@@ -1,0 +1,53 @@
+.input {
+  display: block;
+  border: none;
+  padding: 0;
+  padding-left: 0.9375rem !important;
+  padding-right: 0.9375rem !important;
+  border-radius: 8px;
+  height: 3.75rem;
+  margin: 0;
+  margin-bottom: 0.25rem;
+  width: 60vw;
+  max-width: 280px;
+  min-width: 10px;
+  font-size: 1.1875rem;
+  background-color: var(--neko-background);
+  color: var(--neko-text);
+}
+
+.label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.button {
+  border: 0;
+  outline: none;
+  border-radius: 8px;
+  padding: 0.9375rem;
+  height: 3.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--neko-primary);
+  color: var(--neko-text-inline);
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  width: 100%;
+}
+
+.button:active {
+  box-shadow: inset 6px 6px 10px #586cbc, inset -6px -6px 10px #7892fe;;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.error {
+  color: var(--neko-danger);
+}

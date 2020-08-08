@@ -1,0 +1,34 @@
+html,
+body {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  --neko-background: #E9EEF4;
+  --neko-foreground: #FFFFFF;
+  --neko-primary: #687fdd;
+  --neko-text-inline: #FFFFFF;
+  --neko-text: #000000;
+  --neko-danger: #dd6868;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+  font-family: Inter, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+#main {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: row;
+}
