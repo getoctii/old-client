@@ -1,3 +1,19 @@
 .button {
+  margin-top: 0.7rem;
+  color: #fff;
+  width: 3.75rem;
+  height: 3.75rem;
+  min-height: 3.75rem;
+  min-width: 3.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+}
 
+.red {
+  background-color:  var(--neko-danger);
+}
+
+.blue {
+  background-color:  var(--neko-primary);
 }

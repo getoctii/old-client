@@ -6,13 +6,30 @@ import * as serviceWorker from './serviceWorker'
 import { Router } from './Router'
 import { ReactQueryDevtools } from 'react-query-devtools'
 import { Auth } from './authentication/state'
+import { ReactQueryConfigProvider, queryCache } from 'react-query'
+import { ErrorBoundary } from 'react-error-boundary'
+import Loader from './components/Loader'
+import Error from './components/Error'
 
 ReactDOM.render(
   <React.StrictMode>
-    <Auth.Provider>
-      <Router/>
-    </Auth.Provider>
-    <ReactQueryDevtools />
+    <ReactQueryConfigProvider config={{
+      shared: {
+        suspense: true
+      }
+    }}>
+      <ErrorBoundary
+        onReset={() => queryCache.resetErrorBoundaries()}
+        fallbackRender={({ error, resetErrorBoundary }) => <Error error={error} resetErrorBoundary={resetErrorBoundary} />}
+      >
+        <React.Suspense fallback={<Loader />}>
+          <Auth.Provider>
+            <Router/>
+          </Auth.Provider>
+          <ReactQueryDevtools />
+        </React.Suspense>
+      </ErrorBoundary>
+    </ReactQueryConfigProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )

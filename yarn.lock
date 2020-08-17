@@ -8951,6 +8951,13 @@ react-dom@^16.13.1:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
+react-error-boundary@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-2.3.1.tgz#bd6c8a9777224b6a1153c5f63e1ac86bf039f657"
+  integrity sha512-w1i++MM5GV6WTnM3MtLdw9CNXxqydkZwbwNDT9GBFBaWs0sp21z27DGIevb3fism1T+LGfdWgTFlhaq7G1pIMA==
+  dependencies:
+    "@babel/runtime" "^7.10.5"
+
 react-error-overlay@^6.0.7:
   version "6.0.7"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.7.tgz#1dcfb459ab671d53f660a991513cb2f0a0553108"
@@ -10601,10 +10608,10 @@ typeface-inter@^3.12.0:
   resolved "https://registry.yarnpkg.com/typeface-inter/-/typeface-inter-3.12.0.tgz#3cd7cdae730daa73cc01e88fdbe27601dc7c4fd7"
   integrity sha512-3vKBTKCl6S0OJhMKwmyAOodsfTD3Gxsrj5ReavpQmdZ385ecUr3swfNxiBZ4u594mNfojlqL/zUebavV3A1yCA==
 
-typescript@~3.7.2:
-  version "3.7.5"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.5.tgz#0692e21f65fd4108b9330238aac11dd2e177a1ae"
-  integrity sha512-/P5lkRXkWHNAbcJIiHPfRoKqyd7bsyCma1hZNUGfn20qm64T6ZBlrzprymeu918H+mB/0rIg2gGK/BXkhhYgBw==
+typescript@^3.9.7:
+  version "3.9.7"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.7.tgz#98d600a5ebdc38f40cb277522f12dc800e9e25fa"
+  integrity sha512-BLbiRkiBzAwsjut4x/dsibSTB6yWpwT5qWmC2OfuCg3GgVQCSgMs4vEctYPhsaGtd0AeuuHMkjZ2h2WG8MSzRw==
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"

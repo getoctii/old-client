@@ -1,0 +1,19 @@
+.invite {
+  h3, p {
+    margin: 0;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    margin-top: 1rem;
+  }
+
+  button {
+    margin-top: 0.8rem;
+    background-color: var(--neko-primary)
+  }
+}

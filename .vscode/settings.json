@@ -1,3 +1,5 @@
 {
-  "deno.enable": false
+  "deno.enable": false,
+  "extensions.ignoreRecommendations": true,
+  "files.autoSave": "off"
 }

@@ -1,0 +1,8 @@
+tabWidth: 2
+semi: false
+singleQuote: true
+useTabs: true
+trailingComma: none
+bracketSpacing: true
+arrowParens: always
+proseWrap: none
