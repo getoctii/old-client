@@ -5,4 +5,4 @@ useTabs: false
 trailingComma: none
 bracketSpacing: true
 arrowParens: always
-proseWrap: none
+proseWrap: never

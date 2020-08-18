@@ -6,7 +6,7 @@ import * as serviceWorker from './serviceWorker'
 import { Router } from './Router'
 import { ReactQueryDevtools } from 'react-query-devtools'
 import { Auth } from './authentication/state'
-import { ReactQueryConfigProvider, queryCache } from 'react-query'
+import { queryCache, ReactQueryConfigProvider } from 'react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 import Loader from './components/Loader'
 import Error from './components/Error'
@@ -20,7 +20,7 @@ ReactDOM.render(
     }}>
       <ErrorBoundary
         onReset={() => queryCache.resetErrorBoundaries()}
-        fallbackRender={({ error, resetErrorBoundary }) => <Error error={error} resetErrorBoundary={resetErrorBoundary} />}
+        fallbackRender={({ resetErrorBoundary }) => <Error resetErrorBoundary={resetErrorBoundary}/>}
       >
         <React.Suspense fallback={<Loader />}>
           <Auth.Provider>
