@@ -3,9 +3,9 @@ import styles from './Button.module.scss'
 
 type OnClick = (event: any) => void
 
-const Button = ({ children, onClick }: { children: React.ReactNode, onClick?: OnClick }) => {
+const Button = ({ children, onClick, type, disabled = false }: { children: React.ReactNode, onClick?: OnClick, type: 'button' | 'submit' | 'reset', disabled?: boolean }) => {
   return (
-    <button className={styles.button} onClick={onClick}>
+    <button disabled={disabled} type={type} className={styles.button} onClick={onClick}>
       {children}
     </button>
   )

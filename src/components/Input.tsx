@@ -1,9 +1,10 @@
 import React from 'react'
 import styles from './Input.module.scss'
+import { FieldInputProps } from 'formik'
 
-const Input = ({ name, type, placeholder }: { name: string, type: 'text' | 'color' | 'number', placeholder?: string }) => {
+const Input = ({ field, ...props }: { field: FieldInputProps<string> }) => {
   return (
-    <input className={styles.input} type={type} placeholder={placeholder}/>
+    <input className={styles.input} type='text' {...field} {...props} />
   )
 }
 

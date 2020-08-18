@@ -4,7 +4,7 @@
 
 	outline: none;
 
-  margin: 0;
+	margin: 0;
 	padding: 1.2rem;
 	padding-top: 0.9rem;
 	padding-bottom: 0.9rem;
@@ -16,6 +16,10 @@
 	font-size: 1rem;
 
 	color: #ffffff;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
 
 	&.primary {
 		background-color: var(--inn-primary);
@@ -56,7 +60,7 @@
 }
 
 button:active {
-	box-shadow: inset 5px 5px 15px 0px rgba(4, 85, 190, 0.5);
+	box-shadow: inset 5px 5px 15px 0 rgba(4, 85, 190, 0.5);
 }
 
 button:hover {

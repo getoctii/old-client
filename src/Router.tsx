@@ -1,23 +1,21 @@
 import React from 'react'
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { Authenticate } from './authentication/Authenticate'
 import { PrivateRoute } from './authentication/PrivateRoute'
 import { Sidebar } from './sidebar/Sidebar'
 import { Community } from './community/Community'
-import { ErrorBoundary } from 'react-error-boundary'
-import { queryCache } from 'react-query'
-import { SyncLoader } from 'react-spinners'
-import Loader from './components/Loader'
+import Empty from './community/empty/Empty'
 
 export const Router = () => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path='/authenticate' component={Authenticate} />
+        <Route path='/owo' component={() => <h1>owo</h1>}/>
+        <Route path='/authenticate' component={Authenticate}/>
         <div id='main'>
-          <Sidebar />
-          <PrivateRoute path='/' component={Community} />
-          <PrivateRoute path='/:id' component={Community} />
+          <Sidebar/>
+          <PrivateRoute path='/' component={Empty} exact/>
+          <PrivateRoute path='/conversations/:id' component={Community}/>
         </div>
       </Switch>
     </BrowserRouter>

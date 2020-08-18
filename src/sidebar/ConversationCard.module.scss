@@ -24,3 +24,13 @@
   background-color: var(--neko-primary);
   color: #ffffff;
 }
+
+.card:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.card:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}

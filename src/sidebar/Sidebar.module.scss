@@ -1,25 +1,45 @@
 .sidebar {
-	display: flex;
-	flex-direction: column;
-	min-width: 18rem;
-	min-height: 5rem;
-	z-index: 0;
-	overflow-y: scroll;
-	padding: 1.5rem;
-	background-color: var(--neko-foreground);
+  display: flex;
+  flex-direction: column;
+  min-width: 18rem;
+  min-height: 5rem;
+  z-index: 0;
+  overflow-y: scroll;
+  padding: 1.5rem;
+  background-color: var(--neko-foreground);
   border: 0;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    display: none;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: var(--neko-text);
+  }
+
 
   h1 {
     margin: 0;
 
     span {
-			color: var(--neko-primary);
+      color: var(--neko-primary);
       float: right;
     }
-	}
-  
+  }
+
   .list {
     margin-top: 0.5rem;
+  }
+
+  h3 {
+    span {
+      float: right;
+    }
   }
 
   // for the settings card, its gonna be a tad different,
@@ -29,11 +49,12 @@
     display: flex;
     align-items: center;
     margin-bottom: 0.25rem;
+
     h4 {
-			margin: 0;
-			margin-left: 0.75rem;
-			margin-right: auto;
-			font-weight: 500;
+      margin: 0;
+      margin-left: 0.75rem;
+      margin-right: auto;
+      font-weight: 500;
     }
 
 		img {

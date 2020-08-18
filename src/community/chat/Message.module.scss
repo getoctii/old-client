@@ -1,0 +1,38 @@
+
+.message {
+  display: flex;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-top: .125rem;
+  padding-bottom: .125rem;
+  margin-bottom: 0.8rem;
+
+  h2 {
+    font-size: 1rem;
+    margin: 0;
+    margin-bottom: 0.2rem;
+
+    span {
+      margin-left: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 300;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+}
+
+.avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.content {
+  margin-left: 1rem;
+}
