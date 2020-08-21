@@ -4,6 +4,10 @@
   "private": true,
   "dependencies": {
     "@brianmcallister/react-auto-scroll": "^1.0.5",
+    "@capacitor/android": "2.4.0",
+    "@capacitor/cli": "^2.4.0",
+    "@capacitor/core": "^2.4.0",
+    "@capacitor/ios": "2.4.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
     "@fortawesome/free-solid-svg-icons": "^5.14.0",
     "@fortawesome/pro-duotone-svg-icons": "^5.14.0",

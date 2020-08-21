@@ -1,0 +1,13 @@
+{
+  "appId": "com.innatical.neko",
+  "appName": "Neko",
+  "bundledWebRuntime": false,
+  "npmClient": "yarn",
+  "webDir": "public",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {}
+}
