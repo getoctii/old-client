@@ -1,14 +1,15 @@
 import React from 'react'
 import styles from './Message.module.scss'
+import moment from 'moment'
+import ReactMarkdown from 'react-markdown'
 
-const Message = ({ children, avatar, timestamp, author }: { children: React.ReactNode, avatar: string, timestamp: string, author: string }) => {
+const Message = ({ children, avatar, timestamp, author, primary }: { children: string, avatar: string, timestamp: string, author: string, primary: boolean }) => {
   return (
-    <div className={styles.message}>
-      <img className={styles.avatar} src={avatar} alt={`${author}'s Profile`}/>
+    <div className={primary ? styles.primary : styles.message}>
+      {primary ? <img className={styles.avatar} src={avatar} alt={`${author}'s Profile`}/> : <div className={styles.spacer} />}
       <div className={styles.content}>
-        {/* Cleanup date parsing. */}
-        <h2>{author}<span>{new Date(timestamp.replace(' ', 'T') + 'Z').toTimeString()}</span></h2>
-        <p>{children}</p>
+        {primary && <h2>{author}<span>{moment.utc(timestamp).local().calendar()}</span></h2> }
+        <ReactMarkdown skipHtml={false} escapeHtml={true} unwrapDisallowed={true} allowedTypes={['root', 'text', 'paragraph', 'strong', 'emphasis', 'delete']} source={children}/>
       </div>
     </div>
   )

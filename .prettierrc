@@ -1,8 +1,10 @@
-tabWidth: 2
-semi: false
-singleQuote: true
-useTabs: false
-trailingComma: none
-bracketSpacing: true
-arrowParens: always
-proseWrap: never
+{
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": true,
+  "useTabs": false,
+  "trailingComma": "none",
+  "bracketSpacing": true,
+  "arrowParens": "always",
+  "proseWrap": "never"
+}

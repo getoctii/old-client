@@ -32,3 +32,9 @@ body {
   width: 100%;
   flex-direction: row;
 }
+
+.ReactQueryDevtools {
+  button {
+    right: auto !important;
+  }
+}

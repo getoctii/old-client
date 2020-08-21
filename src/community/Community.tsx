@@ -15,6 +15,12 @@ type ParticipantsResponse = {
   }
 }[]
 
+type UserResponse = {
+  avatar: string
+  username: string
+  discriminator: number
+}
+
 export const Community = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
   const auth = Auth.useContainer()
@@ -24,10 +30,12 @@ export const Community = () => {
     }
   })).data)
   const participant = data?.find((participant) => participant.conversation.id === match?.params.id)
-  if (!participant) return <></>
+  const people = participant?.conversation.participants.filter((userID) => userID !== auth.id)
+  const recipient = useQuery(['users', people?.[0]], async (key, userID) => (await clientGateway.get<UserResponse>(`/users/${userID}`, { headers: { Authorization: auth.token } })).data)
+  if (!participant) return <></> // all of this is really hacky, but I'll clean it up later
   return (
     <div className={styles.community}>
-      <Chat channelID={participant.conversation.channel_id}/>
+      <Chat title={`${recipient.data?.username}#${recipient.data?.discriminator}`} channelID={participant.conversation.channel_id}/>
     </div>
   )
 }

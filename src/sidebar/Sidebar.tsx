@@ -8,7 +8,9 @@ import NewConversation from './menus/NewConversation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ConversationCard } from './ConversationCard'
 import Button from '../components/Button'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
+import Settings from './menus/Settings'
+import { UI } from '../uiStore'
 
 type UserResponse = {
   id: string
@@ -28,6 +30,8 @@ type ParticipantsResponse = {
 
 export const Sidebar = () => {
   const auth = Auth.useContainer()
+  const ui = UI.useContainer()
+  const match = useRouteMatch<{ id: string }>('/conversations/:id')
   const user = useQuery(['users', auth.id], async (key, userID) => (await clientGateway.get<UserResponse>(`/users/${userID}`, {
     headers: {
       Authorization: auth.token
@@ -38,17 +42,17 @@ export const Sidebar = () => {
       Authorization: auth.token
     }
   })).data)
-  const [invite, setInvite] = useState(false)
+  const [selected, setSelected] = useState(match?.params.id || undefined)
+
   const history = useHistory()
   return (
 		<div className={styles.sidebar}>
-      {invite && <NewConversation onDismiss={() => setInvite(false)}/>}
       <div className={styles.profile}>
         <img src={user.data?.avatar} alt={user.data?.username}/>
         <h4>{user.data?.username}#{user.data?.discriminator}</h4>
-        <FontAwesomeIcon icon={faUserCog} fixedWidth/>
+        {/* <FontAwesomeIcon icon={faUserCog} fixedWidth/> */}
       </div>
-      <h3>Recent <span onClick={() => setInvite(true)}><FontAwesomeIcon icon={faPlus}/></span></h3>
+      <h3>Recent <span onClick={() => ui.setModal('newConversation')}><FontAwesomeIcon icon={faPlus}/></span></h3>
       <div className={styles.list}>
         {participants.data && participants.data.length > 0
           ? participants.data?.map(({ conversation }) => {
@@ -58,15 +62,24 @@ export const Sidebar = () => {
               console.warn('Group chats not implemented')
               return <></>
             } else {
-              return <ConversationCard onClick={() => history.push(`/conversations/${conversation.id}`)}
-                                       key={conversation.id} people={people}/>
+              return (
+                <ConversationCard
+                  selected={selected === conversation.id}
+                  onClick={() => {
+                    history.push(`/conversations/${conversation.id}`)
+                    setSelected(conversation.id)
+                  }}
+                  key={conversation.id}
+                  people={people}
+                />
+              )
             }
           })
           : (
             <div className={styles.alert}>
               <h3>You aren't in any chats!</h3>
               <p>Would you like to chat with someone?</p>
-              <Button type='button' onClick={() => setInvite(true)}>Create One</Button>
+              <Button type='button' onClick={() => ui.setModal('newConversation')}>Create One</Button>
             </div>
           )}
       </div>

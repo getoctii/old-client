@@ -15,6 +15,21 @@
     padding-left: 2rem;
     padding-right: 2rem;
   }
+
+  .loader {
+    margin: 0;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    margin-bottom: 0.5rem;
+  
+    h5 {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.buffer {
+  height: 1.5rem;
 }
 
 .box {
@@ -26,14 +41,14 @@
   padding-left: 2rem;
   padding-bottom: 2rem;
   padding-right: 2rem;
-  //z-index: 1;
-  // wtf
   justify-content: space-between;
   background-color: var(--inn-foreground);
+  
 
   form {
     display: flex;
     width: 100%;
+    z-index: 3;
 
     input {
       height: 3rem;
@@ -50,11 +65,16 @@
   }
 }
 
+.top {
+  margin-top: auto;
+  padding-top: 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 .messages {
-  // width: 100%;
-  // height: 100%;
+  // display: flex;
+  // flex-direction: column;
   flex: 1;
   overflow-y: scroll;
-  // display: flex;
-  // flex-direction: column-reverse;
 }

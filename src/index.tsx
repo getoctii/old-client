@@ -10,6 +10,8 @@ import { queryCache, ReactQueryConfigProvider } from 'react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 import Loader from './components/Loader'
 import Error from './components/Error'
+import EventSource from './EventSource'
+import { UI } from './uiStore'
 
 ReactDOM.render(
   <React.StrictMode>
@@ -24,7 +26,10 @@ ReactDOM.render(
       >
         <React.Suspense fallback={<Loader />}>
           <Auth.Provider>
-            <Router/>
+            <UI.Provider>
+              <Router/>
+              <EventSource/>
+            </UI.Provider>
           </Auth.Provider>
           <ReactQueryDevtools />
         </React.Suspense>

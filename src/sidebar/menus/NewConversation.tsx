@@ -9,9 +9,10 @@ import { useMutation } from 'react-query'
 import { clientGateway } from '../../constants'
 import { Auth } from '../../authentication/state'
 import { isTag } from './validations'
+import { UI } from '../../uiStore'
 
 interface ConversationResponse {
-  id: string,
+  id: string
   channel_id: string
 }
 
@@ -30,37 +31,63 @@ const validate = (values: formData) => {
   return errors
 }
 
-const NewConversation = ({ onDismiss }: { onDismiss?: any }) => {
+const NewConversation = () => {
   const { token } = Auth.useContainer()
-  const [createConversation] = useMutation(async (values: { recipient: string }) => (await clientGateway.post<ConversationResponse>('/conversations', new URLSearchParams(values), { headers: { Authorization: token } })).data)
+  const ui = UI.useContainer()
+  const [createConversation] = useMutation(
+    async (values: { recipient: string }) =>
+      (
+        await clientGateway.post<ConversationResponse>(
+          '/conversations',
+          new URLSearchParams(values),
+          { headers: { Authorization: token } }
+        )
+      ).data
+  )
   return (
-    <Modal onDismiss={onDismiss}>
+    <Modal onDismiss={() => ui.setModal('')}>
       <div className={styles.invite}>
         <h3>Start a Conversation</h3>
-        <Formik initialValues={{ tag: '' }} validate={validate}
-                onSubmit={async (values, { setSubmitting, setErrors }) => {
-                  try {
-                    const splitted = values.tag.split('#')
-                    const user = (await clientGateway.get<FindResponse>('/users/find', {
-                      headers: { Authorization: token },
-                      params: { username: splitted[0], discriminator: splitted[1] }
-                    })).data
-                    console.log(await createConversation({ recipient: user.id }))
-                  } catch (e) {
-                    console.warn('UWU', e)
-                    if (e.response.data.errors.includes('UserNotFound') || e.response.data.errors.includes('RecipientNotFound')) setErrors({ tag: 'User not found' })
-                    console.log(e.response.data.errors.includes('InvalidRecipient'))
-                  } finally {
-                    setSubmitting(false)
-                  }
-                }}>
+        <Formik
+          initialValues={{ tag: '' }}
+          validate={validate}
+          onSubmit={async (values, { setSubmitting, setErrors }) => {
+            try {
+              const splitted = values.tag.split('#')
+              const user = (
+                await clientGateway.get<FindResponse>('/users/find', {
+                  headers: { Authorization: token },
+                  params: { username: splitted[0], discriminator: splitted[1] }
+                })
+              ).data
+              await createConversation({ recipient: user.id })
+              ui.setModal('')
+            } catch (e) {
+              if (
+                e.response.data.errors.includes('UserNotFound') ||
+                e.response.data.errors.includes('RecipientNotFound')
+              )
+                setErrors({ tag: 'User not found' })
+              console.log(e.response.data.errors.includes('InvalidRecipient'))
+            } finally {
+              setSubmitting(false)
+            }
+          }}
+        >
           {({ isSubmitting }) => (
             <Form>
-              <label htmlFor='tag' className={styles.inputName}>Username</label>
-              <Field placeholder='username#1234' component={Input} name='tag'/>
-              <ErrorMessage component='p' name='tag'/>
-              <Button disabled={isSubmitting} type='submit'>{isSubmitting ? <BarLoader
-                color="#ffffff"/> : 'Start Chatting'}</Button>
+              <label htmlFor="tag" className={styles.inputName}>
+                Username
+              </label>
+              <Field placeholder="username#1234" component={Input} name="tag" />
+              <ErrorMessage component="p" name="tag" />
+              <Button disabled={isSubmitting} type="submit">
+                {isSubmitting ? (
+                  <BarLoader color="#ffffff" />
+                ) : (
+                  'Start Chatting'
+                )}
+              </Button>
             </Form>
           )}
         </Formik>

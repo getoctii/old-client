@@ -5,7 +5,7 @@
   padding-right: 2rem;
   padding-top: .125rem;
   padding-bottom: .125rem;
-  margin-bottom: 0.8rem;
+  // margin-bottom: 0.8rem;
 
   h2 {
     font-size: 1rem;
@@ -26,6 +26,14 @@
   }
 }
 
+.primary {
+  @extend .message;
+  margin-top: 0.8rem;
+}
+
+.spacer {
+  width: 2.5rem;
+}
 .avatar {
   width: 2.5rem;
   height: 2.5rem;
