@@ -51,6 +51,7 @@ export const Login = () => {
 						id="email"
 						name="email"
 						type="email"
+						enterkeyhint="next"
 					/>
 					<ErrorMessage component="p" className={styles.error} name="email" />
 

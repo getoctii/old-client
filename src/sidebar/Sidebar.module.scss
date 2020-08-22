@@ -9,20 +9,6 @@
   background-color: var(--neko-foreground);
   border: 0;
 
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-
-  &::-webkit-scrollbar-track {
-    display: none;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: var(--neko-text);
-  }
-
-
   h1 {
     margin: 0;
 

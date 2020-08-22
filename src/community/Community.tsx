@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import styles from './Community.module.scss'
 import Chat from './chat/Chat'
 import { useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { clientGateway } from '../constants'
+import Loader from '../components/Loader'
 
 type ParticipantsResponse = {
   id: string
@@ -34,8 +35,10 @@ export const Community = () => {
   const recipient = useQuery(['users', people?.[0]], async (key, userID) => (await clientGateway.get<UserResponse>(`/users/${userID}`, { headers: { Authorization: auth.token } })).data)
   if (!participant) return <></> // all of this is really hacky, but I'll clean it up later
   return (
-    <div className={styles.community}>
-      <Chat title={`${recipient.data?.username}#${recipient.data?.discriminator}`} channelID={participant.conversation.channel_id}/>
-    </div>
+    <Suspense fallback={<Loader />}>
+      <div className={styles.community}>
+        <Chat title={`${recipient.data?.username}#${recipient.data?.discriminator}`} channelID={participant.conversation.channel_id}/>
+      </div>
+    </Suspense>
   )
 }

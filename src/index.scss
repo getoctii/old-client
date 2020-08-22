@@ -5,16 +5,73 @@ body {
   padding: 0;
   --neko-background: #E9EEF4;
   --neko-foreground: #FFFFFF;
-  --neko-primary: #6f96ff; // old #687fdd
+  --neko-primary: #4D99E6; // old #687fdd
   --neko-text-inline: #FFFFFF;
   --neko-text: #000000;
-  --neko-danger: #dd6868;
+  --neko-danger: #E01A4F;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    // --neko-background: #07172A;
+    // --neko-foreground: #13315C;
+    // // this is the primary button
+    // --neko-primary: #6f96ff; // old #687fdd
+    // --neko-text-inline: #EEF4ED;
+    // --neko-text: #EEF4ED;
+    // --neko-danger: #E01A4F;
+    // ahhh
+    // we need a pure but still not exactly 000000 cause oled has a bad effect if its pure black
+    --neko-background: #040A0F; // 040A0F
+    --neko-foreground: #0F1215;
+    // this is the primary button
+    // that better?
+    // modal needs tweaking its wayyy off
+    --neko-primary: #4D99E6; // old #687fdd
+    --neko-text-inline: #EEF4ED;
+    --neko-text: #cccccc;
+    --neko-danger: #ED5454;
+  }
+}
+
+.test {
+  --neko-background: #040A0F;
+  --neko-foreground: #0F1215;
+  // this is the primary button
+  --neko-primary: #6f96ff; // old #687fdd
+  --neko-text-inline: #EEF4ED;
+  --neko-text: #EEF4ED;
+  --neko-danger: #ED5454;
+}
+
+html {
+  * {
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      display: none;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background-color: var(--neko-text);
+    }
+  }
 }
 
 body {
+  color: var(--neko-text);
   height: 100vh;
   width: 100vw;
   font-family: Inter, sans-serif;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+img {
+  pointer-events: none;
 }
 
 * {

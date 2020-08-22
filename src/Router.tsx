@@ -13,7 +13,6 @@ export const Router = () => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path='/owo' component={() => <h1>owo</h1>}/>
         <Route path='/authenticate' component={Authenticate}/>
         <div id='main'>
           {uiStore.modal === 'newConversation' && <NewConversation />}
