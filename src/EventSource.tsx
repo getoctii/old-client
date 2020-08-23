@@ -56,17 +56,13 @@ const EventSource = () => {
 
     eventSource.addEventListener('NEW_PARTICIPANT', (e: any) => {
       const participant = JSON.parse(e.data)
-      console.log(participant)
       queryCache.setQueryData('participants', (initial) => {
-        console.log(initial)
         if (initial instanceof Array) {
           initial.push(participant)
           return initial
         } else return initial
       })
     })
-
-    eventSource.onmessage = (e: any) => console.log(e)
 
     return () => {
       eventSource.close()

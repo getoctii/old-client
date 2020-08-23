@@ -44,8 +44,7 @@ const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
     any
   >(['messages', channelID], fetchMessages, {
     getFetchMore: (last) => {
-      console.log(last)
-      return last.length < 25 ? false : last[last.length - 1]?.created_at
+      return last.length < 25 ? undefined : last[last.length - 1]?.created_at
     }
   })
   const messages = data?.flat().reverse()

@@ -90,7 +90,6 @@ export const Sidebar = () => {
               const people = conversation.participants.filter(
                 (userID: string) => userID !== auth.id
               )
-              console.log(people)
               if (people.length > 1) {
                 console.warn('Group chats not implemented')
                 return <></>
