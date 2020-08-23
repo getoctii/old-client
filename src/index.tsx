@@ -15,20 +15,24 @@ import { UI } from './uiStore'
 
 ReactDOM.render(
   <React.StrictMode>
-    <ReactQueryConfigProvider config={{
-      shared: {
-        suspense: true
-      }
-    }}>
+    <ReactQueryConfigProvider
+      config={{
+        shared: {
+          suspense: true
+        }
+      }}
+    >
       <ErrorBoundary
         onReset={() => queryCache.resetErrorBoundaries()}
-        fallbackRender={({ resetErrorBoundary }) => <Error resetErrorBoundary={resetErrorBoundary}/>}
+        fallbackRender={({ resetErrorBoundary }) => (
+          <Error resetErrorBoundary={resetErrorBoundary} />
+        )}
       >
         <React.Suspense fallback={<Loader />}>
           <Auth.Provider>
             <UI.Provider>
-              <Router/>
-              <EventSource/>
+              <Router />
+              <EventSource />
             </UI.Provider>
           </Auth.Provider>
           <ReactQueryDevtools />
@@ -39,7 +43,4 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister()

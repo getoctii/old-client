@@ -21,7 +21,7 @@
     padding-left: 2rem;
     padding-right: 2rem;
     margin-bottom: 0.5rem;
-  
+
     h5 {
       margin-bottom: 0;
     }
@@ -42,8 +42,6 @@
   padding-bottom: 2rem;
   padding-right: 2rem;
   justify-content: space-between;
-  // background-color: var(--neko-foreground);
-  
 
   form {
     display: flex;
@@ -58,7 +56,6 @@
       flex: 1;
       padding-left: 0.9375rem;
       padding-right: 0.9375rem;
-      // there are alot which use foreground
       color: var(--neko-text);
       background-color: var(--neko-foreground);
       border: none;
@@ -75,8 +72,17 @@
 }
 
 .messages {
-  // display: flex;
-  // flex-direction: column;
   flex: 1;
   overflow-y: scroll;
+}
+
+.backButton {
+  margin-right: 1rem;
+  color: var(--neko-primary);
+}
+
+@media (max-width: 800px) {
+  .header {
+    padding-top: 2rem;
+  }
 }

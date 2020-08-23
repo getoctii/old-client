@@ -25,19 +25,43 @@ type UserResponse = {
 export const Community = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
   const auth = Auth.useContainer()
-  const { data } = useQuery('participants', async () => (await clientGateway.get<ParticipantsResponse>(`/users/${auth.id}/participants`, {
-    headers: {
-      Authorization: auth.token
-    }
-  })).data)
-  const participant = data?.find((participant) => participant.conversation.id === match?.params.id)
-  const people = participant?.conversation.participants.filter((userID) => userID !== auth.id)
-  const recipient = useQuery(['users', people?.[0]], async (key, userID) => (await clientGateway.get<UserResponse>(`/users/${userID}`, { headers: { Authorization: auth.token } })).data)
-  if (!participant) return <></> // all of this is really hacky, but I'll clean it up later
+  const { data } = useQuery(
+    'participants',
+    async () =>
+      (
+        await clientGateway.get<ParticipantsResponse>(
+          `/users/${auth.id}/participants`,
+          {
+            headers: {
+              Authorization: auth.token
+            }
+          }
+        )
+      ).data
+  )
+  const participant = data?.find(
+    (participant) => participant.conversation.id === match?.params.id
+  )
+  const people = participant?.conversation.participants.filter(
+    (userID) => userID !== auth.id
+  )
+  const recipient = useQuery(
+    ['users', people?.[0]],
+    async (key, userID) =>
+      (
+        await clientGateway.get<UserResponse>(`/users/${userID}`, {
+          headers: { Authorization: auth.token }
+        })
+      ).data
+  )
+  if (!participant) return <></>
   return (
     <Suspense fallback={<Loader />}>
       <div className={styles.community}>
-        <Chat title={`${recipient.data?.username}#${recipient.data?.discriminator}`} channelID={participant.conversation.channel_id}/>
+        <Chat
+          title={`${recipient.data?.username}#${recipient.data?.discriminator}`}
+          channelID={participant.conversation.channel_id}
+        />
       </div>
     </Suspense>
   )

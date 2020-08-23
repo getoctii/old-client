@@ -12,7 +12,7 @@
   max-width: 280px;
   min-width: 10px;
   font-size: 1.1875rem;
-  background-color: var(--neko-background);
+  background-color: var(--neko-foreground);
   color: var(--neko-text);
 }
 
@@ -40,7 +40,7 @@
 }
 
 .button:active {
-  box-shadow: inset 6px 6px 10px #586cbc, inset -6px -6px 10px #7892fe;;
+  box-shadow: inset 6px 6px 10px #586cbc, inset -6px -6px 10px #7892fe;
 }
 
 .name {

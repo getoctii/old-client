@@ -1,5 +1,6 @@
 .invite {
-  h3, p {
+  h3,
+  p {
     margin: 0;
   }
 
@@ -24,6 +25,6 @@
   }
 
   p {
-    color: var(--neko-danger)
+    color: var(--neko-danger);
   }
 }

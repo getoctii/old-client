@@ -4,6 +4,9 @@ import { Auth } from './authentication/state'
 // @ts-ignore
 import { EventSourcePolyfill } from 'event-source-polyfill'
 import { CLIENT_GATEWAY_URL } from './constants'
+import { Plugins, HapticsNotificationType } from '@capacitor/core'
+
+const { Haptics, Toast } = Plugins
 
 interface Message {
   id: string
@@ -20,7 +23,7 @@ interface Message {
 }
 
 const EventSource = () => {
-  const { token } = Auth.useContainer()
+  const { token, id } = Auth.useContainer()
   useEffect(() => {
     if (token === null) return
     const eventSource = new EventSourcePolyfill(
@@ -32,8 +35,16 @@ const EventSource = () => {
       }
     )
 
-    eventSource.addEventListener('NEW_MESSAGE', (e: any) => {
+    eventSource.addEventListener('NEW_MESSAGE', async (e: any) => {
       const message = JSON.parse(e.data) as Message
+      if (message.author.id !== id) {
+        Haptics.notification({
+          type: HapticsNotificationType.SUCCESS
+        })
+        Toast.show({
+          text: `${message.author.username}: ${message.content}`
+        })
+      }
       queryCache.setQueryData(['messages', message.channel_id], (initial) => {
         if (initial instanceof Array) {
           if (initial[0].length < 25) initial[0].unshift(message)
@@ -44,15 +55,15 @@ const EventSource = () => {
     })
 
     eventSource.addEventListener('NEW_PARTICIPANT', (e: any) => {
-        const participant = JSON.parse(e.data)
-        console.log(participant)
-        queryCache.setQueryData('participants', (initial) => {
-            console.log(initial)
-            if (initial instanceof Array) {
-                initial.push(participant)
-                return initial
-            } else return initial
-        })
+      const participant = JSON.parse(e.data)
+      console.log(participant)
+      queryCache.setQueryData('participants', (initial) => {
+        console.log(initial)
+        if (initial instanceof Array) {
+          initial.push(participant)
+          return initial
+        } else return initial
+      })
     })
 
     eventSource.onmessage = (e: any) => console.log(e)

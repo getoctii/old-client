@@ -8,20 +8,37 @@ import { Auth } from './state'
 export const Authenticate = () => {
   const location = useLocation()
   const auth = Auth.useContainer()
-  if (auth.authenticated) return <Redirect to='/' />
+  if (auth.authenticated) return <Redirect to="/" />
   return (
     <div className={styles.wrapper}>
       <main className={styles.card}>
         <h1>Neko</h1>
-        <h2>by <b>Innatical</b></h2>
+        <h2>
+          by <b>Innatical</b>
+        </h2>
         <Switch>
-          <Route name='Login' path={'/authenticate/login'} component={Login}/>
-          <Route name='Register' path={'/authenticate/register'} component={Register}/>
-          <Route exact component={() => <Redirect to={'/authenticate/login'}/>}/>
+          <Route name="Login" path={'/authenticate/login'} component={Login} />
+          <Route
+            name="Register"
+            path={'/authenticate/register'}
+            component={Register}
+          />
+          <Route
+            exact
+            component={() => <Redirect to={'/authenticate/login'} />}
+          />
         </Switch>
         <nav>
-          {location.pathname !== '/authenticate/register' ? <Link to={'/authenticate/register'}>Not Registered?</Link> : <></>}
-          {location.pathname !== '/authenticate/login' ? <Link to={'/authenticate/login'}>Already Registered?</Link> : <></>}
+          {location.pathname !== '/authenticate/register' ? (
+            <Link to={'/authenticate/register'}>Not Registered?</Link>
+          ) : (
+            <></>
+          )}
+          {location.pathname !== '/authenticate/login' ? (
+            <Link to={'/authenticate/login'}>Already Registered?</Link>
+          ) : (
+            <></>
+          )}
         </nav>
       </main>
     </div>

@@ -7,5 +7,9 @@ export const isDiscriminator = (discriminator: string) => {
 
 export const isTag = (tag: string) => {
   const splitted = tag.split('#')
-  return splitted.length === 2 && isUsername(splitted[0]) && isDiscriminator(splitted[1])
+  return (
+    splitted.length === 2 &&
+    isUsername(splitted[0]) &&
+    isDiscriminator(splitted[1])
+  )
 }

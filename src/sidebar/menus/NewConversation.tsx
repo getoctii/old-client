@@ -31,19 +31,21 @@ const validate = (values: formData) => {
   return errors
 }
 
+const createConversation = async (
+  token: string,
+  values: { recipient: string }
+) =>
+  (
+    await clientGateway.post<ConversationResponse>(
+      '/conversations',
+      new URLSearchParams(values),
+      { headers: { Authorization: token } }
+    )
+  ).data
+
 const NewConversation = () => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
-  const [createConversation] = useMutation(
-    async (values: { recipient: string }) =>
-      (
-        await clientGateway.post<ConversationResponse>(
-          '/conversations',
-          new URLSearchParams(values),
-          { headers: { Authorization: token } }
-        )
-      ).data
-  )
   return (
     <Modal onDismiss={() => ui.setModal('')}>
       <div className={styles.invite}>
@@ -60,7 +62,7 @@ const NewConversation = () => {
                   params: { username: splitted[0], discriminator: splitted[1] }
                 })
               ).data
-              await createConversation({ recipient: user.id })
+              await createConversation(token!, { recipient: user.id })
               ui.setModal('')
             } catch (e) {
               if (
@@ -68,7 +70,7 @@ const NewConversation = () => {
                 e.response.data.errors.includes('RecipientNotFound')
               )
                 setErrors({ tag: 'User not found' })
-              console.log(e.response.data.errors.includes('InvalidRecipient'))
+              // TODO: Add message if you try to add yourself...
             } finally {
               setSubmitting(false)
             }

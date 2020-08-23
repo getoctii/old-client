@@ -4,10 +4,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--neko-background) url(https://file.coffee/u/QIOEJhW-S.png) repeat 0 0;
+  background: var(--neko-foreground) url(https://file.coffee/u/QIOEJhW-S.png)
+    repeat 0 0;
   margin: 0;
   box-sizing: border-box;
   animation: slide 20s linear infinite;
+}
+
+@media (max-width: 800px) {
+  .wrapper {
+    background: var(--neko-foreground);
+  }
+  .card {
+    width: 100%;
+
+    input {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
 }
 
 @keyframes slide {
@@ -21,7 +36,7 @@
 
 .card {
   display: block;
-  background-color: var(--neko-foreground);
+  background-color: var(--neko-background);
   border-radius: 8px;
   padding: 2rem;
 

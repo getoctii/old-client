@@ -3,45 +3,34 @@ body {
   overflow: hidden;
   margin: 0;
   padding: 0;
-  --neko-background: #E9EEF4;
-  --neko-foreground: #FFFFFF;
-  --neko-primary: #4D99E6; // old #687fdd
-  --neko-text-inline: #FFFFFF;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+  --neko-background: #e9eef4;
+  --neko-foreground: #ffffff;
+  --neko-primary: #4d99e6;
+  --neko-text-inline: #ffffff;
   --neko-text: #000000;
-  --neko-danger: #E01A4F;
+  --neko-danger: #e01a4f;
 }
 
 @media (prefers-color-scheme: dark) {
   body {
-    // --neko-background: #07172A;
-    // --neko-foreground: #13315C;
-    // // this is the primary button
-    // --neko-primary: #6f96ff; // old #687fdd
-    // --neko-text-inline: #EEF4ED;
-    // --neko-text: #EEF4ED;
-    // --neko-danger: #E01A4F;
-    // ahhh
-    // we need a pure but still not exactly 000000 cause oled has a bad effect if its pure black
-    --neko-background: #040A0F; // 040A0F
-    --neko-foreground: #0F1215;
-    // this is the primary button
-    // that better?
-    // modal needs tweaking its wayyy off
-    --neko-primary: #4D99E6; // old #687fdd
-    --neko-text-inline: #EEF4ED;
-    --neko-text: #cccccc;
-    --neko-danger: #ED5454;
+    --neko-background: #040a0f;
+    --neko-foreground: #202020;
+    --neko-primary: #4d99e6;
+    --neko-text-inline: #dadada;
+    --neko-text: #dadada;
+    --neko-danger: #ed5454;
   }
 }
 
 .test {
-  --neko-background: #040A0F;
-  --neko-foreground: #0F1215;
-  // this is the primary button
-  --neko-primary: #6f96ff; // old #687fdd
-  --neko-text-inline: #EEF4ED;
-  --neko-text: #EEF4ED;
-  --neko-danger: #ED5454;
+  --neko-background: #040a0f;
+  --neko-foreground: #0f1215;
+  --neko-primary: #6f96ff;
+  --neko-text-inline: #eef4ed;
+  --neko-text: #eef4ed;
+  --neko-danger: #ed5454;
 }
 
 html {
@@ -49,11 +38,11 @@ html {
     &::-webkit-scrollbar {
       width: 5px;
     }
-    
+
     &::-webkit-scrollbar-track {
       display: none;
     }
-    
+
     &::-webkit-scrollbar-thumb {
       border-radius: 10px;
       background-color: var(--neko-text);
@@ -62,6 +51,8 @@ html {
 }
 
 body {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
   color: var(--neko-text);
   height: 100vh;
   width: 100vw;
@@ -88,6 +79,12 @@ img {
   height: 100%;
   width: 100%;
   flex-direction: row;
+}
+
+@media (max-width: 800px) {
+  #main {
+    display: block;
+  }
 }
 
 .ReactQueryDevtools {

@@ -8,6 +8,7 @@
   padding: 1.5rem;
   background-color: var(--neko-foreground);
   border: 0;
+  height: 100%;
 
   h1 {
     margin: 0;
@@ -28,9 +29,6 @@
     }
   }
 
-  // for the settings card, its gonna be a tad different,
-  // instead of msg under the username, its just gonna be badges,
-  // and the -> icon will be settings icon instead
   .profile {
     display: flex;
     align-items: center;
@@ -43,20 +41,19 @@
       font-weight: 500;
     }
 
-		img {
-			border-radius: 25px;
-			object-fit: cover;
-			height: 2.5rem;
-			width: 2.5rem;
-		}
+    img {
+      border-radius: 25px;
+      object-fit: cover;
+      height: 2.5rem;
+      width: 2.5rem;
+    }
   }
 
   h3 {
     margin-bottom: 0;
   }
 
-	.alert {
-    // i think the reason it looks off is cause we are used to how iOS does the grayish background with the white cards
+  .alert {
     background-color: var(--neko-background);
     display: flex;
     flex-direction: column;
@@ -65,37 +62,16 @@
     padding: 0.75rem;
     margin-bottom: 0.25rem;
     border-radius: 8px;
-  
+
     button {
       width: 100%;
-      background-color: var(--neko-primary)
+      background-color: var(--neko-primary);
     }
   }
+}
 
-  // .seperator {
-  //   margin-top: 1rem;
-  //   border-radius: 50%;
-  //   min-height: 0.5rem;
-  //   min-width: 0.5rem;
-  //   background-color: var(--neko-background);
-  //   opacity: 100%;
-  // }
-
-	// .avatar {
-	// 	width: 3.75rem;
-	// 	height: 3.75rem;
-	// 	min-height: 3.75rem;
-	// 	min-width: 3.75rem;
-	// 	padding: 0;
-	// 	border: 0;
-  //   border-radius: 10px;
-	// 	img {
-	// 	  background-color: transparent;
-	// 		object-fit: cover;
-	// 		width: 100%;
-	// 		height: 100%;
-	// 		padding: 0;
-	// 		box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
-	// 	}
-	// }
+@media (max-width: 800px) {
+  .sidebar {
+    padding-top: 3.5rem;
+  }
 }

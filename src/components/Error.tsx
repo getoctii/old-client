@@ -7,11 +7,15 @@ import Button from './Button'
 const Error = ({ resetErrorBoundary }: { resetErrorBoundary: () => void }) => {
   return (
     <div className={styles.error}>
-      <FontAwesomeIcon icon={faPoo} size='4x'/>
+      <FontAwesomeIcon icon={faPoo} size="4x" />
       <h1>OOPSIE WOOPSIE!!</h1>
-      <p>Uwu We made a hecky wecky!! A wittle hecko boingo! The code monkeys at our headquarters are working VEWY HAWD
-        to fix this!.</p>
-      <Button type='button' onClick={() => resetErrorBoundary()}>Try again</Button>
+      <p>
+        Uwu We made a hecky wecky!! A wittle hecko boingo! The code monkeys at
+        our headquarters are working VEWY HAWD to fix this!.
+      </p>
+      <Button type="button" onClick={() => resetErrorBoundary()}>
+        Try again
+      </Button>
     </div>
   )
 }
