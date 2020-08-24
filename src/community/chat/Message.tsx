@@ -42,7 +42,8 @@ const Message = ({
             'paragraph',
             'strong',
             'emphasis',
-            'delete'
+            'delete',
+            'link'
           ]}
           source={children}
         />
