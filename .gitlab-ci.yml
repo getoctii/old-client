@@ -6,5 +6,10 @@ cache:
 
 build:
     script:
-        - yarn install --frozen-lockfile
-        - yarn build
+      - yarn install --frozen-lockfile
+      - yarn build
+    artifacts:
+      paths:
+        - build
+      expire_in: 1 week
+
