@@ -67,7 +67,7 @@ const EventSource = () => {
     return () => {
       eventSource.close()
     }
-  }, [token])
+  }, [token, id])
 
   return <></>
 }

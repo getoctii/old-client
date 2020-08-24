@@ -25,7 +25,7 @@ export const Router = () => {
         style: isDarkMode ? KeyboardStyle.Dark : KeyboardStyle.Light
       })
     }
-  }, [])
+  }, [isDarkMode])
 
   return (
     <BrowserRouter>

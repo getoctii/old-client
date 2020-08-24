@@ -1,5 +1,4 @@
-import { useState, useMemo } from 'react'
-import decode from 'jwt-decode'
+import { useState } from 'react'
 import { createContainer } from 'unstated-next'
 
 const useUI = () => {

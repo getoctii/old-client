@@ -3,10 +3,7 @@ import styles from './Chat.module.scss'
 import { useInfiniteQuery, useMutation } from 'react-query'
 import { clientGateway } from '../../constants'
 import { Auth } from '../../authentication/state'
-import ScrollableFeed from 'react-scrollable-feed'
-import InfiniteScroll from 'react-infinite-scroller'
 import Message from './Message'
-import { BeatLoader } from 'react-spinners'
 import { useInterval } from 'react-use'
 import moment from 'moment'
 import { Waypoint } from 'react-waypoint'
@@ -39,7 +36,7 @@ const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
       })
     ).data
   }
-  const { data, canFetchMore, fetchMore, isFetchingMore } = useInfiniteQuery<
+  const { data, canFetchMore, fetchMore } = useInfiniteQuery<
     Message[],
     any
   >(['messages', channelID], fetchMessages, {
@@ -147,7 +144,7 @@ const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
           )}
           {!canFetchMore ? (
             <div key="header" className={styles.top}>
-              <h3>Woah, you reached the top of the chat. Here's a cookie 🍪</h3>
+              <h3>Woah, you reached the top of the chat. Here's a cookie <span role='img' aria-label='Cookie'>🍪</span></h3>
             </div>
           ) : (
             <></>
