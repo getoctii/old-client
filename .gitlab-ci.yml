@@ -27,8 +27,6 @@ deploy:
   environment:
     name: production
     url: chat.innatical.com
-  release:
-    tag_name: $CI_COMMIT_TAG
   script:
     - rsync -hrvz --delete --exclude=_ -e "ssh" --progress build/ gitlab_deploy@10.0.0.1:/var/www/chat.innatical.com
   only:
