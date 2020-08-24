@@ -6,7 +6,7 @@ import { EventSourcePolyfill } from 'event-source-polyfill'
 import { CLIENT_GATEWAY_URL } from './constants'
 import { Plugins, HapticsNotificationType } from '@capacitor/core'
 
-const { Haptics, Toast } = Plugins
+const { Haptics, Toast, LocalNotifications } = Plugins
 
 interface Message {
   id: string
@@ -43,6 +43,15 @@ const EventSource = () => {
         })
         Toast.show({
           text: `${message.author.username}: ${message.content}`
+        })
+        LocalNotifications.schedule({
+          notifications: [
+            {
+              title: message.author.username,
+              body: message.content,
+              id: 1
+            }
+          ]
         })
       }
       queryCache.setQueryData(['messages', message.channel_id], (initial) => {
