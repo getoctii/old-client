@@ -8,9 +8,13 @@ import { Plugins, HapticsNotificationType } from '@capacitor/core'
 
 const { Haptics, Toast, LocalNotifications } = Plugins
 
-declare var inntron: {
-  notify: (title: string, content: string) => Promise<null>
-} | undefined
+declare global {
+  interface Window {
+    inntron: {
+      notify: (title: string, content: string) => Promise<null>
+    } | undefined
+  }
+}
 
 interface Message {
   id: string
@@ -48,8 +52,8 @@ const EventSource = () => {
         Toast.show({
           text: `${message.author.username}: ${message.content}`
         })
-        if (inntron) {
-          inntron.notify(message.author.username, message.content)
+        if (window.inntron) {
+          window.inntron.notify(message.author.username, message.content)
         } else {
           LocalNotifications.schedule({
             notifications: [
