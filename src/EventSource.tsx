@@ -8,6 +8,10 @@ import { Plugins, HapticsNotificationType } from '@capacitor/core'
 
 const { Haptics, Toast, LocalNotifications } = Plugins
 
+declare var inntron: {
+  notify: (title: string, content: string) => Promise<null>
+} | undefined
+
 interface Message {
   id: string
   channel_id: string
@@ -44,17 +48,21 @@ const EventSource = () => {
         Toast.show({
           text: `${message.author.username}: ${message.content}`
         })
-        LocalNotifications.schedule({
-          notifications: [
-            {
-              title: message.author.username,
-              body: message.content,
-              id: 1
-            }
-          ]
-        })
+        if (inntron) {
+          inntron.notify(message.author.username, message.content)
+        } else {
+          LocalNotifications.schedule({
+            notifications: [
+              {
+                title: message.author.username,
+                body: message.content,
+                id: 1
+              }
+            ]
+          })
+        }
       }
-      queryCache.setQueryData(['messages', message.channel_id], (initial) => {
+        queryCache.setQueryData(['messages', message.channel_id], (initial) => {
         if (initial instanceof Array) {
           if (initial[0].length < 25) initial[0].unshift(message)
           else initial.unshift([message])
