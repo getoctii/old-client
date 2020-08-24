@@ -45,4 +45,8 @@
 .content {
   margin-left: 1rem;
   overflow: hidden;
+
+  a {
+    color: var(--neko-primary);
+  }
 }
