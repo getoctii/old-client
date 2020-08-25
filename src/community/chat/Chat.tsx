@@ -116,59 +116,61 @@ const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
           )}{' '}
           {title}
         </div>
-        <div className={styles.messages} ref={ref}>
-          {!loading && canFetchMore ? (
-            <Waypoint
-              bottomOffset={20}
-              onEnter={async () => {
-                try {
-                  if (!ref.current) return
-                  setLoading(true)
-                  const oldHeight = ref.current.scrollHeight
-                  const oldTop = ref.current.scrollTop
-                  await fetchMore()
-                  ref.current.scrollTop =
-                    ref.current.scrollHeight - oldHeight + oldTop
-                } finally {
-                  setLoading(false)
-                }
-              }}
-            />
-          ) : (
-            <></>
-          )}
-          {loading && (
-            <div key="loader" className={styles.loader}>
-              <h5>Loading more...</h5>
-            </div>
-          )}
-          {!canFetchMore ? (
-            <div key="header" className={styles.top}>
-              <h3>Woah, you reached the top of the chat. Here's a cookie <span role='img' aria-label='Cookie'>🍪</span></h3>
-            </div>
-          ) : (
-            <></>
-          )}
-          {messages?.map((message, index) =>
-            message ? (
-              <Message
-                key={message.id}
-                primary={isPrimary(message, index)}
-                avatar={message.author.avatar}
-                timestamp={message.created_at}
-                author={message.author.username}
-              >
-                {message.content}
-              </Message>
+        <div className={styles.messagesWrapper}>
+          <div className={styles.messages} ref={ref}>
+            {!loading && canFetchMore ? (
+              <Waypoint
+                bottomOffset={20}
+                onEnter={async () => {
+                  try {
+                    if (!ref.current) return
+                    setLoading(true)
+                    const oldHeight = ref.current.scrollHeight
+                    const oldTop = ref.current.scrollTop
+                    await fetchMore()
+                    ref.current.scrollTop =
+                      ref.current.scrollHeight - oldHeight + oldTop
+                  } finally {
+                    setLoading(false)
+                  }
+                }}
+              />
             ) : (
               <></>
-            )
-          )}
-          <Waypoint
-            onEnter={() => setTracking(true)}
-            onLeave={() => setTracking(false)}
-          />
-          <div key="buffer" className={styles.buffer} />
+            )}
+            {loading && (
+              <div key="loader" className={styles.loader}>
+                <h5>Loading more...</h5>
+              </div>
+            )}
+            {!canFetchMore ? (
+              <div key="header" className={styles.top}>
+                <h3>Woah, you reached the top of the chat. Here's a cookie <span role='img' aria-label='Cookie'>🍪</span></h3>
+              </div>
+            ) : (
+              <></>
+            )}
+            {messages?.map((message, index) =>
+              message ? (
+                <Message
+                  key={message.id}
+                  primary={isPrimary(message, index)}
+                  avatar={message.author.avatar}
+                  timestamp={message.created_at}
+                  author={message.author.username}
+                >
+                  {message.content}
+                </Message>
+              ) : (
+                <></>
+              )
+            )}
+            <Waypoint
+              onEnter={() => setTracking(true)}
+              onLeave={() => setTracking(false)}
+            />
+            <div key="buffer" className={styles.buffer} />
+          </div>
         </div>
         <div className={styles.box}>
           <form
