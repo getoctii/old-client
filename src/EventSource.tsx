@@ -5,6 +5,7 @@ import { Auth } from './authentication/state'
 import { EventSourcePolyfill } from 'event-source-polyfill'
 import { CLIENT_GATEWAY_URL } from './constants'
 import { Plugins, HapticsNotificationType } from '@capacitor/core'
+import { isPlatform } from '@ionic/react'
 
 const { Haptics, Toast, LocalNotifications } = Plugins
 
@@ -46,9 +47,11 @@ const EventSource = () => {
     eventSource.addEventListener('NEW_MESSAGE', async (e: any) => {
       const message = JSON.parse(e.data) as Message
       if (message.author.id !== id) {
-        Haptics.notification({
-          type: HapticsNotificationType.SUCCESS
-        })
+        if (isPlatform('mobile')) {
+          Haptics.notification({
+            type: HapticsNotificationType.SUCCESS
+          })
+        }
         Toast.show({
           text: `${message.author.username}: ${message.content}`
         })
