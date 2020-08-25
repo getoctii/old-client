@@ -116,7 +116,7 @@ const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
           )}{' '}
           {title}
         </div>
-        <div className={styles.messagesWrapper}>
+        {/* <div className={styles.messagesWrapper}> */}
           <div className={styles.messages} ref={ref}>
             {!loading && canFetchMore ? (
               <Waypoint
@@ -171,7 +171,7 @@ const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
             />
             <div key="buffer" className={styles.buffer} />
           </div>
-        </div>
+        {/* </div> */}
         <div className={styles.box}>
           <form
             onSubmit={(event) => {
