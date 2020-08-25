@@ -38,7 +38,7 @@ export const ConversationCard = ({
     >
       <img src={recipient.data?.avatar} alt={recipient.data?.username} />
       <h4>
-        {recipient.data?.username}#{recipient.data?.discriminator.toString().padStart(4, '0')}
+        {recipient.data?.username}
       </h4>
       <FontAwesomeIcon icon={faChevronRight} fixedWidth />
     </div>

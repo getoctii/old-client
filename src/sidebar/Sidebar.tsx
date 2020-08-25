@@ -63,7 +63,7 @@ export const Sidebar = () => {
       <div className={styles.profile}>
         <img src={user.data?.avatar} alt={user.data?.username} />
         <h4>
-          {user.data?.username}#{user.data?.discriminator.toString().padStart(4, '0')}
+          {user.data?.username}#{user.data?.discriminator === 0 ? 'inn' : user.data?.discriminator.toString().padStart(4, '0')}
         </h4>
         {/* <FontAwesomeIcon icon={faUserCog} fixedWidth/> */}
       </div>

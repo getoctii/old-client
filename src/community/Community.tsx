@@ -57,9 +57,9 @@ export const Community = () => {
   if (!participant) return <></>
   return (
     <Suspense fallback={<Loader />}>
-      <div className={styles.community}>
+      <div className={styles.community} key={participant.conversation.channel_id}>
         <Chat
-          title={`${recipient.data?.username}#${recipient.data?.discriminator.toString().padStart(4, '0')}`}
+          title={`${recipient.data?.username}#${recipient.data?.discriminator === 0 ? 'inn' : recipient.data?.discriminator.toString().padStart(4, '0')}`}
           channelID={participant.conversation.channel_id}
         />
       </div>
