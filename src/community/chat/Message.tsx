@@ -45,6 +45,7 @@ const Message = ({
             'delete',
             'link'
           ]}
+          renderers={{link: props => <a href={props.href} target='_blank' rel='noopener'>{props.children}</a>}}
           source={children}
         />
       </div>
