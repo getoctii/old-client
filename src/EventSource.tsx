@@ -9,7 +9,11 @@ import { isPlatform } from '@ionic/react'
 
 const { Haptics, Toast, LocalNotifications } = Plugins
 
-declare var inntronNotify: undefined | ((title: string, body: string) => Promise<null>)
+declare global {
+  interface Window {
+    inntronNotify: undefined | ((title: string, body: string) => Promise<null>)
+  }
+}
 
 interface Message {
   id: string
@@ -49,8 +53,8 @@ const EventSource = () => {
         Toast.show({
           text: `${message.author.username}: ${message.content}`
         })
-        if (inntronNotify) {
-          inntronNotify(message.author.username, message.content)
+        if (window.inntronNotify) {
+          window.inntronNotify(message.author.username, message.content)
         } else {
           LocalNotifications.schedule({
             notifications: [
