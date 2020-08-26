@@ -42,6 +42,10 @@ const EventSource = () => {
       }
     )
 
+    eventSource.onmessage = (e: any) => {
+      console.log(e)
+    }
+
     eventSource.addEventListener('NEW_MESSAGE', async (e: any) => {
       const message = JSON.parse(e.data) as Message
       if (message.author.id !== id) {

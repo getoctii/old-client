@@ -3,7 +3,7 @@ import styles from './Sidebar.module.scss'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { clientGateway } from '../constants'
-import { faPlus } from '@fortawesome/pro-solid-svg-icons'
+import { faPlus, faUserCog } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ConversationCard } from './ConversationCard'
 import Button from '../components/Button'
@@ -65,7 +65,9 @@ export const Sidebar = () => {
         <h4>
           {user.data?.username}#{user.data?.discriminator === 0 ? 'inn' : user.data?.discriminator.toString().padStart(4, '0')}
         </h4>
-        {/* <FontAwesomeIcon icon={faUserCog} fixedWidth/> */}
+        <span onClick={() => ui.setModal('settings')}>
+          <FontAwesomeIcon icon={faUserCog} />
+        </span>
       </div>
       <h3>
         Recent{' '}

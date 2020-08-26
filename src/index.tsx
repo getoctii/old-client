@@ -15,6 +15,7 @@ import { UI } from './uiStore'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/apm'
 import { Plugins } from '@capacitor/core'
+import Theme from './theme/hook'
 
 const { LocalNotifications } = Plugins
 
@@ -45,8 +46,10 @@ ReactDOM.render(
         <React.Suspense fallback={<Loader />}>
           <Auth.Provider>
             <UI.Provider>
-              <Router />
-              <EventSource />
+              <Theme.Provider>
+                <Router />
+                <EventSource />
+              </Theme.Provider>
             </UI.Provider>
           </Auth.Provider>
           <ReactQueryDevtools />

@@ -1,0 +1,11 @@
+{
+  "id": "31c329ae-a1d7-47c7-acd8-d8fbec8888de",
+  "name": "Pureish Dark",
+  "background": "#000000",
+  "foreground": "#0a0a0a",
+  "primary": "#4d99e6",
+  "textInline": "#dadada",
+  "text": "#dadada",
+  "danger": "#ed5454",
+  "overground": "rgba(36, 36, 36, 0.5)"
+}

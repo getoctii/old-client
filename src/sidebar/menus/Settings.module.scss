@@ -1,0 +1,43 @@
+.settings {
+  width: 300px;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    span {
+      float: right;
+    }
+  }
+
+  h3 {
+    margin-bottom: 0;
+    margin-top: 1.5rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  p {
+    margin-top: 0.3rem;
+  }
+
+  button {
+    margin-top: 0.8rem;
+    background-color: var(--neko-primary);
+    height: 3rem;
+  }
+
+  p {
+    color: var(--neko-danger);
+  }
+}

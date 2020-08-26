@@ -187,6 +187,7 @@ const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
               onChange={(e) => setMessage(e.target.value)}
               type="text"
               placeholder={`Say something${adjective}...`}
+              autoFocus
             />
           </form>
         </div>

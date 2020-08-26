@@ -1,0 +1,11 @@
+{
+  "id": "cf77270c-9522-413f-8319-3c8d13091a62",
+  "name": "Pure Dark",
+  "background": "#000000",
+  "foreground": "#000000",
+  "primary": "#4d99e6",
+  "textInline": "#dadada",
+  "text": "#dadada",
+  "danger": "#ed5454",
+  "overground": "rgba(36, 36, 36, 0.5)"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "6baac9be-fd0d-4d78-8cd5-184ad1e98020",
+  "name": "Light",
+  "background": "#e9eef4",
+  "foreground": "#ffffff",
+  "primary": "#4d99e6",
+  "textInline": "#ffffff",
+  "text": "#000000",
+  "danger": "#e01a4f",
+  "overground": "rgba(36, 36, 36, 0.5)"
+}

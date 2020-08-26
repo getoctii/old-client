@@ -1,0 +1,72 @@
+.wrapper {
+  width: 100%;
+  margin: 2rem;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    span {
+      float: right;
+    }
+  }
+
+  h3 {
+    margin-bottom: 0;
+    margin-top: 1.5rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+  }
+
+  label {
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  p {
+    margin-top: 0.3rem;
+  }
+
+  button {
+    margin-top: 0.8rem;
+    background-color: var(--neko-primary);
+    height: 3rem;
+  }
+
+  p {
+    color: var(--neko-danger);
+  }
+}
+
+.themes {
+  width: 100%;
+
+  div {
+    background-color: var(--neko-foreground);
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .selected {
+    background-color: var(--neko-primary);
+    color: var(--neko-text-inline);
+  }
+
+  div:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  
+  div:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+}

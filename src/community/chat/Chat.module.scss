@@ -60,6 +60,12 @@
       background-color: var(--neko-foreground);
       border: none;
       border-radius: 8px;
+
+      &::placeholder {
+        font-family: Inter, sans-serif;
+        opacity: 1;
+        color: var(--neko-text);
+      }
     }
   }
 }

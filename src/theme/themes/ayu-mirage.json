@@ -1,0 +1,11 @@
+{
+  "id": "b2691ad9-a417-4644-8286-510bcd54a6a6",
+  "name": "Ayu Mirage",
+  "background": "#1F2430",
+  "foreground": "#232834",
+  "primary": "#707A8CCC",
+  "textInline": "#95E6CB",
+  "text": "#fafafa",
+  "danger": "#FF3333",
+  "overground": "rgba(20, 25, 37, 0.5)"
+}
