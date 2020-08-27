@@ -1,6 +1,5 @@
 import { createContainer } from 'unstated-next'
-import { useEffect, useState } from 'react'
-import { getCurrentHub } from '@sentry/react'
+import { useEffect } from 'react'
 import { useLocalStorage } from 'react-use'
 import darkTheme from './themes/default-dark.json'
 

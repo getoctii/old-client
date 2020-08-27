@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import Modal from '../components/Modal'
-import { Auth } from '../authentication/state'
 import { UI } from '../uiStore'
 import Sidebar from './Sidebar'
 import styles from './Settings.module.scss'

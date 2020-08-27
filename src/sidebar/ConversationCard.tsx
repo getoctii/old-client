@@ -1,6 +1,6 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronRight, faTimes } from '@fortawesome/pro-solid-svg-icons'
+import { faChevronRight } from '@fortawesome/pro-solid-svg-icons'
 import { useQuery } from 'react-query'
 import { clientGateway } from '../constants'
 import styles from './ConversationCard.module.scss'

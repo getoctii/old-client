@@ -1,11 +1,10 @@
 import React, { useRef, useState } from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimesCircle, faFileUpload } from '@fortawesome/pro-solid-svg-icons'
+import { faFileUpload } from '@fortawesome/pro-solid-svg-icons'
 import { isUsername } from '../authentication/forms/validations'
 import { useQuery, queryCache } from 'react-query'
 import { Auth } from '../authentication/state'
-import { UI } from '../uiStore'
 import { clientGateway } from '../constants'
 import Button from '../components/Button'
 import { BarLoader } from 'react-spinners'
@@ -72,7 +71,7 @@ const Profile = () => {
                   Avatar
                 </label>
                 <div className={styles.avatarContainer}>
-                  <img src={avatar} className={styles.avatar} />
+                  <img src={avatar} className={styles.avatar} alt={user.data?.username} />
                   <div className={styles.overlay} onClick={() => input.current.click()}><FontAwesomeIcon icon={faFileUpload} size='2x'/></div>
                   <input ref={input} type='file' accept='.jpg, .png, .jpeg' onChange={async (event) => {
                     const image = event.target.files?.item(0)
