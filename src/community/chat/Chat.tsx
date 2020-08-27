@@ -128,8 +128,7 @@ const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
                     const oldHeight = ref.current.scrollHeight
                     const oldTop = ref.current.scrollTop
                     await fetchMore()
-                    ref.current.scrollTop =
-                      ref.current.scrollHeight - oldHeight + oldTop
+                    ref.current.scrollTop = ref.current.scrollHeight - oldHeight + oldTop
                   } finally {
                     setLoading(false)
                   }
@@ -170,8 +169,8 @@ const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
               onLeave={() => setTracking(false)}
             />
             <div key="buffer" className={styles.buffer} />
-          </div>
-        {/* </div> */}
+          {/* </div> */}
+        </div>
         <div className={styles.box}>
           <form
             onSubmit={(event) => {
@@ -187,6 +186,7 @@ const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
               onChange={(e) => setMessage(e.target.value)}
               type="text"
               placeholder={`Say something${adjective}...`}
+              autoFocus
             />
           </form>
         </div>

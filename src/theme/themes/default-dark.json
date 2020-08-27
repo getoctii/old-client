@@ -1,0 +1,11 @@
+{
+  "id": "ffc21e1c-6a00-4682-9981-bcd12860c138",
+  "name": "Dark",
+  "background": "#040a0f",
+  "foreground": "#202020",
+  "primary": "#4d99e6",
+  "textInline": "#dadada",
+  "text": "#dadada",
+  "danger": "#ed5454",
+  "overground": "rgba(36, 36, 36, 0.5)"
+}

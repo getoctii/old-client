@@ -1,0 +1,15 @@
+.settings {
+  display: flex;
+  height: 100%;
+  // width: 100%;
+  flex-direction: row;
+}
+
+.left {
+  width: 100%;
+  background-color: var(--neko-foreground);
+}
+
+.right {
+  width: 100%;
+}

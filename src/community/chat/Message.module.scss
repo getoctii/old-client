@@ -50,3 +50,13 @@
     color: var(--neko-primary);
   }
 }
+
+.imageEmbed {
+  flex-direction: column;
+  display: flex;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
