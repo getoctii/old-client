@@ -37,7 +37,20 @@ const Security = () => {
       <Formik
         initialValues={{ oldPassword: '', newPassword: '' }}
         validate={validatePassword}
-        onSubmit={async (values, { setSubmitting, setErrors }) => {}}
+        onSubmit={async (values, { setSubmitting, setErrors }) => {
+          try {
+            await clientGateway.patch(`/users/${id}`, new URLSearchParams({
+              oldPassword: values.oldPassword,
+              newPassword: values.newPassword
+            }), {
+              headers: {
+                authorization: token
+              }
+            })
+          } finally {
+            setSubmitting(false)
+          }
+        }}
       >
         {({ isSubmitting }) => (
           <Form>

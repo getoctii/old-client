@@ -58,7 +58,7 @@ const NewConversation = () => {
               const user = (
                 await clientGateway.get<FindResponse>('/users/find', {
                   headers: { Authorization: token },
-                  params: { username: splitted[0], discriminator: splitted[1] }
+                  params: { username: splitted[0], discriminator: splitted[1] === 'inn' ? '0' : splitted[1] }
                 })
               ).data
               await createConversation(token!, { recipient: user.id })

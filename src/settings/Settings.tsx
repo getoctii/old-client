@@ -16,12 +16,14 @@ const Settings = () => {
       fullscreen={true}
       onDismiss={() => ui.setModal('')}
     >
+      <div className={styles.left}></div>
       <div className={styles.settings}>
         <Sidebar page={page} setPage={setPage} />
         {page === 'profile' && <Profile />}
         {page === 'security' && <Security />}
         {page === 'themes' && <Themes />}
       </div>
+      <div className={styles.right}></div>
     </Modal>
   )
 }
