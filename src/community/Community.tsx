@@ -19,7 +19,8 @@ type ParticipantsResponse = {
 type UserResponse = {
   avatar: string
   username: string
-  discriminator: number
+  discriminator: number,
+  status?: string
 }
 
 export const Community = () => {
@@ -60,6 +61,7 @@ export const Community = () => {
       <div className={styles.community} key={participant.conversation.channel_id}>
         <Chat
           title={`${recipient.data?.username}#${recipient.data?.discriminator === 0 ? 'inn' : recipient.data?.discriminator.toString().padStart(4, '0')}`}
+          status={recipient.data?.status}
           channelID={participant.conversation.channel_id}
         />
       </div>

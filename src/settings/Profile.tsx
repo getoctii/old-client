@@ -11,11 +11,12 @@ import { BarLoader } from 'react-spinners'
 import styles from './shared.module.scss'
 import Input from '../components/Input'
 import axios from 'axios'
-type profileFormData = { username: string, avatar: string }
+type profileFormData = { username: string, avatar: string, status: string }
 
 const validateProfile = (values: profileFormData) => {
-  const errors: { username?: string, avatar?: string } = {}
+  const errors: { username?: string, avatar?: string, status?: string } = {}
   if (!isUsername(values.username)) errors.username = 'A valid username is required'
+  if (values.status.length > 40) errors.status = 'A valid status is required'
   return errors
 }
 
@@ -24,6 +25,7 @@ type UserResponse = {
   avatar: string
   username: string
   discriminator: number
+  status?: string
 }
 
 const Profile = () => {
@@ -45,13 +47,14 @@ const Profile = () => {
     <div className={styles.wrapper}>
       <h2>Profile</h2>
       <Formik
-        initialValues={{ username: user.data?.username || '', avatar: user.data?.avatar || '' }}
+        initialValues={{ username: user.data?.username || '', avatar: user.data?.avatar || '', status: user.data?.status || '' }}
         validate={validateProfile}
         onSubmit={async (values, { setSubmitting, setErrors }) => {
           try {
             await clientGateway.patch(`/users/${id}`, new URLSearchParams({
               ...( values.username !== user.data?.username && { username: values.username }),
-              avatar: values.avatar
+              avatar: values.avatar,
+              status: values.status
             }), {
               headers: {
                 authorization: token
@@ -94,6 +97,14 @@ const Profile = () => {
                 
                 <Field component={Input} name='username' />
                 <ErrorMessage component='p' name='username' />
+
+                <label htmlFor='tag' className={styles.inputName}>
+                  Status
+                </label>
+                
+                <Field component={Input} name='status' />
+                <ErrorMessage component='p' name='status' />
+
 
                 <label htmlFor='tag' className={styles.inputName}>
                   Discriminator

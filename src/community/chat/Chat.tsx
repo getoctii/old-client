@@ -26,7 +26,7 @@ interface Message {
   content: string
 }
 
-const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
+const Chat = ({ channelID, title, status }: { channelID: string; title: string; status?: string }) => {
   const { token } = Auth.useContainer()
   const fetchMessages = async (_: string, channel: string, date: string) => {
     return (
@@ -114,7 +114,7 @@ const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
               icon={faChevronLeft}
             />
           )}{' '}
-          {title}
+          {title} <span className={styles.status}>{status}</span>
         </div>
         {/* <div className={styles.messagesWrapper}> */}
           <div className={styles.messages} ref={ref}>
@@ -123,12 +123,12 @@ const Chat = ({ channelID, title }: { channelID: string; title: string }) => {
                 bottomOffset={20}
                 onEnter={async () => {
                   try {
-                    if (!ref.current) return
+                    if (!ref.current || !ref.current.scrollHeight) return
                     setLoading(true)
                     const oldHeight = ref.current.scrollHeight
                     const oldTop = ref.current.scrollTop
                     await fetchMore()
-                    ref.current.scrollTop = ref.current.scrollHeight - oldHeight + oldTop
+                    ref.current.scrollTop = ref?.current?.scrollHeight ? ref.current.scrollHeight - oldHeight + oldTop : 0
                   } finally {
                     setLoading(false)
                   }
