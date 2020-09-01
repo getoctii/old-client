@@ -23,7 +23,9 @@ const Sidebar = ({ page, setPage }: { page: string, setPage: Function }) => {
         auth.setToken('')
         ui.setModal('')
         history.push('/authenticate/login')
-      }}>Logout</div>
+      }}>
+        Logout
+      </div>
     </div>
   )
 }
