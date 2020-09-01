@@ -16,7 +16,7 @@ type profileFormData = { username: string, avatar: string, status: string }
 const validateProfile = (values: profileFormData) => {
   const errors: { username?: string, avatar?: string, status?: string } = {}
   if (!isUsername(values.username)) errors.username = 'A valid username is required'
-  if (values.status.length > 40) errors.status = 'A valid status is required'
+  if (values.status.length >= 140) errors.status = 'A valid status is required'
   return errors
 }
 

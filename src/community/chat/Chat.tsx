@@ -114,9 +114,9 @@ const Chat = ({ channelID, title, status }: { channelID: string; title: string; 
               icon={faChevronLeft}
             />
           )}{' '}
-          {title} <span className={styles.status}>{status}</span>
+          {title}
+          <p className={styles.status}>{status}</p>
         </div>
-        {/* <div className={styles.messagesWrapper}> */}
           <div className={styles.messages} ref={ref}>
             {!loading && canFetchMore ? (
               <Waypoint
@@ -168,8 +168,7 @@ const Chat = ({ channelID, title, status }: { channelID: string; title: string; 
               onEnter={() => setTracking(true)}
               onLeave={() => setTracking(false)}
             />
-            <div key="buffer" className={styles.buffer} />
-          {/* </div> */}
+          <div key="buffer" className={styles.buffer} />
         </div>
         <div className={styles.box}>
           <form
