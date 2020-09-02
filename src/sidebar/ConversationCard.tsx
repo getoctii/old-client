@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronRight } from '@fortawesome/pro-solid-svg-icons'
-import { useQuery } from 'react-query'
+import { faChevronRight, faTimesCircle } from '@fortawesome/pro-solid-svg-icons'
+import { useQuery, useMutation } from 'react-query'
 import { clientGateway } from '../constants'
 import styles from './ConversationCard.module.scss'
 import { Auth } from '../authentication/state'
@@ -15,12 +15,15 @@ type UserResponse = {
 export const ConversationCard = ({
   people,
   onClick,
-  selected
+  selected,
+  conversationID
 }: {
   people: string[]
   selected?: boolean
-  onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+  onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+  conversationID: string
 }) => {
+  const [hoverDelete, setHoverDelete] = useState(false)
   const { token } = Auth.useContainer()
   const recipient = useQuery(
     ['users', people[0]],
@@ -31,16 +34,22 @@ export const ConversationCard = ({
         })
       ).data
   )
+  const [leaveConversation] = useMutation(async () => await clientGateway.delete(`/conversations/${conversationID}`, {
+    headers: { Authorization: token }
+  }))
   return (
     <div
       className={`${styles.card} ${selected ? styles.selected : ''}`}
       onClick={onClick}
+      onMouseEnter={() => setHoverDelete(true)}
+      onMouseLeave={() => setHoverDelete(false)}
     >
+      
       <img src={recipient.data?.avatar} alt={recipient.data?.username} />
       <h4>
         {recipient.data?.username}
       </h4>
-      <FontAwesomeIcon icon={faChevronRight} fixedWidth />
+      {hoverDelete ? <FontAwesomeIcon className={styles.leave} icon={faTimesCircle} onClick={() => leaveConversation()} fixedWidth /> : <FontAwesomeIcon icon={faChevronRight} fixedWidth />}
     </div>
   )
 }

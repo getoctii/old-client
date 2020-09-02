@@ -11,7 +11,6 @@ import NewConversation from './sidebar/menus/NewConversation'
 import { Plugins, KeyboardResize, KeyboardStyle } from '@capacitor/core'
 import { isPlatform } from '@ionic/react'
 import Settings from './settings/Settings'
-
 const { Keyboard, StatusBar } = Plugins
 
 export const Router = () => {
@@ -31,13 +30,13 @@ export const Router = () => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/authenticate" component={Authenticate} />
-        <div id="main">
+        <Route path='/authenticate' component={Authenticate} />
+        <div id='main'>
           {uiStore.modal === 'newConversation' && <NewConversation />}
           {uiStore.modal === 'settings' && <Settings />}
           {!isMobile && <Sidebar />}
-          <PrivateRoute path="/" component={isMobile ? Sidebar : Empty} exact />
-          <PrivateRoute path="/conversations/:id" component={Community} />
+          <PrivateRoute path='/' component={isMobile ? Sidebar : Empty} exact />
+          <PrivateRoute path='/conversations/:id' component={Community} />
         </div>
       </Switch>
     </BrowserRouter>
