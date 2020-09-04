@@ -5,6 +5,7 @@ import { useQuery, useMutation } from 'react-query'
 import { clientGateway } from '../constants'
 import styles from './ConversationCard.module.scss'
 import { Auth } from '../authentication/state'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 
 type UserResponse = {
   avatar: string
@@ -23,6 +24,8 @@ export const ConversationCard = ({
   onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
   conversationID: string
 }) => {
+  const match = useRouteMatch<{ id: string }>('/conversations/:id')
+  const history = useHistory()
   const [hoverDelete, setHoverDelete] = useState(false)
   const { token } = Auth.useContainer()
   const recipient = useQuery(
@@ -49,7 +52,11 @@ export const ConversationCard = ({
       <h4>
         {recipient.data?.username}
       </h4>
-      {hoverDelete ? <FontAwesomeIcon className={styles.leave} icon={faTimesCircle} onClick={() => leaveConversation()} fixedWidth /> : <FontAwesomeIcon icon={faChevronRight} fixedWidth />}
+      {hoverDelete ? <FontAwesomeIcon className={styles.leave} icon={faTimesCircle} onClick={(event) => {
+        if (match?.params.id === conversationID) history.push('/')
+        event.stopPropagation()
+        leaveConversation()
+      }} fixedWidth /> : <FontAwesomeIcon icon={faChevronRight} fixedWidth />}
     </div>
   )
 }

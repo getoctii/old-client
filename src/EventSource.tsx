@@ -94,6 +94,7 @@ const EventSource = () => {
       const participant = JSON.parse(e.data)
       queryCache.setQueryData('participants', (initial) => {
         if (initial instanceof Array) {
+          console.log(initial.filter(p => p.id !== participant.id))
           return initial.filter(p => p.id !== participant.id)
         } else return initial
       })
