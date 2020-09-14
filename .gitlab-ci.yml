@@ -3,6 +3,11 @@ image: node:latest
 include:
   - template: Security/SAST.gitlab-ci.yml
 
+stages:
+  - test
+  - build
+  - deploy
+
 cache:
   paths:
     - node_modules/
