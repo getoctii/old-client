@@ -12,7 +12,7 @@ export const Authenticate = () => {
   return (
     <div className={styles.wrapper}>
       <main className={styles.card}>
-        <h1>Neko</h1>
+        <h1>Octii</h1>
         <h2>
           by <b>Innatical</b>
         </h2>

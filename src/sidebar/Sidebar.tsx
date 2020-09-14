@@ -106,6 +106,7 @@ export const Sidebar = () => {
                     }}
                     key={conversation.id}
                     people={people}
+                    conversationID={conversation.id}
                   />
                 )
               }

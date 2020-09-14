@@ -90,6 +90,16 @@ const EventSource = () => {
       })
     })
 
+    eventSource.addEventListener('DELETED_PARTICIPANT', (e: any) => {
+      const participant = JSON.parse(e.data)
+      queryCache.setQueryData('participants', (initial) => {
+        if (initial instanceof Array) {
+          console.log(initial.filter(p => p.id !== participant.id))
+          return initial.filter(p => p.id !== participant.id)
+        } else return initial
+      })
+    })
+
     return () => {
       eventSource.close()
     }
