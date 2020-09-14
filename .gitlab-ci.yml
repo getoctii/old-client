@@ -1,5 +1,8 @@
 image: node:latest
 
+include:
+  - template: Security/SAST.gitlab-ci.yml
+
 cache:
   paths:
     - node_modules/
