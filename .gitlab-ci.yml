@@ -5,13 +5,14 @@ cache:
     - node_modules/
 
 build:
-    script:
-      - yarn install --frozen-lockfile
-      - yarn build
-    artifacts:
-      paths:
-        - build
-      expire_in: 1 week
+  stage: build
+  script:
+    - yarn install --frozen-lockfile
+    - yarn build
+  artifacts:
+    paths:
+      - build
+    expire_in: 1 week
 
 deploy:
   stage:  deploy
