@@ -4,9 +4,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--neko-foreground) url('https://file.coffee/u/9sWBUcVc8i.png')
-    repeat 0 0;
+  background: var(--neko-foreground)
+    url('https://cdn.innatical.com/neko/octobg.svg') repeat 0 0;
   margin: 0;
+  background-size: 800px;
   box-sizing: border-box;
   animation: slide 20s linear infinite;
 }
