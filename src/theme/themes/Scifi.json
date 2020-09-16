@@ -1,11 +1,12 @@
 {
-    "id": "cd8fc91e-c24c-4983-b598-0fba2e4a402b",
-    "name": "Blue",
-    "background": "#5390D9",
-    "foreground": "#4EA8DE",    
-    "primary": "#4d99e6",
-    "textInline": "#dadada",
-    "text": "#dadada",
-    "danger": "#ed5454",
-    "overground": "rgba(36, 36, 36, 0.5)"
-  }
+  "id": "cd8fc91e-c24c-4983-b598-0fba2e4a402b",
+  "name": "Blue",
+  "background": "#5390D9",
+  "foreground": "#4EA8DE",
+  "primary": "#4d99e6",
+  "textInline": "#dadada",
+  "text": "#dadada",
+  "danger": "#ed5454",
+  "overground": "rgba(36, 36, 36, 0.5)",
+  "messageHover": "#202020"
+}

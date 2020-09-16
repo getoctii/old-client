@@ -7,5 +7,6 @@
   "textInline": "#dadada",
   "text": "#dadada",
   "danger": "#ed5454",
-  "overground": "rgba(36, 36, 36, 0.5)"
+  "overground": "rgba(36, 36, 36, 0.5)",
+  "messageHover": "#202020"
 }

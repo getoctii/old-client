@@ -13,13 +13,14 @@ interface Theme {
   text: string
   danger: string
   overground: string
+  messageHover: string
 }
 
 const useTheme = () => {
   const [theme, setTheme] = useLocalStorage<Theme>('theme', darkTheme)
   useEffect(() => {
     if (!theme) return
-    const documentStyle = document.documentElement.style
+    const documentStyle = document.documentElement.style
     documentStyle.setProperty('--neko-background', theme.background)
     documentStyle.setProperty('--neko-foreground', theme.foreground)
     documentStyle.setProperty('--neko-text-inline', theme.textInline)
@@ -27,6 +28,7 @@ const useTheme = () => {
     documentStyle.setProperty('--neko-text', theme.text)
     documentStyle.setProperty('--neko-danger', theme.danger)
     documentStyle.setProperty('--neko-overground', theme.overground)
+    documentStyle.setProperty('--neko-message-hover', theme.messageHover)
   }, [theme])
   return { theme, setTheme }
 }
