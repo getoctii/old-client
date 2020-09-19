@@ -1,6 +1,6 @@
 import React from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
-import { isPassword } from '../authentication/forms/validations'
+import { isPassword } from '../validations'
 import { Auth } from '../authentication/state'
 import { clientGateway } from '../constants'
 import Button from '../components/Button'

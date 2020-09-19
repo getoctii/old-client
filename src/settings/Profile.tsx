@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileUpload } from '@fortawesome/pro-solid-svg-icons'
-import { isUsername } from '../authentication/forms/validations'
+import { isUsername } from '../validations'
 import { useQuery, queryCache } from 'react-query'
 import { Auth } from '../authentication/state'
 import { clientGateway } from '../constants'
@@ -54,7 +54,8 @@ const Profile = () => {
           status: user.data?.status || ''
         }}
         validate={validateProfile}
-        onSubmit={async (values, { setSubmitting, setErrors }) => {
+        onSubmit={async (values, { setSubmitting, setErrors, setFieldError }) => {
+          if (!values.username) return setFieldError('username', 'Required')
           try {
             await clientGateway.patch(
               `/users/${id}`,
@@ -81,7 +82,7 @@ const Profile = () => {
           <Form>
             <div className={styles.profile}>
               <div>
-                <label htmlFor="tag" className={styles.inputName}>
+                <label htmlFor='tag' className={styles.inputName}>
                   Avatar
                 </label>
                 <div className={styles.avatarContainer}>
@@ -94,16 +95,15 @@ const Profile = () => {
                     className={styles.overlay}
                     onClick={() => input.current.click()}
                   >
-                    <FontAwesomeIcon icon={faFileUpload} size="2x" />
+                    <FontAwesomeIcon icon={faFileUpload} size='2x' />
                   </div>
                   <input
                     ref={input}
-                    type="file"
-                    accept=".jpg, .png, .jpeg, .gif"
+                    type='file'
+                    accept='.jpg, .png, .jpeg, .gif'
                     onChange={async (event) => {
-                      const image = event.target.files?.item(0)
+                      const image = event.target.files?.item(0) as any
                       const formData = new FormData()
-                      // @ts-ignore
                       formData.append('file', image)
                       const response = await axios.post(
                         'https://covfefe.innatical.com/api/v1/upload',
@@ -114,32 +114,31 @@ const Profile = () => {
                       setFieldValue('avatar', response.data?.url)
                     }}
                   />
-                  {/* we need to make a request on submit to the innapi innpi */}
                 </div>
-                <ErrorMessage component="p" name="avatar" />
+                <ErrorMessage component='p' name='avatar' />
               </div>
               <div className={styles.username}>
-                <label htmlFor="tag" className={styles.inputName}>
+                <label htmlFor='tag' className={styles.inputName}>
                   Username
                 </label>
 
-                <Field component={Input} name="username" />
-                <ErrorMessage component="p" name="username" />
+                <Field component={Input} name='username' />
+                <ErrorMessage component='p' name='username' />
 
-                <label htmlFor="tag" className={styles.inputName}>
+                <label htmlFor='tag' className={styles.inputName}>
                   Status
                 </label>
 
-                <Field component={Input} name="status" />
-                <ErrorMessage component="p" name="status" />
+                <Field component={Input} name='status' />
+                <ErrorMessage component='p' name='status' />
 
-                <label htmlFor="tag" className={styles.inputName}>
+                <label htmlFor='tag' className={styles.inputName}>
                   Discriminator
                 </label>
 
                 <Field
                   component={Input}
-                  name="discriminator"
+                  name='discriminator'
                   value={
                     user.data?.discriminator === 0
                       ? 'inn'
@@ -147,12 +146,12 @@ const Profile = () => {
                   }
                   disabled
                 />
-                <ErrorMessage component="p" name="discriminator" />
+                <ErrorMessage component='p' name='discriminator' />
               </div>
             </div>
 
-            <Button disabled={isSubmitting} type="submit">
-              {isSubmitting ? <BarLoader color="#ffffff" /> : 'Save'}
+            <Button disabled={isSubmitting} type='submit'>
+              {isSubmitting ? <BarLoader color='#ffffff' /> : 'Save'}
             </Button>
           </Form>
         )}

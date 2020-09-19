@@ -1,21 +1,19 @@
 .input {
   font-family: Inter, sans-serif;
   border: 0;
-  border-radius: 8px;
+  border-radius: 10px;
 
   outline: none;
 
   margin: 0;
-  padding: 1.2rem;
-  padding-top: 0.9rem;
-  padding-bottom: 0.9rem;
+  padding: 0.9rem 1.2rem;
 
   transition: ease-in-out box-shadow 0.15s;
 
   font-weight: 500;
   font-size: 1rem;
 
-  background-color: var(--neko-foreground);
+  background: var(--neko-foreground);
   color: var(--neko-text);
   &::placeholder {
     font-family: Inter, sans-serif;

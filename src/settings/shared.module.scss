@@ -35,7 +35,7 @@
 
   button {
     margin-top: 0.8rem;
-    background-color: var(--neko-primary);
+    background: var(--neko-primary);
     height: 3rem;
   }
 
@@ -48,7 +48,7 @@
   width: 100%;
 
   div {
-    background-color: var(--neko-foreground);
+    background: var(--neko-foreground);
     display: flex;
     align-items: center;
     padding: 0.75rem;
@@ -57,7 +57,7 @@
   }
 
   .selected {
-    background-color: var(--neko-primary);
+    background: var(--neko-primary);
     color: var(--neko-text-inline);
   }
 
@@ -65,7 +65,7 @@
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
   }
-  
+
   div:last-child {
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
@@ -78,14 +78,15 @@
 
   .avatar {
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
     height: 124px;
     width: 124px;
     margin: 0;
   }
 
   .overlay {
-    border-radius: 8px;
+    transition: opacity 300ms ease-in-out;
+    border-radius: 10px;
     display: flex;
     opacity: 0;
     position: absolute;
@@ -95,7 +96,7 @@
     right: 0;
     height: 124px;
     width: 124px;
-    background-color: var(--neko-overground);
+    background: var(--neko-overground);
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -120,7 +121,7 @@
   }
 
   .avatar:hover {
-    background-color: var(--neko-overground)
+    background: var(--neko-overground)
   }
 
   .username {

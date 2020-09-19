@@ -100,6 +100,16 @@ const EventSource = () => {
       })
     })
 
+    eventSource.addEventListener('NEW_MEMBER', (e: any) => {
+      const member = JSON.parse(e.data)
+      queryCache.setQueryData(['communities', id], (initial) => {
+        if (initial instanceof Array) {
+          initial.push(member)
+          return initial
+        } else return initial
+      })
+    })
+
     return () => {
       eventSource.close()
     }

@@ -9,12 +9,18 @@ interface Theme {
   background: string
   foreground: string
   primary: string
+  secondary: string
   textInline: string
   text: string
   danger: string
   overground: string
   messageHover: string
+  global?: string
 }
+
+const globalStyle = document.createElement('style')
+globalStyle.type = 'text/css'
+document.head.appendChild(globalStyle)
 
 const useTheme = () => {
   const [theme, setTheme] = useLocalStorage<Theme>('theme', darkTheme)
@@ -25,10 +31,12 @@ const useTheme = () => {
     documentStyle.setProperty('--neko-foreground', theme.foreground)
     documentStyle.setProperty('--neko-text-inline', theme.textInline)
     documentStyle.setProperty('--neko-primary', theme.primary)
+    documentStyle.setProperty('--neko-secondary', theme.secondary)
     documentStyle.setProperty('--neko-text', theme.text)
     documentStyle.setProperty('--neko-danger', theme.danger)
     documentStyle.setProperty('--neko-overground', theme.overground)
     documentStyle.setProperty('--neko-message-hover', theme.messageHover)
+    globalStyle.textContent = theme.global ?? ''
   }, [theme])
   return { theme, setTheme }
 }

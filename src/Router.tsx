@@ -3,14 +3,17 @@ import { useMedia } from 'react-use'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { Authenticate } from './authentication/Authenticate'
 import { PrivateRoute } from './authentication/PrivateRoute'
-import { Sidebar } from './sidebar/Sidebar'
+import { Conversations } from './conversation/Conversations'
 import { Community } from './community/Community'
-import Empty from './community/empty/Empty'
+import Empty from './conversation/empty/Empty'
 import { UI } from './uiStore'
-import NewConversation from './sidebar/menus/NewConversation'
+import NewConversation from './conversation/NewConversation'
 import { Plugins, KeyboardResize, KeyboardStyle } from '@capacitor/core'
 import { isPlatform } from '@ionic/react'
 import Settings from './settings/Settings'
+import { Conversation } from './conversation/Conversation'
+import { Sidebar } from './sidebar/Sidebar'
+import { NewCommunity } from './sidebar/NewCommunity'
 const { Keyboard, StatusBar } = Plugins
 
 export const Router = () => {
@@ -33,10 +36,22 @@ export const Router = () => {
         <Route path='/authenticate' component={Authenticate} />
         <div id='main'>
           {uiStore.modal === 'newConversation' && <NewConversation />}
+          {uiStore.modal === 'newCommunity' && <NewCommunity />}
           {uiStore.modal === 'settings' && <Settings />}
           {!isMobile && <Sidebar />}
-          <PrivateRoute path='/' component={isMobile ? Sidebar : Empty} exact />
-          <PrivateRoute path='/conversations/:id' component={Community} />
+          <PrivateRoute path='/' component={() => (
+            <>
+              <Conversations />
+              <Empty />
+            </>
+          )} exact />
+          <PrivateRoute path='/conversations/:id' component={() => (
+            <>
+              <Conversations />
+              <Conversation />
+            </>
+          )} />
+          <PrivateRoute path='/communities/:id' component={Community} />
         </div>
       </Switch>
     </BrowserRouter>

@@ -4,6 +4,7 @@
   "background": "#e9eef4",
   "foreground": "#ffffff",
   "primary": "#4d99e6",
+  "secondary": "#788A9F",
   "textInline": "#ffffff",
   "text": "#000000",
   "danger": "#e01a4f",

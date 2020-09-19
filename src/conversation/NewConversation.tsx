@@ -1,14 +1,14 @@
 import React from 'react'
 import styles from './NewConversation.module.scss'
-import Modal from '../../components/Modal'
-import Input from '../../components/Input'
-import Button from '../../components/Button'
+import Modal from '../components/Modal'
+import Input from '../components/Input'
+import Button from '../components/Button'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { BarLoader } from 'react-spinners'
-import { clientGateway } from '../../constants'
-import { Auth } from '../../authentication/state'
-import { isTag } from './validations'
-import { UI } from '../../uiStore'
+import { clientGateway } from '../constants'
+import { Auth } from '../authentication/state'
+import { isTag } from '../validations'
+import { UI } from '../uiStore'
 
 interface ConversationResponse {
   id: string
@@ -52,7 +52,8 @@ const NewConversation = () => {
         <Formik
           initialValues={{ tag: '' }}
           validate={validate}
-          onSubmit={async (values, { setSubmitting, setErrors }) => {
+          onSubmit={async (values, { setSubmitting, setErrors, setFieldError }) => {
+            if (!values?.tag) return setFieldError('tag', 'Required')
             try {
               const splitted = values.tag.split('#')
               const user = (
@@ -77,14 +78,14 @@ const NewConversation = () => {
         >
           {({ isSubmitting }) => (
             <Form>
-              <label htmlFor="tag" className={styles.inputName}>
+              <label htmlFor='tag' className={styles.inputName}>
                 Username
               </label>
-              <Field placeholder="username#1234" component={Input} name="tag" />
-              <ErrorMessage component="p" name="tag" />
-              <Button disabled={isSubmitting} type="submit">
+              <Field placeholder='example#1234' component={Input} name='tag' autoComplete={'random'} type='text' />
+              <ErrorMessage component='p' name='tag' />
+              <Button disabled={isSubmitting} type='submit'>
                 {isSubmitting ? (
-                  <BarLoader color="#ffffff" />
+                  <BarLoader color='#ffffff' />
                 ) : (
                   'Start Chatting'
                 )}

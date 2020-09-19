@@ -1,0 +1,30 @@
+.friend {
+  h3,
+  p {
+    margin: 0;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  p {
+    margin-top: 0.3rem;
+  }
+
+  button {
+    margin-top: 0.8rem;
+    background: var(--neko-primary);
+    height: 3rem;
+  }
+
+  p {
+    color: var(--neko-danger);
+  }
+}
