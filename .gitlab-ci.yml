@@ -7,7 +7,7 @@ cache:
 build:
   stage: build
   script:
-    - echo $NPMRC > .npmrc
+    - echo "$NPMRC" > .npmrc
     - yarn install --frozen-lockfile
     - yarn build
   artifacts:
