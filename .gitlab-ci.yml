@@ -7,6 +7,7 @@ cache:
 build:
   stage: build
   script:
+    - echo "@fortawesome:registry=https://npm.fontawesome.com/\n//npm.fontawesome.com/:_authToken=${FONTAWESOME_NPM_AUTH_TOKEN}" > .npmrc
     - yarn install --frozen-lockfile
     - yarn build
   artifacts:
