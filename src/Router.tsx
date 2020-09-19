@@ -21,7 +21,7 @@ export const Router = () => {
   const isMobile = useMedia('(max-width: 800px)')
   const isDarkMode = useMedia('(prefers-color-scheme: dark)')
   useEffect(() => {
-    if (isPlatform('mobile')) {
+    if (isPlatform('capacitor')) {
       StatusBar.setOverlaysWebView({ overlay: true })
       Keyboard.setResizeMode({ mode: KeyboardResize.Native })
       Keyboard.setStyle({
