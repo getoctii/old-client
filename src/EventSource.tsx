@@ -110,6 +110,20 @@ const EventSource = () => {
       })
     })
 
+    eventSource.addEventListener('NEW_CHANNEL', (e: any) => {
+      const channel = JSON.parse(e.data)
+      console.log(channel)
+      queryCache.setQueryData(['community', channel.community_id], (initial: any) => {
+        if (initial) {
+          initial.channels.push({
+            id: channel.id,
+            name: channel.name
+          })
+          return initial
+        } else return initial
+      })
+    })
+
     return () => {
       eventSource.close()
     }
