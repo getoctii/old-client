@@ -14,36 +14,6 @@
   }
 }
 
-.intergationButton {
-  padding: 0.5rem;
-  min-height: 35px;
-  display: flex;
-  align-items: center;
-  background-color: var(--neko-text-inline);
-  border-radius: 8px;
-  margin-top: 10px;
-  color: var(--neko-text);
-}
-
-.intergationButton h5 {
-  margin: 0;
-  margin-left: 8px;
-}
-
-// ::-webkit-scrollbar {
-//   width: 8px;
-// }
-
-// ::-webkit-scrollbar-thumb {
-//   border-radius: 10px;
-//   background-color: #4a4a46;
-// }
-
-// ::-webkit-scrollbar-thumb {
-  // border-radius: 10px;
-  // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
-// }
-
 .channels {
   padding: 1.5rem;
   overflow-y: scroll;
@@ -52,24 +22,30 @@
     margin: 0;
     font-size: 1rem;
     font-weight: 400;
-    margin-top: 0.3rem;
+    margin-top: 0.7rem;
     margin-bottom: 0.3rem;
     span {
       float: right;
     }
   }
+
+  div:first-child {
+    .channel {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+  }
+
+  div:last-child {
+    .channel {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+  }
 }
 
-// .channel {
-//   display: flex;
-//   padding-top: 0.8rem;
-//   padding-bottom: 0.8rem;
-//   cursor: pointer;
-//   border-radius: 5px;
-//   align-items: center;
-// }
-
 .channel {
+  border: inherit;
   background: var(--neko-background);
   display: flex;
   align-items: center;
@@ -97,68 +73,7 @@
   color: var(--neko-text-inline);
 }
 
-.channel:first-child {
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-
-.channel:last-child {
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-
-// .channel h5 {
-//   font-size: 1.1rem;
-//   font-weight: 400;
-//   margin: 0;
-//   color: #54565e;
-//   margin-left: 5px;
-// }
-
-// .channel h6 {
-//   font-size: 0.9rem;
-//   font-weight: 400;
-//   margin: 0;
-//   color: #d1d1d1;
-// }
-
-// .channel img {
-//   object-fit: cover;
-//   width: 2.75rem;
-//   height: 2.75rem;
-//   margin-right: 0.625rem;
-//   border-radius: 8px;
-// }
-
-// .channel p {
-//   font-weight: 300;
-//   font-size: 1rem;
-//   margin: 0;
-// }
-
-.active {
-  // box-shadow: inset 5px 5px 10px #e6e9e8, 
-  // inset -5px -5px 10px #ffffff;
-  background-color: var(--neko-text-inline);
-  padding-right: 0.8rem;
-  padding-left: 0.8rem;
-  margin-right: -0.8rem;
-  margin-left: -0.8rem;
-}
-
-
 .menu {
   margin-top: 0.5rem;
   margin-bottom: 0.7rem;
-}
-
-.divider {
-  padding: 0.1rem !important;
-  border-radius: 0.1rem !important;
-  cursor: default !important;
-  opacity: 50%;
-}
-
-.danger {
-  background-color: #cc5050 !important;
 }

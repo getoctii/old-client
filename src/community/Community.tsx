@@ -13,12 +13,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight, faTimesCircle } from '@fortawesome/pro-solid-svg-icons'
 import Button from '../components/Button'
 import { NewChannel } from './NewChannel'
+import { Settings } from './settings/Settings'
 
 export interface CommunityResponse {
   id: string
   name: string
   icon: string
   large: boolean
+  owner_id: string
   channels: {
     name: string
     id: string
@@ -103,17 +105,21 @@ export const Community = () => {
       <Channels community={community.data} />
       <Suspense fallback={<Loader />}>
         {matchChannel?.params.channelID ? (
-          <Chat
-            title={
-              `#${
-                community.data?.channels.find(
-                  (channel) => channel.id === matchChannel.params.channelID
-                )?.name
-              }` || '#unknown'
-            }
-            status={''}
-            channelID={matchChannel.params.channelID}
-          />
+          matchChannel.params.channelID === 'settings' ? (
+            <Settings />
+          ) : (
+            <Chat
+              title={
+                `#${
+                  community.data?.channels.find(
+                    (channel) => channel.id === matchChannel.params.channelID
+                  )?.name
+                }` || '#unknown'
+              }
+              status={''}
+              channelID={matchChannel.params.channelID}
+            />
+          )
         ) : (
           <Empty />
         )}

@@ -1,6 +1,6 @@
 .communities {
   * {
-      margin-bottom: 2rem;
+    margin-bottom: 2rem;
   }
 }
 
@@ -42,7 +42,6 @@
 }
 
 .separator {
-
   margin-bottom: 0.9rem;
   border-radius: 50%;
   min-height: 0.5rem;
@@ -67,7 +66,7 @@
 }
 
 .messages {
-  @extend  .button;
+  @extend .button;
   background: var(--neko-danger);
   color: #ffffff;
 }
@@ -85,7 +84,7 @@
   margin: 0;
   left: 15px;
   top: 25px;
-  border: white soild 3px
+  border: white soild 3px;
 } // https://ionicframework.com/docs/api/badge
 
 .badge svg {
@@ -97,6 +96,7 @@
   position: relative;
 
   img {
+    border-radius: 10px;
     object-fit: cover;
     width: 100%;
     height: 100%;
@@ -107,7 +107,6 @@
 .avatar:hover {
   .overlay {
     opacity: 1;
-
   }
 }
 
