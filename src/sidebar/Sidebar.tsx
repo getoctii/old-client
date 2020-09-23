@@ -34,7 +34,9 @@ export const Sidebar = () => {
     tab?: string
     id?: string
   }>('/:tab/:id')
-  const [selected, setSelected] = useState<string|undefined>(match?.params.tab === 'communities' ? match.params.id : match?.params.tab)
+  const [selected, setSelected] = useState<string | undefined>(
+    match?.params.tab === 'communities' ? match.params.id : match?.params.tab
+  )
   const user = useQuery(
     ['users', auth.id],
     async (key, userID) =>
@@ -47,53 +49,70 @@ export const Sidebar = () => {
       ).data
   )
   const communities = useQuery(
-    ['communities', auth.id],
-    async (key, userID) =>
+    ['communities'],
+    async () =>
       (
-        await clientGateway.get<MembersResponse>(`/users/${userID}/members`, {
+        await clientGateway.get<MembersResponse>(`/users/${auth.id}/members`, {
           headers: {
             Authorization: auth.token
           }
         })
       ).data
   )
-        console.log(selected)
-  console.log(communities.data)
   return (
     <div className={styles.sidebar}>
-      <Button className={styles.avatar} type='button' onClick={() => ui.setModal('settings')}>
+      <Button
+        className={styles.avatar}
+        type='button'
+        onClick={() => ui.setModal('settings')}
+      >
         <img src={user.data?.avatar} alt={user.data?.username} />
         <div className={styles.overlay}>
-          <FontAwesomeIcon icon={faUserCog} size="2x" />
+          <FontAwesomeIcon icon={faUserCog} size='2x' />
         </div>
       </Button>
-      <Button className={selected === 'conversations' || !selected ? `${styles.messages} ${styles.selected}` : styles.messages} type='button' onClick={() => {
-        setSelected('conversations')
-        history.push('/')
-      }}>
+      <Button
+        className={
+          selected === 'conversations' || !selected
+            ? `${styles.messages} ${styles.selected}`
+            : styles.messages
+        }
+        type='button'
+        onClick={() => {
+          setSelected('conversations')
+          history.push('/')
+        }}
+      >
         <FontAwesomeIcon className={styles.symbol} icon={faInbox} size='2x' />
       </Button>
-      <Button className={styles.plus} type='button' onClick={() => ui.setModal('newCommunity')}>
+      <Button
+        className={styles.plus}
+        type='button'
+        onClick={() => ui.setModal('newCommunity')}
+      >
         <FontAwesomeIcon className={styles.symbol} icon={faPlus} size='2x' />
       </Button>
-      <div className={styles.separator}/>
-        {communities.data?.map((member) => {
-          const community = member.community
-          return (
+      <div className={styles.separator} />
+      {communities.data?.map((member) => {
+        const community = member.community
+        return (
           <Button
             type='button'
             key={community.id}
             style={{ backgroundImage: `url(${community.icon})` }}
-            className={selected === community.id ? `${styles.icon} ${styles.selected}` : styles.icon}
+            className={
+              selected === community.id
+                ? `${styles.icon} ${styles.selected}`
+                : styles.icon
+            }
             onClick={() => {
               setSelected(community.id)
               return history.push(`/communities/${community.id}`)
             }}
           />
-        )})}
+        )
+      })}
       <br />
     </div>
   )
 }
-
-

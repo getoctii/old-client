@@ -10,40 +10,34 @@ import { UI } from '../uiStore'
 import { isInvite, isUsername } from '../validations'
 import { Auth } from '../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronCircleLeft, faFileUpload } from '@fortawesome/pro-solid-svg-icons'
+import {
+  faChevronCircleLeft,
+  faFileUpload
+} from '@fortawesome/pro-solid-svg-icons'
 import axios from 'axios'
+import { useMutation } from 'react-query'
 
 interface ConversationResponse {
   id: string
   channel_id: string
 }
 
-type FindResponse = {
-  id: string
-  avatar: string
-  username: string
-  discriminator: number
-}
-
-type createCommunityData = { name: string, icon: string }
+type createCommunityData = { name: string; icon: string }
 type inviteData = { invite: string }
 
 const validateCommunity = (values: createCommunityData) => {
-  const errors: { name?: string, icon?: string } = {}
+  const errors: { name?: string; icon?: string } = {}
   if (!isUsername(values.name)) errors.name = 'A valid name is required'
   return errors
 }
 
 const validateInvite = (values: inviteData) => {
-  const errors: { name?: string, icon?: string } = {}
+  const errors: { name?: string; icon?: string } = {}
   if (!isInvite(values.invite)) errors.name = 'A valid invite is required'
   return errors
 }
 
-const createCommunity = async (
-  token: string,
-  values: createCommunityData
-) =>
+const createCommunity = async (token: string, values: createCommunityData) =>
   (
     await clientGateway.post<ConversationResponse>(
       '/communities',
@@ -60,17 +54,30 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
 
   return (
     <div className={styles.invite}>
-      <h3><FontAwesomeIcon icon={faChevronCircleLeft} onClick={() => dismiss(false)} /> Create a Community</h3>
+      <h3>
+        <FontAwesomeIcon
+          icon={faChevronCircleLeft}
+          onClick={() => dismiss(false)}
+        />{' '}
+        Create a Community
+      </h3>
       <Formik
         initialValues={{ name: '', icon: '' }}
         validate={validateCommunity}
-        onSubmit={async (values, { setSubmitting, setErrors, setFieldError }) => {
+        onSubmit={async (
+          values,
+          { setSubmitting, setErrors, setFieldError }
+        ) => {
           if (!values?.name) return setFieldError('invite', 'Required')
           try {
-            await createCommunity(token!, { name: values.name, icon: values?.icon || '' })
+            await createCommunity(token!, {
+              name: values.name,
+              icon: values?.icon || ''
+            })
             ui.setModal('')
           } catch (e) {
-            if (e.response.data.errors.includes('CommunityNameInvalid')) setErrors({ name: 'Invaild Community Name' })
+            if (e.response.data.errors.includes('CommunityNameInvalid'))
+              setErrors({ name: 'Invaild Community Name' })
           } finally {
             setSubmitting(false)
           }
@@ -80,11 +87,13 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
           <Form>
             <div>
               <div className={styles.avatarContainer}>
-                {avatar && <img
-                  src={avatar}
-                  className={styles.avatar}
-                  alt={'community'}
-                />}
+                {avatar && (
+                  <img
+                    src={avatar}
+                    className={styles.avatar}
+                    alt={'community'}
+                  />
+                )}
                 <div
                   className={avatar ? styles.hideOverlay : styles.overlay}
                   onClick={() => input.current.click()}
@@ -131,39 +140,45 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
   )
 }
 
-
-
 export const NewCommunity = () => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
   const [createCommunityMenu, setCreateCommunityMenu] = useState(false)
+
+  const [joinCommunity] = useMutation(
+    async (invite: string) =>
+      (
+        await clientGateway.post(
+          `/invites/${invite}/use`,
+          {},
+          { headers: { Authorization: token } }
+        )
+      ).data
+  )
+
   return (
     <Modal onDismiss={() => ui.setModal('')}>
-      {createCommunityMenu ? <CreateCommunity dismiss={setCreateCommunityMenu} /> : (
+      {createCommunityMenu ? (
+        <CreateCommunity dismiss={setCreateCommunityMenu} />
+      ) : (
         <div className={styles.invite}>
           <h3>Join a Community</h3>
           <Formik
             initialValues={{ invite: '' }}
             validate={validateInvite}
-            onSubmit={async (values, { setSubmitting, setErrors, setFieldError }) => {
+            onSubmit={async (
+              values,
+              { setSubmitting, setErrors, setFieldError }
+            ) => {
               if (!values?.invite) return setFieldError('invite', 'Required')
               try {
-                const splitted = values.invite.split('#')
-                const user = (
-                  await clientGateway.get<FindResponse>('/users/find', {
-                    headers: { Authorization: token },
-                    params: { username: splitted[0], discriminator: splitted[1] === 'inn' ? '0' : splitted[1] }
-                  })
-                ).data
-                // await createCommunity(token!, { recipient: user.id })
-                ui.setModal('')
+                joinCommunity(values.invite)
               } catch (e) {
                 if (
                   e.response.data.errors.includes('InviteNotFound') ||
                   e.response.data.errors.includes('RecipientNotFound')
                 )
                   setErrors({ invite: 'Invite not found' })
-                // TODO: Add message if you try to add yourself...
               } finally {
                 setSubmitting(false)
               }
@@ -187,7 +202,13 @@ export const NewCommunity = () => {
             )}
           </Formik>
           <hr />
-          <Button type='button' className={styles.createButton} onClick={() => setCreateCommunityMenu(true)}>Or Create a Community</Button>
+          <Button
+            type='button'
+            className={styles.createButton}
+            onClick={() => setCreateCommunityMenu(true)}
+          >
+            Or Create a Community
+          </Button>
         </div>
       )}
     </Modal>

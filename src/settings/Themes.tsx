@@ -8,8 +8,9 @@ import purple from '../theme/themes/purple.json'
 import mostlyBlack from '../theme/themes/mostly-black.json'
 import pureDark from '../theme/themes/pure-dark.json'
 import xpTestTheme from '../theme/themes/XpTestTheme.json'
+import octiiHub from '../theme/themes/octii-hub.json'
 
-const themes = [ayu, dark, light, purple, mostlyBlack, pureDark, xpTestTheme]
+const themes = [ayu, dark, light, purple, mostlyBlack, pureDark, xpTestTheme, octiiHub]
 
 const Themes = () => {
   const { theme, setTheme } = Theme.useContainer()

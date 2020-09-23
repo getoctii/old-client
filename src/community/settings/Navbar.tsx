@@ -1,4 +1,4 @@
-import React, { SetStateAction } from 'react'
+import React from 'react'
 import styles from './Navbar.module.scss'
 
 export const Navbar = ({
@@ -17,10 +17,10 @@ export const Navbar = ({
         General
       </li>
       <li
-        onClick={() => setSelected('invities')}
-        className={selected === 'invities' ? styles.selected : ''}
+        onClick={() => setSelected('invites')}
+        className={selected === 'invites' ? styles.selected : ''}
       >
-        Invities
+        Invites
       </li>
     </ul>
   )
