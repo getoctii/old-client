@@ -28,6 +28,7 @@
     "axios": "^0.20.0",
     "event-source-polyfill": "^1.0.17",
     "formik": "^2.1.5",
+    "framer-motion": "^2.7.5",
     "jwt-decode": "^2.2.0",
     "moment": "^2.27.0",
     "prettier": "^2.1.0",

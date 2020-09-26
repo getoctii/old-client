@@ -26,7 +26,15 @@ interface Message {
   content: string
 }
 
-const Chat = ({ channelID, title, status }: { channelID: string; title: string; status?: string }) => {
+const Chat = ({
+  channelID,
+  title,
+  status
+}: {
+  channelID: string
+  title: string
+  status?: string
+}) => {
   const { token } = Auth.useContainer()
   const fetchMessages = async (_: string, channel: string, date: string) => {
     return (
@@ -36,14 +44,15 @@ const Chat = ({ channelID, title, status }: { channelID: string; title: string; 
       })
     ).data
   }
-  const { data, canFetchMore, fetchMore } = useInfiniteQuery<
-    Message[],
-    any
-  >(['messages', channelID], fetchMessages, {
-    getFetchMore: (last) => {
-      return last.length < 25 ? undefined : last[last.length - 1]?.created_at
+  const { data, canFetchMore, fetchMore } = useInfiniteQuery<Message[], any>(
+    ['messages', channelID],
+    fetchMessages,
+    {
+      getFetchMore: (last) => {
+        return last.length < 25 ? undefined : last[last.length - 1]?.created_at
+      }
     }
-  })
+  )
   const messages = data?.flat().reverse()
   const [message, setMessage] = useState('')
   const [sendMessage] = useMutation(
@@ -117,58 +126,65 @@ const Chat = ({ channelID, title, status }: { channelID: string; title: string; 
           {title}
           <p className={styles.status}>{status}</p>
         </div>
-          <div className={styles.messages} ref={ref}>
-            {!loading && canFetchMore ? (
-              <Waypoint
-                bottomOffset={20}
-                onEnter={async () => {
-                  try {
-                    if (!ref.current || !ref.current.scrollHeight) return
-                    setLoading(true)
-                    const oldHeight = ref.current.scrollHeight
-                    const oldTop = ref.current.scrollTop
-                    await fetchMore()
-                    ref.current.scrollTop = ref?.current?.scrollHeight ? ref.current.scrollHeight - oldHeight + oldTop : 0
-                  } finally {
-                    setLoading(false)
-                  }
-                }}
-              />
-            ) : (
-              <></>
-            )}
-            {loading && (
-              <div key="loader" className={styles.loader}>
-                <h5>Loading more...</h5>
-              </div>
-            )}
-            {!canFetchMore ? (
-              <div key="header" className={styles.top}>
-                <h3>Woah, you reached the top of the chat. Here's a cookie <span role='img' aria-label='Cookie'>🍪</span></h3>
-              </div>
-            ) : (
-              <></>
-            )}
-            {messages?.map((message, index) =>
-              message ? (
-                <Message
-                  key={message.id}
-                  primary={isPrimary(message, index)}
-                  avatar={message.author.avatar}
-                  timestamp={message.created_at}
-                  author={message.author.username}
-                >
-                  {message.content}
-                </Message>
-              ) : (
-                <></>
-              )
-            )}
+        <div className={styles.messages} ref={ref}>
+          {!loading && canFetchMore ? (
             <Waypoint
-              onEnter={() => setTracking(true)}
-              onLeave={() => setTracking(false)}
+              bottomOffset={20}
+              onEnter={async () => {
+                try {
+                  if (!ref.current || !ref.current.scrollHeight) return
+                  setLoading(true)
+                  const oldHeight = ref.current.scrollHeight
+                  const oldTop = ref.current.scrollTop
+                  await fetchMore()
+                  ref.current.scrollTop = ref?.current?.scrollHeight
+                    ? ref.current.scrollHeight - oldHeight + oldTop
+                    : 0
+                } finally {
+                  setLoading(false)
+                }
+              }}
             />
-          <div key="buffer" className={styles.buffer} />
+          ) : (
+            <></>
+          )}
+          {loading && (
+            <div key='loader' className={styles.loader}>
+              <h5>Loading more...</h5>
+            </div>
+          )}
+          {!canFetchMore ? (
+            <div key='header' className={styles.top}>
+              <h3>
+                Woah, you reached the top of the chat. Here's a cookie{' '}
+                <span role='img' aria-label='Cookie'>
+                  🍪
+                </span>
+              </h3>
+            </div>
+          ) : (
+            <></>
+          )}
+          {messages?.map((message, index) =>
+            message ? (
+              <Message
+                key={message.id}
+                primary={isPrimary(message, index)}
+                avatar={message.author.avatar}
+                timestamp={message.created_at}
+                author={message.author.username}
+              >
+                {message.content}
+              </Message>
+            ) : (
+              <></>
+            )
+          )}
+          <Waypoint
+            onEnter={() => setTracking(true)}
+            onLeave={() => setTracking(false)}
+          />
+          <div key='buffer' className={styles.buffer} />
         </div>
         <div className={styles.box}>
           <form
@@ -183,7 +199,7 @@ const Chat = ({ channelID, title, status }: { channelID: string; title: string; 
             <input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              type="text"
+              type='text'
               placeholder={`Say something${adjective}...`}
               autoFocus
             />

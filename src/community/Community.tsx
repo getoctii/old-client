@@ -1,19 +1,19 @@
 import React, { Suspense, useState } from 'react'
 import styles from './Community.module.scss'
 import Chat from '../chat/Chat'
-import { useRouteMatch } from 'react-router-dom'
+import { Redirect, Switch, useParams, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
-import { clientGateway } from '../constants'
 import Loader from '../components/Loader'
-import { Channels } from './Channels'
-import Empty from '../conversation/empty/Empty'
+import { Sidebar } from './sidebar/Sidebar'
 import Skeleton from 'react-loading-skeleton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/pro-solid-svg-icons'
 import Button from '../components/Button'
 import { NewChannel } from './NewChannel'
 import { Settings } from './settings/Settings'
+import { getCommunity } from './remote'
+import { PrivateRoute } from '../authentication/PrivateRoute'
 
 export interface CommunityResponse {
   id: string
@@ -82,52 +82,50 @@ const EmptyCommunity = ({ community }: { community?: CommunityResponse }) => {
   )
 }
 
+const Channel = () => {
+  const { id, channelID } = useParams<{ id: string; channelID: string }>()
+  const auth = Auth.useContainer()
+  const community = useQuery(['community', id, auth.token], getCommunity)
+  if (!community?.data) return <></>
+  return (
+    <Chat
+      title={
+        `#${
+          community.data.channels.find((channel) => channel.id === channelID)
+            ?.name
+        }` || '#unknown'
+      }
+      status={''}
+      channelID={channelID}
+    />
+  )
+}
+
 export const Community = () => {
   const auth = Auth.useContainer()
-  const matchCommunity = useRouteMatch<{ id: string }>('/communities/:id')
-  const matchChannel = useRouteMatch<{ id: string; channelID: string }>(
-    '/communities/:id/:channelID'
-  )
-  console.log(matchCommunity?.params.id)
-  const community = useQuery(
-    ['community', matchCommunity?.params.id],
-    async () =>
-      (
-        await clientGateway.get<CommunityResponse>(
-          `/communities/${matchCommunity?.params.id}`,
-          {
-            headers: {
-              Authorization: auth.token
-            }
-          }
-        )
-      ).data
-  )
-  if (community?.data && community?.data?.channels.length <= 0)
+  const { id } = useParams<{ id: string }>()
+  const { path } = useRouteMatch()
+  const community = useQuery(['community', id, auth.token], getCommunity)
+  if (!community.data) return <></>
+  if (community.data.channels.length <= 0)
     return <EmptyCommunity community={community.data} />
+
   return (
-    <div className={styles.community} key={matchCommunity?.params.id}>
-      <Channels community={community.data} />
+    <div className={styles.community} key={id}>
+      <Sidebar />
       <Suspense fallback={<Loader />}>
-        {matchChannel?.params.channelID ? (
-          matchChannel.params.channelID === 'settings' ? (
-            <Settings />
-          ) : (
-            <Chat
-              title={
-                `#${
-                  community.data?.channels.find(
-                    (channel) => channel.id === matchChannel.params.channelID
-                  )?.name
-                }` || '#unknown'
-              }
-              status={''}
-              channelID={matchChannel.params.channelID}
-            />
-          )
-        ) : (
-          <Empty />
-        )}
+        <Switch>
+          <PrivateRoute path={`${path}/settings`} component={Settings} exact />
+          <PrivateRoute
+            path={`${path}/channels/:channelID`}
+            component={Channel}
+            exact
+          />
+          <Redirect
+            path='*'
+            to={`/communities/${id}/channels/${community.data.channels[0].id}`}
+          />
+        </Switch>
       </Suspense>
     </div>
   )

@@ -16,38 +16,12 @@ import { useMutation, useQuery } from 'react-query'
 import { clientGateway } from '../../constants'
 import Button from '../../components/Button'
 import { Clipboard } from '@capacitor/core'
-
-interface InviteType {
-  id: string
-  code: string
-  created_at: string
-  updated_at: string
-  author_id: string
-  uses: number
-}
-type InviteResponse = InviteType[]
-
-type UserResponse = {
-  id: string
-  avatar: string
-  username: string
-  discriminator: number
-  status?: string
-}
+import { getInvites, Invite as InviteType } from '../remote'
+import { getUser } from '../../user/remote'
 
 const Invite = (invite: InviteType) => {
   const auth = Auth.useContainer()
-  const user = useQuery(
-    ['users', invite.author_id],
-    async (key, userID) =>
-      (
-        await clientGateway.get<UserResponse>(`/users/${userID}`, {
-          headers: {
-            Authorization: auth.token
-          }
-        })
-      ).data
-  )
+  const user = useQuery(['users', invite.author_id, auth.token], getUser)
 
   return (
     <tr>
@@ -79,22 +53,10 @@ const Invite = (invite: InviteType) => {
 
 const Invites = () => {
   const auth = Auth.useContainer()
-  const matchChannel = useRouteMatch<{ id: string }>(
-    '/communities/:id/settings'
-  )
+  const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
   const invites = useQuery(
-    ['invites', matchChannel?.params.id],
-    async () =>
-      (
-        await clientGateway.get<InviteResponse>(
-          `/communities/${matchChannel?.params.id}/invites`,
-          {
-            headers: {
-              Authorization: auth.token
-            }
-          }
-        )
-      ).data
+    ['invites', match?.params.id, auth.token],
+    getInvites
   )
   const [showCreate, setShowCreate] = useState(false)
 
@@ -102,7 +64,7 @@ const Invites = () => {
     async () =>
       (
         await clientGateway.post(
-          `/communities/${matchChannel?.params.id}/invites`,
+          `/communities/${match?.params.id}/invites`,
           {},
           { headers: { Authorization: auth.token } }
         )
@@ -142,7 +104,7 @@ const Invites = () => {
                 <th>Code</th>
                 <th>Uses</th>
                 <th>Created At</th>
-                <th/>
+                <th />
               </tr>
             </thead>
             <tbody>

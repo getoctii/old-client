@@ -1,7 +1,4 @@
 import { clientGateway } from '../constants'
-import { Auth } from '../authentication/state'
-
-const { token } = Auth.useContainer()
 
 type UserResponse = {
   id: string
@@ -10,10 +7,11 @@ type UserResponse = {
   discriminator: number
 }
 
-export default async (_: string, userID: string) => (
-  await clientGateway.get<UserResponse>(`/users/${userID}`, {
-    headers: {
-      Authorization: token
-    }
-  })
-).data
+export const getUser = async (_: string, userID: string, token: string) =>
+  (
+    await clientGateway.get<UserResponse>(`/users/${userID}`, {
+      headers: {
+        Authorization: token
+      }
+    })
+  ).data

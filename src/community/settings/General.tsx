@@ -10,9 +10,9 @@ import Button from '../../components/Button'
 import Input from '../../components/Input'
 import { clientGateway } from '../../constants'
 import { isUsername } from '../../validations'
-import { CommunityResponse } from '../Community'
 import styles from './General.module.scss'
 import axios from 'axios'
+import { getCommunity } from '../remote'
 
 type generalFormData = {
   name: string
@@ -27,22 +27,10 @@ const validateGeneral = (values: generalFormData) => {
 
 export const General = () => {
   const auth = Auth.useContainer()
-  const matchChannel = useRouteMatch<{ id: string }>(
-    '/communities/:id/settings'
-  )
+  const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
   const community = useQuery(
-    ['community', matchChannel?.params.id],
-    async () =>
-      (
-        await clientGateway.get<CommunityResponse>(
-          `/communities/${matchChannel?.params.id}`,
-          {
-            headers: {
-              Authorization: auth.token
-            }
-          }
-        )
-      ).data
+    ['community', match?.params.id, auth.token],
+    getCommunity
   )
   const [icon, setIcon] = useState(community.data?.icon || '')
   const input = useRef<any>(null)

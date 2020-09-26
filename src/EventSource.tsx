@@ -32,7 +32,7 @@ interface Message {
 const EventSource = () => {
   const { token, id } = Auth.useContainer()
   useEffect(() => {
-    if (token === null) return
+    if (!token || !id) return
     const eventSource = new EventSourcePolyfill(
       CLIENT_GATEWAY_URL + '/events/subscribe',
       {

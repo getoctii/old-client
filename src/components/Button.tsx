@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import React, { CSSProperties } from 'react'
 import styles from './Button.module.scss'
 
@@ -19,7 +20,22 @@ const Button = ({
   style?: CSSProperties
 }) => {
   return (
-    <button
+    <motion.button
+      transition={{
+        type: 'spring',
+        duration: 0.3,
+        bounce: 0.5
+      }}
+      whileHover={{
+        scale: 1.025
+      }}
+      whileTap={{
+        scale: 1.05
+      }}
+      initial={{ scale: 1 }}
+      // uh we probably should add a check for on click
+      // hm, idk about the animation on the sidebar icons
+      // ok, maybe scale it up like by .1 or .2
       disabled={disabled}
       type={type}
       className={className ? `${className} ${styles.button}` : styles.button}
@@ -27,7 +43,7 @@ const Button = ({
       style={style}
     >
       {children}
-    </button>
+    </motion.button>
   )
 }
 
