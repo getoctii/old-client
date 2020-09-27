@@ -7,6 +7,7 @@ cache:
 build:
   stage: build
   script:
+    - echo "$NPMRC" > .npmrc
     - yarn install --frozen-lockfile
     - yarn build
   artifacts:
@@ -15,20 +16,28 @@ build:
     expire_in: 1 week
 
 deploy:
-  stage:  deploy
+  stage: deploy
   image: alpine:latest
   before_script:
-    - apk update && apk add openssh-client bash rsync
+    - apk update && apk add openssh-client bash rsync curl
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
+    - curl -sL https://sentry.io/get-cli/ | ash
   environment:
     name: production
     url: chat.innatical.com
   script:
+    - mkdir maps
+    - mv build/js/*.js.map maps
+    - export VERSION=`sentry-cli releases propose-version`
+    - sentry-cli releases new "$VERSION"
+    - sentry-cli releases set-commits "$VERSION" --auto
+    - sentry-cli releases files $CI_COMMIT_SHA upload-sourcemaps ./maps
+    - sentry-cli releases finalize "$VERSION"
     - rsync -hrvz --delete --exclude=_ -e "ssh" --progress build/ gitlab_deploy@10.0.0.1:/var/www/chat.innatical.com
   only:
     - master

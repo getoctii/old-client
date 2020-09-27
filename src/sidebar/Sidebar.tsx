@@ -1,14 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styles from './Sidebar.module.scss'
+import { UI } from '../uiStore'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { clientGateway } from '../constants'
-import { faPlus, faUserCog } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ConversationCard } from './ConversationCard'
-import Button from '../components/Button'
+import { faUserCog, faInbox, faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { UI } from '../uiStore'
+import Button from '../components/Button'
 
 type UserResponse = {
   id: string
@@ -17,19 +16,24 @@ type UserResponse = {
   discriminator: number
 }
 
-type ParticipantsResponse = {
+type MembersResponse = {
   id: string
-  conversation: {
+  community: {
     id: string
-    channel_id: string
-    participants: string[]
+    name: string
+    icon?: string
+    large: boolean
   }
 }[]
 
 export const Sidebar = () => {
-  const auth = Auth.useContainer()
   const ui = UI.useContainer()
-  const match = useRouteMatch<{ id: string }>('/conversations/:id')
+  const auth = Auth.useContainer()
+  const history = useHistory()
+  const match = useRouteMatch<{
+    tab?: string
+    id?: string
+  }>('/:tab/:id')
   const user = useQuery(
     ['users', auth.id],
     async (key, userID) =>
@@ -41,90 +45,70 @@ export const Sidebar = () => {
         })
       ).data
   )
-  const participants = useQuery(
-    'participants',
+  const communities = useQuery(
+    ['communities'],
     async () =>
       (
-        await clientGateway.get<ParticipantsResponse>(
-          `/users/${auth.id}/participants`,
-          {
-            headers: {
-              Authorization: auth.token
-            }
+        await clientGateway.get<MembersResponse>(`/users/${auth.id}/members`, {
+          headers: {
+            Authorization: auth.token
           }
-        )
+        })
       ).data
   )
-  const [selected, setSelected] = useState(match?.params.id || undefined)
-
-  const history = useHistory()
   return (
     <div className={styles.sidebar}>
-      <div className={styles.profile}>
+      <Button
+        className={styles.avatar}
+        type='button'
+        onClick={() => ui.setModal('settings')}
+      >
         <img src={user.data?.avatar} alt={user.data?.username} />
-        <h4>
-          {user.data?.username}#{user.data?.discriminator === 0 ? 'inn' : user.data?.discriminator.toString().padStart(4, '0')}
-        </h4>
-        <span onClick={() => ui.setModal('settings')}>
-          <FontAwesomeIcon icon={faUserCog} />
-        </span>
-      </div>
-      <h3>
-        Recent{' '}
-        <span onClick={() => ui.setModal('newConversation')}>
-          <FontAwesomeIcon icon={faPlus} />
-        </span>
-      </h3>
-      <div className={styles.list}>
-        {participants.data && participants.data.length > 0 ? (
-          participants.data?.map(
-            ({
-              conversation
-            }: {
-              conversation: {
-                id: string
-                channel_id: string
-                participants: string[]
-              }
-            }) => {
-              const people = conversation.participants.filter(
-                (userID: string) => userID !== auth.id
-              )
-              if (people.length > 1) {
-                console.warn('Group chats not implemented')
-                return <></>
-              } else if (people.length === 0) {
-                console.warn('Empty chats not implemented')
-                return <></>
-              } else {
-                return (
-                  <ConversationCard
-                    selected={selected === conversation.id}
-                    onClick={() => {
-                      history.push(`/conversations/${conversation.id}`)
-                      setSelected(conversation.id)
-                    }}
-                    key={conversation.id}
-                    people={people}
-                    conversationID={conversation.id}
-                  />
-                )
-              }
+        <div className={styles.overlay}>
+          <FontAwesomeIcon icon={faUserCog} size='2x' />
+        </div>
+      </Button>
+      <Button
+        className={
+          match?.params.tab === 'conversations' || !match
+            ? `${styles.messages} ${styles.selected}`
+            : styles.messages
+        }
+        type='button'
+        onClick={() => {
+          history.push('/')
+        }}
+      >
+        <FontAwesomeIcon className={styles.symbol} icon={faInbox} size='2x' />
+      </Button>
+      <Button
+        className={styles.plus}
+        type='button'
+        onClick={() => ui.setModal('newCommunity')}
+      >
+        <FontAwesomeIcon className={styles.symbol} icon={faPlus} size='2x' />
+      </Button>
+      <div className={styles.separator} />
+      {communities.data?.map((member) => {
+        const community = member.community
+        return (
+          <Button
+            type='button'
+            key={community.id}
+            style={{ backgroundImage: `url(${community.icon})` }}
+            className={
+              match?.params.tab === 'communities' &&
+              match.params.id === community.id
+                ? `${styles.icon} ${styles.selected}`
+                : styles.icon
             }
-          )
-        ) : (
-          <div className={styles.alert}>
-            <h3>You aren't in any chats!</h3>
-            <p>Would you like to chat with someone?</p>
-            <Button
-              type="button"
-              onClick={() => ui.setModal('newConversation')}
-            >
-              Create One
-            </Button>
-          </div>
-        )}
-      </div>
+            onClick={() => {
+              return history.push(`/communities/${community.id}`)
+            }}
+          />
+        )
+      })}
+      <br />
     </div>
   )
 }

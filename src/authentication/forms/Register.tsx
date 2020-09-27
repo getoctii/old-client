@@ -1,7 +1,7 @@
 import React from 'react'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
 import styles from './shared.module.scss'
-import { isEmail, isPassword, isUsername } from './validations'
+import { isEmail, isPassword, isUsername } from '../../validations'
 import { register } from '../remote'
 import { BarLoader } from 'react-spinners'
 import { Auth } from '../state'
@@ -25,7 +25,6 @@ const validate = (values: formData) => {
     errors.password = 'A valid password is required'
   if (!isUsername(values.username))
     errors.username = 'A valid username is required'
-  if (!values.betaCode) errors.betaCode = 'A valid beta code is required'
   return errors
 }
 
@@ -34,8 +33,20 @@ export const Register = () => {
 
   const submit = async (
     values: formData,
-    { setSubmitting, setErrors }: FormikHelpers<formData>
+    { setSubmitting, setErrors, setFieldError }: FormikHelpers<formData>
   ) => {
+    if (
+      !values?.username ||
+      !values?.email ||
+      !values?.password ||
+      !values?.betaCode
+    ) {
+      !values?.username && setFieldError('username', 'Required')
+      !values?.email && setFieldError('email', 'Required')
+      !values?.password && setFieldError('password', 'Required')
+      !values?.betaCode && setFieldError('betaCode', 'Required')
+      return
+    }
     try {
       const response = await register(values)
       if (response) {
@@ -61,67 +72,67 @@ export const Register = () => {
     >
       {({ isSubmitting }) => (
         <Form>
-          <label htmlFor="email" className={styles.label}>
+          <label htmlFor='email' className={styles.label}>
             Email
           </label>
           <Field
             className={styles.input}
-            id="email"
-            name="email"
-            type="email"
+            id='email'
+            name='email'
+            type='email'
           />
-          <ErrorMessage component="p" className={styles.error} name="email" />
+          <ErrorMessage component='p' className={styles.error} name='email' />
 
-          <label htmlFor="username" className={styles.label}>
+          <label htmlFor='username' className={styles.label}>
             Username
           </label>
           <Field
             className={styles.input}
-            id="username"
-            name="username"
-            type="text"
+            id='username'
+            name='username'
+            type='text'
           />
           <ErrorMessage
-            component="p"
+            component='p'
             className={styles.error}
-            name="username"
+            name='username'
           />
 
-          <label htmlFor="password" className={styles.label}>
+          <label htmlFor='password' className={styles.label}>
             Password
           </label>
           <Field
             className={styles.input}
-            id="password"
-            name="password"
-            type="password"
+            id='password'
+            name='password'
+            type='password'
           />
           <ErrorMessage
-            component="p"
+            component='p'
             className={styles.error}
-            name="password"
+            name='password'
           />
 
-          <label htmlFor="betaCode" className={styles.label}>
+          <label htmlFor='betaCode' className={styles.label}>
             Beta Code
           </label>
           <Field
             className={styles.input}
-            id="betaCode"
-            name="betaCode"
-            type="text"
+            id='betaCode'
+            name='betaCode'
+            type='text'
           />
           <ErrorMessage
-            component="p"
+            component='p'
             className={styles.error}
-            name="betaCode"
+            name='betaCode'
           />
           <button
             className={styles.button}
-            type="submit"
+            type='submit'
             disabled={isSubmitting}
           >
-            {isSubmitting ? <BarLoader color="#ffffff" /> : 'Register'}
+            {isSubmitting ? <BarLoader color='#ffffff' /> : 'Register'}
           </button>
         </Form>
       )}

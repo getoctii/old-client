@@ -4,8 +4,10 @@
   "background": "#1F2430",
   "foreground": "#232834",
   "primary": "#707A8CCC",
+  "secondary": "#788A9F",
   "textInline": "#95E6CB",
   "text": "#fafafa",
   "danger": "#FF3333",
-  "overground": "rgba(20, 25, 37, 0.5)"
+  "overground": "rgba(20, 25, 37, 0.5)",
+  "messageHover": "#020202"
 }

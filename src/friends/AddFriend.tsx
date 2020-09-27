@@ -1,14 +1,14 @@
 import React from 'react'
-import styles from './NewConversation.module.scss'
-import Modal from '../../components/Modal'
-import Input from '../../components/Input'
-import Button from '../../components/Button'
+import styles from './AddFriend.module.scss'
+import Modal from '../components/Modal'
+import Input from '../components/Input'
+import Button from '../components/Button'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { BarLoader } from 'react-spinners'
-import { clientGateway } from '../../constants'
-import { Auth } from '../../authentication/state'
-import { isTag } from './validations'
-import { UI } from '../../uiStore'
+import { clientGateway } from '../constants'
+import { Auth } from '../authentication/state'
+import { isTag } from '../validations'
+import { UI } from '../uiStore'
 
 interface ConversationResponse {
   id: string
@@ -42,13 +42,13 @@ const createConversation = async (
     )
   ).data
 
-const NewConversation = () => {
+const AddFriend = () => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
   return (
     <Modal onDismiss={() => ui.setModal('')}>
-      <div className={styles.invite}>
-        <h3>Start a Conversation</h3>
+      <div className={styles.friend}>
+        <h3>Add Friend</h3>
         <Formik
           initialValues={{ tag: '' }}
           validate={validate}
@@ -58,7 +58,10 @@ const NewConversation = () => {
               const user = (
                 await clientGateway.get<FindResponse>('/users/find', {
                   headers: { Authorization: token },
-                  params: { username: splitted[0], discriminator: splitted[1] === 'inn' ? '0' : splitted[1] }
+                  params: {
+                    username: splitted[0],
+                    discriminator: splitted[1] === 'inn' ? '0' : splitted[1]
+                  }
                 })
               ).data
               await createConversation(token!, { recipient: user.id })
@@ -77,17 +80,13 @@ const NewConversation = () => {
         >
           {({ isSubmitting }) => (
             <Form>
-              <label htmlFor="tag" className={styles.inputName}>
+              <label htmlFor='tag' className={styles.inputName}>
                 Username
               </label>
-              <Field placeholder="username#1234" component={Input} name="tag" />
-              <ErrorMessage component="p" name="tag" />
-              <Button disabled={isSubmitting} type="submit">
-                {isSubmitting ? (
-                  <BarLoader color="#ffffff" />
-                ) : (
-                  'Start Chatting'
-                )}
+              <Field placeholder='username#1234' component={Input} name='tag' />
+              <ErrorMessage component='p' name='tag' />
+              <Button disabled={isSubmitting} type='submit'>
+                {isSubmitting ? <BarLoader color='#ffffff' /> : 'Add Friend'}
               </Button>
             </Form>
           )}
@@ -97,4 +96,4 @@ const NewConversation = () => {
   )
 }
 
-export default NewConversation
+export default AddFriend

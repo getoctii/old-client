@@ -11,10 +11,7 @@ const Settings = () => {
   const ui = UI.useContainer()
   const [page, setPage] = useState('profile')
   return (
-    <Modal
-      fullscreen={true}
-      onDismiss={() => ui.setModal('')}
-    >
+    <Modal fullscreen={true} onDismiss={() => ui.setModal('')}>
       <div className={styles.left}></div>
       <div className={styles.settings}>
         <Sidebar page={page} setPage={setPage} />

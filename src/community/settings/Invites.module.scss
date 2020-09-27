@@ -1,0 +1,123 @@
+.button {
+  height: 3.75rem;
+  display: block;
+  font-size: 1.25rem;
+  margin-top: auto;
+  font-weight: 700;
+  width: 100%;
+}
+
+.createEmpty {
+  background-color: #f5f8f7;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.input {
+  display: block;
+  height: 3.75rem;
+  margin: 0;
+  width: calc(100% - 0.9375rem - 0.9375rem);
+  color: #000000;
+  min-width: 10px;
+  font-size: 1.1875rem;
+  margin-bottom: 1rem;
+}
+
+.inputName {
+  margin-bottom: 5px;
+  color: lightgrey;
+}
+
+.invitesEmpty {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
+  padding: 2rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+  background: var(--neko-foreground);
+  flex-direction: column;
+}
+
+.invites {
+  height: 100%;
+  margin: -2px;
+  h3 {
+    margin-left: 2px;
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+    span {
+      float: right;
+    }
+  }
+
+  table {
+    width: 100%;
+    margin-top: 0;
+    thead {
+      padding: 30px;
+      th {
+        padding: 0;
+        font-weight: 500;
+        font-size: 1.1rem;
+        text-align: left;
+      }
+    }
+
+    tr:first-child {
+      td:first-child {
+        border-top-left-radius: 10px;
+      }
+      td:last-child {
+        border-top-right-radius: 10px;
+      }
+    }
+
+    tr:last-child {
+      td:first-child {
+        border-bottom-left-radius: 10px;
+      }
+      td:last-child {
+        border-bottom-right-radius: 10px;
+      }
+    }
+
+    tbody {
+      tr {
+        padding: 30px;
+        height: 30px;
+        background-color: var(--neko-foreground);
+        td {
+          text-align: left;
+          font-weight: 400;
+          padding: 15px;
+          font-size: 1rem;
+          white-space: nowrap;
+        }
+
+        .copyAction {
+          width: 49px;
+          background-color: var(--neko-primary);
+          text-align: center;
+          color: var(--neko-text);
+        }
+
+        .deleteAction {
+          width: 49px;
+          background-color: var(--neko-danger);
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 940px), (max-height: 420px) {
+  .invitesEmpty {
+    width: auto;
+    margin-top: 4rem;
+    padding: 2rem;
+  }
+}

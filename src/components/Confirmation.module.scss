@@ -1,0 +1,17 @@
+.confirmation {
+  width: 300px;
+  div {
+    display: flex;
+    button {
+      width: 100%;
+    }
+  }
+}
+
+.danger {
+  background-color: var(--neko-danger);
+}
+
+.seperater {
+  width: 15px;
+}

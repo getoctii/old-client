@@ -32,7 +32,7 @@ interface Message {
 const EventSource = () => {
   const { token, id } = Auth.useContainer()
   useEffect(() => {
-    if (token === null) return
+    if (!token || !id) return
     const eventSource = new EventSourcePolyfill(
       CLIENT_GATEWAY_URL + '/events/subscribe',
       {
@@ -49,7 +49,7 @@ const EventSource = () => {
     eventSource.addEventListener('NEW_MESSAGE', async (e: any) => {
       const message = JSON.parse(e.data) as Message
       if (message.author.id !== id) {
-        if (isPlatform('mobile')) {
+        if (isPlatform('capacitor')) {
           Haptics.notification({
             type: HapticsNotificationType.SUCCESS
           })
@@ -71,7 +71,7 @@ const EventSource = () => {
           })
         }
       }
-        queryCache.setQueryData(['messages', message.channel_id], (initial) => {
+      queryCache.setQueryData(['messages', message.channel_id], (initial) => {
         if (initial instanceof Array) {
           if (initial[0].length < 25) initial[0].unshift(message)
           else initial.unshift([message])
@@ -94,10 +94,67 @@ const EventSource = () => {
       const participant = JSON.parse(e.data)
       queryCache.setQueryData('participants', (initial) => {
         if (initial instanceof Array) {
-          console.log(initial.filter(p => p.id !== participant.id))
-          return initial.filter(p => p.id !== participant.id)
+          console.log(initial.filter((p) => p.id !== participant.id))
+          return initial.filter((p) => p.id !== participant.id)
         } else return initial
       })
+    })
+
+    eventSource.addEventListener('NEW_MEMBER', (e: any) => {
+      const member = JSON.parse(e.data)
+      console.log('member', member)
+      queryCache.setQueryData(['communities'], (initial) => {
+        if (initial instanceof Array) {
+          initial.push(member)
+          return initial
+        } else return initial
+      })
+    })
+
+    eventSource.addEventListener('DELETE_MEMBER', (e: any) => {
+      const member = JSON.parse(e.data)
+      queryCache.setQueryData(['communities'], (initial: any) => {
+        if (initial) {
+          return initial.filter((m: any) => m.id !== member.id)
+        } else return initial
+      })
+    })
+
+    eventSource.addEventListener('NEW_CHANNEL', (e: any) => {
+      const channel = JSON.parse(e.data)
+      console.log('channel', channel)
+      queryCache.setQueryData(
+        ['community', channel.community_id, token],
+        (initial: any) => {
+          console.log('initial', initial)
+          if (initial) {
+            initial.channels.push({
+              id: channel.id,
+              name: channel.name
+            })
+            return initial
+          } else return initial
+        }
+      )
+    })
+
+    eventSource.addEventListener('DELETE_CHANNEL', (e: any) => {
+      const channel = JSON.parse(e.data)
+      queryCache.setQueryData(
+        ['community', channel.community_id, token],
+        (initial: any) => {
+          if (initial) {
+            console.log({
+              ...initial,
+              channels: initial.channels.filter((c: any) => c.id !== channel.id)
+            })
+            return {
+              ...initial,
+              channels: initial.channels.filter((c: any) => c.id !== channel.id)
+            }
+          } else return initial
+        }
+      )
     })
 
     return () => {

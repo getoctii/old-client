@@ -1,0 +1,262 @@
+.card {
+  background: var(--neko-foreground);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  margin-top: 0.8rem;
+  border-radius: 10px;
+  button {
+    margin-top: 1rem;
+    background: var(--neko-primary);
+    height: 3rem;
+    width: 100%;
+  }
+
+  h2,
+  h5,
+  p {
+    margin: 0;
+  }
+
+  h5 {
+    font-weight: 400;
+  }
+
+  h2 {
+    span {
+      float: right;
+    }
+  }
+
+  h3 {
+    margin-bottom: 0;
+    margin-top: 1.5rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  input {
+    background: var(--neko-background);
+  }
+
+  label {
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+  }
+}
+
+.dangerZone {
+  @extend .card;
+  border-color: var(--neko-danger);
+  border-width: 2px;
+  border-style: solid;
+  h4 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h5 {
+    color: var(--neko-danger);
+  }
+  p {
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  label {
+    font-weight: 400;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+  }
+  .dangerWrapper {
+    display: flex;
+    flex-direction: row;
+    button {
+      max-width: 200px;
+      margin-top: 0;
+      background: var(--neko-danger);
+    }
+  }
+  .dangerInput {
+    width: 100%;
+    margin-right: 0.5rem;
+    display: flex;
+    flex-direction: column;
+
+    input {
+      height: 48px;
+    }
+  }
+}
+
+.personalization {
+  margin-top: 0.5rem;
+
+  height: 100%;
+
+  margin-top: 1rem;
+  .icon {
+    object-fit: cover;
+    border-radius: 10px;
+    height: 124px;
+    width: 124px;
+    margin: 0;
+  }
+
+  .overlay {
+    transition: opacity 300ms ease-in-out;
+    border-radius: 10px;
+    display: flex;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 124px;
+    width: 124px;
+    background: var(--neko-overground);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    svg {
+      color: #fff;
+    }
+  }
+
+  .iconWrapper {
+    padding: 1rem;
+    background: var(--neko-background);
+    border-radius: 10px;
+    margin-top: 0.2rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    h4 {
+      font-weight: 600;
+      font-size: 1.15rem;
+      margin: 0;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      font-weight: 400;
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .iconInfo {
+      margin-left: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .covfefe {
+      background: var(--neko-foreground);
+      padding: 1rem;
+      font-size: 0.8rem;
+      font-weight: 400;
+
+      width: 100%;
+      text-align: center;
+      border-radius: 10px;
+    }
+  }
+  .iconContainer {
+    position: relative;
+    height: 124px;
+    input {
+      display: none;
+    }
+  }
+  .iconContainer:hover {
+    .overlay {
+      opacity: 1;
+    }
+  }
+
+  ul {
+    padding-left: 0;
+    list-style: none;
+    margin: 0;
+    li {
+      font-weight: 400;
+      font-size: 0.8rem;
+    }
+  }
+
+  .icon:hover {
+    background: var(--neko-overground);
+  }
+
+  .name {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    input {
+      margin-top: 0.2rem;
+      margin-bottom: 0.5rem;
+    }
+    label {
+      margin: 0;
+    }
+  }
+}
+
+.seperator {
+  height: 8px;
+}
+
+.error {
+  font-size: 0.5rem;
+  color: var(--neko-danger);
+}
+.wrapper {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+
+  button {
+    margin-top: 1rem;
+    background: var(--neko-primary);
+    height: 3rem;
+    width: 100%;
+  }
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    span {
+      float: right;
+    }
+  }
+
+  h3 {
+    margin-bottom: 0;
+    margin-top: 1.5rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+  }
+}
+
+.general {
+  .basics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 0.8rem;
+  }
+}

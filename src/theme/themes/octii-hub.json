@@ -1,0 +1,13 @@
+{
+  "id": "17918676-f5ab-457b-b574-39460ec14ae1",
+  "name": "OctiiHub",
+  "background": "#000000",
+  "foreground": "#1B1B1B",
+  "primary": "#FF9900",
+  "secondary": "#788A9F",
+  "textInline": "#000000",
+  "text": "#FFFFFF",
+  "danger": "#ed5454",
+  "overground": "rgba(70, 70, 70, 0.5)",
+  "messageHover": "#202020"
+}

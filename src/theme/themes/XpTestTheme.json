@@ -1,0 +1,14 @@
+{
+  "id": "bdc06bd2-761f-458a-95f3-25508abd5666",
+  "name": "Vapourwave95",
+  "background": "rgba(0,123,128,1 )",
+  "foreground": "#C3C3C3",
+  "primary": "#8f8f8f",
+  "secondary": "url('https://file.coffee/u/adpCI-Ag-p.png')",
+  "textInline": "rgba(51, 51, 51, 1)",
+  "text": "rgba(51, 51, 51, 1)",
+  "danger": "#8f8f8f",
+  "overground": "rgba(51, 51, 51, 1)",
+  "messageHover": "rgba(0,103,108,1 )",
+  "global": "@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap'); * { border-radius: 0 !important; font-family: 'VT323', monospace !important; };"
+}

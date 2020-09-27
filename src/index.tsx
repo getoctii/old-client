@@ -13,7 +13,6 @@ import Error from './components/Error'
 import EventSource from './EventSource'
 import { UI } from './uiStore'
 import * as Sentry from '@sentry/react'
-import { Integrations } from '@sentry/apm'
 import { Plugins } from '@capacitor/core'
 import Theme from './theme/hook'
 
@@ -21,12 +20,14 @@ const { LocalNotifications } = Plugins
 
 Sentry.init({
   dsn:
-    'https://ed58056045ea4fb599148359fa30aac0@o271654.ingest.sentry.io/5400867',
-  integrations: [new Integrations.Tracing()],
-  tracesSampleRate: 1.0
-});
+    'https://ed58056045ea4fb599148359fa30aac0@o271654.ingest.sentry.io/5400867'
+})
 
 LocalNotifications.requestPermission()
+
+document.oncontextmenu = (event) => {
+  event.preventDefault()
+}
 
 ReactDOM.render(
   <React.StrictMode>

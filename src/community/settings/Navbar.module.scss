@@ -1,0 +1,24 @@
+.navbar {
+  display: flex;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  margin-top: 0.5rem;
+
+  .selected {
+    background: var(--neko-primary);
+    color: var(--neko-text-inline);
+  }
+
+  li {
+    margin-right: 0.8rem;
+    text-align: center;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+    width: 10rem;
+    background: var(--neko-foreground);
+    font-weight: 400;
+    font-size: 1.1rem;
+    border-radius: 10px;
+  }
+}

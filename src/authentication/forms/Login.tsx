@@ -1,7 +1,7 @@
 import React from 'react'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
 import styles from './shared.module.scss'
-import { isEmail, isPassword } from './validations'
+import { isEmail, isPassword } from '../../validations'
 import { login } from '../remote'
 import { BarLoader } from 'react-spinners'
 import { Auth } from '../state'
@@ -21,8 +21,13 @@ export const Login = () => {
 
   const submit = async (
     values: formData,
-    { setSubmitting, setErrors }: FormikHelpers<formData>
+    { setSubmitting, setErrors, setFieldError }: FormikHelpers<formData>
   ) => {
+    if (!values?.email || !values?.password) {
+      !values?.email && setFieldError('email', 'Required')
+      !values?.password && setFieldError('password', 'Required')
+      return
+    }
     try {
       const response = await login(values)
       if (response) {
@@ -49,39 +54,39 @@ export const Login = () => {
     >
       {({ isSubmitting }) => (
         <Form>
-          <label htmlFor="email" className={styles.label}>
+          <label htmlFor='email' className={styles.label}>
             Email
           </label>
           <Field
             className={styles.input}
-            id="email"
-            name="email"
-            type="email"
-            enterkeyhint="next"
+            id='email'
+            name='email'
+            type='email'
+            enterkeyhint='next'
           />
-          <ErrorMessage component="p" className={styles.error} name="email" />
+          <ErrorMessage component='p' className={styles.error} name='email' />
 
-          <label htmlFor="password" className={styles.label}>
+          <label htmlFor='password' className={styles.label}>
             Password
           </label>
           <Field
             className={styles.input}
-            id="password"
-            name="password"
-            type="password"
+            id='password'
+            name='password'
+            type='password'
           />
           <ErrorMessage
-            component="p"
+            component='p'
             className={styles.error}
-            name="password"
+            name='password'
           />
           {/*TODO: Currently at #ffffff for testing, add theming support*/}
           <button
             className={styles.button}
-            type="submit"
+            type='submit'
             disabled={isSubmitting}
           >
-            {isSubmitting ? <BarLoader color="#ffffff" /> : 'Login'}
+            {isSubmitting ? <BarLoader color='#ffffff' /> : 'Login'}
           </button>
         </Form>
       )}

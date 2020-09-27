@@ -1,13 +1,11 @@
 .button {
   border: 0;
-  border-radius: 8px;
+  border-radius: 10px;
 
   outline: none;
 
   margin: 0;
-  padding: 1.2rem;
-  padding-top: 0.9rem;
-  padding-bottom: 0.9rem;
+  padding: 0.9rem 1.2rem;
 
   transition: ease-in-out box-shadow 0.15s;
 
@@ -23,36 +21,36 @@
   cursor: pointer;
 
   &.primary {
-    background-color: var(--inn-primary);
+    background: var(--inn-primary);
   }
 
   &.secondary {
-    background-color: var(--inn-secondary);
+    background: var(--inn-secondary);
   }
 
   &.light {
     color: #202020;
-    background-color: var(--inn-light);
+    background: var(--inn-light);
   }
 
   &.dark {
-    background-color: var(--inn-dark);
+    background: var(--inn-dark);
   }
 
   &.danger {
-    background-color: var(--inn-danger);
+    background: var(--inn-danger);
   }
 
   &.warning {
-    background-color: var(--inn-warning);
+    background: var(--inn-warning);
   }
 
   &.info {
-    background-color: var(--inn-info);
+    background: var(--inn-info);
   }
 
   &.success {
-    background-color: var(--inn-success);
+    background: var(--inn-success);
   }
 
   &.pill {
@@ -60,28 +58,24 @@
   }
 }
 
-button:active {
-  box-shadow: inset 5px 5px 15px 0 rgba(4, 85, 190, 0.5);
-}
-
 button:hover {
   color: #ffffff;
   &.primary {
-    background-color: var(--inn-primary-hover);
+    background: var(--inn-primary-hover);
   }
   &.secondary {
-    background-color: var(--inn-secondary-hover);
+    background: var(--inn-secondary-hover);
   }
   &.light {
     color: #202020;
-    background-color: var(--inn-light-hover);
+    background: var(--inn-light-hover);
   }
 
   &.dark {
-    background-color: var(--inn-dark-hover);
+    background: var(--inn-dark-hover);
   }
 
   &.danger {
-    background-color: var(--inn-danger-hover);
+    background: var(--inn-danger-hover);
   }
 }

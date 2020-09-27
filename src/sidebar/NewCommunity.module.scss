@@ -1,0 +1,95 @@
+.invite {
+  h3,
+  p {
+    margin: 0;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  p {
+    margin-top: 0.3rem;
+  }
+
+  .createButton {
+    margin-top: 0;
+    width: 100%;
+    background: var(--neko-secondary);
+  }
+
+  button {
+    margin-top: 0.8rem;
+    background: var(--neko-primary);
+    height: 3rem;
+  }
+
+  p {
+    color: var(--neko-danger);
+  }
+
+  .avatar {
+    object-fit: cover;
+    border-radius: 10px;
+    height: 124px;
+    width: 124px;
+    margin: 0;
+  }
+
+  .overlay {
+    width: 100%;
+    transition: opacity 300ms ease-in-out;
+    border-radius: 10px;
+    display: flex;
+    opacity: 1;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: var(--neko-overground);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    svg {
+      color: #fff;
+    }
+  }
+
+  .hideOverlay {
+    @extend .overlay;
+
+    opacity: 0;
+  }
+  .avatarContainer {
+    display: flex;
+    background: var(--neko-overground);
+    justify-content: center;
+    border-radius: 10px;
+    height: 150px;
+    align-items: center;
+    margin-top: 0.8rem;
+    position: relative;
+
+    input {
+      display: none;
+    }
+  }
+  .avatarContainer:hover {
+    .overlay {
+      opacity: 1;
+    }
+  }
+
+  .avatar:hover {
+    background: var(--neko-overground);
+  }
+}

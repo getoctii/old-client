@@ -5,55 +5,7 @@ body {
   padding: 0;
   padding: env(safe-area-inset-top) env(safe-area-inset-right)
     env(safe-area-inset-bottom) env(safe-area-inset-left);
-  // --neko-background: #e9eef4;
-  // --neko-foreground: #ffffff;
-  // --neko-primary: #4d99e6;
-  // --neko-text-inline: #ffffff;
-  // --neko-text: #000000;
-  // --neko-danger: #e01a4f;
-  // --neko-overground: rgba(36, 36, 36, 0.5);
 }
-
-// @media (prefers-color-scheme: dark) {
-//   body {
-//     --neko-background: #040a0f;
-//     --neko-foreground: #202020;
-//     --neko-primary: #4d99e6;
-//     --neko-text-inline: #dadada;
-//     --neko-text: #dadada;
-//     --neko-danger: #ed5454;
-//     --neko-overground: rgba(36, 36, 36, 0.5);
-//   }
-// }
-
-// .test {
-//   --neko-background: #040a0f;
-//   --neko-foreground: #0f1215;
-//   --neko-primary: #6f96ff;
-//   --neko-text-inline: #eef4ed;
-//   --neko-text: #eef4ed;
-//   --neko-danger: #ed5454;
-// }
-
-// .purple {
-//   --neko-background: #240046;
-//   --neko-foreground: #10002B;
-//   --neko-primary: #5A189A;
-//   --neko-text-inline: #E0AAFF;
-//   --neko-text: #C77DFF;
-//   --neko-danger: #ed5454;
-//   --neko-overground:#10002B;
-// }
-
-// .ayu-mirage {
-//   --neko-background: #1F2430;
-//   --neko-foreground: #232834;
-//   --neko-primary: #707A8CCC;
-//   --neko-text-inline: #95E6CB;
-//   --neko-text: #fafafa;
-//   --neko-danger: #FF3333;
-//   --neko-overground: rgba(36, 36, 36, 0.5);
-// }
 
 html {
   * {
@@ -67,7 +19,7 @@ html {
 
     &::-webkit-scrollbar-thumb {
       border-radius: 10px;
-      background-color: var(--neko-text);
+      background: var(--neko-text);
     }
 
     scrollbar-color: var(--neko-text) rgba(0, 0, 0, 0);
@@ -83,7 +35,12 @@ body {
   width: 100vw;
   font-family: Inter, sans-serif;
   user-select: none;
+  background: var(--neko-background);
   -webkit-tap-highlight-color: transparent;
+}
+
+hr {
+  border-color: var(--neko-foreground);
 }
 
 img {
@@ -104,12 +61,6 @@ img {
   height: 100%;
   width: 100%;
   flex-direction: row;
-}
-
-@media (max-width: 800px) {
-  #main {
-    display: block;
-  }
 }
 
 .ReactQueryDevtools {

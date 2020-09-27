@@ -8,7 +8,7 @@ import { Auth } from './state'
 export const Authenticate = () => {
   const location = useLocation()
   const auth = Auth.useContainer()
-  if (auth.authenticated) return <Redirect to="/" />
+  if (auth.authenticated) return <Redirect to='/' />
   return (
     <div className={styles.wrapper}>
       <main className={styles.card}>
@@ -17,9 +17,9 @@ export const Authenticate = () => {
           by <b>Innatical</b>
         </h2>
         <Switch>
-          <Route name="Login" path={'/authenticate/login'} component={Login} />
+          <Route name='Login' path={'/authenticate/login'} component={Login} />
           <Route
-            name="Register"
+            name='Register'
             path={'/authenticate/register'}
             component={Register}
           />
