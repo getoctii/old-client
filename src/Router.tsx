@@ -40,8 +40,8 @@ export const Router = () => {
         <AnimatePresence>
           {uiStore.modal === 'newConversation' && <NewConversation />}
           {uiStore.modal === 'newCommunity' && <NewCommunity />}
-          {uiStore.modal === 'settings' && <Settings />}
         </AnimatePresence>
+        {uiStore.modal === 'settings' && <Settings />}
 
         {auth.authenticated && <Sidebar />}
         <Suspense fallback={<Loader />}>
