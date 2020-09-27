@@ -32,11 +32,11 @@ deploy:
     url: chat.innatical.com
   script:
     - mkdir maps
-    - mv build/js/*.js.map maps
+    - mv build/static/js/*.js.map maps
     - export VERSION=`sentry-cli releases propose-version`
     - sentry-cli releases new "$VERSION"
     - sentry-cli releases set-commits "$VERSION" --auto
-    - sentry-cli releases files $CI_COMMIT_SHA upload-sourcemaps ./maps
+    - sentry-cli releases files "$VERSION" upload-sourcemaps ./maps
     - sentry-cli releases finalize "$VERSION"
     - rsync -hrvz --delete --exclude=_ -e "ssh" --progress build/ gitlab_deploy@10.0.0.1:/var/www/chat.innatical.com
   only:
