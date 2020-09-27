@@ -58,7 +58,10 @@ const AddFriend = () => {
               const user = (
                 await clientGateway.get<FindResponse>('/users/find', {
                   headers: { Authorization: token },
-                  params: { username: splitted[0], discriminator: splitted[1] === 'inn' ? '0' : splitted[1] }
+                  params: {
+                    username: splitted[0],
+                    discriminator: splitted[1] === 'inn' ? '0' : splitted[1]
+                  }
                 })
               ).data
               await createConversation(token!, { recipient: user.id })
@@ -77,17 +80,13 @@ const AddFriend = () => {
         >
           {({ isSubmitting }) => (
             <Form>
-              <label htmlFor="tag" className={styles.inputName}>
+              <label htmlFor='tag' className={styles.inputName}>
                 Username
               </label>
-              <Field placeholder="username#1234" component={Input} name="tag" />
-              <ErrorMessage component="p" name="tag" />
-              <Button disabled={isSubmitting} type="submit">
-                {isSubmitting ? (
-                  <BarLoader color="#ffffff" />
-                ) : (
-                  'Add Friend'
-                )}
+              <Field placeholder='username#1234' component={Input} name='tag' />
+              <ErrorMessage component='p' name='tag' />
+              <Button disabled={isSubmitting} type='submit'>
+                {isSubmitting ? <BarLoader color='#ffffff' /> : 'Add Friend'}
               </Button>
             </Form>
           )}

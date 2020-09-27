@@ -52,14 +52,20 @@ const NewConversation = () => {
         <Formik
           initialValues={{ tag: '' }}
           validate={validate}
-          onSubmit={async (values, { setSubmitting, setErrors, setFieldError }) => {
+          onSubmit={async (
+            values,
+            { setSubmitting, setErrors, setFieldError }
+          ) => {
             if (!values?.tag) return setFieldError('tag', 'Required')
             try {
               const splitted = values.tag.split('#')
               const user = (
                 await clientGateway.get<FindResponse>('/users/find', {
                   headers: { Authorization: token },
-                  params: { username: splitted[0], discriminator: splitted[1] === 'inn' ? '0' : splitted[1] }
+                  params: {
+                    username: splitted[0],
+                    discriminator: splitted[1] === 'inn' ? '0' : splitted[1]
+                  }
                 })
               ).data
               await createConversation(token!, { recipient: user.id })
@@ -81,7 +87,13 @@ const NewConversation = () => {
               <label htmlFor='tag' className={styles.inputName}>
                 Username
               </label>
-              <Field placeholder='example#1234' component={Input} name='tag' autoComplete={'random'} type='text' />
+              <Field
+                placeholder='example#1234'
+                component={Input}
+                name='tag'
+                autoComplete={'random'}
+                type='text'
+              />
               <ErrorMessage component='p' name='tag' />
               <Button disabled={isSubmitting} type='submit'>
                 {isSubmitting ? (

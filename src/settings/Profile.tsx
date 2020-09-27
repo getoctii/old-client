@@ -54,7 +54,10 @@ const Profile = () => {
           status: user.data?.status || ''
         }}
         validate={validateProfile}
-        onSubmit={async (values, { setSubmitting, setErrors, setFieldError }) => {
+        onSubmit={async (
+          values,
+          { setSubmitting, setErrors, setFieldError }
+        ) => {
           if (!values.username) return setFieldError('username', 'Required')
           try {
             await clientGateway.patch(

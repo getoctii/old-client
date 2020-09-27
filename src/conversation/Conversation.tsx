@@ -19,7 +19,7 @@ type ParticipantsResponse = {
 type UserResponse = {
   avatar: string
   username: string
-  discriminator: number,
+  discriminator: number
   status?: string
 }
 
@@ -58,9 +58,16 @@ export const Conversation = () => {
   if (!participant) return <></>
   return (
     <Suspense fallback={<Loader />}>
-      <div className={styles.conversation} key={participant.conversation.channel_id}>
+      <div
+        className={styles.conversation}
+        key={participant.conversation.channel_id}
+      >
         <Chat
-          title={`${recipient.data?.username}#${recipient.data?.discriminator === 0 ? 'inn' : recipient.data?.discriminator.toString().padStart(4, '0')}`}
+          title={`${recipient.data?.username}#${
+            recipient.data?.discriminator === 0
+              ? 'inn'
+              : recipient.data?.discriminator.toString().padStart(4, '0')
+          }`}
           status={recipient.data?.status}
           channelID={participant.conversation.channel_id}
         />

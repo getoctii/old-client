@@ -35,7 +35,12 @@ export const Register = () => {
     values: formData,
     { setSubmitting, setErrors, setFieldError }: FormikHelpers<formData>
   ) => {
-    if (!values?.username || !values?.email || !values?.password || !values?.betaCode) {
+    if (
+      !values?.username ||
+      !values?.email ||
+      !values?.password ||
+      !values?.betaCode
+    ) {
       !values?.username && setFieldError('username', 'Required')
       !values?.email && setFieldError('email', 'Required')
       !values?.password && setFieldError('password', 'Required')

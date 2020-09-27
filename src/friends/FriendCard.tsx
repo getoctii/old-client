@@ -12,22 +12,25 @@ type UserResponse = {
   discriminator: number
 }
 
-const FriendCard = ({id, pending}: {id: string, pending: boolean}) => {
+const FriendCard = ({ id, pending }: { id: string; pending: boolean }) => {
   const { token } = Auth.useContainer()
-  const { data } = useQuery(['users', id], async (key, userID) =>
-  (
-    await clientGateway.get<UserResponse>(`/users/${userID}`, {
-      headers: { Authorization: token }
-    })
-  ).data)
+  const { data } = useQuery(
+    ['users', id],
+    async (key, userID) =>
+      (
+        await clientGateway.get<UserResponse>(`/users/${userID}`, {
+          headers: { Authorization: token }
+        })
+      ).data
+  )
   return (
     <div className={styles.card}>
       <img src={data?.avatar} alt={data?.username} />
-      <h4>
-        {data?.username}
-      </h4>
+      <h4>{data?.username}</h4>
       <div className={styles.buttons}>
-        { pending && <FontAwesomeIcon className={styles.primary} icon={faUserCheck} /> }
+        {pending && (
+          <FontAwesomeIcon className={styles.primary} icon={faUserCheck} />
+        )}
         <FontAwesomeIcon className={styles.danger} icon={faUserTimes} />
       </div>
     </div>
