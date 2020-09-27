@@ -43,6 +43,19 @@
   padding-right: 2rem;
   justify-content: space-between;
 
+  button {
+    height: 3rem;
+    width: 3rem;
+    background: var(--neko-foreground);
+    color: var(--neko-text);
+    margin-left: 0.5rem;
+    font-size: 1.05rem;
+  }
+
+  .uploadInput {
+    display: none;
+  }
+
   form {
     display: flex;
     width: 100%;
@@ -59,7 +72,7 @@
       color: var(--neko-text);
       background: var(--neko-foreground);
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       outline: none;
 
       &::placeholder {
@@ -88,7 +101,6 @@
   justify-content: flex-end;
 }
 .messages {
-  // flex: 1;
   margin-top: auto;
   max-height: 100%;
   overflow-y: scroll;

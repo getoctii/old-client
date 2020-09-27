@@ -8,7 +8,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
 import { ContextMenuTrigger, ContextMenu, MenuItem } from 'react-contextmenu'
-import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
 import { CommunityResponse } from '../remote'
 import styles from './Channels.module.scss'
@@ -56,9 +56,14 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
       </AnimatePresence>
       <h4>
         Rooms
-        <span>
-          <FontAwesomeIcon icon={faPlus} onClick={() => setShowCreate(true)} />
-        </span>
+        {community?.owner_id === auth.id && (
+          <span>
+            <FontAwesomeIcon
+              icon={faPlus}
+              onClick={() => setShowCreate(true)}
+            />
+          </span>
+        )}
       </h4>
       <div className={styles.channels}>
         {community && community.channels.length > 0 ? (

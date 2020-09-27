@@ -27,7 +27,13 @@ export interface CommunityResponse {
   }[]
 }
 
-const EmptyCommunity = ({ community }: { community?: CommunityResponse }) => {
+const EmptyCommunity = ({
+  community,
+  dismiss
+}: {
+  community: CommunityResponse
+  dismiss: () => void
+}) => {
   const auth = Auth.useContainer()
   const [createMode, setCreateMode] = useState(false)
   return (
@@ -75,7 +81,10 @@ const EmptyCommunity = ({ community }: { community?: CommunityResponse }) => {
       ) : (
         <NewChannel
           community={community}
-          onDismiss={() => setCreateMode(false)}
+          onDismiss={() => {
+            setCreateMode(false)
+            dismiss()
+          }}
         />
       )}
     </div>
@@ -103,14 +112,17 @@ const Channel = () => {
 
 export const Community = () => {
   const auth = Auth.useContainer()
+  const [count, forceRender] = useState<number>(0)
   const { id } = useParams<{ id: string }>()
   const { path } = useRouteMatch()
   const community = useQuery(['community', id, auth.token], getCommunity)
   if (!community.data) return <></>
-  if (community.data.channels.length <= 0)
-    return <EmptyCommunity community={community.data} />
-
-  return (
+  return community.data.channels.length <= 0 ? (
+    <EmptyCommunity
+      community={community.data}
+      dismiss={() => forceRender(count + 1)}
+    />
+  ) : (
     <div className={styles.community} key={id}>
       <Sidebar />
       <Suspense fallback={<Loader />}>

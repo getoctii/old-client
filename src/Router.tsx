@@ -22,7 +22,6 @@ const { Keyboard, StatusBar } = Plugins
 export const Router = () => {
   const uiStore = UI.useContainer()
   const auth = Auth.useContainer()
-  // const isMobile = useMedia('(max-width: 800px)')
   const isDarkMode = useMedia('(prefers-color-scheme: dark)')
   useEffect(() => {
     if (isPlatform('capacitor')) {

@@ -15,7 +15,7 @@ import {
   faFileUpload
 } from '@fortawesome/pro-solid-svg-icons'
 import axios from 'axios'
-import { useMutation } from 'react-query'
+import { useHistory } from 'react-router-dom'
 
 interface ConversationResponse {
   id: string
@@ -51,7 +51,7 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
   const ui = UI.useContainer()
   const input = useRef<any>(null)
   const [avatar, setAvatar] = useState('')
-
+  const history = useHistory()
   return (
     <div className={styles.invite}>
       <h3>
@@ -70,14 +70,17 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
         ) => {
           if (!values?.name) return setFieldError('invite', 'Required')
           try {
-            await createCommunity(token!, {
+            const community = await createCommunity(token!, {
               name: values.name,
               icon: values?.icon || ''
             })
             ui.setModal('')
+            if (community?.id) history.push(`/communities/${community.id}`)
           } catch (e) {
             if (e.response.data.errors.includes('CommunityNameInvalid'))
               setErrors({ name: 'Invaild Community Name' })
+            if (e.response.data.errors.includes('InvaildIcon'))
+              setErrors({ icon: 'Invaild Community Icon' })
           } finally {
             setSubmitting(false)
           }
@@ -112,7 +115,6 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
                       'https://covfefe.innatical.com/api/v1/upload',
                       formData
                     )
-                    console.log(response)
                     setAvatar(response.data?.url)
                     setFieldValue('icon', response.data?.url)
                   }}
@@ -144,17 +146,15 @@ export const NewCommunity = () => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
   const [createCommunityMenu, setCreateCommunityMenu] = useState(false)
-
-  const [joinCommunity] = useMutation(
-    async (invite: string) =>
-      (
-        await clientGateway.post(
-          `/invites/${invite}/use`,
-          {},
-          { headers: { Authorization: token } }
-        )
-      ).data
-  )
+  const history = useHistory()
+  const joinCommunity = async (invite: string) =>
+    (
+      await clientGateway.post<{ community_id: string }>(
+        `/invites/${invite}/use`,
+        {},
+        { headers: { Authorization: token } }
+      )
+    ).data
 
   return (
     <Modal onDismiss={() => ui.setModal('')}>
@@ -172,13 +172,19 @@ export const NewCommunity = () => {
             ) => {
               if (!values?.invite) return setFieldError('invite', 'Required')
               try {
-                joinCommunity(values.invite)
+                const id = (await joinCommunity(values.invite)).community_id
+                history.push(`/communities/${id}`)
+                ui.setModal('')
               } catch (e) {
-                if (
-                  e.response.data.errors.includes('InviteNotFound') ||
-                  e.response.data.errors.includes('RecipientNotFound')
-                )
+                console.log('joinError', e.response.data.errors)
+                if (e.response.data.errors.includes('InvalidCode'))
+                  setErrors({ invite: 'Invaild Invite' })
+                if (e.response.data.errors.includes('InviteNotFound'))
                   setErrors({ invite: 'Invite not found' })
+                if (e.response.data.errors.includes('AlreadyInCommunity'))
+                  setErrors({
+                    invite: 'You are already in this community'
+                  })
               } finally {
                 setSubmitting(false)
               }

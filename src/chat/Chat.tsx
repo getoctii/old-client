@@ -4,14 +4,16 @@ import { useInfiniteQuery, useMutation } from 'react-query'
 import { clientGateway } from '../constants'
 import { Auth } from '../authentication/state'
 import Message from './Message'
-import { useInterval } from 'react-use'
+import { useDropArea, useInterval } from 'react-use'
 import moment from 'moment'
 import { Waypoint } from 'react-waypoint'
 import Loader from '../components/Loader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
+import { faChevronLeft, faFileUpload } from '@fortawesome/pro-solid-svg-icons'
 import { useMedia } from 'react-use'
 import { useHistory } from 'react-router-dom'
+import Button from '../components/Button'
+import axios from 'axios'
 
 interface Message {
   id: string
@@ -95,7 +97,7 @@ const Chat = ({
 
   useInterval(() => {
     setAdjectives(adjectives[Math.floor(Math.random() * adjectives.length)])
-  }, 30000) // 30 seconds
+  }, 30000)
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
   const [tracking, setTracking] = useState(true)
@@ -110,9 +112,23 @@ const Chat = ({
   const isMobile = useMedia('(max-width: 800px)')
   const history = useHistory()
 
+  const uploadFile = async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await axios.post(
+      'https://covfefe.innatical.com/api/v1/upload',
+      formData
+    )
+    await sendMessage(response.data.url)
+  }
+
+  const uploadInput = useRef<HTMLInputElement>(null)
+  const [bond] = useDropArea({
+    onFiles: (files) => uploadFile(files[0])
+  })
   return (
     <Suspense fallback={<Loader />}>
-      <div className={styles.chat}>
+      <div className={styles.chat} {...bond}>
         <div
           onClick={() => isMobile && history.push('/')}
           className={styles.header}
@@ -204,6 +220,18 @@ const Chat = ({
               autoFocus
             />
           </form>
+          <Button type='button' onClick={() => uploadInput.current?.click()}>
+            <FontAwesomeIcon icon={faFileUpload} />
+            <input
+              ref={uploadInput}
+              className={styles.uploadInput}
+              type='file'
+              accept='.jpg, .png, .jpeg, .gif'
+              onChange={async (event) => {
+                uploadFile(event.target.files?.item(0) as any)
+              }}
+            />
+          </Button>
         </div>
       </div>
     </Suspense>

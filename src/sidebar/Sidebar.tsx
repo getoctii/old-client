@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styles from './Sidebar.module.scss'
 import { UI } from '../uiStore'
 import { Auth } from '../authentication/state'
@@ -34,9 +34,6 @@ export const Sidebar = () => {
     tab?: string
     id?: string
   }>('/:tab/:id')
-  const [selected, setSelected] = useState<string | undefined>(
-    match?.params.tab === 'communities' ? match.params.id : match?.params.tab
-  )
   const user = useQuery(
     ['users', auth.id],
     async (key, userID) =>
@@ -73,13 +70,12 @@ export const Sidebar = () => {
       </Button>
       <Button
         className={
-          selected === 'conversations' || !selected
+          match?.params.tab === 'conversations' || !match
             ? `${styles.messages} ${styles.selected}`
             : styles.messages
         }
         type='button'
         onClick={() => {
-          setSelected('conversations')
           history.push('/')
         }}
       >
@@ -101,12 +97,12 @@ export const Sidebar = () => {
             key={community.id}
             style={{ backgroundImage: `url(${community.icon})` }}
             className={
-              selected === community.id
+              match?.params.tab === 'communities' &&
+              match.params.id === community.id
                 ? `${styles.icon} ${styles.selected}`
                 : styles.icon
             }
             onClick={() => {
-              setSelected(community.id)
               return history.push(`/communities/${community.id}`)
             }}
           />

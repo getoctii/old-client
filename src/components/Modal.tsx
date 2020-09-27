@@ -14,28 +14,31 @@ const Modal = ({
   return (
     <div className={`${styles.modal} ${fullscreen ? styles.fullscreen : ''}`}>
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        // this is really easy to do
+        {...(!fullscreen && {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          exit: { opacity: 0 }
+        })}
         className={styles.background}
         onClick={onDismiss}
       ></motion.div>
       <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{
-          type: 'spring',
-          duration: 0.5,
-          bounce: 0.5
-        }}
-        exit={{
-          scale: 0,
+        {...(!fullscreen && {
+          initial: { scale: 0 },
+          animate: { scale: 1 },
           transition: {
-            bounce: 0,
-            duration: 0.25
+            type: 'spring',
+            duration: 0.5,
+            bounce: 0.5
+          },
+          exit: {
+            scale: 0,
+            transition: {
+              bounce: 0,
+              duration: 0.25
+            }
           }
-        }}
+        })}
         className={styles.content}
       >
         {children}

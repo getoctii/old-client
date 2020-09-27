@@ -33,9 +33,6 @@ const Button = ({
         scale: 1.05
       }}
       initial={{ scale: 1 }}
-      // uh we probably should add a check for on click
-      // hm, idk about the animation on the sidebar icons
-      // ok, maybe scale it up like by .1 or .2
       disabled={disabled}
       type={type}
       className={className ? `${className} ${styles.button}` : styles.button}

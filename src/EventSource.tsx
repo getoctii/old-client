@@ -111,11 +111,20 @@ const EventSource = () => {
       })
     })
 
+    eventSource.addEventListener('DELETE_MEMBER', (e: any) => {
+      const member = JSON.parse(e.data)
+      queryCache.setQueryData(['communities'], (initial: any) => {
+        if (initial) {
+          return initial.filter((m: any) => m.id !== member.id)
+        } else return initial
+      })
+    })
+
     eventSource.addEventListener('NEW_CHANNEL', (e: any) => {
       const channel = JSON.parse(e.data)
       console.log('channel', channel)
       queryCache.setQueryData(
-        ['community', channel.community_id],
+        ['community', channel.community_id, token],
         (initial: any) => {
           console.log('initial', initial)
           if (initial) {
@@ -132,7 +141,7 @@ const EventSource = () => {
     eventSource.addEventListener('DELETE_CHANNEL', (e: any) => {
       const channel = JSON.parse(e.data)
       queryCache.setQueryData(
-        ['community', channel.community_id],
+        ['community', channel.community_id, token],
         (initial: any) => {
           if (initial) {
             console.log({

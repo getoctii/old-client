@@ -12,19 +12,46 @@ import moment from 'moment'
 import { IonToast } from '@ionic/react'
 import { Auth } from '../../authentication/state'
 import { useRouteMatch } from 'react-router-dom'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery, queryCache } from 'react-query'
 import { clientGateway } from '../../constants'
 import Button from '../../components/Button'
 import { Clipboard } from '@capacitor/core'
 import { getInvites, Invite as InviteType } from '../remote'
 import { getUser } from '../../user/remote'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const Invite = (invite: InviteType) => {
   const auth = Auth.useContainer()
   const user = useQuery(['users', invite.author_id, auth.token], getUser)
+  const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
+
+  const [deleteInvite] = useMutation(
+    async () =>
+      (
+        await clientGateway.delete(`/invites/${invite.id}`, {
+          headers: { Authorization: auth.token }
+        })
+      ).data,
+    {
+      onSuccess: () => {
+        queryCache.invalidateQueries(['invites', match?.params.id, auth.token])
+      }
+    }
+  )
 
   return (
-    <tr>
+    <motion.tr
+      initial={{
+        opacity: 0
+      }}
+      animate={{
+        opacity: 1,
+        transition: { y: { stiffness: 1000, velocity: -100 } }
+      }}
+      exit={{
+        opacity: 0
+      }}
+    >
       <td>
         {user.data?.username}#
         {user.data?.discriminator === 0
@@ -34,7 +61,15 @@ const Invite = (invite: InviteType) => {
       <td>{invite.code}</td>
       <td>{invite.uses}</td>
       <td>{moment.utc(invite.created_at).local().calendar()}</td>
-      <td
+      <motion.td
+        whileTap={{
+          scale: 1.2,
+          transition: {
+            bounce: 0,
+            duration: 0.25
+          }
+        }}
+        initial={{ scale: 1 }}
         className={styles.copyAction}
         onClick={() =>
           Clipboard.write({
@@ -43,11 +78,22 @@ const Invite = (invite: InviteType) => {
         }
       >
         <FontAwesomeIcon icon={faCopy} />
-      </td>
-      <td className={styles.deleteAction}>
+      </motion.td>
+      <motion.td
+        whileTap={{
+          scale: 1.2,
+          transition: {
+            bounce: 0,
+            duration: 0.25
+          }
+        }}
+        initial={{ scale: 1 }}
+        className={styles.deleteAction}
+        onClick={() => deleteInvite()}
+      >
         <FontAwesomeIcon icon={faTrashAlt} />
-      </td>
-    </tr>
+      </motion.td>
+    </motion.tr>
   )
 }
 
@@ -68,7 +114,12 @@ const Invites = () => {
           {},
           { headers: { Authorization: auth.token } }
         )
-      ).data
+      ).data,
+    {
+      onSuccess: () => {
+        queryCache.invalidateQueries(['invites', match?.params.id, auth.token])
+      }
+    }
   )
   return (
     <div className={styles.invites}>
@@ -108,9 +159,11 @@ const Invites = () => {
               </tr>
             </thead>
             <tbody>
-              {invites.data.map((invite) => (
-                <Invite {...invite} />
-              ))}
+              <AnimatePresence>
+                {invites.data.map((invite) => (
+                  <Invite {...invite} key={invite.id} />
+                ))}
+              </AnimatePresence>
             </tbody>
           </table>
         </div>

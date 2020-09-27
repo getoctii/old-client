@@ -11,6 +11,7 @@ import { clientGateway } from '../constants'
 import { CommunityResponse } from './Community'
 import { BarLoader } from 'react-spinners'
 import styles from './NewChannel.module.scss'
+import { useHistory } from 'react-router-dom'
 
 type formData = { name: string }
 
@@ -35,6 +36,7 @@ export const NewChannel = ({
   community?: CommunityResponse
   onDismiss: Function
 }) => {
+  const history = useHistory()
   const { token } = Auth.useContainer()
   return (
     <Modal onDismiss={onDismiss}>
@@ -47,13 +49,17 @@ export const NewChannel = ({
         ) => {
           try {
             if (!values.name) return setFieldError('name', 'Required')
-            await clientGateway.post(
+            const channel = await clientGateway.post(
               `/communities/${community?.id}/channels`,
               new URLSearchParams({ name: values.name.split(' ').join('-') }),
               {
                 headers: { Authorization: token }
               }
             )
+            if (channel?.data?.id)
+              history.push(
+                `/communities/${community?.id}/channels/${channel.data.id}`
+              )
             onDismiss()
           } catch (e) {
             const errors = e.response.data.errors
