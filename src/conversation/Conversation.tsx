@@ -46,6 +46,7 @@ export const Conversation = () => {
   const people = participant?.conversation.participants.filter(
     (userID) => userID !== auth.id
   )
+
   const recipient = useQuery(
     ['users', people?.[0]],
     async (key, userID) =>

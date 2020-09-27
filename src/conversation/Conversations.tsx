@@ -44,15 +44,20 @@ const ConversationList = () => {
   )
   const [selected, setSelected] = useState(match?.params.id || undefined)
   const history = useHistory()
-  if (!selected && participants.data && participants.data.length > 0)
+  const filteredParticipants = participants.data?.filter(
+    (part) => part.conversation.participants.length > 1
+  )
+
+  if (!selected && filteredParticipants && filteredParticipants.length > 0) {
     history.push(
       `/conversations/${
-        lastConversation
+        lastConversation &&
+        filteredParticipants.find((p) => p.conversation.id === lastConversation)
           ? lastConversation
-          : participants.data[0].conversation.id
+          : filteredParticipants[0].conversation.id
       }`
     )
-
+  }
   return (
     <>
       {participants.data && participants.data.length > 0 ? (
