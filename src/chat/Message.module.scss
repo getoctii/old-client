@@ -19,6 +19,7 @@
   }
 
   p {
+    user-select: text;
     margin: 0;
     font-size: 1rem;
     font-weight: 400;
@@ -34,11 +35,6 @@
   margin-top: 0.8rem;
 }
 
-.spacer {
-  p {
-    margin-left: 2.5rem;
-  }
-}
 .avatar {
   width: 2.5rem;
   height: 2.5rem;
@@ -55,6 +51,10 @@
     color: var(--neko-primary);
     text-decoration: none;
   }
+}
+
+.spacer {
+  margin-left: 3.5rem;
 }
 
 .imageEmbed {
