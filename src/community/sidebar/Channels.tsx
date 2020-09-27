@@ -74,16 +74,16 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
                   animate={
                     match?.params.channelID === channel.id
                       ? {
-                          background: 'var(--neko-primary',
+                          background: 'var(--neko-primary)', // it was missing ) h
                           color: 'var(--neko-text-inline)'
                         }
                       : {
                           background: 'var(--neko-background)',
-                          color: 'var(--neko-text-inline)'
+                          color: 'var(--neko-text)'
                         }
                   }
                   transition={{
-                    duration: 0.5
+                    duration: 0.25
                   }}
                   className={styles.channel}
                   onClick={() => {
