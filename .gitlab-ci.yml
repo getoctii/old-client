@@ -19,14 +19,14 @@ deploy:
   stage: deploy
   image: alpine:latest
   before_script:
-    - apk update && apk add openssh-client bash rsync curl
+    - apk update && apk add openssh-client bash rsync curl bash
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - curl -sL https://sentry.io/get-cli/ | ash
+    - curl -sL https://sentry.io/get-cli/ | bash
   environment:
     name: production
     url: chat.innatical.com
