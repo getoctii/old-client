@@ -4,16 +4,16 @@ import { useInfiniteQuery, useMutation } from 'react-query'
 import { clientGateway } from '../constants'
 import { Auth } from '../authentication/state'
 import Message from './Message'
-import { useDropArea, useInterval } from 'react-use'
+import { useDropArea } from 'react-use'
 import moment from 'moment'
 import { Waypoint } from 'react-waypoint'
 import Loader from '../components/Loader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft, faFileUpload } from '@fortawesome/pro-solid-svg-icons'
+import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import { useMedia } from 'react-use'
 import { useHistory } from 'react-router-dom'
-import Button from '../components/Button'
 import axios from 'axios'
+import Box from './Box'
 
 interface Message {
   id: string
@@ -56,7 +56,6 @@ const Chat = ({
     }
   )
   const messages = data?.flat().reverse()
-  const [message, setMessage] = useState('')
   const [sendMessage] = useMutation(
     async (content: string) =>
       (
@@ -78,26 +77,6 @@ const Chat = ({
     )
   }
 
-  const adjectives = [
-    ' amazing',
-    ' insightful',
-    ' funny',
-    ' about cats',
-    ' interesting',
-    ' special',
-    ' innovative',
-    ', anything really',
-    ' delightful',
-    ' steamy',
-    ' about Innatical'
-  ]
-  const [adjective, setAdjectives] = useState(
-    adjectives[Math.floor(Math.random() * adjectives.length)]
-  )
-
-  useInterval(() => {
-    setAdjectives(adjectives[Math.floor(Math.random() * adjectives.length)])
-  }, 30000)
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
   const [tracking, setTracking] = useState(true)
@@ -124,7 +103,6 @@ const Chat = ({
     await sendMessage(response.data.url)
   }
 
-  const uploadInput = useRef<HTMLInputElement>(null)
   const [bond] = useDropArea({
     onFiles: (files) => uploadFile(files[0])
   })
@@ -207,40 +185,12 @@ const Chat = ({
           />
           <div key='buffer' className={styles.buffer} />
         </div>
-        <div className={styles.box}>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault()
-              if (message !== '') {
-                sendMessage(message)
-                setMessage('')
-              }
-            }}
-          >
-            <input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              type='text'
-              placeholder={`Say something${adjective}...`}
-              {...(!isMobile && { autoFocus: true })}
-            />
-          </form>
-          <Button type='button' onClick={() => uploadInput.current?.click()}>
-            <FontAwesomeIcon icon={faFileUpload} />
-            <input
-              ref={uploadInput}
-              className={styles.uploadInput}
-              type='file'
-              accept='.jpg, .png, .jpeg, .gif'
-              onChange={async (event) => {
-                await uploadFile(event.target.files?.item(0) as any)
-              }}
-            />
-          </Button>
-        </div>
+        <Box {...{sendMessage, uploadFile}}/>
       </div>
     </Suspense>
   )
 }
+
+Chat.whyDidYouRender = true
 
 export default Chat
