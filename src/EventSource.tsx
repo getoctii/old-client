@@ -60,15 +60,19 @@ const EventSource = () => {
         if (window.inntronNotify) {
           window.inntronNotify(message.author.username, message.content)
         } else {
-          LocalNotifications.schedule({
-            notifications: [
-              {
-                title: message.author.username,
-                body: message.content,
-                id: 1
-              }
-            ]
-          })
+          try {
+            LocalNotifications.schedule({
+              notifications: [
+                {
+                  title: message.author.username,
+                  body: message.content,
+                  id: 1
+                }
+              ]
+            }).catch(() => console.warn('Failed to send notification'))
+          } catch {
+            console.warn('Failed to send notification')
+          }
         }
       }
       queryCache.setQueryData(['messages', message.channel_id], (initial) => {

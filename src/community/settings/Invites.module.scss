@@ -44,6 +44,7 @@
 .invites {
   height: 100%;
   margin: -2px;
+
   h3 {
     margin-left: 2px;
     margin-top: 1rem;
@@ -54,6 +55,11 @@
   }
 
   table {
+    @media (max-width: 800px) {
+      display: block;
+      overflow-x: scroll;
+      white-space: nowrap;
+    }
     width: 100%;
     margin-top: 0;
     thead {

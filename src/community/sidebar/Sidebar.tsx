@@ -4,7 +4,7 @@ import { Integrations } from './Integrations'
 import React from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useMutation, useQuery } from 'react-query'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
 import { getCommunity } from '../remote'
 import styles from './Sidebar.module.scss'
@@ -13,14 +13,17 @@ import { clientGateway } from '../../constants'
 
 export const Sidebar = () => {
   const auth = Auth.useContainer()
-  const { id } = useParams<{ id: string }>()
+  const match = useRouteMatch<{ id: string }>('/communities/:id')
   const history = useHistory()
-  const community = useQuery(['community', id, auth.token], getCommunity)
+  const community = useQuery(
+    ['community', match?.params.id, auth.token],
+    getCommunity
+  )
   const [leaveCommunity] = useMutation(
     async () =>
       (
         await clientGateway.post(
-          `/communities/${id}/leave`,
+          `/communities/${match?.params.id}/leave`,
           {},
           {
             headers: { Authorization: auth.token }

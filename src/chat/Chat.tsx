@@ -130,7 +130,7 @@ const Chat = ({
     <Suspense fallback={<Loader />}>
       <div className={styles.chat} {...bond}>
         <div
-          onClick={() => isMobile && history.push('/')}
+          onClick={() => isMobile && history.goBack()}
           className={styles.header}
         >
           {isMobile && (
@@ -217,7 +217,7 @@ const Chat = ({
               onChange={(e) => setMessage(e.target.value)}
               type='text'
               placeholder={`Say something${adjective}...`}
-              autoFocus
+              {...(!isMobile && { autoFocus: true })}
             />
           </form>
           <Button type='button' onClick={() => uploadInput.current?.click()}>

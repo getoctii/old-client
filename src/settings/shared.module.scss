@@ -1,7 +1,10 @@
 .wrapper {
   width: 100%;
   margin: 2rem;
-  min-width: 500px;
+
+  @media (not (max-width: 800px)) {
+    min-width: 500px;
+  }
 
   h2,
   p {
@@ -44,6 +47,11 @@
   }
 }
 
+.backButton {
+  margin-right: 1rem;
+  color: var(--neko-primary);
+}
+
 .themes {
   width: 100%;
 
@@ -75,6 +83,10 @@
 .profile {
   margin-top: 0.5rem;
   display: flex;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+  }
 
   .avatar {
     object-fit: cover;
@@ -125,7 +137,9 @@
   }
 
   .username {
-    margin-left: 1rem;
+    @media (not (max-width: 800px)) {
+      margin-left: 1rem;
+    }
     display: flex;
     flex-direction: column;
 

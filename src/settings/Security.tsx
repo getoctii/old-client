@@ -7,6 +7,9 @@ import Button from '../components/Button'
 import { BarLoader } from 'react-spinners'
 import styles from './shared.module.scss'
 import Input from '../components/Input'
+import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
+import { useMedia } from 'react-use'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type validateFormData = { newPassword: string; oldPassword: string }
 
@@ -26,12 +29,18 @@ type UserResponse = {
   discriminator: number
 }
 
-const Security = () => {
+const Security = ({ setPage }: { setPage: Function }) => {
   const { token, id } = Auth.useContainer()
+  const isMobile = useMedia('(max-width: 800px)')
 
   return (
     <div className={styles.wrapper}>
-      <h2>Security</h2>
+      <h2 onClick={() => isMobile && setPage('')}>
+        {isMobile && (
+          <FontAwesomeIcon className={styles.backButton} icon={faChevronLeft} />
+        )}
+        Security
+      </h2>
       <Formik
         initialValues={{ oldPassword: '', newPassword: '' }}
         validate={validatePassword}

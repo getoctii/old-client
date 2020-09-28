@@ -75,10 +75,21 @@
   .dangerWrapper {
     display: flex;
     flex-direction: row;
+
     button {
       max-width: 200px;
       margin-top: 0;
       background: var(--neko-danger);
+    }
+
+    @media (max-width: 800px) {
+      flex-direction: column;
+
+      button {
+        margin-top: 1rem;
+        width: 100%;
+        max-width: none;
+      }
     }
   }
   .dangerInput {
@@ -136,6 +147,11 @@
     margin-top: 0.2rem;
     margin-bottom: 0.8rem;
     display: flex;
+
+    @media (max-width: 800px) {
+      flex-direction: column;
+    }
+
     h4 {
       font-weight: 600;
       font-size: 1.15rem;
@@ -256,7 +272,11 @@
 .general {
   .basics {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     column-gap: 0.8rem;
+
+    @media (max-width: 800px) {
+      display: block;
+    }
   }
 }

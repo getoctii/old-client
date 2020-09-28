@@ -6,18 +6,24 @@ import styles from './Settings.module.scss'
 import Profile from './Profile'
 import Security from './Security'
 import Themes from './Themes'
+import { useMedia } from 'react-use'
 
 const Settings = () => {
   const ui = UI.useContainer()
-  const [page, setPage] = useState('profile')
+  const isMobile = useMedia('(max-width: 800px)')
+  const [page, setPage] = useState(isMobile ? '' : 'profile')
   return (
     <Modal fullscreen={true} onDismiss={() => ui.setModal('')}>
       <div className={styles.left}></div>
       <div className={styles.settings}>
-        <Sidebar page={page} setPage={setPage} />
-        {page === 'profile' && <Profile />}
-        {page === 'security' && <Security />}
-        {page === 'themes' && <Themes />}
+        {page !== '' && isMobile ? (
+          <></>
+        ) : (
+          <Sidebar page={page} setPage={setPage} />
+        )}
+        {page === 'profile' && <Profile setPage={setPage} />}
+        {page === 'security' && <Security setPage={setPage} />}
+        {page === 'themes' && <Themes setPage={setPage} />}
       </div>
       <div className={styles.right}></div>
     </Modal>

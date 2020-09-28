@@ -23,6 +23,7 @@ export const Router = () => {
   const uiStore = UI.useContainer()
   const auth = Auth.useContainer()
   const isDarkMode = useMedia('(prefers-color-scheme: dark)')
+  const isMobile = useMedia('(max-width: 800px)')
   useEffect(() => {
     if (isPlatform('capacitor')) {
       StatusBar.setOverlaysWebView({ overlay: true })
@@ -43,15 +44,16 @@ export const Router = () => {
         </AnimatePresence>
         {uiStore.modal === 'settings' && <Settings />}
 
-        {auth.authenticated && <Sidebar />}
+        {auth.authenticated && !isMobile && <Sidebar />}
         <Suspense fallback={<Loader />}>
           <Switch>
             <PrivateRoute
               path='/'
               component={() => (
                 <>
+                  {isMobile && <Sidebar />}
                   <Conversations />
-                  <Empty />
+                  {!isMobile && <Empty />}
                 </>
               )}
               exact
@@ -60,7 +62,7 @@ export const Router = () => {
               path='/conversations/:channelID'
               component={() => (
                 <>
-                  <Conversations />
+                  {!isMobile && <Conversations />}
                   <Conversation />
                 </>
               )}
