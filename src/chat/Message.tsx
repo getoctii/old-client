@@ -1,23 +1,29 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styles from './Message.module.scss'
 import moment from 'moment'
 import ReactMarkdown from 'react-markdown'
+import { useMeasure } from 'react-use'
 
 const Message = ({
   children,
   avatar,
   timestamp,
   author,
-  primary
+  primary,
+  onresize
 }: {
   children: string
   avatar: string
   timestamp: string
   author: string
   primary: boolean
+  onresize: () => void
 }) => {
+  const [ref, size] = useMeasure<HTMLDivElement>()
+  useEffect(() => onresize(), [size, onresize])
+
   return (
-    <div className={primary ? styles.primary : styles.message}>
+    <div className={primary ? styles.primary : styles.message} ref={ref}>
       {primary && (
         <img
           className={styles.avatar}

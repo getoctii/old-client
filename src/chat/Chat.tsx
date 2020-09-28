@@ -102,12 +102,14 @@ const Chat = ({
   const [loading, setLoading] = useState(false)
   const [tracking, setTracking] = useState(true)
 
-  useEffect(() => {
+  const autoScroll = () => {
     if (tracking && ref.current) {
       ref.current.scrollTop =
         ref.current.scrollHeight - ref.current.clientHeight
     }
-  })
+  }
+
+  useEffect(autoScroll)
 
   const isMobile = useMedia('(max-width: 800px)')
   const history = useHistory()
@@ -126,6 +128,8 @@ const Chat = ({
   const [bond] = useDropArea({
     onFiles: (files) => uploadFile(files[0])
   })
+
+  const resizeCallback = () => autoScroll()
   return (
     <Suspense fallback={<Loader />}>
       <div className={styles.chat} {...bond}>
@@ -189,6 +193,7 @@ const Chat = ({
                 avatar={message.author.avatar}
                 timestamp={message.created_at}
                 author={message.author.username}
+                onresize={resizeCallback}
               >
                 {message.content}
               </Message>
@@ -228,7 +233,7 @@ const Chat = ({
               type='file'
               accept='.jpg, .png, .jpeg, .gif'
               onChange={async (event) => {
-                uploadFile(event.target.files?.item(0) as any)
+                await uploadFile(event.target.files?.item(0) as any)
               }}
             />
           </Button>
