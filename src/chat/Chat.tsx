@@ -128,6 +128,8 @@ const Chat = ({
   const [bond] = useDropArea({
     onFiles: (files) => uploadFile(files[0])
   })
+
+  const resizeCallback = () => autoScroll()
   return (
     <Suspense fallback={<Loader />}>
       <div className={styles.chat} {...bond}>
@@ -191,7 +193,7 @@ const Chat = ({
                 avatar={message.author.avatar}
                 timestamp={message.created_at}
                 author={message.author.username}
-                onresize={() => autoScroll}
+                onresize={resizeCallback}
               >
                 {message.content}
               </Message>
