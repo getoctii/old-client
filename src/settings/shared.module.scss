@@ -1,8 +1,7 @@
 .wrapper {
   width: 100%;
   margin: 2rem;
-
-  @media (not (max-width: 800px)) {
+  @media (min-width: 800px) {
     min-width: 500px;
   }
 
@@ -137,7 +136,7 @@
   }
 
   .username {
-    @media (not (max-width: 800px)) {
+    @media (min-width: 800px) {
       margin-left: 1rem;
     }
     display: flex;
