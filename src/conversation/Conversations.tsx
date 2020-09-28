@@ -10,7 +10,7 @@ import Button from '../components/Button'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { UI } from '../uiStore'
 import Loader from '../components/Loader'
-import { useLocalStorage } from 'react-use'
+import { useLocalStorage, useMedia } from 'react-use'
 
 type ParticipantsResponse = {
   id: string
@@ -28,6 +28,7 @@ const ConversationList = () => {
   const [lastConversation, setLastConversation] = useLocalStorage(
     'last_conversation'
   )
+  const isMobile = useMedia('(max-width: 800px)')
   const participants = useQuery(
     'participants',
     async () =>
@@ -48,7 +49,12 @@ const ConversationList = () => {
     (part) => part.conversation.participants.length > 1
   )
 
-  if (!selected && filteredParticipants && filteredParticipants.length > 0) {
+  if (
+    !selected &&
+    filteredParticipants &&
+    filteredParticipants.length > 0 &&
+    !isMobile
+  ) {
     history.push(
       `/conversations/${
         lastConversation &&

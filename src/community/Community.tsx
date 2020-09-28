@@ -14,6 +14,8 @@ import { NewChannel } from './NewChannel'
 import { Settings } from './settings/Settings'
 import { getCommunity } from './remote'
 import { PrivateRoute } from '../authentication/PrivateRoute'
+import { useMedia } from 'react-use'
+import { Sidebar as MainSidebar } from '../sidebar/Sidebar'
 
 export interface CommunityResponse {
   id: string
@@ -115,6 +117,7 @@ export const Community = () => {
   const [count, forceRender] = useState<number>(0)
   const { id } = useParams<{ id: string }>()
   const { path } = useRouteMatch()
+  const isMobile = useMedia('(max-width: 800px)')
   const community = useQuery(['community', id, auth.token], getCommunity)
   if (!community.data) return <></>
   return community.data.channels.length <= 0 ? (
@@ -124,7 +127,7 @@ export const Community = () => {
     />
   ) : (
     <div className={styles.community} key={id}>
-      <Sidebar />
+      {!isMobile && <Sidebar />}
       <Suspense fallback={<Loader />}>
         <Switch>
           <PrivateRoute path={`${path}/settings`} component={Settings} exact />
@@ -133,10 +136,22 @@ export const Community = () => {
             component={Channel}
             exact
           />
-          <Redirect
-            path='*'
-            to={`/communities/${id}/channels/${community.data.channels[0].id}`}
-          />
+          {!isMobile ? (
+            <Redirect
+              path='*'
+              to={`/communities/${id}/channels/${community.data.channels[0].id}`}
+            />
+          ) : (
+            <PrivateRoute
+              path='*'
+              component={() => (
+                <>
+                  <MainSidebar />
+                  <Sidebar />
+                </>
+              )}
+            />
+          )}
         </Switch>
       </Suspense>
     </div>

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFileUpload } from '@fortawesome/pro-solid-svg-icons'
+import { faFileUpload, faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import { isUsername } from '../validations'
 import { useQuery, queryCache } from 'react-query'
 import { Auth } from '../authentication/state'
@@ -11,6 +11,7 @@ import { BarLoader } from 'react-spinners'
 import styles from './shared.module.scss'
 import Input from '../components/Input'
 import axios from 'axios'
+import { useMedia } from 'react-use'
 type profileFormData = { username: string; avatar: string; status: string }
 
 const validateProfile = (values: profileFormData) => {
@@ -29,7 +30,7 @@ type UserResponse = {
   status?: string
 }
 
-const Profile = () => {
+const Profile = ({ setPage }: { setPage: Function }) => {
   const { token, id } = Auth.useContainer()
   const user = useQuery(
     ['users', id],
@@ -44,9 +45,16 @@ const Profile = () => {
   )
   const input = useRef<any>(null)
   const [avatar, setAvatar] = useState(user.data?.avatar || '')
+  const isMobile = useMedia('(max-width: 800px)')
   return (
     <div className={styles.wrapper}>
-      <h2>Profile</h2>
+      <h2 onClick={() => isMobile && setPage('')}>
+        {' '}
+        {isMobile && (
+          <FontAwesomeIcon className={styles.backButton} icon={faChevronLeft} />
+        )}
+        Profile
+      </h2>
       <Formik
         initialValues={{
           username: user.data?.username || '',

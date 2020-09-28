@@ -10,6 +10,10 @@
   border: 0;
   height: 100%;
 
+  @media (max-width: 800px) {
+    width: 100%;
+  }
+
   h1,
   h2 {
     margin: 0;
