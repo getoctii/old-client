@@ -54,7 +54,7 @@ const Message = ({
           renderers={{
             link: (props) => {
               if (
-                /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(png|jpeg|jpg)/g.test(
+                /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(png|jpeg|jpg|gif)/g.test(
                   props.href
                 )
               )
@@ -71,7 +71,7 @@ const Message = ({
                       alt='chat'
                       src={
                         props.href.match(
-                          /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(png|jpeg|jpg)$/g
+                          /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(png|jpeg|jpg|gif)$/g
                         )?.[0]
                       }
                     />
