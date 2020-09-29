@@ -9,6 +9,7 @@ build:
   script:
     - echo "$NPMRC" > .npmrc
     - yarn install --frozen-lockfile
+    - export VERSION=`sentry-cli releases propose-version`
     - yarn build
   artifacts:
     paths:
