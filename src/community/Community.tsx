@@ -16,6 +16,7 @@ import { getCommunity } from './remote'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
 import { Sidebar as MainSidebar } from '../sidebar/Sidebar'
+import { Members } from './Members'
 
 export interface CommunityResponse {
   id: string
@@ -131,6 +132,7 @@ export const Community = () => {
       <Suspense fallback={<Loader />}>
         <Switch>
           <PrivateRoute path={`${path}/settings`} component={Settings} exact />
+          <PrivateRoute path={`${path}/members`} component={Members} exact />
           <PrivateRoute
             path={`${path}/channels/:channelID`}
             component={Channel}
