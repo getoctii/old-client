@@ -26,11 +26,15 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-infinite-scroller": "^1.2.1",
     "axios": "^0.20.0",
+    "emoji-dictionary": "^1.0.11",
+    "emoji-picker-react": "^3.2.4",
     "event-source-polyfill": "^1.0.20",
     "formik": "^2.1.5",
     "framer-motion": "^2.7.5",
     "jwt-decode": "^3.0.0-beta.2",
     "moment": "^2.29.0",
+    "patch-package": "^6.2.2",
+    "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.1.2",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.0.0",
@@ -79,6 +83,7 @@
   },
   "devDependencies": {
     "@types/jwt-decode": "^2.2.1",
+    "@types/react-beautiful-dnd": "^13.0.0",
     "@types/react-router-dom": "^5.1.5",
     "@welldone-software/why-did-you-render": "^4.3.2",
     "react-scripts-plugin-sentry": "^1.0.3"

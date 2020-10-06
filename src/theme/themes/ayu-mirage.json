@@ -9,5 +9,6 @@
   "text": "#fafafa",
   "danger": "#FF3333",
   "overground": "rgba(20, 25, 37, 0.5)",
-  "messageHover": "#020202"
+  "messageHover": "#020202",
+  "shadow": "0 2px 4px 0 rgba(0, 0, 0, 0.5)"
 }

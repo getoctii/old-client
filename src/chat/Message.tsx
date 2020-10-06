@@ -3,6 +3,8 @@ import styles from './Message.module.scss'
 import moment from 'moment'
 import ReactMarkdown from 'react-markdown'
 import { useMeasure } from 'react-use'
+// @ts-ignore
+import emoji from 'emoji-dictionary'
 
 const Message = ({
   children,

@@ -1,9 +1,16 @@
 import styles from './Chat.module.scss'
 import Button from '../components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFileUpload } from '@fortawesome/pro-solid-svg-icons'
+import {
+  faFileUpload,
+  faMask,
+  faSmileWink
+} from '@fortawesome/pro-solid-svg-icons'
 import React, { useRef, useState } from 'react'
 import { useInterval, useMedia } from 'react-use'
+// @ts-ignore
+import emoji from 'emoji-dictionary'
+import Picker from 'emoji-picker-react'
 
 const adjectives = [
   ' amazing',
@@ -19,7 +26,13 @@ const adjectives = [
   ' about Innatical'
 ]
 
-export default ({sendMessage, uploadFile}: {sendMessage: (msg: string) => void, uploadFile: (file: File) => void}) => {
+export default ({
+  sendMessage,
+  uploadFile
+}: {
+  sendMessage: (msg: string) => void
+  uploadFile: (file: File) => void
+}) => {
   const isMobile = useMedia('(max-width: 800px)')
   const [adjective, setAdjectives] = useState(
     adjectives[Math.floor(Math.random() * adjectives.length)]
@@ -29,14 +42,19 @@ export default ({sendMessage, uploadFile}: {sendMessage: (msg: string) => void, 
   }, 30000)
   const uploadInput = useRef<HTMLInputElement>(null)
   const [message, setMessage] = useState('')
-
+  const [emojiPicker, setEmojiPicker] = useState(false)
   return (
     <div className={styles.box}>
       <form
         onSubmit={(event) => {
           event.preventDefault()
           if (message !== '') {
-            sendMessage(message)
+            sendMessage(
+              message.replace(
+                /:\w+:/gi,
+                (name: string) => emoji.getUnicode(name) ?? name
+              )
+            )
             setMessage('')
           }
         }}
@@ -60,6 +78,11 @@ export default ({sendMessage, uploadFile}: {sendMessage: (msg: string) => void, 
             await uploadFile(event.target.files?.item(0) as any)
           }}
         />
+      </Button>
+      {/* BRUh do they not have a fucking style or className BRUh */}
+      {emojiPicker && <Picker onEmojiClick={() => {}} />}
+      <Button type='button' onClick={() => setEmojiPicker(!emojiPicker)}>
+        <FontAwesomeIcon icon={faSmileWink} />
       </Button>
     </div>
   )

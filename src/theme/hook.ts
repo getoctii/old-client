@@ -15,6 +15,7 @@ interface Theme {
   danger: string
   overground: string
   messageHover: string
+  shadow: string
   global?: string
 }
 
@@ -36,6 +37,7 @@ const useTheme = () => {
     documentStyle.setProperty('--neko-danger', theme.danger)
     documentStyle.setProperty('--neko-overground', theme.overground)
     documentStyle.setProperty('--neko-message-hover', theme.messageHover)
+    documentStyle.setProperty('--neko-shadow', theme.shadow)
     globalStyle.textContent = theme.global ?? ''
   }, [theme])
   return { theme, setTheme }
