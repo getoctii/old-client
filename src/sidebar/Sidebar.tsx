@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './Sidebar.module.scss'
 import { UI } from '../uiStore'
 import { Auth } from '../authentication/state'
@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserCog, faInbox, faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Button from '../components/Button'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
 type UserResponse = {
   id: string
@@ -25,6 +26,63 @@ type MembersResponse = {
     large: boolean
   }
 }[]
+
+const reorder = (list: any, startIndex: number, endIndex: number): any => {
+  const result = Array.from(list)
+  const [removed] = result.splice(startIndex, 1)
+  result.splice(endIndex, 0, removed)
+
+  return result
+}
+
+const Community = ({
+  community,
+  index
+}: {
+  community: {
+    id: string
+    name: string
+    icon?: string
+    large: boolean
+  }
+  index: number
+}) => {
+  const match = useRouteMatch<{
+    tab?: string
+    id?: string
+  }>('/:tab/:id')
+  const history = useHistory()
+  return (
+    <Draggable draggableId={community.id} index={index}>
+      {(provided) => (
+        <Button
+          type='button'
+          key={community.id}
+          style={{}}
+          className={
+            match?.params.tab === 'communities' &&
+            match.params.id === community.id
+              ? `${styles.icon} ${styles.selected}`
+              : styles.icon
+          }
+          // this is hacky, lmao
+          props={{
+            ref: provided.innerRef,
+            ...provided.draggableProps,
+            ...provided.dragHandleProps,
+            style: {
+              ...provided.draggableProps.style,
+              backgroundImage: `url(${community.icon})`
+            }
+          }}
+          onClick={() => {
+            return history.push(`/communities/${community.id}`)
+          }}
+        />
+      )}
+    </Draggable>
+  )
+}
 
 export const Sidebar = () => {
   const ui = UI.useContainer()
@@ -55,6 +113,9 @@ export const Sidebar = () => {
           }
         })
       ).data
+  )
+  const [communitiesList, setCommunitiesList] = useState(
+    communities?.data || []
   )
   return (
     <div className={styles.sidebar}>
@@ -89,25 +150,38 @@ export const Sidebar = () => {
         <FontAwesomeIcon className={styles.symbol} icon={faPlus} size='2x' />
       </Button>
       <div className={styles.separator} />
-      {communities.data?.map((member) => {
-        const community = member.community
-        return (
-          <Button
-            type='button'
-            key={community.id}
-            style={{ backgroundImage: `url(${community.icon})` }}
-            className={
-              match?.params.tab === 'communities' &&
-              match.params.id === community.id
-                ? `${styles.icon} ${styles.selected}`
-                : styles.icon
-            }
-            onClick={() => {
-              return history.push(`/communities/${community.id}`)
-            }}
-          />
-        )
-      })}
+      <DragDropContext
+        onDragEnd={(result) => {
+          if (
+            !result.destination ||
+            result.destination.index === result.source.index
+          )
+            return
+          const items = reorder(
+            communities.data || [],
+            result.source.index,
+            result.destination.index
+          )
+          setCommunitiesList(items)
+        }}
+      >
+        <Droppable droppableId='list'>
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {communitiesList.map((member, index) => {
+                return (
+                  <Community
+                    key={member.community.id}
+                    community={member.community}
+                    index={index}
+                  />
+                )
+              })}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
       <br />
     </div>
   )

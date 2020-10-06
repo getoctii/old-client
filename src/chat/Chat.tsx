@@ -28,15 +28,7 @@ interface Message {
   content: string
 }
 
-const Chat = ({
-  channelID,
-  title,
-  status
-}: {
-  channelID: string
-  title: string
-  status?: string
-}) => {
+const Messages = ({ channelID }: { channelID: string }) => {
   const { token } = Auth.useContainer()
   const fetchMessages = async (_: string, channel: string, date: string) => {
     return (
@@ -56,16 +48,6 @@ const Chat = ({
     }
   )
   const messages = data?.flat().reverse()
-  const [sendMessage] = useMutation(
-    async (content: string) =>
-      (
-        await clientGateway.post(
-          `/channels/${channelID}/messages`,
-          new URLSearchParams({ content }),
-          { headers: { Authorization: token } }
-        )
-      ).data
-  )
 
   const isPrimary = (message: Message, index: number) => {
     return !(
@@ -90,6 +72,94 @@ const Chat = ({
 
   useEffect(autoScroll)
 
+  const resizeCallback = () => autoScroll()
+  return (
+    <div className={styles.messages} ref={ref}>
+      {!loading && canFetchMore ? (
+        <Waypoint
+          bottomOffset={20}
+          onEnter={async () => {
+            try {
+              if (!ref.current || !ref.current.scrollHeight) return
+              setLoading(true)
+              const oldHeight = ref.current.scrollHeight
+              const oldTop = ref.current.scrollTop
+              await fetchMore()
+              ref.current.scrollTop = ref?.current?.scrollHeight
+                ? ref.current.scrollHeight - oldHeight + oldTop
+                : 0
+            } finally {
+              setLoading(false)
+            }
+          }}
+        />
+      ) : (
+        <></>
+      )}
+      {loading && (
+        <div key='loader' className={styles.loader}>
+          <h5>Loading more...</h5>
+        </div>
+      )}
+      {!canFetchMore ? (
+        <div key='header' className={styles.top}>
+          <h3>
+            Woah, you reached the top of the chat. Here's a cookie{' '}
+            <span role='img' aria-label='Cookie'>
+              🍪
+            </span>
+          </h3>
+        </div>
+      ) : (
+        <></>
+      )}
+      {messages?.map((message, index) =>
+        message ? (
+          <Message
+            key={message.id}
+            primary={isPrimary(message, index)}
+            avatar={message.author.avatar}
+            timestamp={message.created_at}
+            author={message.author.username}
+            onresize={resizeCallback}
+          >
+            {message.content}
+          </Message>
+        ) : (
+          <></>
+        )
+      )}
+      <Waypoint
+        onEnter={() => setTracking(true)}
+        onLeave={() => setTracking(false)}
+      />
+      <div key='buffer' className={styles.buffer} />
+    </div>
+  )
+}
+
+const Chat = ({
+  channelID,
+  title,
+  status
+}: {
+  channelID: string
+  title: string
+  status?: string
+}) => {
+  const { token } = Auth.useContainer()
+
+  const [sendMessage] = useMutation(
+    async (content: string) =>
+      (
+        await clientGateway.post(
+          `/channels/${channelID}/messages`,
+          new URLSearchParams({ content }),
+          { headers: { Authorization: token } }
+        )
+      ).data
+  )
+
   const isMobile = useMedia('(max-width: 800px)')
   const history = useHistory()
 
@@ -107,7 +177,6 @@ const Chat = ({
     onFiles: (files) => uploadFile(files[0])
   })
 
-  const resizeCallback = () => autoScroll()
   return (
     <Suspense fallback={<Loader />}>
       <div className={styles.chat} {...bond}>
@@ -124,68 +193,8 @@ const Chat = ({
           {title}
           <p className={styles.status}>{status}</p>
         </div>
-        <div className={styles.messages} ref={ref}>
-          {!loading && canFetchMore ? (
-            <Waypoint
-              bottomOffset={20}
-              onEnter={async () => {
-                try {
-                  if (!ref.current || !ref.current.scrollHeight) return
-                  setLoading(true)
-                  const oldHeight = ref.current.scrollHeight
-                  const oldTop = ref.current.scrollTop
-                  await fetchMore()
-                  ref.current.scrollTop = ref?.current?.scrollHeight
-                    ? ref.current.scrollHeight - oldHeight + oldTop
-                    : 0
-                } finally {
-                  setLoading(false)
-                }
-              }}
-            />
-          ) : (
-            <></>
-          )}
-          {loading && (
-            <div key='loader' className={styles.loader}>
-              <h5>Loading more...</h5>
-            </div>
-          )}
-          {!canFetchMore ? (
-            <div key='header' className={styles.top}>
-              <h3>
-                Woah, you reached the top of the chat. Here's a cookie{' '}
-                <span role='img' aria-label='Cookie'>
-                  🍪
-                </span>
-              </h3>
-            </div>
-          ) : (
-            <></>
-          )}
-          {messages?.map((message, index) =>
-            message ? (
-              <Message
-                key={message.id}
-                primary={isPrimary(message, index)}
-                avatar={message.author.avatar}
-                timestamp={message.created_at}
-                author={message.author.username}
-                onresize={resizeCallback}
-              >
-                {message.content}
-              </Message>
-            ) : (
-              <></>
-            )
-          )}
-          <Waypoint
-            onEnter={() => setTracking(true)}
-            onLeave={() => setTracking(false)}
-          />
-          <div key='buffer' className={styles.buffer} />
-        </div>
-        <Box {...{sendMessage, uploadFile}}/>
+        <Messages channelID={channelID} />
+        <Box {...{ sendMessage, uploadFile }} />
       </div>
     </Suspense>
   )

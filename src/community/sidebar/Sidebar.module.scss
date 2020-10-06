@@ -26,6 +26,10 @@
   padding: 1.5rem;
   overflow-y: scroll;
   flex: 1;
+
+  .container {
+    position: relative;
+  }
 }
 
 .contextMenu {
@@ -76,6 +80,46 @@
   border-bottom-right-radius: 10px;
 }
 
-.leave {
-  color: var(--neko-danger);
+.menu {
+  position: absolute;
+  width: 100%;
+  background: var(--neko-background);
+  border-radius: 10px;
+  box-shadow: var(--neko-shadow);
+
+  .menuItem {
+    cursor: pointer;
+    margin-top: 0.7rem;
+    margin-left: 0.7rem;
+    margin-right: 0.7rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    background: var(--neko-foreground);
+
+    svg {
+      margin-left: auto;
+    }
+
+    &:last-child {
+      margin-top: 0.3rem;
+      margin-bottom: 0.7rem;
+
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    &:first-child {
+      margin-top: 0.7rem;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+  }
+
+  .danger {
+    background: var(--neko-danger);
+    color: var(--neko-text);
+  }
 }

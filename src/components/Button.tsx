@@ -10,7 +10,8 @@ const Button = ({
   type,
   disabled = false,
   className,
-  style
+  style,
+  props
 }: {
   children?: React.ReactNode
   onClick?: OnClick
@@ -18,6 +19,7 @@ const Button = ({
   disabled?: boolean
   className?: string
   style?: CSSProperties
+  props?: any
 }) => {
   return (
     <motion.button
@@ -38,6 +40,7 @@ const Button = ({
       className={className ? `${className} ${styles.button}` : styles.button}
       onClick={onClick}
       style={style}
+      {...props}
     >
       {children}
     </motion.button>

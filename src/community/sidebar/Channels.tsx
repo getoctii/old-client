@@ -1,9 +1,10 @@
 import {
   faPlus,
   faHashtag,
-  faPencilAlt,
   faCopy,
-  faTrashAlt
+  faTrashAlt,
+  faBellSlash,
+  faBell
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
@@ -18,6 +19,7 @@ import { NewChannel } from '../NewChannel'
 import { Confirmation } from '../../components/Confirmation'
 import { useMutation } from 'react-query'
 import { clientGateway } from '../../constants'
+import { useLocalStorage } from 'react-use'
 
 export const Channels = ({ community }: { community?: CommunityResponse }) => {
   const auth = Auth.useContainer()
@@ -25,6 +27,10 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
     '/communities/:id/channels/:channelID'
   )
   const history = useHistory()
+  const [mutedChannels, setMutedChannels] = useLocalStorage<string[]>(
+    'muted_channels',
+    []
+  )
   const [showCreate, setShowCreate] = useState(false)
   const [showDelete, setShowDelete] = useState<string | undefined>(undefined)
   const [deleteChannel] = useMutation(
@@ -95,6 +101,13 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
                   <h4>
                     <FontAwesomeIcon icon={faHashtag} fixedWidth={true} />
                     {channel.name}
+                    {mutedChannels?.includes(channel.id) && (
+                      <FontAwesomeIcon
+                        className={styles.muted}
+                        icon={faBellSlash}
+                        fixedWidth
+                      />
+                    )}
                   </h4>
                 </motion.div>
               </ContextMenuTrigger>
@@ -103,16 +116,40 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
                 id={`channel-${channel.id}`}
                 className={styles.contextMenu}
               >
-                {community.owner_id === auth.id && (
-                  <MenuItem key={`edit-${channel.id}`}>
-                    Edit Channel{' '}
-                    <FontAwesomeIcon
-                      style={{ float: 'right' }}
-                      fixedWidth={true}
-                      icon={faPencilAlt}
-                    />
-                  </MenuItem>
-                )}
+                <MenuItem
+                  key={`mute-${channel.id}`}
+                  onClick={() => {
+                    if (!channel.id) return
+                    if (mutedChannels?.includes(channel.id))
+                      setMutedChannels(
+                        mutedChannels.filter(
+                          (channels) => channels !== channel.id
+                        )
+                      )
+                    else
+                      setMutedChannels([...(mutedChannels || []), channel.id])
+                  }}
+                >
+                  {mutedChannels?.includes(channel.id) ? (
+                    <>
+                      Unmute Channel{' '}
+                      <FontAwesomeIcon
+                        icon={faBellSlash}
+                        fixedWidth={true}
+                        style={{ float: 'right' }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      Mute Channel{' '}
+                      <FontAwesomeIcon
+                        icon={faBell}
+                        fixedWidth={true}
+                        style={{ float: 'right' }}
+                      />
+                    </>
+                  )}
+                </MenuItem>
                 <MenuItem
                   key={`copy-${channel.id}`}
                   onClick={() => {

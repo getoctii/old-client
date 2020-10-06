@@ -6,6 +6,7 @@ import { EventSourcePolyfill } from 'event-source-polyfill'
 import { CLIENT_GATEWAY_URL } from './constants'
 import { Plugins, HapticsNotificationType } from '@capacitor/core'
 import { isPlatform } from '@ionic/react'
+import { useLocalStorage } from 'react-use'
 
 const { Haptics, Toast, LocalNotifications } = Plugins
 
@@ -27,12 +28,15 @@ interface Message {
   created_at: string
   updated_at: string
   content: string
+  community_id?: string
   community_name?: string
   channel_name?: string
 }
 
 const EventSource = () => {
   const { token, id } = Auth.useContainer()
+  const [mutedCommunities] = useLocalStorage<string[]>('muted_communities', [])
+  const [mutedChannels] = useLocalStorage<string[]>('muted_channels', [])
   useEffect(() => {
     if (!token || !id) return
     const eventSource = new EventSourcePolyfill(
@@ -50,7 +54,14 @@ const EventSource = () => {
 
     eventSource.addEventListener('NEW_MESSAGE', async (e: any) => {
       const message = JSON.parse(e.data) as Message
+
       if (message.author.id !== id) {
+        if (
+          (message.community_id &&
+            mutedCommunities?.includes(message.community_id)) ||
+          mutedChannels?.includes(message.channel_id)
+        )
+          return
         if (isPlatform('capacitor')) {
           Haptics.notification({
             type: HapticsNotificationType.SUCCESS
@@ -181,7 +192,7 @@ const EventSource = () => {
     return () => {
       eventSource.close()
     }
-  }, [token, id])
+  }, [token, id, mutedCommunities, mutedChannels])
 
   return <></>
 }

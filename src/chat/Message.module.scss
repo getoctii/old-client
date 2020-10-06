@@ -19,10 +19,11 @@
   }
 
   p {
-    user-select: text;
     margin: 0;
     font-size: 1rem;
     font-weight: 400;
+    // welp doesn't do what i hoped it does
+    // well it works, but i think we would need to put it on the message div not the p tag
   }
 }
 
@@ -43,9 +44,10 @@
 }
 
 .content {
+  user-select: text;
   margin-left: 1rem;
   overflow: hidden;
-  width: 100%;
+  width: fit-content;
 
   a {
     color: var(--neko-primary);

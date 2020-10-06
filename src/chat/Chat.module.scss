@@ -56,6 +56,35 @@
     display: none;
   }
 
+  aside {
+    border-radius: 10px !important;
+    position: absolute !important;
+    z-index: 10;
+    bottom: 5.5rem;
+    right: 2rem;
+    box-shadow: var(--neko-shadow) !important;
+    border: none !important;
+    color: var(--neko-text) !important;
+    background-color: var(--neko-foreground) !important;
+
+    input {
+      background-color: var(--neko-background);
+      border: none !important;
+      color: var(--neko-text);
+    }
+    ul::before {
+      background: var(--neko-foreground) !important;
+      color: var(--neko-text) !important;
+    }
+
+    button {
+      color: var(--neko-text) !important;
+    }
+    button:first-child {
+      margin-left: 0;
+    }
+  }
+
   form {
     display: flex;
     width: 100%;
