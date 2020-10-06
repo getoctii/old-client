@@ -4489,10 +4489,9 @@ emoji-names@^1.0.1:
   dependencies:
     emoji-name-map "^1.0.0"
 
-emoji-picker-react@^3.2.4:
+emoji-picker-react@lleyton/emoji-picker-react:
   version "3.2.4"
-  resolved "https://registry.yarnpkg.com/emoji-picker-react/-/emoji-picker-react-3.2.4.tgz#04eb0f9aa9683300b402efe2a0fc9156d8fac394"
-  integrity sha512-X9AESw1olo73kWBS25hlBcr5GQltHI6kZueV11bR5NJrrG/Dt8TrMbhSMSngs4rMxeAoVT04ST9ixI1KxPThJg==
+  resolved "https://codeload.github.com/lleyton/emoji-picker-react/tar.gz/6d8cf38dac1200488d99c41a0b9470d3eaf4fe8c"
 
 emoji-regex@^7.0.1, emoji-regex@^7.0.2:
   version "7.0.3"

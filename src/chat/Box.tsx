@@ -1,11 +1,7 @@
 import styles from './Chat.module.scss'
 import Button from '../components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faFileUpload,
-  faMask,
-  faSmileWink
-} from '@fortawesome/pro-solid-svg-icons'
+import { faFileUpload, faSmileWink } from '@fortawesome/pro-solid-svg-icons'
 import React, { useRef, useState } from 'react'
 import { useInterval, useMedia } from 'react-use'
 // @ts-ignore
@@ -79,11 +75,19 @@ export default ({
           }}
         />
       </Button>
-      {/* BRUh do they not have a fucking style or className BRUh */}
-      {emojiPicker && <Picker onEmojiClick={() => {}} />}
-      <Button type='button' onClick={() => setEmojiPicker(!emojiPicker)}>
-        <FontAwesomeIcon icon={faSmileWink} />
-      </Button>
+      {emojiPicker && (
+        <Picker
+          onEmojiClick={(event, data) =>
+            setMessage(message ? `${message} ${data.emoji}` : data.emoji)
+          }
+          native
+        />
+      )}
+      {!isMobile && (
+        <Button type='button' onClick={() => setEmojiPicker(!emojiPicker)}>
+          <FontAwesomeIcon icon={faSmileWink} />
+        </Button>
+      )}
     </div>
   )
 }

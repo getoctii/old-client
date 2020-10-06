@@ -36,10 +36,7 @@ interface Message {
 const EventSource = () => {
   const { token, id } = Auth.useContainer()
   const [mutedCommunities] = useLocalStorage<string[]>('muted_communities', [])
-  const [mutedChannels, setMutedChannels] = useLocalStorage<string[]>(
-    'muted_channels',
-    []
-  )
+  const [mutedChannels] = useLocalStorage<string[]>('muted_channels', [])
   useEffect(() => {
     if (!token || !id) return
     const eventSource = new EventSourcePolyfill(
@@ -195,7 +192,7 @@ const EventSource = () => {
     return () => {
       eventSource.close()
     }
-  }, [token, id])
+  }, [token, id, mutedCommunities, mutedChannels])
 
   return <></>
 }

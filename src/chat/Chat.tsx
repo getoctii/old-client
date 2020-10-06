@@ -48,16 +48,6 @@ const Messages = ({ channelID }: { channelID: string }) => {
     }
   )
   const messages = data?.flat().reverse()
-  const [sendMessage] = useMutation(
-    async (content: string) =>
-      (
-        await clientGateway.post(
-          `/channels/${channelID}/messages`,
-          new URLSearchParams({ content }),
-          { headers: { Authorization: token } }
-        )
-      ).data
-  )
 
   const isPrimary = (message: Message, index: number) => {
     return !(
@@ -82,8 +72,6 @@ const Messages = ({ channelID }: { channelID: string }) => {
 
   useEffect(autoScroll)
 
-  const isMobile = useMedia('(max-width: 800px)')
-  const history = useHistory()
   const resizeCallback = () => autoScroll()
   return (
     <div className={styles.messages} ref={ref}>

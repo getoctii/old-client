@@ -1,7 +1,6 @@
 import {
   faPlus,
   faHashtag,
-  faPencilAlt,
   faCopy,
   faTrashAlt,
   faBellSlash,

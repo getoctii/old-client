@@ -70,12 +70,16 @@
     input {
       background-color: var(--neko-background);
       border: none !important;
+      color: var(--neko-text);
     }
     ul::before {
       background: var(--neko-foreground) !important;
       color: var(--neko-text) !important;
     }
 
+    button {
+      color: var(--neko-text) !important;
+    }
     button:first-child {
       margin-left: 0;
     }

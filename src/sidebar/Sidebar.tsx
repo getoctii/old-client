@@ -9,7 +9,6 @@ import { faUserCog, faInbox, faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Button from '../components/Button'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { CommunityResponse } from '../community/remote'
 
 type UserResponse = {
   id: string
@@ -66,6 +65,7 @@ const Community = ({
               ? `${styles.icon} ${styles.selected}`
               : styles.icon
           }
+          // this is hacky, lmao
           props={{
             ref: provided.innerRef,
             ...provided.draggableProps,

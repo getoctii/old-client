@@ -2,8 +2,7 @@ import {
   faBell,
   faBellSlash,
   faEllipsisH,
-  faHouseLeave,
-  faShare
+  faHouseLeave
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Integrations } from './Integrations'

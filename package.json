@@ -27,7 +27,7 @@
     "@types/react-infinite-scroller": "^1.2.1",
     "axios": "^0.20.0",
     "emoji-dictionary": "^1.0.11",
-    "emoji-picker-react": "^3.2.4",
+    "emoji-picker-react": "lleyton/emoji-picker-react",
     "event-source-polyfill": "^1.0.20",
     "formik": "^2.1.5",
     "framer-motion": "^2.7.5",
