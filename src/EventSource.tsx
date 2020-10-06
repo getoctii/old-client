@@ -27,6 +27,8 @@ interface Message {
   created_at: string
   updated_at: string
   content: string
+  community_name?: string
+  channel_name?: string
 }
 
 const EventSource = () => {
@@ -58,18 +60,33 @@ const EventSource = () => {
           text: `${message.author.username}: ${message.content}`
         })
         if (window.inntronNotify) {
-          window.inntronNotify(message.author.username, message.content)
+          window.inntronNotify(
+            `${
+              message.community_name
+                ? message.community_name
+                : message.author.username
+            }${message.channel_name ? ` #${message.channel_name}` : ''}`,
+            `${message.community_name ? `${message.author.username}: ` : ''}${
+              message.content
+            }`
+          )
         } else {
           try {
             LocalNotifications.schedule({
               notifications: [
                 {
-                  title: message.author.username,
-                  body: message.content,
+                  title: `${
+                    message.community_name
+                      ? message.community_name
+                      : message.author.username
+                  }${message.channel_name ? ` #${message.channel_name}` : ''}`,
+                  body: `${
+                    message.community_name ? `${message.author.username}: ` : ''
+                  }${message.content}`,
                   id: 1
                 }
               ]
-            }).catch(() => console.warn('Failed to send notification'))
+            })
           } catch {
             console.warn('Failed to send notification')
           }
