@@ -1,11 +1,10 @@
-import { faBoxOpen, faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
+import { faBoxOpen } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AnimatePresence, motion } from 'framer-motion'
 import moment from 'moment'
 import React, { Suspense, useRef, useState } from 'react'
 import { useInfiniteQuery } from 'react-query'
-import { useHistory, useParams } from 'react-router-dom'
-import { useMedia } from 'react-use'
+import { useParams } from 'react-router-dom'
 import { Waypoint } from 'react-waypoint'
 import { Auth } from '../authentication/state'
 import Loader from '../components/Loader'
@@ -74,9 +73,6 @@ export const Members = () => {
 
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
-
-  const isMobile = useMedia('(max-width: 800px)')
-  const history = useHistory()
 
   return (
     <Suspense fallback={<Loader />}>

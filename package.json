@@ -33,6 +33,7 @@
     "moment": "^2.29.0",
     "prettier": "^2.1.2",
     "react": "^16.13.1",
+    "react-beautiful-dnd": "^13.0.0",
     "react-contextmenu": "^2.14.0",
     "react-dom": "^16.13.1",
     "react-error-boundary": "^3.0.2",
