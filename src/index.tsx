@@ -37,6 +37,8 @@ Octii-chan and Lleyton
 
 P.S. If you do know what you're doing, maybe you should join us :P.
 lleyton@innatical.com
+
+P.P.S. Thanks to https://twitter.com/TheDragonGirl24 for the amazing art!
 `,
   'font-size: 18px; font-family: Inter, sans-serif; font-weight: 600'
 )
