@@ -20,7 +20,7 @@ import Typing from './typing'
 Sentry.init({
   dsn:
     'https://ed58056045ea4fb599148359fa30aac0@o271654.ingest.sentry.io/5400867',
-  release: 'neko-client@' + process.env.REACT_APP_VERSION
+  release: process.env.REACT_APP_VERSION
 })
 
 console.log(
