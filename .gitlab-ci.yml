@@ -6,6 +6,8 @@ cache:
 
 build:
   stage: build
+  before_script:
+    - curl -sL https://sentry.io/get-cli/ | bash
   script:
     - echo "$NPMRC" > .npmrc
     - yarn install --frozen-lockfile
