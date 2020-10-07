@@ -39,7 +39,7 @@ lleyton@innatical.com
 Sentry.init({
   dsn:
     'https://ed58056045ea4fb599148359fa30aac0@o271654.ingest.sentry.io/5400867',
-  release: process.env.VERSION ?? undefined
+  release: process.env.REACT_APP_VERSION ?? undefined
 })
 
 LocalNotifications.requestPermission().catch(() =>
