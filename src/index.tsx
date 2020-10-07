@@ -18,6 +18,24 @@ import { LocalNotifications } from '@capacitor/core'
 import Theme from './theme/hook'
 import Typing from './typing'
 
+console.log(
+  '%c+',
+  `background: url("https://file.coffee/u/wkV2Mrh7bl.png"); background-size: 500px 696px; color: transparent; font-size: 1px; padding: 348px 250px; line-height: 696px;`
+)
+console.log(
+  `%cHey!
+
+If anyone told you to paste something here, they're deceiving you. Anything pasted here has access to your account. Thank you for using Octii!
+
+With love,
+Octii-chan and Lleyton
+
+P.S. If you do know what you're doing, maybe you should join us :P.
+lleyton@innatical.com
+`,
+  'font-size: 18px; font-family: Inter, sans-serif; font-weight: 600'
+)
+
 Sentry.init({
   dsn:
     'https://ed58056045ea4fb599148359fa30aac0@o271654.ingest.sentry.io/5400867',
