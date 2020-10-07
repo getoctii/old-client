@@ -8,7 +8,6 @@ import { Router } from './Router'
 import { ReactQueryDevtools } from 'react-query-devtools'
 import { Auth } from './authentication/state'
 import { queryCache, ReactQueryConfigProvider } from 'react-query'
-import { ErrorBoundary } from 'react-error-boundary'
 import Loader from './components/Loader'
 import Error from './components/Error'
 import EventSource from './EventSource'
@@ -17,6 +16,12 @@ import * as Sentry from '@sentry/react'
 import { LocalNotifications } from '@capacitor/core'
 import Theme from './theme/hook'
 import Typing from './typing'
+
+Sentry.init({
+  dsn:
+    'https://ed58056045ea4fb599148359fa30aac0@o271654.ingest.sentry.io/5400867',
+  release: 'neko-client@' + process.env.REACT_APP_VERSION
+})
 
 console.log(
   '%c+',
@@ -36,12 +41,6 @@ lleyton@innatical.com
   'font-size: 18px; font-family: Inter, sans-serif; font-weight: 600'
 )
 
-Sentry.init({
-  dsn:
-    'https://ed58056045ea4fb599148359fa30aac0@o271654.ingest.sentry.io/5400867',
-  release: process.env.REACT_APP_VERSION
-})
-
 LocalNotifications.requestPermission().catch(() =>
   console.warn('Notifications not supported')
 )
@@ -59,10 +58,10 @@ ReactDOM.render(
         }
       }}
     >
-      <ErrorBoundary
+      <Sentry.ErrorBoundary
         onReset={() => queryCache.resetErrorBoundaries()}
-        fallbackRender={({ resetErrorBoundary }) => (
-          <Error resetErrorBoundary={resetErrorBoundary} />
+        fallback={({ resetError }) => (
+          <Error resetErrorBoundary={resetError} />
         )}
       >
         <React.Suspense fallback={<Loader />}>
@@ -79,7 +78,7 @@ ReactDOM.render(
           </Auth.Provider>
           <ReactQueryDevtools />
         </React.Suspense>
-      </ErrorBoundary>
+      </Sentry.ErrorBoundary>
     </ReactQueryConfigProvider>
   </React.StrictMode>,
   document.getElementById('root')
