@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from './Sidebar.module.scss'
 import { UI } from '../uiStore'
 import { Auth } from '../authentication/state'
@@ -114,9 +114,15 @@ export const Sidebar = () => {
         })
       ).data
   )
+  // oh that was a thing workaround for whats its face uh uhhhhh DRAG and drop yes
+  // i didn't know how we could do this so i just copied what they did lmao use effect
+  // we need 404 or redirects for when u visit an invaild ID instead of just crashing
   const [communitiesList, setCommunitiesList] = useState(
     communities?.data || []
   )
+  useEffect(() => {
+    setCommunitiesList(communities?.data || [])
+  }, [communities])
   return (
     <div className={styles.sidebar}>
       <Button
