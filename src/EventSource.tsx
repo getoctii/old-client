@@ -7,6 +7,7 @@ import { CLIENT_GATEWAY_URL } from './constants'
 import { Plugins, HapticsNotificationType } from '@capacitor/core'
 import { isPlatform } from '@ionic/react'
 import { useLocalStorage } from 'react-use'
+import Typing from './typing'
 
 const { Haptics, Toast, LocalNotifications } = Plugins
 
@@ -35,6 +36,7 @@ interface Message {
 
 const EventSource = () => {
   const { token, id } = Auth.useContainer()
+  const { startTyping, stopTyping } = Typing.useContainer()
   const [mutedCommunities] = useLocalStorage<string[]>('muted_communities', [])
   const [mutedChannels] = useLocalStorage<string[]>('muted_channels', [])
   useEffect(() => {
@@ -110,6 +112,8 @@ const EventSource = () => {
           return initial
         } else return initial
       })
+
+      stopTyping(message.channel_id, message.author.id)
     })
 
     eventSource.addEventListener('NEW_PARTICIPANT', (e: any) => {
@@ -189,10 +193,20 @@ const EventSource = () => {
       )
     })
 
+    eventSource.addEventListener('TYPING', (e: any) => {
+      // no idea what typing event sends
+      const event = JSON.parse(e.data) as {
+        channel_id: string
+        user_id: string
+        username: string
+      }
+      startTyping(event.channel_id, event.user_id, event.username)
+    })
+
     return () => {
       eventSource.close()
     }
-  }, [token, id, mutedCommunities, mutedChannels])
+  }, [token, id, mutedCommunities, mutedChannels, startTyping, stopTyping])
 
   return <></>
 }

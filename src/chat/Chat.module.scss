@@ -1,4 +1,5 @@
 .chat {
+  position: relative;
   padding-bottom: 0;
   font-size: 1.3125rem;
   font-weight: 700;
@@ -138,6 +139,16 @@
 .backButton {
   margin-right: 1rem;
   color: var(--neko-primary);
+}
+
+.typing {
+  position: absolute;
+  font-weight: 500;
+  font-size: 0.8rem;
+  padding: 0;
+  margin: 0;
+  bottom: 0.5rem;
+  left: 2rem;
 }
 
 .status {

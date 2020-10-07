@@ -14,6 +14,7 @@ import { useMedia } from 'react-use'
 import { useHistory } from 'react-router-dom'
 import axios from 'axios'
 import Box from './Box'
+import Typing from '../typing'
 
 interface Message {
   id: string
@@ -138,6 +139,31 @@ const Messages = ({ channelID }: { channelID: string }) => {
   )
 }
 
+const TypingIndicator = ({ channelID }: { channelID: string }) => {
+  const { id } = Auth.useContainer()
+  const { typing } = Typing.useContainer()
+  const users = typing[channelID]
+    ?.filter((userID) => userID[0] !== id)
+    .map((t) => t[1])
+  if (users?.length > 0)
+    return (
+      <p className={styles.typing}>
+        {users?.length === 1
+          ? `${users[0]} is typing...`
+          : users?.length === 2
+          ? `${users.join(' and ')} are typing...`
+          : users?.length > 2
+          ? `${users.slice(-1).join(', ')} and ${
+              users[users.length - 1]
+            } are typing...`
+          : users?.length > 3
+          ? 'A lot of people are typing...'
+          : ''}
+      </p>
+    )
+  else return <></>
+}
+
 const Chat = ({
   channelID,
   title,
@@ -148,7 +174,6 @@ const Chat = ({
   status?: string
 }) => {
   const { token } = Auth.useContainer()
-
   const [sendMessage] = useMutation(
     async (content: string) =>
       (
@@ -173,6 +198,16 @@ const Chat = ({
     await sendMessage(response.data.url)
   }
 
+  const postTyping = async (msg: string) => {
+    if (msg.length > 0) {
+      clientGateway.post(`/channels/${channelID}/typing`, undefined, {
+        headers: {
+          Authorization: token
+        }
+      })
+    }
+  }
+
   const [bond] = useDropArea({
     onFiles: (files) => uploadFile(files[0])
   })
@@ -194,7 +229,8 @@ const Chat = ({
           <p className={styles.status}>{status}</p>
         </div>
         <Messages channelID={channelID} />
-        <Box {...{ sendMessage, uploadFile }} />
+        <Box {...{ sendMessage, uploadFile, postTyping }} />
+        <TypingIndicator channelID={channelID} />
       </div>
     </Suspense>
   )
