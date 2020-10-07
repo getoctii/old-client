@@ -60,8 +60,8 @@ ReactDOM.render(
     >
       <Sentry.ErrorBoundary
         onReset={() => queryCache.resetErrorBoundaries()}
-        fallback={({ resetErrorBoundary }) => (
-          <Error resetErrorBoundary={resetErrorBoundary} />
+        fallback={({ resetError }) => (
+          <Error resetErrorBoundary={resetError} />
         )}
       >
         <React.Suspense fallback={<Loader />}>
