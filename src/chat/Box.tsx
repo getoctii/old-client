@@ -2,7 +2,7 @@ import styles from './Chat.module.scss'
 import Button from '../components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileUpload, faSmileWink } from '@fortawesome/pro-solid-svg-icons'
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { useInterval, useMedia } from 'react-use'
 // @ts-ignore
 import emoji from 'emoji-dictionary'
@@ -24,10 +24,12 @@ const adjectives = [
 
 export default ({
   sendMessage,
-  uploadFile
+  uploadFile,
+  postTyping
 }: {
   sendMessage: (msg: string) => void
   uploadFile: (file: File) => void
+  postTyping: (msg: string) => void
 }) => {
   const isMobile = useMedia('(max-width: 800px)')
   const [adjective, setAdjectives] = useState(
@@ -39,6 +41,10 @@ export default ({
   const uploadInput = useRef<HTMLInputElement>(null)
   const [message, setMessage] = useState('')
   const [emojiPicker, setEmojiPicker] = useState(false)
+  useInterval(() => postTyping(message), 7000)
+  useEffect(() => {
+    if (message.length > 0) postTyping(message)
+  }, [message, postTyping])
   return (
     <div className={styles.box}>
       <form

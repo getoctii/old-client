@@ -16,6 +16,7 @@ import { UI } from './uiStore'
 import * as Sentry from '@sentry/react'
 import { LocalNotifications } from '@capacitor/core'
 import Theme from './theme/hook'
+import Typing from './typing'
 
 Sentry.init({
   dsn:
@@ -47,12 +48,15 @@ ReactDOM.render(
         )}
       >
         <React.Suspense fallback={<Loader />}>
+          {/* fucking provider hell */}
           <Auth.Provider>
             <UI.Provider>
-              <Theme.Provider>
-                <Router />
-                <EventSource />
-              </Theme.Provider>
+              <Typing.Provider>
+                <Theme.Provider>
+                  <Router />
+                  <EventSource />
+                </Theme.Provider>
+              </Typing.Provider>
             </UI.Provider>
           </Auth.Provider>
           <ReactQueryDevtools />
