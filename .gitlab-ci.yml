@@ -10,6 +10,7 @@ build:
     - echo "$NPMRC" > .npmrc
     - yarn install --frozen-lockfile
     - export REACT_APP_VERSION=`sentry-cli releases propose-version`
+    - echo "$REACT_APP_VERSION"
     - yarn build
   artifacts:
     paths:
