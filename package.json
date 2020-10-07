@@ -16,6 +16,7 @@
     "@ionic/pwa-elements": "^3.0.1",
     "@ionic/react": "^5.3.4",
     "@sentry/apm": "^5.25.0",
+    "@sentry/browser": "^5.25.0",
     "@sentry/react": "^5.25.0",
     "@sentry/rrweb": "^0.1.2",
     "@testing-library/jest-dom": "^5.11.4",
