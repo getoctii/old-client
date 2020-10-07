@@ -60,7 +60,7 @@ ReactDOM.render(
     >
       <Sentry.ErrorBoundary
         onReset={() => queryCache.resetErrorBoundaries()}
-        fallbackRender={({ resetErrorBoundary }) => (
+        fallback={({ resetErrorBoundary }) => (
           <Error resetErrorBoundary={resetErrorBoundary} />
         )}
       >
