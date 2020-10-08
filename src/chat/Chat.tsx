@@ -122,7 +122,7 @@ const Messages = ({ channelID }: { channelID: string }) => {
             avatar={message.author.avatar}
             timestamp={message.created_at}
             author={message.author.username}
-            onresize={resizeCallback}
+            onResize={resizeCallback}
           >
             {message.content}
           </Message>
