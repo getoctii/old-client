@@ -61,14 +61,12 @@
 }
 
 .imageEmbed {
-  flex-direction: column;
-  display: inline-flex;
-
   img {
     margin-top: 0.5rem;
     max-width: 50%;
     border-radius: 10px;
     height: auto;
     width: auto;
+    object-fit: cover;
   }
 }
