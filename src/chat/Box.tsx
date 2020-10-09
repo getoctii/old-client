@@ -29,9 +29,10 @@ export default ({
 }: {
   sendMessage: (msg: string) => void
   uploadFile: (file: File) => void
-  postTyping: (msg: string) => void
+  postTyping: () => void
 }) => {
   const isMobile = useMedia('(max-width: 800px)')
+  const [typing, setTyping] = useState<boolean>(false)
   const [adjective, setAdjectives] = useState(
     adjectives[Math.floor(Math.random() * adjectives.length)]
   )
@@ -41,10 +42,15 @@ export default ({
   const uploadInput = useRef<HTMLInputElement>(null)
   const [message, setMessage] = useState('')
   const [emojiPicker, setEmojiPicker] = useState(false)
-  useInterval(() => postTyping(message), 7000)
+  useInterval(() => typing && postTyping(), 7000)
   useEffect(() => {
-    if (message.length > 0) postTyping(message)
-  }, [message, postTyping])
+    if (message.length > 0 && !typing) {
+      postTyping()
+      setTyping(true)
+    } else if (message.length === 0 && typing) {
+      setTyping(false)
+    }
+  }, [message, postTyping, typing])
   return (
     <div className={styles.box}>
       <form

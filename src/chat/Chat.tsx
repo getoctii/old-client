@@ -119,13 +119,9 @@ const Messages = ({ channelID }: { channelID: string }) => {
           <Message
             key={message.id}
             primary={isPrimary(message, index)}
-            avatar={message.author.avatar}
-            timestamp={message.created_at}
-            author={message.author.username}
             onResize={resizeCallback}
-          >
-            {message.content}
-          </Message>
+            {...message}
+          />
         ) : (
           <></>
         )
@@ -198,14 +194,12 @@ const Chat = ({
     await sendMessage(response.data.url)
   }
 
-  const postTyping = async (msg: string) => {
-    if (msg.length > 0) {
-      clientGateway.post(`/channels/${channelID}/typing`, undefined, {
-        headers: {
-          Authorization: token
-        }
-      })
-    }
+  const postTyping = async () => {
+    clientGateway.post(`/channels/${channelID}/typing`, undefined, {
+      headers: {
+        Authorization: token
+      }
+    })
   }
 
   const [bond] = useDropArea({

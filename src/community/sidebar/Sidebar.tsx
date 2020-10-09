@@ -72,24 +72,30 @@ export const Sidebar = () => {
               >
                 {community.data && muted?.includes(community.data.id) ? (
                   <>
-                    Unmute Community <FontAwesomeIcon icon={faBell} />
+                    <span>Unmute Community</span>{' '}
+                    <FontAwesomeIcon icon={faBell} />
                   </>
                 ) : (
                   <>
-                    Mute Community <FontAwesomeIcon icon={faBellSlash} />
+                    <span>Mute Community</span>{' '}
+                    <FontAwesomeIcon icon={faBellSlash} />
                   </>
                 )}
               </div>
               {community.data?.owner_id !== auth.id && (
-                <div
-                  className={`${styles.menuItem} ${styles.danger}`}
-                  onClick={() => {
-                    leaveCommunity()
-                    history.push('/')
-                  }}
-                >
-                  Leave <FontAwesomeIcon icon={faHouseLeave} />
-                </div>
+                <>
+                  <hr />
+                  <div
+                    className={`${styles.menuItem} ${styles.danger}`}
+                    onClick={() => {
+                      leaveCommunity()
+                      history.push('/')
+                    }}
+                  >
+                    <span>Leave Community</span>{' '}
+                    <FontAwesomeIcon icon={faHouseLeave} />
+                  </div>
+                </>
               )}
             </div>
           )}

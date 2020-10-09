@@ -61,40 +61,53 @@
 }
 
 .contextMenu {
+  z-index: 100;
   margin-top: 0.5rem;
   margin-bottom: 0.7rem;
-  background: var(--neko-background);
+  background: var(--neko-context);
   padding: 0.5rem;
   border-radius: 10px;
   box-shadow: var(--neko-shadow);
-
+  backdrop-filter: blur(20px);
   div {
     padding: 0.5rem;
-    border-radius: 8px;
-    background-color: var(--neko-foreground);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+
+    span {
+      margin-right: 0.8rem;
+    }
 
     &:hover {
-      background: var(--neko-message-hover);
-    }
-
-    &:not(:first-child) {
-      margin-top: 0.3rem;
-    }
-
-    &:not(:last-child) {
-      margin-bottom: 0.3rem;
+      background: var(--neko-primary);
     }
 
     &:focus {
       outline: none;
     }
+
+    svg {
+      margin-left: auto;
+    }
   }
 
-  svg {
-    margin-left: 0.8rem;
+  hr {
+    margin: 5px 0.5rem 5px 0.5rem;
+    opacity: 0.2;
+    border: 1px var(--neko-background) solid;
+    border-radius: 2px;
   }
-}
 
-.danger {
-  color: var(--neko-danger);
+  .danger {
+    color: var(--neko-danger);
+    &:hover {
+      color: var(--neko-text);
+      background: var(--neko-danger);
+    }
+  }
+
+  &:focus {
+    outline: none;
+  }
 }

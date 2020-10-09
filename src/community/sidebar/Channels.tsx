@@ -52,6 +52,7 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
         )}
         {showDelete && (
           <Confirmation
+            type='channel'
             onConfirm={() => {
               deleteChannel(showDelete)
               setShowDelete(undefined)
@@ -132,21 +133,13 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
                 >
                   {mutedChannels?.includes(channel.id) ? (
                     <>
-                      Unmute Channel{' '}
-                      <FontAwesomeIcon
-                        icon={faBellSlash}
-                        fixedWidth={true}
-                        style={{ float: 'right' }}
-                      />
+                      <span>Unmute Channel</span>
+                      <FontAwesomeIcon icon={faBellSlash} fixedWidth />
                     </>
                   ) : (
                     <>
-                      Mute Channel{' '}
-                      <FontAwesomeIcon
-                        icon={faBell}
-                        fixedWidth={true}
-                        style={{ float: 'right' }}
-                      />
+                      <span>Mute Channel</span>{' '}
+                      <FontAwesomeIcon icon={faBell} fixedWidth />
                     </>
                   )}
                 </MenuItem>
@@ -158,26 +151,21 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
                     })
                   }}
                 >
-                  Copy ID
-                  <FontAwesomeIcon
-                    style={{ float: 'right' }}
-                    fixedWidth={true}
-                    icon={faCopy}
-                  />
+                  <span>Copy ID</span>
+                  <FontAwesomeIcon fixedWidth icon={faCopy} />
                 </MenuItem>
                 {community.owner_id === auth.id && (
-                  <MenuItem
-                    key={`delete-${channel.id}`}
-                    className={styles.danger}
-                    onClick={() => setShowDelete(channel.id)}
-                  >
-                    Delete Channel
-                    <FontAwesomeIcon
-                      style={{ float: 'right' }}
-                      fixedWidth={true}
-                      icon={faTrashAlt}
-                    />
-                  </MenuItem>
+                  <>
+                    <hr />
+                    <MenuItem
+                      key={`delete-${channel.id}`}
+                      className={styles.danger}
+                      onClick={() => setShowDelete(channel.id)}
+                    >
+                      <span>Delete Channel</span>
+                      <FontAwesomeIcon fixedWidth icon={faTrashAlt} />
+                    </MenuItem>
+                  </>
                 )}
               </ContextMenu>
             </div>

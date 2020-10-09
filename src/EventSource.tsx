@@ -116,6 +116,17 @@ const EventSource = () => {
       stopTyping(message.channel_id, message.author.id)
     })
 
+    eventSource.addEventListener('DELETED_MESSAGE', async (e: any) => {
+      const message = JSON.parse(e.data) as Message
+      queryCache.setQueryData(['messages', message.channel_id], (initial) => {
+        if (initial instanceof Array) {
+          return initial.map((sub) =>
+            sub.filter((msg: Message) => msg.id !== message.id)
+          )
+        } else return initial
+      })
+    })
+
     eventSource.addEventListener('NEW_PARTICIPANT', (e: any) => {
       const participant = JSON.parse(e.data)
       queryCache.setQueryData('participants', (initial) => {
@@ -206,6 +217,8 @@ const EventSource = () => {
     return () => {
       eventSource.close()
     }
+    // LMAO, yeah maybe wanna start moving shit into its own useEffect _might be a smart idea idk_
+    // but why the fuck does starttyping cause a useeffect, its a void
   }, [token, id, mutedCommunities, mutedChannels, startTyping, stopTyping])
 
   return <></>

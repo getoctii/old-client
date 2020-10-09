@@ -60,6 +60,9 @@ ReactDOM.render(
       config={{
         shared: {
           suspense: true
+        },
+        queries: {
+          refetchOnWindowFocus: false
         }
       }}
     >
@@ -68,7 +71,6 @@ ReactDOM.render(
         fallback={({ resetError }) => <Error resetErrorBoundary={resetError} />}
       >
         <React.Suspense fallback={<Loader />}>
-          {/* fucking provider hell */}
           <Auth.Provider>
             <UI.Provider>
               <Typing.Provider>
