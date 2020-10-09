@@ -11,5 +11,6 @@
   "overground": "rgba(51, 51, 51, 1)",
   "messageHover": "rgba(0,103,108,1 )",
   "global": "@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap'); * { border-radius: 0 !important; font-family: 'VT323', monospace !important; };",
-  "shadow": "0 2px 4px 0 rgba(0, 0, 0, 0.5)"
+  "shadow": "0 2px 4px 0 rgba(0, 0, 0, 0.5)",
+  "context": "rgba(255, 255, 255, 1)"
 }

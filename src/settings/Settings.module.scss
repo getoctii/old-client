@@ -1,8 +1,11 @@
+.settingsModal {
+  z-index: 1000;
+}
+
 .settings {
   display: flex;
   height: 100%;
   flex-direction: row;
-
   @media (max-width: 800px) {
     width: 100%;
   }

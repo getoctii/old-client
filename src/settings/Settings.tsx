@@ -13,7 +13,11 @@ const Settings = () => {
   const isMobile = useMedia('(max-width: 800px)')
   const [page, setPage] = useState(isMobile ? '' : 'profile')
   return (
-    <Modal fullscreen={true} onDismiss={() => ui.setModal('')}>
+    <Modal
+      className={styles.settingsModal}
+      fullscreen={true}
+      onDismiss={() => ui.setModal('')}
+    >
       <div className={styles.left}></div>
       <div className={styles.settings}>
         {page !== '' && isMobile ? (

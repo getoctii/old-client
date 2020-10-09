@@ -5,14 +5,20 @@ import { motion } from 'framer-motion'
 const Modal = ({
   children,
   onDismiss,
-  fullscreen
+  fullscreen,
+  className
 }: {
   children: React.ReactNode
   onDismiss?: any
   fullscreen?: boolean
+  className?: string
 }) => {
   return (
-    <div className={`${styles.modal} ${fullscreen ? styles.fullscreen : ''}`}>
+    <div
+      className={`${styles.modal} ${
+        fullscreen ? styles.fullscreen : ''
+      } ${className}`}
+    >
       <motion.div
         {...(!fullscreen && {
           initial: { opacity: 0 },

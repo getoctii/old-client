@@ -10,5 +10,6 @@
   "danger": "#e01a4f",
   "overground": "rgba(70, 70, 70, 0.5)",
   "messageHover": "#e0e0e0",
-  "shadow": "0 2px 4px 0 rgba(153, 153, 153, 0.5)"
+  "shadow": "0 2px 4px 0 rgba(153, 153, 153, 0.5)",
+  "context": "rgba(0, 0, 0, 0.1)"
 }

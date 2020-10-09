@@ -6,10 +6,26 @@
       width: 100%;
     }
   }
+
+  .cancel {
+    background: var(--neko-secondary);
+  }
+
+  h3 {
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 0.3rem;
+  }
+
+  p {
+    font-weight: 400;
+    font-size: 1rem;
+  }
 }
 
 .danger {
-  background-color: var(--neko-danger);
+  background: var(--neko-danger);
 }
 
 .seperater {

@@ -80,12 +80,8 @@ const ConversationList = () => {
             const people = conversation.participants.filter(
               (userID: string) => userID !== auth.id
             )
-            if (people.length > 1) {
-              console.warn('Group chats not implemented')
-              return <></>
-            } else if (people.length === 0) {
-              console.warn('Empty chats not implemented')
-              return <></>
+            if (people.length > 1 || people.length === 0) {
+              return
             } else {
               return (
                 <ConversationCard

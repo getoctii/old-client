@@ -4,19 +4,25 @@ import styles from './Confirmation.module.scss'
 import Button from './Button'
 
 export const Confirmation = ({
+  type,
   onConfirm,
   onDismiss
 }: {
+  type: 'channel' | 'message'
   onConfirm: Function
   onDismiss: Function
 }) => {
   return (
     <Modal onDismiss={() => onDismiss()}>
       <div className={styles.confirmation}>
-        <h3>Are you sure you want to delete the channel?</h3>
+        <h3>
+          Are you sure you want to delete this{' '}
+          {type === 'channel' ? 'channel' : 'message'}?
+        </h3>
         <p>
-          One you do this, you cannot retrive the channel and it's messages so
-          beware.
+          {type === 'channel'
+            ? "One you do this, you cannot retrive the channel and it's messages so beware."
+            : 'One you do this, you cannot retrive this message again so beware.'}
         </p>
         <div>
           <Button
