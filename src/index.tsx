@@ -28,7 +28,10 @@ Sentry.init({
 
 console.log(
   '%c+',
-  `background: url("https://file.coffee/u/wkV2Mrh7bl.png") no-repeat; background-size: 500px 696px; color: transparent; font-size: 1px; padding: 348px 250px; ${/^((?!chrome|android).)*safari/i.test(navigator.userAgent) && 'line-height: 696px;'}`
+  `background: url("https://file.coffee/u/wkV2Mrh7bl.png") no-repeat; background-size: 500px 696px; color: transparent; font-size: 1px; padding: 348px 250px; ${
+    /^((?!chrome|android).)*safari/i.test(navigator.userAgent) &&
+    'line-height: 696px;'
+  }`
 )
 console.log(
   `%cHey!
@@ -62,7 +65,7 @@ ReactDOM.render(
           suspense: true
         },
         queries: {
-          refetchOnWindowFocus: false
+          refetchOnWindowFocus: process.env.NODE_ENV === 'production'
         }
       }}
     >
