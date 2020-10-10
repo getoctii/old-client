@@ -57,13 +57,12 @@ const EventSource = () => {
     eventSource.addEventListener('NEW_MESSAGE', async (e: any) => {
       const message = JSON.parse(e.data) as Message
 
-      if (message.author.id !== id) {
-        if (
-          (message.community_id &&
-            mutedCommunities?.includes(message.community_id)) ||
-          mutedChannels?.includes(message.channel_id)
-        )
-          return
+      if (
+        message.author.id !== id &&
+        message.community_id &&
+        !mutedCommunities?.includes(message.community_id) &&
+        !mutedChannels?.includes(message.channel_id)
+      ) {
         if (isPlatform('capacitor')) {
           Haptics.notification({
             type: HapticsNotificationType.SUCCESS
@@ -205,7 +204,6 @@ const EventSource = () => {
     })
 
     eventSource.addEventListener('TYPING', (e: any) => {
-      // no idea what typing event sends
       const event = JSON.parse(e.data) as {
         channel_id: string
         user_id: string
@@ -217,8 +215,6 @@ const EventSource = () => {
     return () => {
       eventSource.close()
     }
-    // LMAO, yeah maybe wanna start moving shit into its own useEffect _might be a smart idea idk_
-    // but why the fuck does starttyping cause a useeffect, its a void
   }, [token, id, mutedCommunities, mutedChannels, startTyping, stopTyping])
 
   return <></>
