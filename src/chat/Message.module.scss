@@ -4,7 +4,6 @@
   padding-right: 2rem;
   // padding-top: 0.2rem;
   // padding-bottom: 0.2rem;
-  word-break: break-word;
 
   h2 {
     font-size: 1rem;
@@ -19,6 +18,11 @@
   }
 
   p {
+    line-height: 1.5rem;
+    overflow-wrap: break-word;
+    white-space: -webkit-pre-wrap;
+    min-width: fit-content;
+    max-width: 100%;
     display: inline-block;
     clear: both;
     margin: 0;

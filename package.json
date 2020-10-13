@@ -47,6 +47,7 @@
     "react-loading-skeleton": "^2.1.1",
     "react-markdown": "^4.3.1",
     "react-merge-refs": "^1.1.0",
+    "react-parallax-tilt": "^1.4.66",
     "react-query": "^2.23.1",
     "react-query-devtools": "^2.5.1",
     "react-router-dom": "^5.2.0",
