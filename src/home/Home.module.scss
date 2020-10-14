@@ -16,7 +16,6 @@
     z-index: 2;
     max-width: 70rem;
     margin-top: 2rem;
-    width: 100%;
     margin-bottom: 2rem;
   }
   .hero {
@@ -90,6 +89,10 @@
 .extensible {
   opacity: 0;
   animation: fadeIn 1s ease-in 2.5s forwards;
+}
+
+.error {
+  color: var(--neko-danger);
 }
 
 @keyframes fadeIn {

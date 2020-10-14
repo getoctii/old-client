@@ -48,10 +48,10 @@ const Home = () => {
             <h2>Coming Early 2021</h2>
             <Formik
               initialValues={{ email: '' }}
-              onValidate={() => console.log('iwi')}
-              onSubmit={() => console.log('owo')}
+              validate={validate}
+              onSubmit={submit}
             >
-              {({ isSubmitting }) => (
+              {({ isSubmitting, errors, touched }) => (
                 <Form className={styles.form}>
                   <label htmlFor='email'>Email</label>
                   <div className={styles.input}>
@@ -65,7 +65,9 @@ const Home = () => {
                       <FontAwesomeIcon icon={faBell} />
                     </Button>
                   </div>
-                  <ErrorMessage component='p' className={styles.error} name='email' />
+
+                  { console.log(errors.email) }
+                  { errors.email && touched.email ? <ErrorMessage component='p' className={styles.error} name='email' /> : <p>We don't spam. Promise.</p>}
                 </Form>
               )}
             </Formik>
