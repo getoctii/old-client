@@ -43,6 +43,7 @@
         display: flex;
       }
       input {
+        flex: 1;
         background-color: var(--neko-background);
         margin-right: 1rem;
       }
@@ -74,4 +75,28 @@
   bottom: 4rem;
   height: 20rem;
   background-color: var(--neko-primary);
+}
+
+.simple {
+  opacity: 0;
+  animation: fadeIn 1s ease-in 0.5s forwards;
+}
+
+.private {
+  opacity: 0;
+  animation: fadeIn 1s ease-in 1.5s forwards;
+}
+
+.extensible {
+  opacity: 0;
+  animation: fadeIn 1s ease-in 2.5s forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

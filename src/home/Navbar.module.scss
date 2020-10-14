@@ -20,8 +20,9 @@
     }
   }
 
-  button {
-    margin-left: auto;
-    background-color: #0081ff;
-  }
+    button {
+      background: var(--neko-primary);
+      margin-left: auto;
+      min-height: 3rem;
+    }
 }
