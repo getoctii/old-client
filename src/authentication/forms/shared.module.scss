@@ -15,12 +15,12 @@ form {
   height: 3.75rem;
   margin: 0;
   margin-bottom: 0.25rem;
-  width: 60vw;
-  max-width: 280px;
-  min-width: 10px;
+  // width: 60vw;
+  // max-width: 280px;
+  // min-width: 10px;
   font-size: 1.1875rem;
   background: var(--neko-default-background);
-  color: var(--neko-default-text-inline);
+  color: var(--neko-default-text);
 }
 
 .label {
@@ -58,4 +58,14 @@ form {
   margin-top: 0.25rem;
   margin-bottom: 0;
   color: var(--neko-danger);
+}
+
+@media (max-height: 667px) {
+  form {
+    height: auto;
+  }
+
+  .button {
+    margin-top: 1.25rem;
+  }
 }

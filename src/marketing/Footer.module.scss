@@ -43,6 +43,9 @@
     margin: 0;
   }
 
+  h3 {
+    font-weight: 400;
+  }
   .heart {
     color: red;
   }
@@ -51,4 +54,27 @@
     text-decoration: none;
     color: #ffffff;
   }
+}
+
+@media (max-width: 800px) {
+  form {
+    width: 100%;
+  }
+  h3 {
+    font-size: 0.8rem;
+  }
+  .container {
+    max-width: 100%;
+  }
+  .footer {
+    width: 100%;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (max-height: 480px) {
+  // .footer {
+  //   margin-top: 4rem;
+  // }
 }
