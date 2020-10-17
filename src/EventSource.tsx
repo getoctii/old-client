@@ -7,7 +7,7 @@ import { CLIENT_GATEWAY_URL } from './constants'
 import { Plugins, HapticsNotificationType } from '@capacitor/core'
 import { isPlatform } from '@ionic/react'
 import { useLocalStorage } from 'react-use'
-import Typing from './typing'
+import Typing from './state/typing'
 
 const { Haptics, Toast, LocalNotifications } = Plugins
 

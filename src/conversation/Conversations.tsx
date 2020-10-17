@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ConversationCard } from './ConversationCard'
 import Button from '../components/Button'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { UI } from '../uiStore'
+import { UI } from '../state/ui'
 import Loader from '../components/Loader'
 import { useLocalStorage, useMedia } from 'react-use'
 

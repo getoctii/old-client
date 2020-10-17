@@ -8,7 +8,7 @@ import { BarLoader } from 'react-spinners'
 import { clientGateway } from '../constants'
 import { Auth } from '../authentication/state'
 import { isTag } from '../validations'
-import { UI } from '../uiStore'
+import { UI } from '../state/ui'
 
 interface ConversationResponse {
   id: string

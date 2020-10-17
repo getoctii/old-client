@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './Sidebar.module.scss'
-import { UI } from '../uiStore'
+import { UI } from '../state/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faTimesCircle,

@@ -6,7 +6,7 @@ import { PrivateRoute } from './authentication/PrivateRoute'
 import { Conversations } from './conversation/Conversations'
 import { Community } from './community/Community'
 import Empty from './conversation/empty/Empty'
-import { UI } from './uiStore'
+import { UI } from './state/ui'
 import NewConversation from './conversation/NewConversation'
 import { Plugins, KeyboardResize, KeyboardStyle } from '@capacitor/core'
 import { isPlatform } from '@ionic/react'
@@ -17,6 +17,8 @@ import { NewCommunity } from './sidebar/NewCommunity'
 import { AnimatePresence } from 'framer-motion'
 import Loader from './components/Loader'
 import { Auth } from './authentication/state'
+import Home from './marketing/Home'
+// import Privacy from './marketing/Privacy'
 const { Keyboard, StatusBar } = Plugins
 
 export const Router = () => {
@@ -36,6 +38,8 @@ export const Router = () => {
 
   return (
     <BrowserRouter>
+      <Route path='/home' component={Home} />
+      {/* <Route path='/privacy' component={Privacy} /> */}
       <Route path='/authenticate' component={Authenticate} />
       <div id='main'>
         <AnimatePresence>
@@ -56,6 +60,7 @@ export const Router = () => {
                   {!isMobile && <Empty />}
                 </>
               )}
+              redirect={'/home'}
               exact
             />
             <PrivateRoute
