@@ -18,7 +18,6 @@ import SentryRRWeb from '@sentry/rrweb'
 import { LocalNotifications } from '@capacitor/core'
 import Theme from './theme/hook'
 import Typing from './state/typing'
-import { clientGateway } from './constants'
 
 Sentry.init({
   dsn:

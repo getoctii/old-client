@@ -8,7 +8,7 @@ const Navbar = () => {
   return (
     <div className={styles.navbar}>
       <div className={styles.branding}>
-        <img src='/logo512.png' />
+        <img alt='Octii Logo' src='/logo512.png' />
         <h1>Octii</h1>
       </div>
       <Button type='button' onClick={() => history.push('/authenticate')}>

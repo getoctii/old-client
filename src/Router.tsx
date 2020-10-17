@@ -18,7 +18,7 @@ import { AnimatePresence } from 'framer-motion'
 import Loader from './components/Loader'
 import { Auth } from './authentication/state'
 import Home from './marketing/Home'
-import Privacy from './marketing/Privacy'
+// import Privacy from './marketing/Privacy'
 const { Keyboard, StatusBar } = Plugins
 
 export const Router = () => {

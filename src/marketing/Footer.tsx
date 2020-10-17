@@ -1,9 +1,9 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+// import { useHistory } from 'react-router-dom'
 import styles from './Footer.module.scss'
 
 const Footer = () => {
-  const history = useHistory()
+  // const history = useHistory()
   return (
     <div className={styles.footer}>
       <div className={styles.container}>

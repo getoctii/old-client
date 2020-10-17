@@ -1,19 +1,11 @@
 import React from 'react'
 import styles from './Authenticate.module.scss'
-import {
-  Link,
-  Switch,
-  Route,
-  Redirect,
-  useLocation,
-  useRouteMatch
-} from 'react-router-dom'
+import { Link, Switch, Route, Redirect, useRouteMatch } from 'react-router-dom'
 import { Login } from './forms/Login'
 import { Register } from './forms/Register'
 import { Auth } from './state'
 
 export const Authenticate = () => {
-  const location = useLocation()
   const match = useRouteMatch<{ page: 'login' | 'register' }>(
     '/authenticate/:page'
   )
