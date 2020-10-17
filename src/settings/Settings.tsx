@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Modal from '../components/Modal'
-import { UI } from '../uiStore'
+import { UI } from '../state/ui'
 import Sidebar from './Sidebar'
 import styles from './Settings.module.scss'
 import Profile from './Profile'

@@ -39,6 +39,49 @@ body {
   -webkit-tap-highlight-color: transparent;
   position: fixed;
   background-color: var(--neko-background);
+
+  --neko-default-background: #eef7ff;
+  --neko-default-foreground: #ffffff;
+  --neko-default-primary: #0081ff;
+  --neko-default-secondary: #788a9f;
+  --neko-default-text-inline: #ffffff;
+  --neko-default-text: #000000;
+  --neko-default-danger: #ed5454;
+  --neko-default-overground: rgba(70, 70, 70, 0.5);
+  --neko-default-message-hover: #e0e0e0;
+  --neko-default-shadow: 0 2px 4px 0 rgba(153, 153, 153, 0.5);
+  --neko-default-context: rgba(0, 0, 0, 0.1);
+}
+// {
+//   "id": "ffc21e1c-6a00-4682-9981-bcd12860c138",
+//   "name": "Dark",
+//   "background": "#040a0f",
+//   "foreground": "#202020",
+//   "primary": "#0081FF",
+//   "secondary": "#788A9F",
+//   "textInline": "#dadada",
+//   "text": "#dadada",
+//   "danger": "#ed5454",
+//   "overground": "rgba(70, 70, 70, 0.5)",
+//   "messageHover": "#191919",
+//   "shadow": "10px 10px 47px -14px rgba(0, 0, 0, 0.64)",
+//   "context": "rgba(255, 255, 255, 0.1)"
+// }
+
+@media (prefers-color-scheme: dark) {
+  body {
+    --neko-default-background: #202125;
+    --neko-default-foreground: #040a0f;
+    --neko-default-primary: #0081ff;
+    --neko-default-secondary: #788a9f;
+    --neko-default-text-inline: #ececec;
+    --neko-default-text: #ebebeb;
+    --neko-default-danger: #ed5454;
+    --neko-default-overground: rgba(70, 70, 70, 0.5);
+    --neko-default-message-hover: #191919;
+    --neko-default-shadow: 10px 10px 47px -14px rgba(0, 0, 0, 0.64);
+    --neko-default-context: rgba(255, 255, 255, 0.1);
+  }
 }
 
 hr {

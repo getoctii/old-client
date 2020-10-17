@@ -14,7 +14,7 @@ import { useMedia } from 'react-use'
 import { useHistory } from 'react-router-dom'
 import axios from 'axios'
 import Box from './Box'
-import Typing from '../typing'
+import Typing from '../state/typing'
 
 interface Message {
   id: string

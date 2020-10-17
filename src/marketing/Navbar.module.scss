@@ -1,0 +1,29 @@
+.navbar {
+  display: flex;
+  z-index: 2;
+  max-width: 70rem;
+  margin-top: 2rem;
+  width: 100%;
+  .branding {
+    display: flex;
+    align-items: center;
+    h1 {
+      margin: 0;
+      padding: 0;
+      font-weight: 800;
+      color: var(--neko-default-text);
+    }
+
+    img {
+      width: 50px;
+      height: 50px;
+      margin-right: 0.7rem;
+    }
+  }
+
+  button {
+    background: var(--neko-default-primary);
+    margin-left: auto;
+    min-height: 3rem;
+  }
+}

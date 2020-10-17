@@ -1,30 +1,48 @@
 .wrapper {
-  width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--neko-foreground)
-    url('https://cdn.innatical.com/neko/octobg.svg') repeat 0 0;
   margin: 0;
-  background-size: 800px;
   box-sizing: border-box;
   animation: slide 20s linear infinite;
+  display: flex;
 }
 
-@media (max-width: 800px) {
-  .wrapper {
-    background: var(--neko-foreground);
-  }
-  .card {
-    width: 100%;
+.aside {
+  background: linear-gradient(180deg, #007fff 0%, #0035a8 100%);
+}
 
-    input {
-      width: 100%;
-      max-width: 100%;
-    }
+@media (prefers-color-scheme: dark) {
+  .aside {
+    background: linear-gradient(
+      320deg,
+      rgba(2, 0, 36, 1) 0%,
+      rgba(0, 86, 172, 1) 100%
+    );
   }
 }
+
+// @keyframes hueshifter {
+//   0% {
+//     background: linear-gradient(
+//       320deg,
+//       rgba(2, 0, 36, 1) 0%,
+//       rgba(0, 0, 255, 1) 100%
+//     );
+//   }
+//   50% {
+//     background: linear-gradient(
+//       320deg,
+//       rgba(2, 0, 36, 1) 0%,
+//       rgba(255, 0, 0, 1) 100%
+//     );
+//   }
+//   100% {
+//     background: linear-gradient(
+//       320deg,
+//       rgba(2, 0, 36, 1) 0%,
+//       rgba(0, 255, 0, 1) 100%
+//     );
+//   }
+// }
 
 @keyframes slide {
   from {
@@ -36,13 +54,21 @@
 }
 
 .card {
-  display: block;
-  background: var(--neko-background);
-  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
   padding: 2rem;
+  max-width: 345px;
+  height: 100%;
+  background: var(--neko-default-foreground);
+
+  img {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
 
   h1 {
-    margin-top: 0;
+    color: var(--neko-default-text);
+    margin-top: 0.8rem;
     margin-bottom: 0.25rem;
     font-size: 1.5rem;
     font-weight: 800;
@@ -60,7 +86,92 @@
   }
 
   nav {
+    color: var(--neko-default-text);
     display: flex;
     justify-content: space-between;
+  }
+}
+
+aside {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 6rem;
+
+  h1 {
+    font-size: 2.5rem;
+    color: var(--neko-default-text-inline);
+    margin: 0;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--neko-default-text-inline);
+  }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--neko-default-text-inline);
+    text-align: right;
+    margin-right: 3rem;
+  }
+  .timeline::after {
+    content: '';
+    width: 0.5rem;
+    background: #ffffff;
+    position: absolute;
+    right: 6rem;
+    top: 6rem;
+    border-radius: 10px;
+    bottom: 6rem;
+  }
+
+  .circle {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: var(--neko-default-text-inline);
+    position: absolute;
+    z-index: 2;
+    right: 4.8rem;
+    margin-top: -2.25rem;
+    border: 5px solid var(--neko-default-text-inline);
+  }
+
+  .current {
+    animation: currentPulse alternate infinite ease-in-out 1.3s;
+  }
+
+  .next {
+    background: var(--neko-default-secondary);
+  }
+
+  @keyframes currentPulse {
+    0% {
+      background-color: var(--neko-default-text-inline);
+    }
+    100% {
+      background-color: var(--neko-default-primary);
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  .wrapper {
+    display: block;
+  }
+  .aside {
+    display: none;
+  }
+  .card {
+    max-width: none;
+
+    input {
+      width: 100%;
+      max-width: none;
+    }
   }
 }

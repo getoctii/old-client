@@ -3,7 +3,7 @@ import styles from './Friends.module.scss'
 import FriendCard from './FriendCard'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/pro-solid-svg-icons'
-import { UI } from '../uiStore'
+import { UI } from '../state/ui'
 
 const Friends = () => {
   const ui = UI.useContainer()

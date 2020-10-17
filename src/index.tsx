@@ -11,13 +11,13 @@ import { queryCache, ReactQueryConfigProvider } from 'react-query'
 import Loader from './components/Loader'
 import Error from './components/Error'
 import EventSource from './EventSource'
-import { UI } from './uiStore'
+import { UI } from './state/ui'
 import '@sentry/browser'
 import * as Sentry from '@sentry/react'
 import SentryRRWeb from '@sentry/rrweb'
 import { LocalNotifications } from '@capacitor/core'
 import Theme from './theme/hook'
-import Typing from './typing'
+import Typing from './state/typing'
 
 Sentry.init({
   dsn:

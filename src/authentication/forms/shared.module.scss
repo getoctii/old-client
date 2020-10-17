@@ -1,3 +1,9 @@
+form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .input {
   display: block;
   border: none;
@@ -5,6 +11,7 @@
   padding-left: 0.9375rem !important;
   padding-right: 0.9375rem !important;
   border-radius: 8px;
+  min-height: 3.75rem;
   height: 3.75rem;
   margin: 0;
   margin-bottom: 0.25rem;
@@ -12,36 +19,34 @@
   max-width: 280px;
   min-width: 10px;
   font-size: 1.1875rem;
-  background: var(--neko-foreground);
-  color: var(--neko-text);
+  background: var(--neko-default-background);
+  color: var(--neko-default-text-inline);
 }
 
 .label {
   margin-top: 0.8rem;
   display: inline-block;
+  color: var(--neko-default-text);
   margin-bottom: 0.25rem;
 }
 
 .button {
+  margin-top: auto;
   border: 0;
   outline: none;
   border-radius: 8px;
   padding: 0.9375rem;
+  min-height: 3.75rem;
   height: 3.75rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: var(--neko-primary);
-  color: var(--neko-text-inline);
+  background: var(--neko-default-primary);
+  color: var(--neko-default-text-inline);
   margin-bottom: 1rem;
-  margin-top: 1rem;
   font-size: 1.25rem;
   font-weight: 700;
   width: 100%;
-}
-
-.button:active {
-  box-shadow: inset 6px 6px 10px #586cbc, inset -6px -6px 10px #7892fe;
 }
 
 .name {
