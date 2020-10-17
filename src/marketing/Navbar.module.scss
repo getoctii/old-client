@@ -27,3 +27,21 @@
     min-height: 3rem;
   }
 }
+
+@media (max-width: 800px) {
+  .navbar {
+    .branding {
+      h1 {
+        font-size: 1.25rem;
+      }
+
+      img {
+        width: 38px;
+        height: 38px;
+      }
+    }
+    button {
+      height: 2rem;
+    }
+  }
+}

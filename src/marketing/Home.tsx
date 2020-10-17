@@ -45,7 +45,7 @@ const Home = () => {
         <Navbar />
         <div className={styles.heroContainer}>
           <div className={styles.hero}>
-            <div>
+            <div className={styles.heroLeft}>
               <h1>
                 <span className={styles.simple}>Simple.</span>
                 <br />

@@ -48,6 +48,7 @@
     h2 {
       opacity: 0;
       animation: fadeIn 0.5s ease-in 3.25s forwards;
+      font-weight: 400;
     }
 
     form {
@@ -62,6 +63,7 @@
         display: flex;
       }
       input {
+        color: var(--neko-default-text);
         flex: 1;
         background: var(--neko-default-background);
         margin-right: 0.5rem;
@@ -134,4 +136,45 @@
   width: 100%;
   height: 100%;
   align-items: center;
+}
+
+@media (max-width: 800px) {
+  .wrapper {
+    .hero {
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1rem;
+      }
+    }
+  }
+  .heroContainer {
+    max-width: 100%;
+  }
+  .centered {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  .heroLeft {
+    max-width: 300px;
+    width: 100%;
+  }
+}
+
+@media (max-height: 480px) {
+  .centered {
+    display: block;
+    height: auto;
+  }
+  .wrapper {
+    display: block;
+    overflow-y: scroll;
+  }
 }

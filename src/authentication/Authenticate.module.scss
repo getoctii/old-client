@@ -20,30 +20,6 @@
   }
 }
 
-// @keyframes hueshifter {
-//   0% {
-//     background: linear-gradient(
-//       320deg,
-//       rgba(2, 0, 36, 1) 0%,
-//       rgba(0, 0, 255, 1) 100%
-//     );
-//   }
-//   50% {
-//     background: linear-gradient(
-//       320deg,
-//       rgba(2, 0, 36, 1) 0%,
-//       rgba(255, 0, 0, 1) 100%
-//     );
-//   }
-//   100% {
-//     background: linear-gradient(
-//       320deg,
-//       rgba(2, 0, 36, 1) 0%,
-//       rgba(0, 255, 0, 1) 100%
-//     );
-//   }
-// }
-
 @keyframes slide {
   from {
     background-position: 0 0;
@@ -173,5 +149,19 @@ aside {
       width: 100%;
       max-width: none;
     }
+  }
+}
+
+@media (max-height: 667px) {
+  .card {
+    overflow-y: scroll;
+    display: block;
+    min-width: 345px;
+  }
+}
+
+@media (max-height: 667px) and (max-width: 800px) {
+  .card {
+    min-width: auto;
   }
 }
