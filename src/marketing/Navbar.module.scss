@@ -11,6 +11,7 @@
       margin: 0;
       padding: 0;
       font-weight: 800;
+      color: var(--neko-default-text);
     }
 
     img {
@@ -20,9 +21,9 @@
     }
   }
 
-    button {
-      background: var(--neko-primary);
-      margin-left: auto;
-      min-height: 3rem;
-    }
+  button {
+    background: var(--neko-default-primary);
+    margin-left: auto;
+    min-height: 3rem;
+  }
 }

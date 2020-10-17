@@ -1,0 +1,137 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background: var(--neko-default-foreground);
+  height: 100%;
+  z-index: 0;
+
+  .heroContainer {
+    flex: 1;
+    align-items: center;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    margin-top: auto;
+    margin-bottom: auto;
+
+    z-index: 2;
+    max-width: 70rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+  .hero {
+    z-index: 2;
+    display: flex;
+    width: 100%;
+
+    color: var(--neko-default-text);
+    align-items: center;
+    justify-content: center;
+
+    .octii {
+      margin-left: auto;
+      @media (max-width: 1200px) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      justify-content: start;
+    }
+    h1 {
+      font-size: 3rem;
+      margin: 0;
+    }
+
+    h2 {
+      opacity: 0;
+      animation: fadeIn 0.5s ease-in 3.25s forwards;
+    }
+
+    form {
+      opacity: 0;
+      animation: fadeIn 0.5s ease-in 3.75s forwards;
+      label {
+        margin-top: 0.8rem;
+        display: inline-block;
+        margin-bottom: 0.25rem;
+      }
+      .input {
+        display: flex;
+      }
+      input {
+        flex: 1;
+        background: var(--neko-default-background);
+        margin-right: 0.5rem;
+
+        @media (prefers-color-scheme: dark) {
+          background: var(--neko-default-foreground);
+        }
+      }
+
+      button {
+        background: var(--neko-default-primary);
+        color: var(--neko-default-text-inline);
+      }
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--neko-default-background);
+  }
+
+  .features {
+    z-index: 2;
+    width: 100%;
+  }
+}
+
+.container {
+  z-index: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4rem;
+  height: 20rem;
+  background-color: var(--neko-default-primary);
+}
+
+.simple {
+  opacity: 0;
+  animation: fadeIn 0.75s ease-in 0.25s forwards;
+}
+
+.private {
+  opacity: 0;
+  animation: fadeIn 0.75s ease-in 1s forwards;
+}
+
+.extensible {
+  opacity: 0;
+  animation: fadeIn 0.75s ease-in 1.75s forwards;
+}
+
+.error {
+  color: var(--neko-default-danger);
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  padding-left: 10rem;
+  padding-right: 10rem;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}

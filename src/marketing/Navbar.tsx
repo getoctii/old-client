@@ -11,7 +11,9 @@ const Navbar = () => {
         <img src='/logo512.png' />
         <h1>Octii</h1>
       </div>
-      <Button type='button' onClick={() => history.push('/authenticate')}>Beta Login</Button>
+      <Button type='button' onClick={() => history.push('/authenticate')}>
+        Login
+      </Button>
     </div>
   )
 }

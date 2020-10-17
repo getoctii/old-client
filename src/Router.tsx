@@ -17,7 +17,8 @@ import { NewCommunity } from './sidebar/NewCommunity'
 import { AnimatePresence } from 'framer-motion'
 import Loader from './components/Loader'
 import { Auth } from './authentication/state'
-import Home from './home/Home'
+import Home from './marketing/Home'
+import Privacy from './marketing/Privacy'
 const { Keyboard, StatusBar } = Plugins
 
 export const Router = () => {
@@ -38,6 +39,7 @@ export const Router = () => {
   return (
     <BrowserRouter>
       <Route path='/home' component={Home} />
+      {/* <Route path='/privacy' component={Privacy} /> */}
       <Route path='/authenticate' component={Authenticate} />
       <div id='main'>
         <AnimatePresence>

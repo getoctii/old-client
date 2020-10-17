@@ -1,21 +1,29 @@
 import React from 'react'
 import styles from './Authenticate.module.scss'
-import { Link, Switch, Route, Redirect, useLocation } from 'react-router-dom'
+import {
+  Link,
+  Switch,
+  Route,
+  Redirect,
+  useLocation,
+  useRouteMatch
+} from 'react-router-dom'
 import { Login } from './forms/Login'
 import { Register } from './forms/Register'
 import { Auth } from './state'
 
 export const Authenticate = () => {
   const location = useLocation()
+  const match = useRouteMatch<{ page: 'login' | 'register' }>(
+    '/authenticate/:page'
+  )
   const auth = Auth.useContainer()
   if (auth.authenticated) return <Redirect to='/' />
   return (
     <div className={styles.wrapper}>
       <main className={styles.card}>
-        <h1>Octii</h1>
-        <h2>
-          by <b>Innatical</b>
-        </h2>
+        <img alt='octii' src='/logo192.png' />
+        <h1>{match?.params.page === 'register' ? 'Register' : 'Login'}</h1>
         <Switch>
           <Route name='Login' path={'/authenticate/login'} component={Login} />
           <Route
@@ -29,18 +37,49 @@ export const Authenticate = () => {
           />
         </Switch>
         <nav>
-          {location.pathname !== '/authenticate/register' ? (
+          {match?.params.page === 'login' ? (
             <Link to={'/authenticate/register'}>Not Registered?</Link>
           ) : (
             <></>
           )}
-          {location.pathname !== '/authenticate/login' ? (
+          {match?.params.page === 'register' ? (
             <Link to={'/authenticate/login'}>Already Registered?</Link>
           ) : (
             <></>
           )}
         </nav>
       </main>
+
+      <aside className={styles.aside}>
+        <div className={styles.left}>
+          <h1>
+            <span className={styles.simple}>Simple.</span>
+            <br />
+            <span className={styles.private}>Private.</span>
+            <br />
+            <span className={styles.extensible}>Extensible.</span>
+          </h1>
+          <h3>Limited Beta Access</h3>
+        </div>
+        <div className={styles.timeline}>
+          {/* this is gonna be a pain to program  */}
+          <div>
+            Beta 1 <div className={styles.circle} />
+          </div>
+          <div>
+            Beta 2 <div className={`${styles.circle} ${styles.current}`} />
+          </div>
+          <div>
+            Beta 3 <div className={`${styles.circle} ${styles.next}`} />
+          </div>
+          <div>
+            Open Beta <div className={`${styles.circle} ${styles.next}`} />
+          </div>
+          <div>
+            Release <div className={`${styles.circle} ${styles.next}`} />
+          </div>
+        </div>
+      </aside>
     </div>
   )
 }

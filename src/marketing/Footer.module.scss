@@ -4,9 +4,10 @@
   flex-direction: column;
   align-items: center;
   padding: 1rem;
+  padding-left: 10rem;
+  padding-right: 10rem;
   .container {
     z-index: 2;
-
     max-width: 70rem;
     width: 100%;
     height: 100%;
@@ -23,6 +24,7 @@
   }
   li {
     color: #ffffff;
+    cursor: pointer;
     list-style: none;
     &:last-child {
       margin-left: 15px;
@@ -50,5 +52,3 @@
     color: #ffffff;
   }
 }
-
-// what did u say?
