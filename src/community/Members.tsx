@@ -79,7 +79,7 @@ export const Members = () => {
       <div className={styles.members}>
         {members.length > 0 ? (
           <div className={styles.membersBody}>
-            <h2>Members </h2>
+            <h2>Members</h2>
             <table>
               <thead>
                 <tr>
