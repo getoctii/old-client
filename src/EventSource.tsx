@@ -56,6 +56,13 @@ const EventSource = () => {
 
     eventSource.addEventListener('NEW_MESSAGE', async (e: any) => {
       const message = JSON.parse(e.data) as Message
+      // imma look in there discord if someone had thisbefore
+      const initial = queryCache.getQueryData(['messages', message.channel_id])
+      if (initial instanceof Array) {
+        if (initial[0].length < 25) initial[0].unshift(message)
+        else initial.unshift([message])
+        queryCache.setQueryData(['messages', message.channel_id], initial)
+      }
 
       if (
         message.author.id !== id &&
@@ -104,26 +111,21 @@ const EventSource = () => {
           }
         }
       }
-      queryCache.setQueryData(['messages', message.channel_id], (initial) => {
-        if (initial instanceof Array) {
-          if (initial[0].length < 25) initial[0].unshift(message)
-          else initial.unshift([message])
-          return initial
-        } else return initial
-      })
-
       stopTyping(message.channel_id, message.author.id)
     })
 
     eventSource.addEventListener('DELETED_MESSAGE', async (e: any) => {
       const message = JSON.parse(e.data) as Message
-      queryCache.setQueryData(['messages', message.channel_id], (initial) => {
-        if (initial instanceof Array) {
-          return initial.map((sub) =>
+      const initial = queryCache.getQueryData(['messages', message.channel_id])
+
+      if (initial instanceof Array) {
+        queryCache.setQueryData(
+          ['messages', message.channel_id],
+          initial.map((sub) =>
             sub.filter((msg: Message) => msg.id !== message.id)
           )
-        } else return initial
-      })
+        )
+      }
     })
 
     eventSource.addEventListener('NEW_PARTICIPANT', (e: any) => {

@@ -65,9 +65,9 @@ const Messages = ({ channelID }: { channelID: string }) => {
   const [tracking, setTracking] = useState(true)
 
   const autoScroll = () => {
-    if (tracking && ref.current) {
-      ref.current.scrollTop =
-        ref.current.scrollHeight - ref.current.clientHeight
+    const scrollRef = ref?.current // wait what if ref itself is null big brain time
+    if (tracking && scrollRef) {
+      scrollRef.scrollTop = scrollRef.scrollHeight - scrollRef.clientHeight
     }
   }
 
