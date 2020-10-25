@@ -5,8 +5,8 @@ import { faFileUpload, faSmileWink } from '@fortawesome/pro-solid-svg-icons'
 import React, { useRef, useState, useEffect } from 'react'
 import { useInterval, useMedia } from 'react-use'
 // @ts-ignore
-import emoji from 'emoji-dictionary'
 import Picker from 'emoji-picker-react'
+import { Form, Formik, FastField } from 'formik'
 
 const adjectives = [
   ' amazing',
@@ -53,7 +53,38 @@ export default ({
   }, [message, postTyping, typing])
   return (
     <div className={styles.box}>
-      <form
+      <Formik
+        initialValues={{ message: '' }}
+        validate={(values) => {
+          if (values?.message !== '') return {}
+          return { message: 'No message content' }
+        }}
+        onSubmit={(values, { resetForm }) => {
+          if (values?.message !== '') {
+            sendMessage(values.message)
+            resetForm()
+          }
+        }}
+      >
+        {() => (
+          <Form>
+            <FastField
+              name='message'
+              placeholder={`Say something${adjective}...`}
+            >
+              {({ field }: any) => (
+                <input
+                  {...field}
+                  placeholder={`Say something${adjective}...`}
+                  type='text'
+                  {...(!isMobile && { autoFocus: true })}
+                />
+              )}
+            </FastField>
+          </Form>
+        )}
+      </Formik>
+      {/* <form
         onSubmit={(event) => {
           event.preventDefault()
           if (message !== '') {
@@ -66,15 +97,8 @@ export default ({
             setMessage('')
           }
         }}
-      >
-        <input
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          type='text'
-          placeholder={`Say something${adjective}...`}
-          {...(!isMobile && { autoFocus: true })}
-        />
-      </form>
+      > */}
+      {/* </form> */}
       <Button type='button' onClick={() => uploadInput.current?.click()}>
         <FontAwesomeIcon icon={faFileUpload} />
         <input

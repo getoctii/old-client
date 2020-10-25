@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, Suspense } from 'react'
+import React, { useState, useEffect, useRef, Suspense, useCallback, useMemo } from 'react'
 import styles from './Chat.module.scss'
 import { useInfiniteQuery, useMutation } from 'react-query'
 import { clientGateway } from '../constants'
@@ -48,7 +48,9 @@ const Messages = ({ channelID }: { channelID: string }) => {
       }
     }
   )
-  const messages = data?.flat().reverse()
+
+  // const messages = data?.flat().reverse()
+  const messages = useMemo(() => data?.flat().reverse(), [data])
 
   const isPrimary = (message: Message, index: number) => {
     return !(
@@ -64,16 +66,15 @@ const Messages = ({ channelID }: { channelID: string }) => {
   const [loading, setLoading] = useState(false)
   const [tracking, setTracking] = useState(true)
 
-  const autoScroll = () => {
+  const autoScroll = useCallback(() => {
     const scrollRef = ref?.current // wait what if ref itself is null big brain time
     if (tracking && scrollRef) {
       scrollRef.scrollTop = scrollRef.scrollHeight - scrollRef.clientHeight
     }
-  }
+  }, [tracking, ref])
 
-  useEffect(autoScroll)
+  useEffect(autoScroll, [messages, autoScroll])
 
-  const resizeCallback = () => autoScroll()
   return (
     <div className={styles.messages} ref={ref}>
       {!loading && canFetchMore ? (
@@ -119,7 +120,7 @@ const Messages = ({ channelID }: { channelID: string }) => {
           <Message
             key={message.id}
             primary={isPrimary(message, index)}
-            onResize={resizeCallback}
+            onResize={autoScroll}
             {...message}
           />
         ) : (

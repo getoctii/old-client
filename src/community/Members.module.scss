@@ -41,6 +41,11 @@
   flex-direction: column;
 }
 
+.backButton {
+  margin-right: 1rem;
+  color: var(--neko-primary);
+}
+
 .members {
   overflow-y: scroll;
   height: 100%;

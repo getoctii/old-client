@@ -42,7 +42,7 @@ export const Authenticate = () => {
         </nav>
       </main>
 
-      <aside className={styles.aside}>
+      <aside>
         <div className={styles.left}>
           <h1>
             <span className={styles.simple}>Simple.</span>

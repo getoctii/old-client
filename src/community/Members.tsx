@@ -1,10 +1,11 @@
-import { faBoxOpen } from '@fortawesome/pro-solid-svg-icons'
+import { faBoxOpen, faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AnimatePresence, motion } from 'framer-motion'
 import moment from 'moment'
 import React, { Suspense, useRef, useState } from 'react'
 import { useInfiniteQuery } from 'react-query'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
+import { useMedia } from 'react-use'
 import { Waypoint } from 'react-waypoint'
 import { Auth } from '../authentication/state'
 import Loader from '../components/Loader'
@@ -49,6 +50,7 @@ const Member = (member: Member) => {
 }
 
 export const Members = () => {
+  const history = useHistory()
   const { token } = Auth.useContainer()
   const { id } = useParams<{ id: string }>()
   const fetchMembers = async (_: string, community: string, date: string) => {
@@ -73,13 +75,21 @@ export const Members = () => {
 
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
-
+  const isMobile = useMedia('(max-width: 800px)')
   return (
     <Suspense fallback={<Loader />}>
       <div className={styles.members}>
         {members.length > 0 ? (
           <div className={styles.membersBody}>
-            <h2>Members</h2>
+            <h2 onClick={() => isMobile && history.goBack()}>
+              {isMobile && (
+                <FontAwesomeIcon
+                  className={styles.backButton}
+                  icon={faChevronLeft}
+                />
+              )}
+              Members
+            </h2>
             <table>
               <thead>
                 <tr>
