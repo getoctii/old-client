@@ -5,7 +5,6 @@ import { faFileUpload, faSmileWink } from '@fortawesome/pro-solid-svg-icons'
 import React, { useRef, useState, useEffect } from 'react'
 import { useInterval, useMedia } from 'react-use'
 // @ts-ignore
-import emoji from 'emoji-dictionary'
 import Picker from 'emoji-picker-react'
 import { Form, Formik, FastField } from 'formik'
 
