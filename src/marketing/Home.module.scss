@@ -52,14 +52,10 @@ body {
     }
 
     h2 {
-      opacity: 0;
-      animation: fadeIn 0.5s ease-in 3.25s forwards;
       font-weight: 400;
     }
 
     form {
-      opacity: 0;
-      animation: fadeIn 0.5s ease-in 3.75s forwards;
       label {
         margin-top: 0.8rem;
         display: inline-block;
@@ -104,21 +100,6 @@ body {
   bottom: 4rem;
   height: 20rem;
   background-color: var(--neko-default-primary);
-}
-
-.simple {
-  opacity: 0;
-  animation: fadeIn 0.75s ease-in 0.25s forwards;
-}
-
-.private {
-  opacity: 0;
-  animation: fadeIn 0.75s ease-in 1s forwards;
-}
-
-.extensible {
-  opacity: 0;
-  animation: fadeIn 0.75s ease-in 1.75s forwards;
 }
 
 .error {
