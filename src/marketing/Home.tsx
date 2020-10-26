@@ -61,7 +61,9 @@ const Home = () => {
               >
                 {({ isSubmitting, errors, touched }) => (
                   <Form className={styles.form}>
-                    <label htmlFor='email'>Email</label>
+                    <label htmlFor='email'>
+                      Enter your email to receive updates.
+                    </label>
                     <div className={styles.input}>
                       <Field
                         id='email'
