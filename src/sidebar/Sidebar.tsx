@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import styles from './Sidebar.module.scss'
 import { UI } from '../state/ui'
 import { Auth } from '../authentication/state'
@@ -9,6 +9,7 @@ import { faUserCog, faInbox, faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Button from '../components/Button'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { useLocalStorage } from 'react-use'
 
 type UserResponse = {
   id: string
@@ -27,7 +28,7 @@ type MembersResponse = {
   }
 }[]
 
-const reorder = (list: any, startIndex: number, endIndex: number): any => {
+const reorder = (list: any[], startIndex: number, endIndex: number): any[] => {
   const result = Array.from(list)
   const [removed] = result.splice(startIndex, 1)
   result.splice(endIndex, 0, removed)
@@ -55,30 +56,37 @@ const Community = ({
   return (
     <Draggable draggableId={community.id} index={index}>
       {(provided) => (
-        <Button
-          type='button'
+        // @ts-ignore NOPE ITS FUCKED
+        // we can try to do the selection animation in css
+        <div
           key={community.id}
-          style={{}}
+          style={provided.draggableProps.style}
           className={
             match?.params.tab === 'communities' &&
             match.params.id === community.id
               ? `${styles.icon} ${styles.selected}`
               : styles.icon
           }
-          // this is hacky, lmao
-          props={{
-            ref: provided.innerRef,
-            ...provided.draggableProps,
-            ...provided.dragHandleProps,
-            style: {
-              ...provided.draggableProps.style,
-              backgroundImage: `url(${community.icon})`
-            }
-          }}
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
           onClick={() => {
             return history.push(`/communities/${community.id}`)
           }}
-        />
+          // transition={{
+          //   type: 'spring',
+          //   duration: 0.3,
+          //   bounce: 0.5
+          // }}
+          // whileHover={{
+          //   scale: 1.025
+          // }}
+          // whileTap={{
+          // scale: 1.05
+          // }}
+        >
+          <img src={community.icon} alt={community.name} />
+        </div>
       )}
     </Draggable>
   )
@@ -114,12 +122,10 @@ export const Sidebar = () => {
         })
       ).data
   )
-  const [communitiesList, setCommunitiesList] = useState(
-    communities?.data || []
+  const [communitiesOrder, setCommunitiesOrder] = useLocalStorage<string[]>(
+    'communities',
+    communities.data?.map((member) => member.community.id) ?? []
   )
-  useEffect(() => {
-    setCommunitiesList(communities?.data || [])
-  }, [communities])
   return (
     <div className={styles.sidebar}>
       <Button
@@ -160,26 +166,33 @@ export const Sidebar = () => {
             result.destination.index === result.source.index
           )
             return
+          console.log('reordering...')
+          console.log((communities.data || []).map((c) => c.community.id))
           const items = reorder(
             communities.data || [],
             result.source.index,
             result.destination.index
           )
-          setCommunitiesList(items)
+          console.log(items.map((c) => c.community.id))
+          setCommunitiesOrder(items.map((c) => c.community.id))
         }}
       >
         <Droppable droppableId='list'>
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
-              {communitiesList.map((member, index) => {
-                return (
+              {(communities?.data ?? [])
+                .sort(
+                  (a, b) =>
+                    (communitiesOrder?.indexOf(a.community.id) ?? 0) -
+                    (communitiesOrder?.indexOf(b.community.id) ?? 0)
+                )
+                .map((member, index) => (
                   <Community
                     key={member.community.id}
                     community={member.community}
                     index={index}
                   />
-                )
-              })}
+                ))}
               {provided.placeholder}
             </div>
           )}

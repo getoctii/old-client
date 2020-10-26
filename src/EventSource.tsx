@@ -59,7 +59,12 @@ const EventSource = () => {
       // imma look in there discord if someone had thisbefore
       const initial = queryCache.getQueryData(['messages', message.channel_id])
       if (initial instanceof Array) {
-        queryCache.setQueryData(['messages', message.channel_id], initial[0].length < 25 ? [message, ...initial[0]] : [message, ...initial])
+        queryCache.setQueryData(
+          ['messages', message.channel_id],
+          initial[0].length < 25
+            ? [[message, ...initial[0]], ...initial.slice(1)]
+            : [[message], ...initial]
+        )
       }
 
       if (
