@@ -47,11 +47,11 @@ const Home = () => {
           <div className={styles.hero}>
             <div className={styles.heroLeft}>
               <h1>
-                <span className={styles.simple}>Simple.</span>
+                <span>Simple.</span>
                 <br />
-                <span className={styles.private}>Private.</span>
+                <span>Private.</span>
                 <br />
-                <span className={styles.extensible}>Extensible.</span>
+                <span>Extensible.</span>
               </h1>
               <h2>Coming Early 2021</h2>
               <Formik
