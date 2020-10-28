@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import Input from '../components/Input'
@@ -20,25 +20,28 @@ const validate = (values: formData) => {
   return errors
 }
 
-const submit = async (
-  values: formData,
-  { setSubmitting, setFieldError }: FormikHelpers<formData>
-) => {
-  if (!values?.email) {
-    !values?.email && setFieldError('email', 'Required')
-    return
-  }
-  try {
-    await clientGateway.post('/users/newsletter', new URLSearchParams(values))
-  } finally {
-    setSubmitting(false)
-  }
-}
-
-// share the server
-
+// modal stupid, just do a temporoary success msg instead of we don't spam
+// also maybe we should add a check for localstorage to see if they subsribed?
 const Home = () => {
   const isDarkMode = useMedia('(prefers-color-scheme: dark)')
+  const [submitted, setSubmitted] = useState(false)
+
+  const submit = async (
+    values: formData,
+    { setSubmitting, setFieldError }: FormikHelpers<formData>
+  ) => {
+    if (!values?.email) {
+      !values?.email && setFieldError('email', 'Required')
+      return
+    }
+    try {
+      await clientGateway.post('/users/newsletter', new URLSearchParams(values))
+      setSubmitted(true)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.centered}>
@@ -75,7 +78,6 @@ const Home = () => {
                         <FontAwesomeIcon icon={faBell} />
                       </Button>
                     </div>
-
                     {console.log(errors.email)}
                     {errors.email && touched.email ? (
                       <ErrorMessage
@@ -83,6 +85,10 @@ const Home = () => {
                         className={styles.error}
                         name='email'
                       />
+                    ) : submitted ? (
+                      <p className={styles.subscribed}>
+                        Subscribed! We will email you soon...
+                      </p>
                     ) : (
                       <p>We don't spam. Promise.</p>
                     )}
