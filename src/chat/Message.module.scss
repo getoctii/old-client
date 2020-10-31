@@ -2,13 +2,11 @@
   display: flex;
   padding-left: 2rem;
   padding-right: 2rem;
-  // padding-top: 0.2rem;
-  // padding-bottom: 0.2rem;
 
   h2 {
+    line-height: 1.325rem;
     font-size: 1rem;
     margin: 0;
-    // margin-bottom: 0.2rem;
 
     span {
       margin-left: 0.5rem;
@@ -18,7 +16,7 @@
   }
 
   p {
-    line-height: 1.5rem;
+    line-height: 1.325rem;
     overflow-wrap: break-word;
     white-space: -webkit-pre-wrap;
     min-width: fit-content;
@@ -28,46 +26,52 @@
     margin: 0;
     font-size: 1rem;
     font-weight: 400;
-
     user-select: text;
   }
-}
 
-.message:hover {
-  background: var(--neko-message-hover);
-}
+  &:hover {
+    background: var(--neko-chat-hover);
+  }
 
-.primary {
-  @extend .message;
-  margin-top: 0.8rem;
-}
+  &.primary {
+    margin-top: 0.8rem;
+  }
 
-.avatar {
-  width: 2.65rem;
-  height: 2.65rem;
-  object-fit: cover;
-  border-radius: 8px;
-}
+  .avatar {
+    width: 2.65rem;
+    height: 2.65rem;
+    object-fit: cover;
+    border-radius: 12px;
+  }
 
-.content {
-  margin-left: 1rem;
-  overflow: hidden;
-  width: 100%;
+  .content {
+    margin-left: 1rem;
+    overflow: hidden;
+    width: 100%;
 
-  a {
-    color: var(--neko-primary);
-    text-decoration: none;
+    a {
+      color: var(--neko-text-href);
+      text-decoration: none;
+    }
+
+    &.spacer {
+      margin-left: 3.65rem;
+    }
   }
 }
 
-.spacer {
-  margin-left: 3.65rem;
+.text {
+  margin: 0;
+  padding: 0;
+  line-height: 1.325rem;
+  font-size: 1rem;
 }
 
 .imageEmbed {
   img {
     margin-top: 0.5rem;
     max-width: 50%;
+    max-height: 300px;
     border-radius: 10px;
     height: auto;
     width: auto;
@@ -114,7 +118,7 @@
     }
 
     &:hover {
-      background: var(--neko-primary);
+      background: var(--neko-colors-primary);
     }
 
     &:focus {
@@ -134,10 +138,10 @@
   }
 
   .danger {
-    color: var(--neko-danger);
+    color: var(--neko-colors-danger);
     &:hover {
-      color: var(--neko-text);
-      background: var(--neko-danger);
+      color: var(--neko-text-normal);
+      background: var(--neko-colors-danger);
     }
   }
 

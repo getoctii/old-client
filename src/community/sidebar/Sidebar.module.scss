@@ -1,8 +1,7 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  background-color: var(--neko-foreground);
-  margin-left: 0.15rem;
+  background: var(--neko-channels-background);
   min-width: 18rem;
   min-height: 5rem;
 
@@ -35,14 +34,14 @@
 .contextMenu {
   margin-top: 0.5rem;
   margin-bottom: 0.7rem;
-  background: var(--neko-background);
+  background: var(--neko-channels-background);
   padding: 0.5rem;
   border-radius: 10px;
 
   div {
     padding: 0.5rem;
     border-radius: 8px;
-    background-color: var(--neko-foreground);
+    background-color: var(--neko-sidebar-background);
 
     &:hover {
       background: var(--neko-message-hover);
@@ -119,7 +118,7 @@
   .danger {
     color: var(--neko-danger);
     &:hover {
-      color: var(--neko-text);
+      color: var(--neko-light);
       background: var(--neko-danger);
     }
   }

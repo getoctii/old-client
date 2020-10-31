@@ -1,4 +1,4 @@
-.wrapper {
+.channels {
   h4 {
     margin: 0;
     font-size: 1rem;
@@ -9,105 +9,56 @@
       float: right;
     }
   }
-}
 
-.channel {
-  border: inherit;
-  background: var(--neko-background);
-  display: flex;
-  align-items: center;
-  padding: 0.75rem;
-  margin-bottom: 0.25rem;
+  .list {
+    hr {
+      margin: 0;
+      margin-left: 2.6rem;
+      border-color: var(--neko-sidebar-seperator);
+      opacity: 0.5;
+      border-style: solid;
+    }
+    .channel {
+      padding-top: 0.6rem;
+      padding-bottom: 0.6rem;
+      border: inherit;
+      display: flex;
+      border-radius: 14px;
+      align-items: center;
 
-  svg {
-    margin-right: 0.45rem;
-  }
-  h4 {
-    margin: 0;
-    padding: 0;
-    margin-right: auto;
-    font-weight: 500;
-    width: 100%;
-    display: flex;
-    align-items: center;
-  }
+      .icon {
+        margin-right: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 10px;
+      }
+      h4 {
+        margin: 0;
+        padding: 0;
+        margin-right: auto;
+        font-weight: 500;
+        width: 100%;
+        display: flex;
+        align-items: center;
+      }
 
-  .muted {
-    margin-left: auto;
-    margin-right: 0;
-  }
-}
+      .muted {
+        margin-left: auto;
+        margin-right: 0;
+      }
 
-.selected {
-  background: var(--neko-primary);
-  color: var(--neko-text-inline);
-}
+      &.selected {
+        // color: var(--neko-text-inline);
+        margin-left: -0.6rem;
+        padding-left: 0.6rem;
+        margin-right: -0.6rem;
+        padding-right: 0.6rem;
 
-.channels {
-  > div {
-    &:first-child {
-      .channel {
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
+        .icon {
+          color: var(--neko-text-normal);
+          background: var(--neko-channels-background) !important;
+          background-color: var(--neko-channels-background) !important;
+        }
       }
     }
-    &:last-child {
-      .channel {
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-      }
-    }
-  }
-}
-
-.contextMenu {
-  z-index: 100;
-  margin-top: 0.5rem;
-  margin-bottom: 0.7rem;
-  background: var(--neko-context);
-  padding: 0.5rem;
-  border-radius: 10px;
-  box-shadow: var(--neko-shadow);
-  backdrop-filter: blur(20px);
-  div {
-    padding: 0.5rem;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-
-    span {
-      margin-right: 0.8rem;
-    }
-
-    &:hover {
-      background: var(--neko-primary);
-    }
-
-    &:focus {
-      outline: none;
-    }
-
-    svg {
-      margin-left: auto;
-    }
-  }
-
-  hr {
-    margin: 5px 0.5rem 5px 0.5rem;
-    opacity: 0.2;
-    border: 1px var(--neko-background) solid;
-    border-radius: 2px;
-  }
-
-  .danger {
-    color: var(--neko-danger);
-    &:hover {
-      color: var(--neko-text);
-      background: var(--neko-danger);
-    }
-  }
-
-  &:focus {
-    outline: none;
   }
 }

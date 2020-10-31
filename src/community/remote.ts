@@ -9,6 +9,7 @@ export interface CommunityResponse {
   channels: {
     name: string
     id: string
+    color: string
   }[]
 }
 

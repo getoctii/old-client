@@ -102,10 +102,10 @@ const Channel = () => {
   return (
     <Chat
       title={
-        `#${
+        `${
           community.data.channels.find((channel) => channel.id === channelID)
             ?.name
-        }` || '#unknown'
+        }` || 'unknown'
       }
       status={''}
       channelID={channelID}

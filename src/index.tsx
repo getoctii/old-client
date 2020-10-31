@@ -17,6 +17,7 @@ import * as Sentry from '@sentry/react'
 import SentryRRWeb from '@sentry/rrweb'
 import { LocalNotifications } from '@capacitor/core'
 import Theme from './theme/hook'
+import ThemeProvider from './theme/Provider'
 import Typing from './state/typing'
 
 Sentry.init({
@@ -78,8 +79,10 @@ ReactDOM.render(
             <UI.Provider>
               <Typing.Provider>
                 <Theme.Provider>
-                  <Router />
-                  <EventSource />
+                  <ThemeProvider>
+                    <Router />
+                    <EventSource />
+                  </ThemeProvider>
                 </Theme.Provider>
               </Typing.Provider>
             </UI.Provider>

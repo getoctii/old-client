@@ -1,34 +1,3 @@
-.button {
-  height: 3.75rem;
-  display: block;
-  font-size: 1.25rem;
-  margin-top: auto;
-  font-weight: 700;
-  width: 100%;
-}
-
-.createEmpty {
-  background-color: #f5f8f7;
-  padding: 2rem;
-  border-radius: 8px;
-}
-
-.input {
-  display: block;
-  height: 3.75rem;
-  margin: 0;
-  width: calc(100% - 0.9375rem - 0.9375rem);
-  color: #000000;
-  min-width: 10px;
-  font-size: 1.1875rem;
-  margin-bottom: 1rem;
-}
-
-.inputName {
-  margin-bottom: 5px;
-  color: lightgrey;
-}
-
 .membersEmpty {
   display: flex;
   justify-content: center;
@@ -37,13 +6,13 @@
   padding: 2rem;
   border-radius: 10px;
   margin-top: 1rem;
-  background: var(--neko-foreground);
+  background: var(--neko-settings-card);
   flex-direction: column;
 }
 
 .backButton {
   margin-right: 1rem;
-  color: var(--neko-primary);
+  color: var(--neko-colors-primary);
 }
 
 .members {
@@ -104,7 +73,7 @@
       tr {
         padding: 30px;
         height: 30px;
-        background-color: var(--neko-foreground);
+        background-color: var(--neko-settings-card);
         td {
           text-align: left;
           font-weight: 400;
@@ -115,14 +84,14 @@
 
         .copyAction {
           width: 49px;
-          background-color: var(--neko-primary);
+          background-color: var(--neko-colors-primary);
           text-align: center;
           color: var(--neko-text);
         }
 
         .deleteAction {
           width: 49px;
-          background-color: var(--neko-danger);
+          background-color: var(--neko-colors-danger);
           text-align: center;
         }
       }

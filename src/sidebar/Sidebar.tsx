@@ -5,18 +5,17 @@ import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { clientGateway } from '../constants'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserCog, faInbox, faPlus } from '@fortawesome/pro-solid-svg-icons'
+import {
+  faUserCog,
+  faInbox,
+  faPlus,
+  faThLarge
+} from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Button from '../components/Button'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { useLocalStorage } from 'react-use'
-
-type UserResponse = {
-  id: string
-  avatar: string
-  username: string
-  discriminator: number
-}
+import { State, UserResponse } from '../user/remote'
 
 type MembersResponse = {
   id: string
@@ -56,8 +55,6 @@ const Community = ({
   return (
     <Draggable draggableId={community.id} index={index}>
       {(provided) => (
-        // @ts-ignore NOPE ITS FUCKED
-        // we can try to do the selection animation in css
         <div
           key={community.id}
           style={provided.draggableProps.style}
@@ -73,17 +70,6 @@ const Community = ({
           onClick={() => {
             return history.push(`/communities/${community.id}`)
           }}
-          // transition={{
-          //   type: 'spring',
-          //   duration: 0.3,
-          //   bounce: 0.5
-          // }}
-          // whileHover={{
-          //   scale: 1.025
-          // }}
-          // whileTap={{
-          // scale: 1.05
-          // }}
         >
           <img src={community.icon} alt={community.name} />
         </div>
@@ -128,77 +114,115 @@ export const Sidebar = () => {
   )
   return (
     <div className={styles.sidebar}>
-      <Button
-        className={styles.avatar}
-        type='button'
-        onClick={() => ui.setModal('settings')}
-      >
-        <img src={user.data?.avatar} alt={user.data?.username} />
-        <div className={styles.overlay}>
-          <FontAwesomeIcon icon={faUserCog} size='2x' />
-        </div>
-      </Button>
-      <Button
-        className={
-          match?.params.tab === 'conversations' || !match
-            ? `${styles.messages} ${styles.selected}`
-            : styles.messages
-        }
-        type='button'
-        onClick={() => {
-          history.push('/')
-        }}
-      >
-        <FontAwesomeIcon className={styles.symbol} icon={faInbox} size='2x' />
-      </Button>
-      <Button
-        className={styles.plus}
-        type='button'
-        onClick={() => ui.setModal('newCommunity')}
-      >
-        <FontAwesomeIcon className={styles.symbol} icon={faPlus} size='2x' />
-      </Button>
-      <div className={styles.separator} />
-      <DragDropContext
-        onDragEnd={(result) => {
-          if (
-            !result.destination ||
-            result.destination.index === result.source.index
-          )
-            return
-          console.log('reordering...')
-          console.log((communities.data || []).map((c) => c.community.id))
-          const items = reorder(
-            communities.data || [],
-            result.source.index,
-            result.destination.index
-          )
-          console.log(items.map((c) => c.community.id))
-          setCommunitiesOrder(items.map((c) => c.community.id))
-        }}
-      >
-        <Droppable droppableId='list'>
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              {(communities?.data ?? [])
-                .sort(
-                  (a, b) =>
-                    (communitiesOrder?.indexOf(a.community.id) ?? 0) -
-                    (communitiesOrder?.indexOf(b.community.id) ?? 0)
-                )
-                .map((member, index) => (
-                  <Community
-                    key={member.community.id}
-                    community={member.community}
-                    index={index}
-                  />
-                ))}
-              {provided.placeholder}
-            </div>
+      <div className={styles.scrollable}>
+        <Button
+          className={
+            match?.params.tab === 'hub' || !match
+              ? `${styles.hub} ${styles.selected}`
+              : styles.hub
+          }
+          type='button'
+          onClick={() => {
+            history.push('/')
+          }}
+        >
+          <FontAwesomeIcon
+            className={styles.symbol}
+            icon={faThLarge}
+            size='2x'
+          />
+        </Button>
+        <Button
+          className={
+            match?.params.tab === 'conversations' || !match
+              ? `${styles.messages} ${styles.selected}`
+              : styles.messages
+          }
+          type='button'
+          onClick={() => {
+            history.push('/')
+          }}
+        >
+          <FontAwesomeIcon className={styles.symbol} icon={faInbox} size='2x' />
+        </Button>
+
+        <div className={styles.separator} />
+        <DragDropContext
+          onDragEnd={(result) => {
+            if (
+              !result.destination ||
+              result.destination.index === result.source.index
+            )
+              return
+            const items = reorder(
+              communities.data || [],
+              result.source.index,
+              result.destination.index
+            )
+            setCommunitiesOrder(items.map((c) => c.community.id))
+          }}
+        >
+          <Droppable droppableId='list'>
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                {(communities?.data ?? [])
+                  .sort(
+                    (a, b) =>
+                      (communitiesOrder?.indexOf(a.community.id) ?? 0) -
+                      (communitiesOrder?.indexOf(b.community.id) ?? 0)
+                  )
+                  .map((member, index) => (
+                    <Community
+                      key={member.community.id}
+                      community={member.community}
+                      index={index}
+                    />
+                  ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+        <br />
+      </div>
+      <div className={styles.pinned}>
+        <Button className={styles.avatar} type='button'>
+          <img
+            src={user.data?.avatar}
+            alt={user.data?.username}
+            onClick={() => ui.setModal('settings')}
+          />
+          <div
+            className={styles.overlay}
+            onClick={() => ui.setModal('settings')}
+          >
+            <FontAwesomeIcon icon={faUserCog} size='2x' />
+          </div>
+          {user.data?.state && (
+            <div
+              className={`${styles.badge} ${
+                user.data.state === State.online
+                  ? styles.online
+                  : user.data.state === State.dnd
+                  ? styles.dnd
+                  : user.data.state === State.idle
+                  ? styles.idle
+                  : user.data.state === State.offline
+                  ? styles.offline
+                  : ''
+              }`}
+              onClick={() => ui.setModal('status')}
+            />
           )}
-        </Droppable>
-      </DragDropContext>
-      <br />
+        </Button>
+        <Button
+          className={styles.plus}
+          type='button'
+          onClick={() => ui.setModal('newCommunity')}
+        >
+          <FontAwesomeIcon className={styles.symbol} icon={faPlus} size='2x' />
+        </Button>
+      </div>
     </div>
   )
 }

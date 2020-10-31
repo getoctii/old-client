@@ -18,6 +18,7 @@ import { AnimatePresence } from 'framer-motion'
 import Loader from './components/Loader'
 import { Auth } from './authentication/state'
 import Home from './marketing/Home'
+import Status from './components/Status'
 // import Privacy from './marketing/Privacy'
 const { Keyboard, StatusBar } = Plugins
 
@@ -48,6 +49,7 @@ export const Router = () => {
         </AnimatePresence>
         {uiStore.modal === 'settings' && <Settings />}
 
+        {uiStore.modal === 'status' && <Status />}
         {auth.authenticated && !isMobile && <Sidebar />}
         <Suspense fallback={<Loader />}>
           <Switch>

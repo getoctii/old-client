@@ -4,14 +4,14 @@ import moment from 'moment'
 import ReactMarkdown from 'react-markdown'
 import { useMeasure } from 'react-use'
 import { faCopy, faTrashAlt } from '@fortawesome/pro-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Clipboard } from '@capacitor/core'
-import { ContextMenuTrigger, ContextMenu, MenuItem } from 'react-contextmenu'
 import { Auth } from '../authentication/state'
 import { Confirmation } from '../components/Confirmation'
-import { useMutation } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { clientGateway } from '../constants'
 import { AnimatePresence } from 'framer-motion'
+import { UserResponse } from '../user/remote'
+import Context from '../components/Context'
 
 const ImageEmbed = ({
   children,
@@ -30,21 +30,16 @@ const ImageEmbed = ({
 const Message = memo(
   ({
     id,
-    author,
-    created_at,
+    authorID,
+    createdAt,
     primary,
     content,
     onResize
   }: {
     id: string
-    author: {
-      id: string
-      username: string
-      avatar: string
-      discriminator: number
-    }
-    created_at: string
-    updated_at: string
+    authorID: string
+    createdAt: string
+    updatedAt: string
     content: string
     primary: boolean
     onResize: () => void
@@ -59,6 +54,49 @@ const Message = memo(
           })
         ).data
     )
+    const user = useQuery(
+      ['users', authorID],
+      async (key, userID) =>
+        (
+          await clientGateway.get<UserResponse>(`/users/${userID}`, {
+            headers: { Authorization: auth.token }
+          })
+        ).data
+    )
+    const getItems = () => {
+      const items = [
+        {
+          text: 'Copy Message',
+          icon: faCopy,
+          danger: false,
+          onClick: () => {
+            Clipboard.write({
+              string: content
+            })
+          }
+        },
+        {
+          text: 'Copy ID',
+          icon: faCopy,
+          danger: false,
+          onClick: () => {
+            Clipboard.write({
+              string: id
+            })
+          }
+        }
+      ]
+
+      if (authorID === auth.id) {
+        items.push({
+          text: 'Delete Message',
+          icon: faTrashAlt,
+          danger: true,
+          onClick: () => setDeleteMessageModal(true)
+        })
+      }
+      return items
+    }
     return (
       <>
         <AnimatePresence>
@@ -72,13 +110,13 @@ const Message = memo(
             />
           )}
         </AnimatePresence>
-        <ContextMenuTrigger id={id}>
-          <div className={primary ? styles.primary : styles.message}>
+        <Context id={id} key={id} items={getItems()}>
+          <div className={`${styles.message} ${primary ? styles.primary : ''}`}>
             {primary && (
               <img
                 className={styles.avatar}
-                src={author.avatar}
-                alt={`${author}'s Profile`}
+                src={user.data?.avatar}
+                alt={`${user.data?.username}'s Profile`}
               />
             )}
             <div
@@ -86,8 +124,8 @@ const Message = memo(
             >
               {primary && (
                 <h2 key='username'>
-                  {author.username}
-                  <span>{moment.utc(created_at).local().calendar()}</span>
+                  {user.data?.username}
+                  <span>{moment.utc(createdAt).local().calendar()}</span>
                 </h2>
               )}
               <ReactMarkdown
@@ -105,50 +143,55 @@ const Message = memo(
                   'heading'
                 ]}
                 renderers={{
-                  heading: (props) => <p>{props.children}</p>,
-                  paragraph: (props) => {
-                    const content = props.children.flatMap(
-                      (child: any, index: number) =>
-                        typeof child === 'object' &&
-                        child.key &&
-                        !!child.key.match(/link/g) ? (
-                          /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(png|jpeg|jpg|gif)/g.test(
-                            child.props.href
-                          ) ? (
-                            [
-                              <p>{child}</p>,
-                              <div className={styles.imageEmbed}>
-                                <img
-                                  alt='chat'
-                                  src={
-                                    child.props.href.match(
-                                      /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(png|jpeg|jpg|gif)$/g
-                                    )?.[0]
-                                  }
-                                />
-                              </div>
-                            ]
-                          ) : (
-                            <p>{child}</p>
-                          )
+                  heading: (props: { children: any }) => (
+                    <p>{props.children}</p>
+                  ),
+                  paragraph: (props: any) => {
+                    const content = props.children.flatMap((child: any) =>
+                      typeof child === 'object' &&
+                      child.key &&
+                      !!child.key.match(/link/g) ? (
+                        /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(png|jpeg|jpg|gif)/g.test(
+                          child.props.href
+                        ) ? (
+                          [
+                            <p>{child}</p>,
+                            <div className={styles.imageEmbed}>
+                              <img
+                                alt='chat'
+                                src={
+                                  child.props.href.match(
+                                    /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(png|jpeg|jpg|gif)$/g
+                                  )?.[0]
+                                }
+                              />
+                            </div>
+                          ]
                         ) : (
                           <p>{child}</p>
                         )
+                      ) : (
+                        <p>{child}</p>
+                      )
                     )
                     const paragraphs = content.filter(
-                      (e: any) => e.type === 'p'
+                      (element: any) => element.type === 'p'
                     )
-                    const images = content.filter((e: any) => e.type === 'div')
+                    const images = content.filter(
+                      (element: any) => element.type === 'div'
+                    )
                     return (
                       <>
                         {[
-                          <div key='text'>
+                          <div key='text' className={styles.text}>
                             <p>
-                              {paragraphs.flatMap((p: any) => p.props.children)}
+                              {paragraphs.flatMap(
+                                (paragraph: any) => paragraph.props.children
+                              )}
                             </p>
                           </div>,
                           <ImageEmbed key='images' onResize={onResize}>
-                            {images.map((img: any, index: any) => (
+                            {images.map((img: any, index: number) => (
                               <div {...img.props} key={index} />
                             ))}
                           </ImageEmbed>
@@ -170,48 +213,7 @@ const Message = memo(
               />
             </div>
           </div>
-        </ContextMenuTrigger>
-        <ContextMenu
-          key={`context-${id}`}
-          id={id}
-          className={styles.contextMenu}
-        >
-          <MenuItem
-            key={`copy-message-${id}`}
-            onClick={() => {
-              Clipboard.write({
-                string: content
-              })
-            }}
-          >
-            <span>Copy Message</span>
-            <FontAwesomeIcon fixedWidth icon={faCopy} />
-          </MenuItem>
-          <MenuItem
-            key={`copy-id-${id}`}
-            onClick={() => {
-              Clipboard.write({
-                string: id
-              })
-            }}
-          >
-            <span>Copy ID</span>
-            <FontAwesomeIcon fixedWidth icon={faCopy} />
-          </MenuItem>
-          {author.id === auth.id && (
-            <>
-              <hr />
-              <MenuItem
-                key={`delete-${id}`}
-                className={styles.danger}
-                onClick={() => setDeleteMessageModal(true)}
-              >
-                <span>Delete Message</span>
-                <FontAwesomeIcon fixedWidth icon={faTrashAlt} />
-              </MenuItem>
-            </>
-          )}
-        </ContextMenu>
+        </Context>
       </>
     )
   }

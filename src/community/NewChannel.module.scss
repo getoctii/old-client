@@ -37,12 +37,12 @@
 
   button {
     width: 100%;
-    background-color: var(--neko-primary);
+    background: var(--neko-colors-primary);
   }
 }
 
 .error {
   margin-top: 0.25rem;
   margin-bottom: 0;
-  color: var(--neko-danger);
+  color: var(--neko-colors-danger);
 }

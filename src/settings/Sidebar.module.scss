@@ -6,7 +6,7 @@
   z-index: 0;
   overflow-y: scroll;
   padding: 1.5rem;
-  background: var(--neko-foreground);
+  background: var(--neko-channels-background);
   border: 0;
   height: 100%;
 
@@ -27,7 +27,7 @@
     margin-top: 0.5rem;
 
     div {
-      background: var(--neko-background);
+      background: var(--neko-sidebar-background);
       display: flex;
       align-items: center;
       padding: 0.75rem;
@@ -52,8 +52,8 @@
     }
 
     .selected {
-      background: var(--neko-primary);
-      color: var(--neko-text-inline);
+      background: var(--neko-colors-primary);
+      color: var(--neko-text-inverse);
     }
 
     div:first-child {
@@ -66,14 +66,14 @@
       border-bottom-right-radius: 10px;
     }
   }
-}
 
-.logout {
-  margin-top: auto;
-  text-align: center;
-  background: var(--neko-danger);
-  border-radius: 10px;
-  color: var(--neko-text-inline);
-  padding: 0.75rem;
-  cursor: pointer;
+  .logout {
+    margin-top: auto;
+    text-align: center;
+    background: var(--neko-colors-danger);
+    border-radius: 10px;
+    color: var(--neko-text-inverse);
+    padding: 0.75rem;
+    cursor: pointer;
+  }
 }

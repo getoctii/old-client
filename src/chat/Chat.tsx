@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, Suspense, useCallback, useMemo } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  Suspense,
+  useCallback,
+  useMemo
+} from 'react'
 import styles from './Chat.module.scss'
 import { useInfiniteQuery, useMutation } from 'react-query'
 import { clientGateway } from '../constants'
@@ -9,7 +16,7 @@ import moment from 'moment'
 import { Waypoint } from 'react-waypoint'
 import Loader from '../components/Loader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
+import { faChevronLeft, faHashtag } from '@fortawesome/pro-solid-svg-icons'
 import { useMedia } from 'react-use'
 import { useHistory } from 'react-router-dom'
 import axios from 'axios'
@@ -49,7 +56,6 @@ const Messages = ({ channelID }: { channelID: string }) => {
     }
   )
 
-  // const messages = data?.flat().reverse()
   const messages = useMemo(() => data?.flat().reverse(), [data])
 
   const isPrimary = (message: Message, index: number) => {
@@ -67,7 +73,7 @@ const Messages = ({ channelID }: { channelID: string }) => {
   const [tracking, setTracking] = useState(true)
 
   const autoScroll = useCallback(() => {
-    const scrollRef = ref?.current // wait what if ref itself is null big brain time
+    const scrollRef = ref?.current
     if (tracking && scrollRef) {
       scrollRef.scrollTop = scrollRef.scrollHeight - scrollRef.clientHeight
     }
@@ -76,7 +82,7 @@ const Messages = ({ channelID }: { channelID: string }) => {
   useEffect(autoScroll, [messages, autoScroll])
 
   return (
-    <div className={styles.messages} ref={ref}>
+    <div key={channelID} className={styles.messages} ref={ref}>
       {!loading && canFetchMore ? (
         <Waypoint
           bottomOffset={20}
@@ -121,7 +127,11 @@ const Messages = ({ channelID }: { channelID: string }) => {
             key={message.id}
             primary={isPrimary(message, index)}
             onResize={autoScroll}
-            {...message}
+            id={message.id}
+            authorID={message.author.id}
+            createdAt={message.created_at}
+            content={message.content}
+            updatedAt={message.updated_at}
           />
         ) : (
           <></>
@@ -214,14 +224,22 @@ const Chat = ({
           onClick={() => isMobile && history.goBack()}
           className={styles.header}
         >
-          {isMobile && (
-            <FontAwesomeIcon
-              className={styles.backButton}
-              icon={faChevronLeft}
-            />
-          )}{' '}
-          {title}
-          <p className={styles.status}>{status}</p>
+          {isMobile ? (
+            <div className={styles.icon}>
+              <FontAwesomeIcon
+                className={styles.backButton}
+                icon={faChevronLeft}
+              />
+            </div>
+          ) : (
+            <div className={styles.icon}>
+              <FontAwesomeIcon icon={faHashtag} />
+            </div>
+          )}
+          <div className={styles.title}>
+            {title}
+            <p className={styles.status}>{status}</p>
+          </div>
         </div>
         <Messages channelID={channelID} />
         <Box {...{ sendMessage, uploadFile, postTyping }} />

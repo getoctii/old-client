@@ -37,7 +37,7 @@
   padding: 2rem;
   border-radius: 10px;
   margin-top: 1rem;
-  background: var(--neko-foreground);
+  background: var(--neko-settings-card);
   flex-direction: column;
 }
 
@@ -94,7 +94,7 @@
       tr {
         padding: 30px;
         height: 30px;
-        background-color: var(--neko-foreground);
+        background-color: var(--neko-settings-card);
         td {
           text-align: left;
           font-weight: 400;
@@ -105,14 +105,14 @@
 
         .copyAction {
           width: 49px;
-          background-color: var(--neko-primary);
+          background-color: var(--neko-colors-primary);
           text-align: center;
           color: var(--neko-text);
         }
 
         .deleteAction {
           width: 49px;
-          background-color: var(--neko-danger);
+          background-color: var(--neko-colors-danger);
           text-align: center;
         }
       }

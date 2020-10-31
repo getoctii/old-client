@@ -14,12 +14,13 @@ import { Auth } from '../../authentication/state'
 import { CommunityResponse } from '../remote'
 import styles from './Channels.module.scss'
 import { Clipboard } from '@capacitor/core'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { NewChannel } from '../NewChannel'
 import { Confirmation } from '../../components/Confirmation'
 import { useMutation } from 'react-query'
 import { clientGateway } from '../../constants'
 import { useLocalStorage } from 'react-use'
+import Context from '../../components/Context'
 
 export const Channels = ({ community }: { community?: CommunityResponse }) => {
   const auth = Auth.useContainer()
@@ -41,8 +42,47 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
         })
       ).data
   )
+  const getItems = (channelID: string) => {
+    const items = [
+      {
+        text: mutedChannels?.includes(channelID)
+          ? 'Unmute Channel'
+          : 'Mute Channel',
+        icon: mutedChannels?.includes(channelID) ? faBellSlash : faBell,
+        danger: false,
+        onClick: () => {
+          if (!channelID) return
+          if (mutedChannels?.includes(channelID))
+            setMutedChannels(
+              mutedChannels.filter((channels) => channels !== channelID)
+            )
+          else setMutedChannels([...(mutedChannels || []), channelID])
+        }
+      },
+      {
+        text: 'Copy ID',
+        icon: faCopy,
+        danger: false,
+        onClick: () => {
+          Clipboard.write({
+            string: channelID
+          })
+        }
+      }
+    ]
+
+    if (community?.owner_id === auth.id) {
+      items.push({
+        text: 'Delete Channel',
+        icon: faTrashAlt,
+        danger: true,
+        onClick: () => setShowDelete(channelID)
+      })
+    }
+    return items
+  }
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.channels}>
       <AnimatePresence>
         {showCreate && (
           <NewChannel
@@ -72,27 +112,41 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
           </span>
         )}
       </h4>
-      <div className={styles.channels}>
+      <div className={styles.list}>
         {community && community.channels.length > 0 ? (
-          community.channels.map((channel) => (
-            <div key={channel.id} className={styles.channelWrapper}>
-              <ContextMenuTrigger key={channel.id} id={`channel-${channel.id}`}>
-                <motion.div
-                  animate={
+          community.channels.map((channel, index) => (
+            <Context
+              id={channel.id}
+              key={channel.id}
+              items={getItems(channel.id)}
+            >
+              <>
+                {index !== 0 && (
+                  <hr
+                    className={
+                      match?.params.channelID === channel.id
+                        ? styles.hidden
+                        : ''
+                    }
+                  />
+                )}
+                <div
+                  style={
                     match?.params.channelID === channel.id
-                      ? {
-                          background: 'var(--neko-primary)', // it was missing ) h
-                          color: 'var(--neko-text-inline)'
-                        }
-                      : {
-                          background: 'var(--neko-background)',
-                          color: 'var(--neko-text)'
-                        }
+                      ? channel.color
+                        ? {
+                            backgroundColor: channel.color
+                          }
+                        : {
+                            background: 'var(--neko-colors-primary)'
+                          }
+                      : {}
                   }
-                  transition={{
-                    duration: 0.25
-                  }}
-                  className={styles.channel}
+                  className={`${styles.channel} ${
+                    match?.params.channelID === channel.id
+                      ? styles.selected
+                      : ''
+                  }`}
                   onClick={() => {
                     history.push(
                       `/communities/${community.id}/channels/${channel.id}`
@@ -100,7 +154,20 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
                   }}
                 >
                   <h4>
-                    <FontAwesomeIcon icon={faHashtag} fixedWidth={true} />
+                    <div
+                      className={styles.icon}
+                      style={
+                        channel.color
+                          ? {
+                              backgroundColor: channel.color
+                            }
+                          : {
+                              background: 'var(--neko-colors-primary)'
+                            }
+                      }
+                    >
+                      <FontAwesomeIcon icon={faHashtag} fixedWidth={true} />
+                    </div>
                     {channel.name}
                     {mutedChannels?.includes(channel.id) && (
                       <FontAwesomeIcon
@@ -110,65 +177,9 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
                       />
                     )}
                   </h4>
-                </motion.div>
-              </ContextMenuTrigger>
-              <ContextMenu
-                key={`context-${channel.id}`}
-                id={`channel-${channel.id}`}
-                className={styles.contextMenu}
-              >
-                <MenuItem
-                  key={`mute-${channel.id}`}
-                  onClick={() => {
-                    if (!channel.id) return
-                    if (mutedChannels?.includes(channel.id))
-                      setMutedChannels(
-                        mutedChannels.filter(
-                          (channels) => channels !== channel.id
-                        )
-                      )
-                    else
-                      setMutedChannels([...(mutedChannels || []), channel.id])
-                  }}
-                >
-                  {mutedChannels?.includes(channel.id) ? (
-                    <>
-                      <span>Unmute Channel</span>
-                      <FontAwesomeIcon icon={faBellSlash} fixedWidth />
-                    </>
-                  ) : (
-                    <>
-                      <span>Mute Channel</span>{' '}
-                      <FontAwesomeIcon icon={faBell} fixedWidth />
-                    </>
-                  )}
-                </MenuItem>
-                <MenuItem
-                  key={`copy-${channel.id}`}
-                  onClick={() => {
-                    Clipboard.write({
-                      string: channel.id
-                    })
-                  }}
-                >
-                  <span>Copy ID</span>
-                  <FontAwesomeIcon fixedWidth icon={faCopy} />
-                </MenuItem>
-                {community.owner_id === auth.id && (
-                  <>
-                    <hr />
-                    <MenuItem
-                      key={`delete-${channel.id}`}
-                      className={styles.danger}
-                      onClick={() => setShowDelete(channel.id)}
-                    >
-                      <span>Delete Channel</span>
-                      <FontAwesomeIcon fixedWidth icon={faTrashAlt} />
-                    </MenuItem>
-                  </>
-                )}
-              </ContextMenu>
-            </div>
+                </div>
+              </>
+            </Context>
           ))
         ) : (
           <></>

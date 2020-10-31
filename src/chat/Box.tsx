@@ -84,21 +84,6 @@ export default ({
           </Form>
         )}
       </Formik>
-      {/* <form
-        onSubmit={(event) => {
-          event.preventDefault()
-          if (message !== '') {
-            sendMessage(
-              message.replace(
-                /:\w+:/gi,
-                (name: string) => emoji.getUnicode(name) ?? name
-              )
-            )
-            setMessage('')
-          }
-        }}
-      > */}
-      {/* </form> */}
       <Button type='button' onClick={() => uploadInput.current?.click()}>
         <FontAwesomeIcon icon={faFileUpload} />
         <input

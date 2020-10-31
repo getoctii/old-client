@@ -1,15 +1,73 @@
 {
   "id": "ffc21e1c-6a00-4682-9981-bcd12860c138",
   "name": "Dark",
-  "background": "#040a0f",
-  "foreground": "#202020",
-  "primary": "#0081FF",
-  "secondary": "#788A9F",
-  "textInline": "#dadada",
-  "text": "#dadada",
-  "danger": "#ed5454",
-  "overground": "rgba(70, 70, 70, 0.5)",
-  "messageHover": "#191919",
-  "shadow": "10px 10px 47px -14px rgba(0, 0, 0, 0.64)",
-  "context": "rgba(255, 255, 255, 0.1)"
+  "version": "0.0.1",
+  "colors": {
+    "primary": "linear-gradient(224deg, #75C8FF 0%, #007FFF 100%)",
+    "secondary": "linear-gradient(224deg, #A3A3A3 0%, #636363 100%)",
+    "success": "#8f8f8f",
+    "info": "#8f8f8f",
+    "danger": "linear-gradient(224deg, #FC9D9D 0%, #F86464 100%)",
+    "warning": "#8f8f8f",
+    "light": "#dadada",
+    "dark": "#040a0f"
+  },
+  "text": {
+    "normal": "#FEFEFE",
+    "inverse": "#dadada",
+    "href": "#1089FF",
+    "danger": "#F86464"
+  },
+  "sidebar": {
+    "background": "#040a0f",
+    "seperator": "#383838"
+  },
+  "settings": {
+    "background": "#040a0f",
+    "card": "#202020",
+    "input": "#040a0f"
+  },
+  "channels": {
+    "background": "#202020",
+    "seperator": "#383838",
+    "search": {
+      "background": "string",
+      "text": "string",
+      "placeholder": "string"
+    }
+  },
+  "chat": {
+    "background": "#040a0f",
+    "hover": "#202020",
+    "header": {
+      "channel": "string",
+      "description": "string"
+    }
+  },
+  "context": {
+    "seperator": "#040a0f",
+    "background": "rgba(255, 255, 255, 0.1)"
+  },
+  "status": {
+    "selected": "#1089FF",
+    "online": "#23DB5F",
+    "idle": "#FED009",
+    "dnd": "#F86464",
+    "offline": "#D8D8D8"
+  },
+  "message": {
+    "author": "string",
+    "date": "string",
+    "message": "string"
+  },
+
+  "input": {
+    "background": "#202020",
+    "text": "#ffffff"
+  },
+
+  "modal": {
+    "background": "rgba(70, 70, 70, 0.5)",
+    "foreground": "#040a0f"
+  }
 }

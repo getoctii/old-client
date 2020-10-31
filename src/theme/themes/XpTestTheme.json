@@ -1,16 +1,68 @@
 {
   "id": "bdc06bd2-761f-458a-95f3-25508abd5666",
   "name": "Vapourwave95",
-  "background": "rgba(0,123,128,1 )",
-  "foreground": "#C3C3C3",
-  "primary": "#8f8f8f",
-  "secondary": "url('https://file.coffee/u/adpCI-Ag-p.png')",
-  "textInline": "rgba(51, 51, 51, 1)",
-  "text": "rgba(51, 51, 51, 1)",
-  "danger": "#8f8f8f",
-  "overground": "rgba(51, 51, 51, 1)",
-  "messageHover": "rgba(0,103,108,1 )",
-  "global": "@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap'); * { border-radius: 0 !important; font-family: 'VT323', monospace !important; };",
-  "shadow": "0 2px 4px 0 rgba(0, 0, 0, 0.5)",
-  "context": "rgba(255, 255, 255, 1)"
+
+  "colors": {
+    "primary": "#8f8f8f",
+    "secondary": "url('https://file.coffee/u/adpCI-Ag-p.png')",
+    "success": "#8f8f8f",
+    "info": "#8f8f8f",
+    "danger": "#8f8f8f",
+    "warning": "#8f8f8f",
+    "light": "string",
+    "dark": "string"
+  },
+
+  "href": "string",
+  "sidebar": {
+    "background": "string",
+    "hub": {
+      "background": "string",
+      "text": "string"
+    },
+    "messages": {
+      "background": "string",
+      "text": "string"
+    },
+    "seperator": "string",
+    "add": {
+      "background": "string",
+      "text": "string"
+    }
+  },
+
+  "channels": {
+    "background": "string",
+    "seperator": "string",
+    "search": {
+      "background": "string",
+      "text": "string",
+      "placeholder": "string"
+    }
+  },
+  "chat": {
+    "background": "string",
+    "header": {
+      "channel": "string",
+      "description": "string"
+    }
+  },
+
+  "status": {
+    "online": "string",
+    "idle": "string",
+    "dnd": "string",
+    "offline": "string"
+  },
+  "message": {
+    "author": "string",
+    "date": "string",
+    "message": "string"
+  },
+
+  "input": {
+    "background": "string",
+    "text": "string"
+  },
+  "global": "@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap'); * { border-radius: 0 !important; font-family: 'VT323', monospace !important; };"
 }

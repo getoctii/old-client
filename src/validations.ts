@@ -1,5 +1,5 @@
 export const isDiscriminator = (discriminator: string) => {
-  if (!discriminator) return true
+  if (!discriminator) return false
   if (discriminator === 'inn') return true
   const num = parseInt(discriminator)
   return num <= 9999 && num >= 0

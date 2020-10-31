@@ -1,0 +1,48 @@
+.status {
+  position: absolute;
+  z-index: 1000;
+  bottom: 0;
+  left: 5.75rem;
+  bottom: 1rem;
+  background: var(--neko-sidebar-background);
+  width: 17.5rem;
+  border-radius: 16px;
+  padding: 1.5rem;
+  h1 {
+    font-weight: 500;
+    font-size: 1.2rem;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 0.8rem;
+    span {
+      float: right;
+    }
+  }
+
+  .statusButtons {
+    display: flex;
+    width: 100%;
+
+    button {
+      height: 3rem;
+      width: 3rem;
+      font-size: 1.25rem;
+      &:not(:last-child) {
+        margin-right: 0.8rem;
+      }
+
+      &.online {
+        background: var(--neko-status-online);
+      }
+      &.dnd {
+        background: var(--neko-status-dnd);
+      }
+      &.idle {
+        background: var(--neko-status-idle);
+      }
+      &.offline {
+        background: var(--neko-status-offline);
+      }
+    }
+  }
+}

@@ -11,6 +11,8 @@ html {
   * {
     &::-webkit-scrollbar {
       width: 5px;
+
+      display: none;
     }
 
     &::-webkit-scrollbar-track {
@@ -19,10 +21,11 @@ html {
 
     &::-webkit-scrollbar-thumb {
       border-radius: 10px;
-      background: var(--neko-text);
+      background: var(--neko-text-normal);
+      opacity: 0.25;
     }
 
-    scrollbar-color: var(--neko-text) rgba(0, 0, 0, 0);
+    scrollbar-color: var(--neko-text-normal) rgba(0, 0, 0, 0);
     scrollbar-width: thin;
   }
 }
@@ -30,15 +33,14 @@ html {
 body {
   padding: env(safe-area-inset-top) env(safe-area-inset-right)
     env(safe-area-inset-bottom) env(safe-area-inset-left);
-  color: var(--neko-text);
+  color: var(--neko-text-normal);
   height: 100vh;
   width: 100vw;
   font-family: Inter, sans-serif;
   user-select: none;
-  background: var(--neko-background);
+  background: var(--neko-chat-background);
   -webkit-tap-highlight-color: transparent;
   position: fixed;
-  background-color: var(--neko-background);
 
   --neko-default-background: #eef7ff;
   --neko-default-foreground: #ffffff;
