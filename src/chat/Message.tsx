@@ -2,8 +2,8 @@ import React, { useEffect, memo, ReactChildren, useState } from 'react'
 import styles from './Message.module.scss'
 import moment from 'moment'
 import ReactMarkdown from 'react-markdown'
-import { useMeasure } from 'react-use'
-import { faCopy, faTrashAlt } from '@fortawesome/pro-solid-svg-icons'
+import { useAudio, useMeasure } from 'react-use'
+import { faCopy, faPause, faPlay, faTrashAlt } from '@fortawesome/pro-solid-svg-icons'
 import { Clipboard } from '@capacitor/core'
 import { Auth } from '../authentication/state'
 import { Confirmation } from '../components/Confirmation'
@@ -12,6 +12,31 @@ import { clientGateway } from '../constants'
 import { AnimatePresence } from 'framer-motion'
 import { UserResponse } from '../user/remote'
 import Context from '../components/Context'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+const secondsToTimestamp = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60)
+  return `${minutes}:${Math.floor(seconds - minutes * 60).toString().padStart(2, '0')}`
+}
+
+const AudioEmbed = ({
+  src
+}: {
+  src: string
+}) => {
+  const [audio, state, controls] = useAudio({
+    src
+  })
+
+  return (
+    <div className={styles.audioEmbed}>
+      {audio}
+      <FontAwesomeIcon className={styles.icon} onClick={() => state.paused ? controls.play() : controls.pause()} icon={state.paused ? faPlay : faPause}/>
+      <input value={state.time} max={state.duration} onChange={e => controls.seek(e.target.valueAsNumber)} step='any' type='range' />
+      <span>{secondsToTimestamp(state.time)}/{secondsToTimestamp(state.duration)}</span>
+    </div>
+  )
+}
 
 const ImageEmbed = ({
   children,
@@ -167,7 +192,13 @@ const Message = memo(
                               />
                             </div>
                           ]
-                        ) : (
+                        ) : /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(aac|flac|m4a|mp3|ogg|wav|mpeg)/g.test(
+                          child.props.href
+                        ) ? ([
+                          <p>{child}</p>,
+                          <div><AudioEmbed src={child.props.href} /></div>
+
+                        ]) : (
                           <p>{child}</p>
                         )
                       ) : (

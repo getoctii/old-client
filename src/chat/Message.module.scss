@@ -18,7 +18,7 @@
     line-height: 1.5rem;
     word-break: break-all;
     overflow-wrap: break-word;
-    white-space: -webkit-pre-wrap;
+    white-space: pre-wrap;
     min-width: fit-content;
     max-width: 100%;
     display: inline-block;
@@ -76,5 +76,75 @@
     padding: 0;
     line-height: 1.325rem;
     font-size: 1rem;
+  }
+}
+
+.audioEmbed {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.25rem;
+  padding-left: 1rem;
+
+  //max-width: 45%;
+
+  border-radius: 16px;
+  background: var(--neko-input-background);
+
+  * {
+    margin-right: 1rem;
+  }
+
+  .icon {
+  }
+
+  input {
+    flex: 1;
+    border: hidden;
+
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+
+    &::-webkit-slider-runnable-track {
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--neko-chat-background);
+      border-radius: 10px;
+      margin:-2px;
+    }
+
+    &::-moz-range-track {
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--neko-chat-background);
+      border-radius: 10px;
+      margin:-6px;
+      height: 15px;
+    }
+
+    &::-moz-range-thumb {
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--neko-default-primary);
+      height: 15px;
+      width: 15px;
+      border-radius: 7.5px;
+      border: none;
+    }
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--neko-default-primary);
+      height: 15px;
+      width: 15px;
+      border-radius: 7.5px;
+    }
+  }
+
+  span {
+    font-size: 1rem;
+    font-weight: 500;
   }
 }
