@@ -166,7 +166,21 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
                             }
                       }
                     >
-                      <FontAwesomeIcon icon={faHashtag} fixedWidth={true} />
+                      <FontAwesomeIcon
+                        icon={faHashtag}
+                        fixedWidth={true}
+                        style={
+                          match?.params.channelID === channel.id
+                            ? channel.color
+                              ? {
+                                  color: channel.color
+                                }
+                              : {
+                                  color: 'var(--neko-text-href)'
+                                }
+                            : {}
+                        }
+                      />
                     </div>
                     {channel.name}
                     {mutedChannels?.includes(channel.id) && (

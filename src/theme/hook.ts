@@ -1,7 +1,10 @@
 import { createContainer } from 'unstated-next'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useLocalStorage, useMedia } from 'react-use'
-import darkTheme from './themes/default-dark.json'
+import octii from './themes/octii.json'
+import octiiHub from './themes/octii-hub.json'
+import ayu from './themes/ayu-mirage.json'
+import eyestrain from './themes/eyestrain.json'
 
 const isThemeBundle = (theme: Theme | ThemeBundle): theme is ThemeBundle => {
   return (theme as ThemeBundle).dark !== undefined
@@ -10,13 +13,14 @@ const isThemeBundle = (theme: Theme | ThemeBundle): theme is ThemeBundle => {
 interface ThemeBundle {
   id: string
   name: string
+  version?: string
   dark: Theme
   light: Theme
 }
 
 interface Theme {
-  id: string
-  name: string
+  id?: string
+  name?: string
   version?: string
 
   colors: {
@@ -88,28 +92,44 @@ interface Theme {
     background: string
     foreground: string
   }
+
+  emojis: {
+    background: string
+    input: string
+  }
 }
 
 const globalStyle = document.createElement('style')
 globalStyle.type = 'text/css'
 document.head.appendChild(globalStyle)
 
+export const themes = [octii, octiiHub, ayu, eyestrain]
+
 const useTheme = () => {
-  const [theme, setTheme] = useLocalStorage<Theme | ThemeBundle>(
-    'theme',
-    darkTheme
+  const [themeId, setThemeId] = useLocalStorage<string>('themeId', octii.id)
+  const theme = useMemo<Theme | ThemeBundle | undefined>(
+    () => themes.find((t) => t.id === themeId),
+    [themeId]
   )
-  const prefersDarkMode = useMedia('prefers-color-scheme: dark')
+  const [variations, setVariations] = useLocalStorage<
+    'light' | 'dark' | 'system'
+  >('variations', 'system')
+  const prefersDarkMode = useMedia('(prefers-color-scheme: dark)')
   useEffect(() => {
-    if (!theme) return
+    if (!theme) return setThemeId(octii.id)
     const documentStyle = document.documentElement.style
-    const currentTheme =
-      isThemeBundle(theme) && prefersDarkMode
-        ? theme.dark
-        : isThemeBundle(theme)
+
+    const currentTheme = isThemeBundle(theme)
+      ? variations === 'system'
+        ? prefersDarkMode
+          ? theme.dark
+          : theme.light
+        : variations === 'light'
         ? theme.light
-        : theme
-    if (!currentTheme.version) return setTheme(darkTheme)
+        : theme.dark
+      : theme
+
+    if (!theme.version) return
 
     Object.entries({
       '--neko-colors-primary': currentTheme.colors.primary,
@@ -142,10 +162,12 @@ const useTheme = () => {
       '--neko-settings-card': currentTheme.settings.card,
       '--neko-settings-input': currentTheme.settings.input,
       '--neko-context-background': currentTheme.context.background,
-      '--neko-context-seperator': currentTheme.context.seperator
+      '--neko-context-seperator': currentTheme.context.seperator,
+      '--neko-emojis-background': currentTheme.emojis.background,
+      '--neko-emojis-input': currentTheme.emojis.input
     }).forEach(([key, value]) => documentStyle.setProperty(key, value))
-  }, [theme, prefersDarkMode, setTheme])
-  return { theme, setTheme }
+  }, [theme, prefersDarkMode, variations])
+  return { theme, themeId, setThemeId, setVariations, variations }
 }
 
 export default createContainer(useTheme)

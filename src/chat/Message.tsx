@@ -56,7 +56,7 @@ const Message = memo(
     )
     const user = useQuery(
       ['users', authorID],
-      async (key, userID) =>
+      async (_, userID) =>
         (
           await clientGateway.get<UserResponse>(`/users/${userID}`, {
             headers: { Authorization: auth.token }

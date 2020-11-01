@@ -27,6 +27,7 @@
     align-items: center;
 
     .icon {
+      color: var(--neko-text-inverse);
       margin-right: 0.5rem;
       padding: 0.5rem;
       border-radius: 10px;
@@ -48,6 +49,7 @@
     }
 
     &.selected {
+      color: var(--neko-text-inverse);
       margin-left: -0.6rem;
       padding-left: 0.6rem;
       margin-right: -0.6rem;
@@ -69,6 +71,9 @@
     }
     &.selected {
       background: var(--neko-colors-primary);
+      .icon {
+        color: var(--neko-text-href);
+      }
     }
   }
 

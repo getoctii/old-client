@@ -14,7 +14,7 @@
     hr {
       margin: 0;
       margin-left: 2.6rem;
-      border-color: var(--neko-sidebar-seperator);
+      border-color: var(--neko-channels-seperator);
       opacity: 0.5;
       border-style: solid;
     }
@@ -25,10 +25,10 @@
       display: flex;
       border-radius: 14px;
       align-items: center;
-
       .icon {
         margin-right: 0.5rem;
         padding: 0.5rem;
+        color: var(--neko-text-inverse);
         border-radius: 10px;
       }
       h4 {
@@ -47,7 +47,7 @@
       }
 
       &.selected {
-        // color: var(--neko-text-inline);
+        color: var(--neko-text-inverse);
         margin-left: -0.6rem;
         padding-left: 0.6rem;
         margin-right: -0.6rem;
@@ -55,8 +55,8 @@
 
         .icon {
           color: var(--neko-text-normal);
-          background: var(--neko-channels-background) !important;
-          background-color: var(--neko-channels-background) !important;
+          background: var(--neko-text-inverse) !important;
+          background-color: var(--neko-text-inverse) !important;
         }
       }
     }

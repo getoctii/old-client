@@ -1,37 +1,36 @@
 {
-  "id": "b2691ad9-a417-4644-8286-510bcd54a6a6",
-  "name": "Ayu Mirage",
+  "id": "cf77270c-9522-413f-8319-3c8d13091a62",
+  "name": "Eyestrain",
   "version": "0.0.1",
-
   "dark": {
     "colors": {
-      "primary": "#707A8CCC",
-      "secondary": "#788A9F",
+      "primary": "linear-gradient(224deg, #75C8FF 0%, #007FFF 100%)",
+      "secondary": "linear-gradient(224deg, #A3A3A3 0%, #636363 100%)",
       "success": "#8f8f8f",
       "info": "#8f8f8f",
-      "danger": "#FF3333",
+      "danger": "linear-gradient(224deg, #FC9D9D 0%, #F86464 100%)",
       "warning": "#8f8f8f",
       "light": "#dadada",
-      "dark": "#1F2430"
+      "dark": "#040a0f"
     },
     "text": {
-      "normal": "#fafafa",
-      "inverse": "#95E6CB",
-      "href": "#707A8CCC",
-      "danger": "#FF3333"
+      "normal": "#FFFFFF",
+      "inverse": "#FEFEFE",
+      "href": "#1089FF",
+      "danger": "#F86464"
     },
     "sidebar": {
-      "background": "#1F2430",
-      "seperator": "#383838"
+      "background": "#000000",
+      "seperator": "#000000"
     },
     "settings": {
-      "background": "#1F2430",
-      "card": "#232834",
-      "input": "#1F2430"
+      "background": "#000000",
+      "card": "#000000",
+      "input": "#000000"
     },
     "channels": {
-      "background": "#232834",
-      "seperator": "#383838",
+      "background": "#000000",
+      "seperator": "#000000",
       "search": {
         "background": "string",
         "text": "string",
@@ -39,22 +38,22 @@
       }
     },
     "chat": {
-      "background": "#191E2A",
-      "hover": "#232834",
+      "background": "#000000",
+      "hover": "#000000",
       "header": {
         "channel": "string",
         "description": "string"
       }
     },
     "context": {
-      "seperator": "#1F2430",
+      "seperator": "#000000",
       "background": "rgba(255, 255, 255, 0.1)"
     },
     "status": {
-      "selected": "#707A8CCC",
-      "online": "#BAE67E",
-      "idle": "#FFCC66",
-      "dnd": "#FF3333",
+      "selected": "#000000",
+      "online": "#23DB5F",
+      "idle": "#FED009",
+      "dnd": "#F86464",
       "offline": "#D8D8D8"
     },
     "message": {
@@ -63,47 +62,47 @@
       "message": "string"
     },
     "input": {
-      "background": "#232834",
-      "text": "#ffffff"
+      "background": "#000000",
+      "text": "#FFFFFF"
     },
     "modal": {
       "background": "rgba(70, 70, 70, 0.5)",
-      "foreground": "#1F2430"
+      "foreground": "#000000"
     },
     "emojis": {
-      "background": "#232834",
-      "input": "#1F2430"
+      "background": "#000000",
+      "input": "#000000"
     }
   },
   "light": {
     "colors": {
-      "primary": "#707A8CCC",
+      "primary": "linear-gradient(224deg, #75C8FF 0%, #007FFF 100%)",
       "secondary": "linear-gradient(224deg, #A3A3A3 0%, #636363 100%)",
       "success": "#8f8f8f",
       "info": "#8f8f8f",
       "danger": "linear-gradient(224deg, #FC9D9D 0%, #F86464 100%)",
       "warning": "#8f8f8f",
       "light": "#dadada",
-      "dark": "#1F2430"
+      "dark": "#040a0f"
     },
     "text": {
       "normal": "#000000",
-      "inverse": "#FEFEFE",
+      "inverse": "#FFFFFF",
       "href": "#1089FF",
       "danger": "#F86464"
     },
     "sidebar": {
-      "background": "#FAFAFA",
-      "seperator": "#F1F1F1"
+      "background": "#FFFFFF",
+      "seperator": "#FFFFFF"
     },
     "settings": {
-      "background": "#EEF7FF",
+      "background": "#FFFFFF",
       "card": "#FFFFFF",
-      "input": "#EEF7FF"
+      "input": "#FFFFFF"
     },
     "channels": {
-      "background": "#8A91991A",
-      "seperator": "#F1F1F1",
+      "background": "#FFFFFF",
+      "seperator": "#FFFFFF",
       "search": {
         "background": "string",
         "text": "string",
@@ -111,7 +110,7 @@
       }
     },
     "chat": {
-      "background": "#FAFAFA",
+      "background": "#FFFFFF",
       "hover": "#FFFFFF",
       "header": {
         "channel": "string",
@@ -123,7 +122,7 @@
       "background": "rgba(0, 0, 0, 0.1)"
     },
     "status": {
-      "selected": "#707A8CCC",
+      "selected": "#FFFFFF",
       "online": "#23DB5F",
       "idle": "#FED009",
       "dnd": "#F86464",
@@ -140,7 +139,7 @@
     },
     "modal": {
       "background": "rgba(70, 70, 70, 0.5)",
-      "foreground": "#FAFAFA"
+      "foreground": "#FFFFFF"
     },
     "emojis": {
       "background": "#ffffff",

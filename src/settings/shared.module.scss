@@ -54,6 +54,9 @@
 .themes {
   width: 100%;
 
+  h5 {
+    margin: 0;
+  }
   div {
     background: var(--neko-channels-background);
     display: flex;
@@ -63,6 +66,9 @@
     cursor: pointer;
   }
 
+  button {
+    background: var(--neko-channels-background);
+  }
   .selected {
     background: var(--neko-colors-primary);
     color: var(--neko-text-inverse);
@@ -150,5 +156,29 @@
     label {
       margin: 0;
     }
+  }
+}
+
+.buttonRow {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+
+  button {
+    flex: 1;
+    background: var(--neko-colors-secondary);
+
+    &:not(:first-child) {
+      margin-left: 0.5rem;
+    }
+
+    &:not(:last-child) {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .selected {
+    background: var(--neko-colors-primary);
+    color: var(--neko-text-inverse);
   }
 }

@@ -38,12 +38,14 @@
       opacity: 0.2;
       border: 1px var(--neko-context-seperator) solid;
       border-radius: 2px;
+      width: 100%;
+      margin-left: 0 !important;
     }
 
     .danger {
       color: var(--neko-text-danger);
       &:hover {
-        color: var(--neko-text-normal);
+        color: var(--neko-text-inverse);
         background: var(--neko-colors-danger);
       }
     }

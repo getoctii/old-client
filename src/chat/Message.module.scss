@@ -4,7 +4,6 @@
   padding-right: 2rem;
 
   h2 {
-    line-height: 1.325rem;
     font-size: 1rem;
     margin: 0;
 
@@ -16,7 +15,8 @@
   }
 
   p {
-    line-height: 1.325rem;
+    line-height: 1.5rem;
+    word-break: break-all;
     overflow-wrap: break-word;
     white-space: -webkit-pre-wrap;
     min-width: fit-content;
@@ -58,94 +58,23 @@
       margin-left: 3.65rem;
     }
   }
-}
 
-.text {
-  margin: 0;
-  padding: 0;
-  line-height: 1.325rem;
-  font-size: 1rem;
-}
-
-.imageEmbed {
-  img {
-    margin-top: 0.5rem;
-    max-width: 50%;
-    max-height: 300px;
-    border-radius: 10px;
-    height: auto;
-    width: auto;
-    object-fit: cover;
-  }
-}
-
-.contextWrapper {
-  > div {
-    &:first-child {
-      .channel {
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-      }
-    }
-    &:last-child {
-      .channel {
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-      }
+  .imageEmbed {
+    img {
+      margin-top: 0.5rem;
+      max-width: 50%;
+      max-height: 300px;
+      border-radius: 10px;
+      height: auto;
+      width: auto;
+      object-fit: cover;
     }
   }
-}
 
-.contextMenu {
-  z-index: 100;
-  margin-top: 0.5rem;
-  margin-bottom: 0.7rem;
-  background: var(--neko-context);
-  padding: 0.5rem;
-  border-radius: 10px;
-  box-shadow: var(--neko-shadow);
-  backdrop-filter: blur(20px);
-  div {
+  .text {
+    margin: 0;
+    padding: 0;
+    line-height: 1.325rem;
     font-size: 1rem;
-    font-weight: 400;
-    padding: 0.5rem;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-
-    span {
-      margin-right: 0.8rem;
-    }
-
-    &:hover {
-      background: var(--neko-colors-primary);
-    }
-
-    &:focus {
-      outline: none;
-    }
-
-    svg {
-      margin-left: auto;
-    }
-  }
-
-  hr {
-    margin: 5px 0.5rem 5px 0.5rem;
-    opacity: 0.2;
-    border: 1px var(--neko-background) solid;
-    border-radius: 2px;
-  }
-
-  .danger {
-    color: var(--neko-colors-danger);
-    &:hover {
-      color: var(--neko-text-normal);
-      background: var(--neko-colors-danger);
-    }
-  }
-
-  &:focus {
-    outline: none;
   }
 }

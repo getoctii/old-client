@@ -36,6 +36,7 @@
       height: 2.65rem;
       width: 2.65rem;
       border-radius: 12px;
+      color: var(--neko-text-inverse);
       svg {
         align-self: center;
       }
@@ -91,23 +92,22 @@
     z-index: 10;
     bottom: 5.5rem;
     right: 2rem;
-    box-shadow: var(--neko-shadow) !important;
     border: none !important;
-    color: var(--neko-text) !important;
-    background-color: var(--neko-foreground) !important;
-
+    color: var(--neko-text-normal) !important;
+    background: var(--neko-emojis-background) !important;
+    box-shadow: none !important;
     input {
-      background-color: var(--neko-background);
+      background: var(--neko-emojis-input);
       border: none !important;
-      color: var(--neko-text);
+      color: var(--neko-text-normal);
     }
     ul::before {
-      background: var(--neko-foreground) !important;
-      color: var(--neko-text) !important;
+      background: var(--neko-emojis-background) !important;
+      color: var(--neko-text-normal) !important;
     }
 
     button {
-      color: var(--neko-text) !important;
+      color: var(--neko-text-normal) !important;
     }
     button:first-child {
       margin-left: 0;

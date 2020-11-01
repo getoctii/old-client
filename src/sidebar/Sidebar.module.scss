@@ -85,7 +85,7 @@
 
   .selected {
     box-shadow: 0 0 0 2px var(--neko-sidebar-background),
-      0 0 0 4px var(--neko-colors-primary);
+      0 0 0 4px var(--neko-colors-href);
   }
 
   .messages {
@@ -119,7 +119,7 @@
       width: 18px;
       bottom: -3.45px;
       right: -3.45px;
-      border-color: var(--neko-channels-background);
+      border-color: var(--neko-sidebar-background);
       border-width: 3.5px;
       border-style: solid;
       &.selectedBadge {

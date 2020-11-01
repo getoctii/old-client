@@ -45,7 +45,7 @@ export const Integrations = ({
             key='settings'
             className={
               matchTab?.params.tab === 'settings'
-                ? `${styles.settings} ${styles.selecnted}`
+                ? `${styles.settings} ${styles.selected}`
                 : styles.settings
             }
             onClick={() => {
