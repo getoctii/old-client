@@ -1,0 +1,11 @@
+.imageEmbed {
+  img {
+    margin-top: 0.5rem;
+    max-width: 50%;
+    max-height: 300px;
+    border-radius: 10px;
+    height: auto;
+    width: auto;
+    object-fit: cover;
+  }
+}

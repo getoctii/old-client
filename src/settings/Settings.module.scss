@@ -1,31 +1,17 @@
-.settingsModal {
-  z-index: 1000;
-}
-
 .settings {
   display: flex;
-  height: 100%;
-  flex-direction: row;
-  @media (max-width: 800px) {
+
+  width: 100%;
+  .pages {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
   }
-}
 
-.left {
-  width: 100%;
-  background: var(--neko-foreground);
-}
-
-.right {
-  width: 100%;
-}
-
-@media (max-width: 800px) {
-  .left {
-    display: none;
-  }
-
-  .right {
-    display: none;
+  // , (max-height: 420px)
+  @media (max-width: 940px) {
+    height: 100%;
+    padding-top: calc(env(safe-area-inset-top) + 2rem);
   }
 }

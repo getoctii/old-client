@@ -1,50 +1,78 @@
 import React from 'react'
-import styles from './shared.module.scss'
-import Theme from '../theme/hook'
-import ayu from '../theme/themes/ayu-mirage.json'
-import dark from '../theme/themes/default-dark.json'
-import light from '../theme/themes/default-light.json'
-import purple from '../theme/themes/purple.json'
-import mostlyBlack from '../theme/themes/mostly-black.json'
-import pureDark from '../theme/themes/pure-dark.json'
-import xpTestTheme from '../theme/themes/XpTestTheme.json'
-import octiiHub from '../theme/themes/octii-hub.json'
+import styles from './Themes.module.scss'
+import Theme, { themes } from '../theme/hook'
+import Button from '../components/Button'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import { useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useHistory } from 'react-router-dom'
 
-const themes = [
-  ayu,
-  dark,
-  light,
-  purple,
-  mostlyBlack,
-  pureDark,
-  xpTestTheme,
-  octiiHub
-]
-
-const Themes = ({ setPage }: { setPage: Function }) => {
-  const { theme, setTheme } = Theme.useContainer()
-  const isMobile = useMedia('(max-width: 800px)')
+const Themes = () => {
+  const {
+    themeId,
+    setThemeId,
+    setVariations,
+    variations
+  } = Theme.useContainer()
+  const isMobile = useMedia('(max-width: 940px)')
+  const history = useHistory()
   return (
-    <div className={styles.wrapper}>
-      <h2 onClick={() => setPage('')}>
+    <div className={styles.themes}>
+      <h2>
         {isMobile && (
-          <FontAwesomeIcon className={styles.backButton} icon={faChevronLeft} />
+          <div
+            className={styles.icon}
+            onClick={() => isMobile && history.push('/settings')}
+          >
+            <FontAwesomeIcon
+              className={styles.backButton}
+              icon={faChevronLeft}
+            />
+          </div>
         )}
         Themes
       </h2>
-      <br />
-      <div className={styles.themes}>
-        {themes.map((t) => (
-          <div
-            onClick={() => setTheme(t)}
-            className={theme?.id === t.id ? styles.selected : ''}
+      <div className={styles.options}>
+        <h4>Variations</h4>
+        <div className={styles.variations}>
+          <Button
+            type='button'
+            onClick={() => setVariations('light')}
+            className={variations === 'light' ? styles.selected : ''}
           >
-            {t.name}
-          </div>
-        ))}
+            Light
+          </Button>
+          <Button
+            type='button'
+            onClick={() => setVariations('dark')}
+            className={variations === 'dark' ? styles.selected : ''}
+          >
+            Dark
+          </Button>
+          <Button
+            type='button'
+            onClick={() => setVariations('system')}
+            className={variations === 'system' ? styles.selected : ''}
+          >
+            System
+          </Button>
+        </div>
+        <h4>Color Themes</h4>
+        <div className={styles.colors}>
+          {themes.map((t, index) => (
+            <>
+              {index !== 0 && <hr />}
+              <div
+                onClick={() => setThemeId(t.id)}
+                className={`${styles.theme} ${
+                  themeId === t.id ? styles.selected : ''
+                }`}
+              >
+                {t.name}
+              </div>
+            </>
+          ))}
+        </div>
       </div>
     </div>
   )

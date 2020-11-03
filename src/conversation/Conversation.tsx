@@ -6,6 +6,7 @@ import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { clientGateway } from '../constants'
 import Loader from '../components/Loader'
+import { UserResponse } from '../user/remote'
 
 type ParticipantsResponse = {
   id: string
@@ -15,13 +16,6 @@ type ParticipantsResponse = {
     participants: string[]
   }
 }[]
-
-type UserResponse = {
-  avatar: string
-  username: string
-  discriminator: number
-  status?: string
-}
 
 export const Conversation = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')

@@ -75,18 +75,23 @@ export const Members = () => {
 
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
-  const isMobile = useMedia('(max-width: 800px)')
+  const isMobile = useMedia('(max-width: 940px)')
   return (
     <Suspense fallback={<Loader />}>
       <div className={styles.members}>
         {members.length > 0 ? (
           <div className={styles.membersBody}>
-            <h2 onClick={() => isMobile && history.goBack()}>
+            <h2 onClick={() => isMobile && history.push(`/communities/${id}`)}>
               {isMobile && (
-                <FontAwesomeIcon
-                  className={styles.backButton}
-                  icon={faChevronLeft}
-                />
+                <div
+                  className={styles.icon}
+                  onClick={() => isMobile && history.push('/settings')}
+                >
+                  <FontAwesomeIcon
+                    className={styles.backButton}
+                    icon={faChevronLeft}
+                  />
+                </div>
               )}
               Members
             </h2>

@@ -5,7 +5,7 @@ import { Redirect, Switch, useParams, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import Loader from '../components/Loader'
-import { Sidebar } from './sidebar/Sidebar'
+import { Sidebar as Channels } from './sidebar/Sidebar'
 import Skeleton from 'react-loading-skeleton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/pro-solid-svg-icons'
@@ -15,7 +15,7 @@ import { Settings } from './settings/Settings'
 import { getCommunity } from './remote'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
-import { Sidebar as MainSidebar } from '../sidebar/Sidebar'
+import { Sidebar } from '../sidebar/Sidebar'
 import { Members } from './Members'
 
 export interface CommunityResponse {
@@ -39,6 +39,7 @@ const EmptyCommunity = ({
 }) => {
   const auth = Auth.useContainer()
   const [createMode, setCreateMode] = useState(false)
+
   return (
     <div className={styles.communityEmpty}>
       <small>{community?.name || <Skeleton />}</small>
@@ -102,10 +103,10 @@ const Channel = () => {
   return (
     <Chat
       title={
-        `#${
+        `${
           community.data.channels.find((channel) => channel.id === channelID)
             ?.name
-        }` || '#unknown'
+        }` || 'unknown'
       }
       status={''}
       channelID={channelID}
@@ -113,13 +114,15 @@ const Channel = () => {
   )
 }
 
-export const Community = () => {
+const Community = () => {
   const auth = Auth.useContainer()
   const [count, forceRender] = useState<number>(0)
   const { id } = useParams<{ id: string }>()
   const { path } = useRouteMatch()
-  const isMobile = useMedia('(max-width: 800px)')
+  const match = useRouteMatch<{ id: string }>('/communities/:id/:page')
+  const isMobile = useMedia('(max-width: 940px)')
   const community = useQuery(['community', id, auth.token], getCommunity)
+
   if (!community.data) return <></>
   return community.data.channels.length <= 0 ? (
     <EmptyCommunity
@@ -128,7 +131,7 @@ export const Community = () => {
     />
   ) : (
     <div className={styles.community} key={id}>
-      {!isMobile && <Sidebar />}
+      {isMobile && !match ? <Channels /> : !isMobile ? <Channels /> : <></>}
       <Suspense fallback={<Loader />}>
         <Switch>
           <PrivateRoute path={`${path}/settings`} component={Settings} exact />
@@ -138,24 +141,33 @@ export const Community = () => {
             component={Channel}
             exact
           />
-          {!isMobile ? (
+          {!isMobile && (
             <Redirect
               path='*'
               to={`/communities/${id}/channels/${community.data.channels[0].id}`}
-            />
-          ) : (
-            <PrivateRoute
-              path='*'
-              component={() => (
-                <>
-                  <MainSidebar />
-                  <Sidebar />
-                </>
-              )}
             />
           )}
         </Switch>
       </Suspense>
     </div>
   )
+}
+
+const Router = () => {
+  const isMobile = useMedia('(max-width: 940px)')
+  const match = useRouteMatch<{ id: string; tab: string }>(
+    '/communities/:id/:tab'
+  )
+  return (
+    <>
+      {isMobile && !match && <Sidebar />}
+      <Suspense fallback={<Loader />}>
+        <Community />
+      </Suspense>
+    </>
+  )
+}
+
+export default {
+  Router
 }

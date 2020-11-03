@@ -45,6 +45,9 @@ const Modal = ({
             }
           }
         })}
+        {...(fullscreen && {
+          style: { borderRadius: 0 }
+        })}
         className={styles.content}
       >
         {children}

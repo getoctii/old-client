@@ -9,7 +9,7 @@ import { isPlatform } from '@ionic/react'
 import { useLocalStorage } from 'react-use'
 import Typing from './state/typing'
 
-const { Haptics, Toast, LocalNotifications } = Plugins
+const { Haptics, LocalNotifications } = Plugins
 
 declare global {
   interface Window {
@@ -56,7 +56,6 @@ const EventSource = () => {
 
     eventSource.addEventListener('NEW_MESSAGE', async (e: any) => {
       const message = JSON.parse(e.data) as Message
-      // imma look in there discord if someone had thisbefore
       const initial = queryCache.getQueryData(['messages', message.channel_id])
       if (initial instanceof Array) {
         queryCache.setQueryData(
@@ -69,8 +68,7 @@ const EventSource = () => {
 
       if (
         message.author.id !== id &&
-        message.community_id &&
-        !mutedCommunities?.includes(message.community_id) &&
+        !mutedCommunities?.includes(message.community_id ?? '') &&
         !mutedChannels?.includes(message.channel_id)
       ) {
         if (isPlatform('capacitor')) {
@@ -78,9 +76,6 @@ const EventSource = () => {
             type: HapticsNotificationType.SUCCESS
           })
         }
-        Toast.show({
-          text: `${message.author.username}: ${message.content}`
-        })
         if (window.inntronNotify) {
           window.inntronNotify(
             `${
@@ -94,20 +89,28 @@ const EventSource = () => {
           )
         } else {
           try {
-            LocalNotifications.schedule({
-              notifications: [
-                {
-                  title: `${
-                    message.community_name
-                      ? message.community_name
-                      : message.author.username
-                  }${message.channel_name ? ` #${message.channel_name}` : ''}`,
-                  body: `${
-                    message.community_name ? `${message.author.username}: ` : ''
-                  }${message.content}`,
-                  id: 1
-                }
-              ]
+            LocalNotifications.requestPermission().then((granted) => {
+              if (granted) {
+                LocalNotifications.schedule({
+                  notifications: [
+                    {
+                      title: `${
+                        message.community_name
+                          ? message.community_name
+                          : message.author.username
+                      }${
+                        message.channel_name ? ` #${message.channel_name}` : ''
+                      }`,
+                      body: `${
+                        message.community_name
+                          ? `${message.author.username}: `
+                          : ''
+                      }${message.content}`,
+                      id: 1
+                    }
+                  ]
+                })
+              }
             })
           } catch {
             console.warn('Failed to send notification')

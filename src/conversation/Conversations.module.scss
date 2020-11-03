@@ -1,21 +1,33 @@
 .sidebar {
-  margin-left: 0.15rem;
   display: flex;
   flex-direction: column;
+  max-width: 18rem;
+  width: 18rem;
   min-width: 18rem;
   min-height: 5rem;
   z-index: 0;
   overflow-y: scroll;
   padding: 1.5rem;
-  background: var(--neko-foreground);
+  background: var(--neko-channels-background);
   border: 0;
   height: 100%;
 
+  hr {
+    margin: 0;
+    margin-left: 3.5rem;
+    border-color: var(--neko-channels-seperator);
+    opacity: 0.5;
+    border-style: solid;
+  }
+
+  .hidden {
+    border-color: var(--neko-channels-background);
+  }
   h1 {
     margin: 0;
 
     span {
-      color: var(--neko-primary);
+      color: var(--neko-colors-primary);
       float: right;
     }
   }
@@ -26,6 +38,8 @@
 
   h3 {
     margin-top: 0;
+    font-size: 1.35rem;
+    font-weight: 800;
     span {
       float: right;
     }
@@ -68,14 +82,25 @@
 
     button {
       width: 100%;
-      background: var(--neko-primary);
+      background: var(--neko-colors-primary);
     }
   }
 }
 
-@media (max-width: 800px) {
+// , (max-height: 420px)
+@media (max-width: 940px) {
   .sidebar {
+    padding-top: calc(env(safe-area-inset-top) + 2rem);
     min-width: 1rem;
     width: 100%;
+    max-width: 100%;
+
+    h3 {
+      font-size: 2rem;
+    }
+  }
+
+  body {
+    background: var(--neko-channels-background);
   }
 }
