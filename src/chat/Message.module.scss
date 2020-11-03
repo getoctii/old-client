@@ -2,13 +2,10 @@
   display: flex;
   padding-left: 2rem;
   padding-right: 2rem;
-  // padding-top: 0.2rem;
-  // padding-bottom: 0.2rem;
 
   h2 {
     font-size: 1rem;
     margin: 0;
-    // margin-bottom: 0.2rem;
 
     span {
       margin-left: 0.5rem;
@@ -19,8 +16,9 @@
 
   p {
     line-height: 1.5rem;
+    word-break: break-all;
     overflow-wrap: break-word;
-    white-space: -webkit-pre-wrap;
+    white-space: pre-wrap;
     min-width: fit-content;
     max-width: 100%;
     display: inline-block;
@@ -28,120 +26,44 @@
     margin: 0;
     font-size: 1rem;
     font-weight: 400;
-
     user-select: text;
   }
-}
-
-.message:hover {
-  background: var(--neko-message-hover);
-}
-
-.primary {
-  @extend .message;
-  margin-top: 0.8rem;
-}
-
-.avatar {
-  width: 2.65rem;
-  height: 2.65rem;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.content {
-  margin-left: 1rem;
-  overflow: hidden;
-  width: 100%;
-
-  a {
-    color: var(--neko-primary);
-    text-decoration: none;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--neko-chat-hover);
+    }
   }
-}
 
-.spacer {
-  margin-left: 3.65rem;
-}
+  &.primary {
+    margin-top: 0.8rem;
+  }
 
-.imageEmbed {
-  img {
-    margin-top: 0.5rem;
-    max-width: 50%;
-    border-radius: 10px;
-    height: auto;
-    width: auto;
+  .avatar {
+    width: 2.65rem;
+    height: 2.65rem;
     object-fit: cover;
+    border-radius: 12px;
   }
-}
 
-.contextWrapper {
-  > div {
-    &:first-child {
-      .channel {
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-      }
+  .content {
+    margin-left: 1rem;
+    overflow: hidden;
+    width: 100%;
+
+    a {
+      color: var(--neko-text-href);
+      text-decoration: none;
     }
-    &:last-child {
-      .channel {
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-      }
+
+    &.spacer {
+      margin-left: 3.65rem;
     }
   }
-}
 
-.contextMenu {
-  z-index: 100;
-  margin-top: 0.5rem;
-  margin-bottom: 0.7rem;
-  background: var(--neko-context);
-  padding: 0.5rem;
-  border-radius: 10px;
-  box-shadow: var(--neko-shadow);
-  backdrop-filter: blur(20px);
-  div {
+  .text {
+    margin: 0;
+    padding: 0;
+    line-height: 1.325rem;
     font-size: 1rem;
-    font-weight: 400;
-    padding: 0.5rem;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-
-    span {
-      margin-right: 0.8rem;
-    }
-
-    &:hover {
-      background: var(--neko-primary);
-    }
-
-    &:focus {
-      outline: none;
-    }
-
-    svg {
-      margin-left: auto;
-    }
-  }
-
-  hr {
-    margin: 5px 0.5rem 5px 0.5rem;
-    opacity: 0.2;
-    border: 1px var(--neko-background) solid;
-    border-radius: 2px;
-  }
-
-  .danger {
-    color: var(--neko-danger);
-    &:hover {
-      color: var(--neko-text);
-      background: var(--neko-danger);
-    }
-  }
-
-  &:focus {
-    outline: none;
   }
 }

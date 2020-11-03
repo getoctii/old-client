@@ -5,18 +5,24 @@ import { Navbar } from './Navbar'
 import { useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import styles from './Settings.module.scss'
 
 export const Settings = () => {
   const [selected, setSelected] = useState('general')
   const isMobile = useMedia('(max-width: 800px)')
+  const { id } = useParams<{ id: string }>()
   const history = useHistory()
   return (
     <div className={styles.settings}>
-      <h2 onClick={() => isMobile && history.goBack()}>
+      <h2>
         {isMobile && (
-          <FontAwesomeIcon className={styles.backButton} icon={faChevronLeft} />
+          <div
+            className={styles.icon}
+            onClick={() => isMobile && history.push(`/communities/${id}`)}
+          >
+            <FontAwesomeIcon icon={faChevronLeft} />
+          </div>
         )}
         Settings
       </h2>

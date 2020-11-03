@@ -1,36 +1,29 @@
-import React, { useState } from 'react'
-import Modal from '../components/Modal'
-import { UI } from '../state/ui'
+import React from 'react'
 import Sidebar from './Sidebar'
-import styles from './Settings.module.scss'
 import Profile from './Profile'
 import Security from './Security'
 import Themes from './Themes'
 import { useMedia } from 'react-use'
+import { Redirect, Switch, useRouteMatch } from 'react-router-dom'
+import { PrivateRoute } from '../authentication/PrivateRoute'
+import styles from './Settings.module.scss'
 
 const Settings = () => {
-  const ui = UI.useContainer()
-  const isMobile = useMedia('(max-width: 800px)')
-  const [page, setPage] = useState(isMobile ? '' : 'profile')
+  const isMobile = useMedia('(max-width: 940px)')
+  const { path } = useRouteMatch()
+  const match = useRouteMatch('/settings/:page')
   return (
-    <Modal
-      className={styles.settingsModal}
-      fullscreen={true}
-      onDismiss={() => ui.setModal('')}
-    >
-      <div className={styles.left}></div>
-      <div className={styles.settings}>
-        {page !== '' && isMobile ? (
-          <></>
-        ) : (
-          <Sidebar page={page} setPage={setPage} />
-        )}
-        {page === 'profile' && <Profile setPage={setPage} />}
-        {page === 'security' && <Security setPage={setPage} />}
-        {page === 'themes' && <Themes setPage={setPage} />}
+    <div className={styles.settings}>
+      {!match && isMobile ? <Sidebar /> : !isMobile ? <Sidebar /> : <></>}
+      <div className={styles.pages}>
+        <Switch>
+          {!isMobile && <Redirect path={path} to={`${path}/profile`} exact />}
+          <PrivateRoute path={`${path}/profile`} component={Profile} exact />
+          <PrivateRoute path={`${path}/security`} component={Security} exact />
+          <PrivateRoute path={`${path}/themes`} component={Themes} exact />
+        </Switch>
       </div>
-      <div className={styles.right}></div>
-    </Modal>
+    </div>
   )
 }
 

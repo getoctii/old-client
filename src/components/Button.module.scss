@@ -1,6 +1,6 @@
 .button {
   border: 0;
-  border-radius: 10px;
+  border-radius: 13px;
 
   outline: none;
 
@@ -21,61 +21,39 @@
   cursor: pointer;
 
   &.primary {
-    background: var(--inn-primary);
+    background: var(--neko-colors-primary);
   }
 
   &.secondary {
-    background: var(--inn-secondary);
+    background: var(--neko-colors-secondary);
   }
 
   &.light {
     color: #202020;
-    background: var(--inn-light);
+    background: var(--neko-colors-light);
   }
 
   &.dark {
-    background: var(--inn-dark);
+    background: var(--neko-colors-dark);
   }
 
   &.danger {
-    background: var(--inn-danger);
+    background: var(--neko-colors-danger);
   }
 
   &.warning {
-    background: var(--inn-warning);
+    background: var(--neko-colors-warning);
   }
 
   &.info {
-    background: var(--inn-info);
+    background: var(--neko-colors-info);
   }
 
   &.success {
-    background: var(--inn-success);
+    background: var(--neko-colors-success);
   }
 
   &.pill {
     border-radius: 25px;
-  }
-}
-
-button:hover {
-  color: #ffffff;
-  &.primary {
-    background: var(--inn-primary-hover);
-  }
-  &.secondary {
-    background: var(--inn-secondary-hover);
-  }
-  &.light {
-    color: #202020;
-    background: var(--inn-light-hover);
-  }
-
-  &.dark {
-    background: var(--inn-dark-hover);
-  }
-
-  &.danger {
-    background: var(--inn-danger-hover);
   }
 }

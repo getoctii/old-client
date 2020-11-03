@@ -1,4 +1,4 @@
-import { faUsersCog, faAddressBook } from '@fortawesome/pro-solid-svg-icons'
+import { faAddressBook, faUserCog } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
@@ -22,34 +22,44 @@ export const Integrations = ({
         key='members'
         className={
           matchTab?.params.tab === 'members'
-            ? `${styles.integration} ${styles.selected}`
-            : styles.integration
+            ? `${styles.members} ${styles.selected}`
+            : styles.members
         }
         onClick={() => {
           if (community) history.push(`/communities/${community.id}/members`)
         }}
       >
         <h4>
-          <FontAwesomeIcon icon={faAddressBook} fixedWidth={true} />
+          <div className={styles.icon}>
+            <FontAwesomeIcon icon={faAddressBook} fixedWidth={true} />
+          </div>
           Members
         </h4>
       </div>
       {community?.owner_id === auth.id && (
-        <div
-          key='settings'
-          className={
-            matchTab?.params.tab === 'settings'
-              ? `${styles.integration} ${styles.selected}`
-              : styles.integration
-          }
-          onClick={() => {
-            if (community) history.push(`/communities/${community.id}/settings`)
-          }}
-        >
-          <h4>
-            <FontAwesomeIcon icon={faUsersCog} fixedWidth={true} />
-            Settings
-          </h4>
+        <div>
+          <hr
+            className={matchTab?.params.tab === 'members' ? styles.hidden : ''}
+          />
+          <div
+            key='settings'
+            className={
+              matchTab?.params.tab === 'settings'
+                ? `${styles.settings} ${styles.selected}`
+                : styles.settings
+            }
+            onClick={() => {
+              if (community)
+                history.push(`/communities/${community.id}/settings`)
+            }}
+          >
+            <h4>
+              <div className={styles.icon}>
+                <FontAwesomeIcon icon={faUserCog} fixedWidth={true} />
+              </div>
+              Settings
+            </h4>
+          </div>
         </div>
       )}
     </div>

@@ -1,0 +1,57 @@
+.wrapper {
+  .menu {
+    z-index: 100;
+    margin-top: 0.5rem;
+    margin-bottom: 0.7rem;
+    background: var(--neko-context-background);
+    padding: 0.5rem;
+    border-radius: 10px;
+    backdrop-filter: blur(20px);
+    cursor: pointer;
+    div {
+      padding: 0.5rem;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+
+      span {
+        margin-right: 0.8rem;
+        font-size: 1rem;
+        font-weight: 400;
+      }
+
+      &:hover {
+        background: var(--neko-colors-primary);
+      }
+
+      &:focus {
+        outline: none;
+      }
+
+      svg {
+        margin-left: auto;
+      }
+    }
+
+    hr {
+      margin: 5px 0.5rem 5px 0.5rem;
+      opacity: 0.2;
+      border: 1px var(--neko-context-seperator) solid;
+      border-radius: 2px;
+      width: 100%;
+      margin-left: 0 !important;
+    }
+
+    .danger {
+      color: var(--neko-text-danger);
+      &:hover {
+        color: var(--neko-text-inverse);
+        background: var(--neko-colors-danger);
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+}

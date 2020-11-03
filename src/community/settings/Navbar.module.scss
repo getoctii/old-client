@@ -6,8 +6,8 @@
   margin-top: 0.5rem;
 
   .selected {
-    background: var(--neko-primary);
-    color: var(--neko-text-inline);
+    background: var(--neko-colors-primary);
+    color: var(--neko-text-inverse);
   }
 
   li {
@@ -16,9 +16,19 @@
     padding-top: 0.9rem;
     padding-bottom: 0.9rem;
     width: 10rem;
-    background: var(--neko-foreground);
+    background: var(--neko-settings-card);
     font-weight: 400;
     font-size: 1.1rem;
     border-radius: 10px;
+  }
+
+  @media (max-width: 940px) {
+    width: 100%;
+    li {
+      width: 100%;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
   }
 }

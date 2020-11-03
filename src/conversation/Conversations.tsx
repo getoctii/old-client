@@ -1,25 +1,26 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './Conversations.module.scss'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { clientGateway } from '../constants'
-import { faPlus } from '@fortawesome/pro-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ConversationCard } from './ConversationCard'
 import Button from '../components/Button'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { UI } from '../state/ui'
 import Loader from '../components/Loader'
 import { useLocalStorage, useMedia } from 'react-use'
+import NewConversation from './NewConversation'
 
-type ParticipantsResponse = {
+type Participant = {
   id: string
   conversation: {
     id: string
     channel_id: string
     participants: string[]
   }
-}[]
+}
+
+type ParticipantsResponse = Participant[]
 
 const ConversationList = () => {
   const auth = Auth.useContainer()
@@ -28,7 +29,7 @@ const ConversationList = () => {
   const [lastConversation, setLastConversation] = useLocalStorage(
     'last_conversation'
   )
-  const isMobile = useMedia('(max-width: 800px)')
+  const isMobile = useMedia('(max-width: 940px)')
   const participants = useQuery(
     'participants',
     async () =>
@@ -49,6 +50,10 @@ const ConversationList = () => {
     (part) => part.conversation.participants.length > 1
   )
 
+  useEffect(() => {
+    setSelected(match?.params.id || undefined)
+  }, [match])
+
   if (
     !selected &&
     filteredParticipants &&
@@ -67,16 +72,14 @@ const ConversationList = () => {
   return (
     <>
       {participants.data && participants.data.length > 0 ? (
-        participants.data?.map(
-          ({
-            conversation
-          }: {
-            conversation: {
-              id: string
-              channel_id: string
-              participants: string[]
-            }
-          }) => {
+        participants.data
+          ?.filter(({ conversation }: Participant) => {
+            const people = conversation.participants.filter(
+              (userID: string) => userID !== auth.id
+            )
+            return people.length > 1 || people.length !== 0
+          })
+          .map(({ conversation }: Participant, index) => {
             const people = conversation.participants.filter(
               (userID: string) => userID !== auth.id
             )
@@ -84,21 +87,28 @@ const ConversationList = () => {
               return
             } else {
               return (
-                <ConversationCard
-                  selected={selected === conversation.id}
-                  onClick={() => {
-                    history.push(`/conversations/${conversation.id}`)
-                    setSelected(conversation.id)
-                    setLastConversation(conversation.id)
-                  }}
-                  key={conversation.id}
-                  people={people}
-                  conversationID={conversation.id}
-                />
+                <div key={conversation.id}>
+                  {index !== 0 && (
+                    <hr
+                      className={
+                        selected === conversation.id ? styles.hidden : ''
+                      }
+                    />
+                  )}
+                  <ConversationCard
+                    selected={selected === conversation.id}
+                    onClick={() => {
+                      history.push(`/conversations/${conversation.id}`)
+                      setSelected(conversation.id)
+                      setLastConversation(conversation.id)
+                    }}
+                    people={people}
+                    conversationID={conversation.id}
+                  />
+                </div>
               )
             }
-          }
-        )
+          })
       ) : (
         <div className={styles.alert}>
           <h3>You aren't in any chats!</h3>
@@ -113,15 +123,12 @@ const ConversationList = () => {
 }
 
 export const Conversations = () => {
-  const ui = UI.useContainer()
+  const isMobile = useMedia('(max-width: 940px)')
   return (
     <div className={styles.sidebar}>
-      <h3>
-        Conversations{' '}
-        <span onClick={() => ui.setModal('newConversation')}>
-          <FontAwesomeIcon icon={faPlus} />
-        </span>
-      </h3>
+      {isMobile && <div className={styles.statusBar} />}
+      <h3>Messages</h3>
+      <NewConversation />
       <div className={styles.list}>
         <React.Suspense fallback={<Loader />}>
           <ConversationList />

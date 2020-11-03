@@ -9,9 +9,31 @@
   h2 {
     margin: 0;
   }
-}
 
-.backButton {
-  margin-right: 1rem;
-  color: var(--neko-primary);
+  @media (max-width: 940px) {
+    padding-top: calc(env(safe-area-inset-top) + 2rem);
+    .icon {
+      background: var(--neko-colors-primary);
+      margin-right: 0.7rem;
+      padding: 0.5rem;
+      height: 2.65rem;
+      width: 2.65rem;
+      border-radius: 12px;
+      color: var(--neko-text-inverse);
+      cursor: pointer;
+      svg {
+        align-self: center;
+      }
+      display: flex;
+      vertical-align: middle;
+      justify-content: center;
+    }
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      padding-bottom: 1rem;
+    }
+  }
 }

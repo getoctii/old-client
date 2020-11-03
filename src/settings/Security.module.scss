@@ -1,0 +1,81 @@
+.security {
+  margin-top: 5rem;
+  overflow-y: scroll;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+
+  form {
+    background: var(--neko-settings-card);
+    padding: 2rem;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+
+    max-width: 500px;
+    h2,
+    h5,
+    h4,
+    h6,
+    p {
+      margin: 0;
+    }
+
+    h4 {
+      font-weight: 400;
+    }
+    .password {
+      margin-top: 0.8rem;
+      label {
+        font-weight: 700;
+      }
+      input {
+        margin-top: 0.5rem;
+        background: var(--neko-settings-background);
+        width: 100%;
+      }
+    }
+
+    .save {
+      margin-top: 1rem;
+      background: var(--neko-colors-primary);
+    }
+  }
+
+  @media (max-height: 800px) {
+    margin-top: 2.5rem;
+  }
+
+  // , (max-height: 420px)
+  @media (max-width: 940px) {
+    margin-top: 0;
+    .icon {
+      background: var(--neko-colors-primary);
+      margin-right: 0.7rem;
+      padding: 0.5rem;
+      height: 2.65rem;
+      width: 2.65rem;
+      border-radius: 12px;
+      color: var(--neko-text-inverse);
+      cursor: pointer;
+      svg {
+        align-self: center;
+      }
+      display: flex;
+      vertical-align: middle;
+      justify-content: center;
+    }
+
+    form {
+      padding: 1.5rem;
+    }
+    h2 {
+      display: flex;
+      align-items: center;
+    }
+    h2 {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+}

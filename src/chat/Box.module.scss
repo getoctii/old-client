@@ -1,0 +1,83 @@
+.box {
+  display: flex;
+  flex-direction: row;
+  vertical-align: middle;
+  align-items: center;
+  margin-bottom: 0;
+  padding-left: 2rem;
+  margin-bottom: 2rem;
+  padding-right: 2rem;
+  justify-content: space-between;
+
+  &.typingIndicator {
+    margin-bottom: 0.5rem;
+  }
+
+  button {
+    height: 3.125rem;
+    width: 3.125rem;
+    background: var(--neko-input-background);
+    color: var(--neko-input-text);
+    margin-left: 0.5rem;
+    font-size: 1.05rem;
+  }
+
+  .uploadInput {
+    display: none;
+  }
+
+  aside {
+    border-radius: 10px !important;
+    position: absolute !important;
+    z-index: 10;
+    bottom: 5.5rem;
+    right: 2rem;
+    border: none !important;
+    color: var(--neko-text-normal) !important;
+    background: var(--neko-emojis-background) !important;
+    box-shadow: none !important;
+    input {
+      background: var(--neko-emojis-input);
+      border: none !important;
+      color: var(--neko-text-normal);
+    }
+    ul::before {
+      background: var(--neko-emojis-background) !important;
+      color: var(--neko-text-normal) !important;
+    }
+
+    button {
+      color: var(--neko-text-normal) !important;
+    }
+    button:first-child {
+      margin-left: 0;
+    }
+  }
+
+  form {
+    display: flex;
+    width: 100%;
+    z-index: 3;
+
+    input {
+      width: 100%;
+      height: 3.125rem;
+      font-size: 1.05rem;
+      margin: 0;
+      flex: 1;
+      padding-left: 0.9375rem;
+      padding-right: 0.9375rem;
+      color: var(--neko-input-text);
+      background: var(--neko-input-background);
+      border: none;
+      border-radius: 14px;
+      outline: none;
+
+      &::placeholder {
+        font-family: Inter, sans-serif;
+        opacity: 0.65;
+        color: var(--neko-input-text);
+      }
+    }
+  }
+}

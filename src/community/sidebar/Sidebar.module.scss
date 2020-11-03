@@ -1,8 +1,7 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  background-color: var(--neko-foreground);
-  margin-left: 0.15rem;
+  background: var(--neko-channels-background);
   min-width: 18rem;
   min-height: 5rem;
 
@@ -35,14 +34,14 @@
 .contextMenu {
   margin-top: 0.5rem;
   margin-bottom: 0.7rem;
-  background: var(--neko-background);
+  background: var(--neko-context-background);
   padding: 0.5rem;
   border-radius: 10px;
 
   div {
     padding: 0.5rem;
     border-radius: 8px;
-    background-color: var(--neko-foreground);
+    background-color: var(--neko-sidebar-background);
 
     &:hover {
       background: var(--neko-message-hover);
@@ -84,10 +83,9 @@
   position: absolute;
   width: 100%;
   z-index: 100;
-  background: var(--neko-context);
+  background: var(--neko-context-background);
   padding: 0.5rem;
   border-radius: 10px;
-  box-shadow: var(--neko-shadow);
   backdrop-filter: blur(20px);
 
   .menuItem {
@@ -98,7 +96,7 @@
     align-items: center;
 
     &:hover {
-      background: var(--neko-primary);
+      background: var(--neko-colors-primary);
     }
 
     &:focus {
@@ -107,24 +105,45 @@
     svg {
       margin-left: auto;
     }
+
+    &.danger {
+      color: var(--neko-text-danger);
+      &:hover {
+        color: var(--neko-text-inverse);
+        background: var(--neko-colors-danger);
+      }
+    }
   }
 
   hr {
     margin: 5px 0.5rem 5px 0.5rem;
     opacity: 0.2;
-    border: 1px var(--neko-background) solid;
+    border: 1px var(--neko-context-seperator) solid;
     border-radius: 2px;
-  }
-
-  .danger {
-    color: var(--neko-danger);
-    &:hover {
-      color: var(--neko-text);
-      background: var(--neko-danger);
-    }
   }
 
   &:focus {
     outline: none;
+  }
+}
+
+// , (max-height: 420px)
+@media (max-width: 940px) {
+  .wrapper {
+    height: 100%;
+    padding-top: calc(env(safe-area-inset-top) + 2rem);
+    min-width: 1rem;
+    width: 100%;
+    max-width: 100%;
+    .sidebar {
+      padding-top: 0;
+    }
+    h3 {
+      font-size: 2rem;
+    }
+  }
+
+  body {
+    background: var(--neko-channels-background);
   }
 }

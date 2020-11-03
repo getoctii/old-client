@@ -37,25 +37,28 @@
 
   button {
     margin-top: 0.8rem;
-    background: var(--neko-primary);
+    background: var(--neko-colors-primary);
     height: 3rem;
   }
 
   p {
-    color: var(--neko-danger);
+    color: var(--neko-colors-danger);
   }
 }
 
 .backButton {
   margin-right: 1rem;
-  color: var(--neko-primary);
+  color: var(--neko-colors-primary);
 }
 
 .themes {
   width: 100%;
 
+  h5 {
+    margin: 0;
+  }
   div {
-    background: var(--neko-foreground);
+    background: var(--neko-channels-background);
     display: flex;
     align-items: center;
     padding: 0.75rem;
@@ -63,9 +66,12 @@
     cursor: pointer;
   }
 
+  button {
+    background: var(--neko-channels-background);
+  }
   .selected {
-    background: var(--neko-primary);
-    color: var(--neko-text-inline);
+    background: var(--neko-colors-primary);
+    color: var(--neko-text-inverse);
   }
 
   div:first-child {
@@ -150,5 +156,29 @@
     label {
       margin: 0;
     }
+  }
+}
+
+.buttonRow {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+
+  button {
+    flex: 1;
+    background: var(--neko-colors-secondary);
+
+    &:not(:first-child) {
+      margin-left: 0.5rem;
+    }
+
+    &:not(:last-child) {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .selected {
+    background: var(--neko-colors-primary);
+    color: var(--neko-text-inverse);
   }
 }
