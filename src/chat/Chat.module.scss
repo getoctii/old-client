@@ -29,6 +29,13 @@
       }
     }
 
+    .status {
+      margin: 0;
+      margin-top: 0.3rem;
+      font-weight: 400;
+      font-size: 0.9rem;
+    }
+
     .icon {
       background: var(--neko-colors-primary);
       margin-right: 0.7rem;
@@ -37,6 +44,7 @@
       width: 2.65rem;
       border-radius: 12px;
       color: var(--neko-text-inverse);
+      cursor: pointer;
       svg {
         align-self: center;
       }
@@ -46,137 +54,87 @@
     }
   }
 
-  .loader {
-    margin: 0;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    margin-bottom: 0.5rem;
+  .messages {
+    margin-top: auto;
+    max-height: 100%;
+    overflow-y: scroll;
 
-    h5 {
-      margin-bottom: 0;
-    }
-  }
-}
-
-.buffer {
-  height: 1.5rem;
-}
-
-.box {
-  display: flex;
-  flex-direction: row;
-  vertical-align: middle;
-  align-items: center;
-  margin-bottom: 0;
-  padding-left: 2rem;
-  padding-bottom: 2rem;
-  padding-right: 2rem;
-  justify-content: space-between;
-
-  button {
-    height: 3.125rem;
-    width: 3.125rem;
-    background: var(--neko-input-background);
-    color: var(--neko-input-text);
-    margin-left: 0.5rem;
-    font-size: 1.05rem;
-  }
-
-  .uploadInput {
-    display: none;
-  }
-
-  aside {
-    border-radius: 10px !important;
-    position: absolute !important;
-    z-index: 10;
-    bottom: 5.5rem;
-    right: 2rem;
-    border: none !important;
-    color: var(--neko-text-normal) !important;
-    background: var(--neko-emojis-background) !important;
-    box-shadow: none !important;
-    input {
-      background: var(--neko-emojis-input);
-      border: none !important;
-      color: var(--neko-text-normal);
-    }
-    ul::before {
-      background: var(--neko-emojis-background) !important;
-      color: var(--neko-text-normal) !important;
-    }
-
-    button {
-      color: var(--neko-text-normal) !important;
-    }
-    button:first-child {
-      margin-left: 0;
-    }
-  }
-
-  form {
-    display: flex;
-    width: 100%;
-    z-index: 3;
-
-    input {
-      width: 100%;
-      height: 3.125rem;
-      font-size: 1.05rem;
+    .loader {
       margin: 0;
-      flex: 1;
-      padding-left: 0.9375rem;
-      padding-right: 0.9375rem;
-      color: var(--neko-input-text);
-      background: var(--neko-input-background);
-      border: none;
-      border-radius: 14px;
-      outline: none;
+      padding-left: 2rem;
+      padding-right: 2rem;
+      margin-bottom: 0.5rem;
 
-      &::placeholder {
-        font-family: Inter, sans-serif;
-        opacity: 0.65;
-        color: var(--neko-input-text);
+      h5 {
+        margin-bottom: 0;
       }
     }
+
+    .top {
+      margin-top: auto;
+      h3 {
+        font-size: 1.4rem;
+        margin-bottom: 0;
+      }
+      padding-top: 2rem;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+
+    .buffer {
+      height: 1.5rem;
+    }
+  }
+
+  .typing {
+    // position: absolute;
+    font-weight: 500;
+    font-size: 0.8rem;
+    padding: 0;
+    margin: 0;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+    // bottom: 0.5rem;
+    // // i think i had a reason, just set the bottom
+    // left: 2rem;
+  }
+
+  @media (max-width: 940px) {
+    padding-top: calc(env(safe-area-inset-top) + 0.8rem);
+    .header {
+      margin-top: 0.5rem;
+    }
   }
 }
 
-.top {
-  margin-top: auto;
-  h3 {
-    margin-bottom: 0;
-  }
-  padding-top: 2rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
+// .messagesWrapper {
+//   height: 100%;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: flex-end;
+// }
 
-.messagesWrapper {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-.messages {
-  margin-top: auto;
-  max-height: 100%;
-  overflow-y: scroll;
-}
-
-.typing {
-  position: absolute;
-  font-weight: 500;
-  font-size: 0.8rem;
-  padding: 0;
-  margin: 0;
-  bottom: 0.5rem;
-  left: 2rem;
-}
-
-.status {
-  margin: 0;
-  margin-top: 0.3rem;
-  font-weight: 400;
-  font-size: 0.9rem;
-}
+// wait i think the live reload session JUST DIED LMAO
+// , (max-height: 420px)
+// @media (max-width: 940px) {
+//   // .typingEmpty {
+//   // margin-bottom: calc(env(safe-area-inset-bottom) + 0.8rem);
+//   // }
+//   .typing {
+//     // um
+//     // fine do it ur way, but if it no work idk what we do
+//     // WHAT THE FUCK why is it not moving while keyboard is out
+//     bottom: calc(env(safe-area-inset-bottom) / 1.5);
+//   }
+//   .chat {
+//     padding-top: calc(env(safe-area-inset-top) + 0.8rem);
+//     padding-bottom: calc(env(safe-area-inset-bottom) + 1.5rem);
+//     .header {
+//       margin-top: 0.5rem;
+//     }
+//     .box {
+//       padding-bottom: 0;
+//     }
+//   }
+// }

@@ -9,7 +9,7 @@
       "success": "#8f8f8f",
       "info": "#8f8f8f",
       "danger": "linear-gradient(224deg, #FC9D9D 0%, #F86464 100%)",
-      "warning": "#8f8f8f",
+      "warning": "linear-gradient(224deg, #FFD575 0%, #FF7200 100%)",
       "light": "#dadada",
       "dark": "#040a0f"
     },
@@ -17,7 +17,9 @@
       "normal": "#FEFEFE",
       "inverse": "#FEFEFE",
       "href": "#1089FF",
-      "danger": "#F86464"
+      "danger": "#F86464",
+      "warning": "#FF7D0E",
+      "secondary": "#646464"
     },
     "sidebar": {
       "background": "#040a0f",
@@ -81,7 +83,7 @@
       "success": "#8f8f8f",
       "info": "#8f8f8f",
       "danger": "linear-gradient(224deg, #FC9D9D 0%, #F86464 100%)",
-      "warning": "#8f8f8f",
+      "warning": "linear-gradient(224deg, #FFD575 0%, #FF7200 100%)",
       "light": "#dadada",
       "dark": "#040a0f"
     },
@@ -89,7 +91,9 @@
       "normal": "#000000",
       "inverse": "#FEFEFE",
       "href": "#1089FF",
-      "danger": "#F86464"
+      "danger": "#F86464",
+      "warning": "#FF7D0E",
+      "secondary": "#646464"
     },
     "sidebar": {
       "background": "#EEF7FF",

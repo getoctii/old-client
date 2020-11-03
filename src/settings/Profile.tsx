@@ -7,11 +7,13 @@ import { useQuery, queryCache } from 'react-query'
 import { Auth } from '../authentication/state'
 import { clientGateway } from '../constants'
 import Button from '../components/Button'
-import { BarLoader } from 'react-spinners'
-import styles from './shared.module.scss'
+import { BarLoader, MoonLoader } from 'react-spinners'
+import styles from './Profile.module.scss'
 import Input from '../components/Input'
 import axios from 'axios'
 import { useMedia } from 'react-use'
+import { getUser } from '../user/remote'
+import { useHistory } from 'react-router-dom'
 type profileFormData = { username: string; avatar: string; status: string }
 
 const validateProfile = (values: profileFormData) => {
@@ -30,28 +32,27 @@ type UserResponse = {
   status?: string
 }
 
-const Profile = ({ setPage }: { setPage: Function }) => {
+const Profile = () => {
   const { token, id } = Auth.useContainer()
-  const user = useQuery(
-    ['users', id],
-    async (key, userID) =>
-      (
-        await clientGateway.get<UserResponse>(`/users/${userID}`, {
-          headers: {
-            Authorization: token
-          }
-        })
-      ).data
-  )
+  const user = useQuery(['users', id, token], getUser)
   const input = useRef<any>(null)
   const [avatar, setAvatar] = useState(user.data?.avatar || '')
-  const isMobile = useMedia('(max-width: 800px)')
+  const [isUploading, setIsUploading] = useState(false)
+  const isMobile = useMedia('(max-width: 940px)')
+  const history = useHistory()
   return (
-    <div className={styles.wrapper}>
-      <h2 onClick={() => isMobile && setPage('')}>
-        {' '}
+    <div className={styles.profile}>
+      <h2>
         {isMobile && (
-          <FontAwesomeIcon className={styles.backButton} icon={faChevronLeft} />
+          <div
+            className={styles.icon}
+            onClick={() => isMobile && history.push('/settings')}
+          >
+            <FontAwesomeIcon
+              className={styles.backButton}
+              icon={faChevronLeft}
+            />
+          </div>
         )}
         Profile
       </h2>
@@ -91,77 +92,98 @@ const Profile = ({ setPage }: { setPage: Function }) => {
       >
         {({ isSubmitting, setFieldValue }) => (
           <Form>
-            <div className={styles.profile}>
-              <div>
-                <label htmlFor='tag' className={styles.inputName}>
-                  Avatar
-                </label>
-                <div className={styles.avatarContainer}>
-                  <img
-                    src={avatar}
-                    className={styles.avatar}
-                    alt={user.data?.username}
-                  />
-                  <div
-                    className={styles.overlay}
-                    onClick={() => input.current.click()}
-                  >
-                    <FontAwesomeIcon icon={faFileUpload} size='2x' />
-                  </div>
-                  <input
-                    ref={input}
-                    type='file'
-                    accept='.jpg, .png, .jpeg, .gif'
-                    onChange={async (event) => {
-                      const image = event.target.files?.item(0) as any
-                      const formData = new FormData()
-                      formData.append('file', image)
-                      const response = await axios.post(
-                        'https://covfefe.innatical.com/api/v1/upload',
-                        formData
-                      )
-                      console.log(response)
-                      setAvatar(response.data?.url)
-                      setFieldValue('avatar', response.data?.url)
-                    }}
-                  />
+            <div>
+              <label htmlFor='tag' className={styles.inputName}>
+                Avatar
+              </label>
+              <div className={styles.avatar}>
+                <img src={avatar} alt={user.data?.username} />
+                <div className={styles.details}>
+                  <p>Recommanded icon size is 100x100</p>
+                  <h6>
+                    Powered by <a href='https://file.coffee'>file.coffee</a>
+                  </h6>
                 </div>
-                <ErrorMessage component='p' name='avatar' />
-              </div>
-              <div className={styles.username}>
-                <label htmlFor='tag' className={styles.inputName}>
-                  Username
-                </label>
-
-                <Field component={Input} name='username' />
-                <ErrorMessage component='p' name='username' />
-
-                <label htmlFor='tag' className={styles.inputName}>
-                  Status
-                </label>
-
-                <Field component={Input} name='status' />
-                <ErrorMessage component='p' name='status' />
-
-                <label htmlFor='tag' className={styles.inputName}>
-                  Discriminator
-                </label>
-
-                <Field
-                  component={Input}
-                  name='discriminator'
-                  value={
-                    user.data?.discriminator === 0
-                      ? 'inn'
-                      : user.data?.discriminator.toString().padStart(4, '0')
-                  }
-                  disabled
+                <Button
+                  type='button'
+                  onClick={() => input.current.click()}
+                  disabled={isUploading}
+                >
+                  {isUploading ? (
+                    <MoonLoader />
+                  ) : (
+                    <FontAwesomeIcon icon={faFileUpload} />
+                  )}
+                </Button>
+                <input
+                  ref={input}
+                  type='file'
+                  accept='.jpg, .png, .jpeg, .gif'
+                  onChange={async (event) => {
+                    setIsUploading(true)
+                    const image = event.target.files?.item(0) as any
+                    const formData = new FormData()
+                    formData.append('file', image)
+                    const response = await axios.post(
+                      'https://covfefe.innatical.com/api/v1/upload',
+                      formData
+                    )
+                    console.log(response)
+                    setIsUploading(false)
+                    setAvatar(response.data?.url)
+                    setFieldValue('avatar', response.data?.url)
+                  }}
                 />
-                <ErrorMessage component='p' name='discriminator' />
               </div>
+              <ErrorMessage component='p' name='avatar' />
             </div>
+            <div className={styles.username}>
+              <label htmlFor='tag' className={styles.inputName}>
+                Username
+              </label>
 
-            <Button disabled={isSubmitting} type='submit'>
+              <Field component={Input} name='username' />
+              <ErrorMessage component='p' name='username' />
+            </div>
+            <div className={styles.discriminator}>
+              <ErrorMessage component='p' name='status' />
+
+              <label htmlFor='tag' className={styles.inputName}>
+                Discriminator
+              </label>
+
+              <Field
+                component={Input}
+                name='discriminator'
+                value={
+                  user.data?.discriminator === 0
+                    ? 'inn'
+                    : user.data?.discriminator.toString().padStart(4, '0')
+                }
+                disabled
+              />
+              <ErrorMessage component='p' name='discriminator' />
+            </div>
+            <div className={styles.discriminator}>
+              <ErrorMessage component='p' name='status' />
+
+              <label htmlFor='tag' className={styles.inputName}>
+                Email
+              </label>
+
+              <Field
+                component={Input}
+                name='email'
+                value={user.data?.email}
+                disabled
+              />
+              <ErrorMessage component='p' name='email' />
+            </div>
+            <Button
+              disabled={isSubmitting}
+              type='submit'
+              className={styles.save}
+            >
               {isSubmitting ? <BarLoader color='#ffffff' /> : 'Save'}
             </Button>
           </Form>

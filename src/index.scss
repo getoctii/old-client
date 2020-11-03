@@ -2,9 +2,6 @@ html,
 body {
   overflow: hidden;
   margin: 0;
-  padding: 0;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right)
-    env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 html {
@@ -31,8 +28,8 @@ html {
 }
 
 body {
-  padding: env(safe-area-inset-top) env(safe-area-inset-right)
-    env(safe-area-inset-bottom) env(safe-area-inset-left);
+  // padding: env(safe-area-inset-top) env(safe-area-inset-right)
+  //   env(safe-area-inset-bottom) env(safe-area-inset-left);
   color: var(--neko-text-normal);
   height: 100vh;
   width: 100vw;
@@ -99,8 +96,7 @@ img {
 }
 
 #root {
-  padding: env(safe-area-inset-top) env(safe-area-inset-right)
-    env(safe-area-inset-bottom) env(safe-area-inset-left);
+  padding: env(safe-area-inset-right) env(safe-area-inset-left);
   height: 100%;
   width: 100%;
 }
@@ -110,6 +106,11 @@ img {
   height: 100%;
   width: 100%;
   flex-direction: row;
+
+  // , (max-height: 420px)
+  @media (max-width: 940px) {
+    flex-direction: column-reverse;
+  }
 }
 
 .ReactQueryDevtools {

@@ -1,6 +1,47 @@
+// .security {
+//   form {
+//     h2,
+//     h5,
+//     h4,
+//     h6,
+//     p {
+//       margin: 0;
+//     }
+
+//     h4 {
+//       font-weight: 400;
+//     }
+//     .password {
+//       margin-top: 0.8rem;
+//       label {
+//         font-weight: 700;
+//       }
+//       input {
+//         margin-top: 0.5rem;
+//         background: var(--neko-settings-background);
+//         width: 100%;
+//       }
+//     }
+
+//     .save {
+//       margin-top: 1rem;
+//       background: var(--neko-colors-primary);
+//     }
+//   }
+// }
+
 .themes {
-  width: 100%;
-  margin: 2rem;
+  margin-top: 5rem;
+  overflow-y: scroll;
+
+  .options {
+    background: var(--neko-settings-card);
+    padding: 2rem;
+    margin-top: 0.8rem;
+    border-radius: 14px;
+    max-width: 500px;
+    min-width: 500px;
+  }
 
   h4,
   h2 {
@@ -8,14 +49,15 @@
   }
 
   h4 {
-    margin-top: 0.7rem;
     margin-bottom: 0.45rem;
   }
   .variations {
     width: 100%;
     display: flex;
     flex-direction: row;
-
+    margin-bottom: 0.8rem;
+    border-radius: 14px;
+    background: var(--neko-settings-background);
     .selected {
       background: var(--neko-colors-primary);
       color: var(--neko-text-inverse);
@@ -23,7 +65,7 @@
     button {
       flex: 1;
       color: var(--neko-text-normal);
-      background: var(--neko-channels-background);
+      background: none;
 
       &:not(:first-child) {
         margin-left: 0.5rem;
@@ -36,34 +78,77 @@
   }
 
   .colors {
+    hr {
+      margin: 0;
+      border-color: var(--neko-channels-seperator);
+      opacity: 0.5;
+      border-style: solid;
+    }
     width: 100%;
     .theme {
-      background: var(--neko-channels-background);
+      border-radius: 14px;
+      background: none;
       display: flex;
       align-items: center;
-
-      padding: 0.9rem 1.2rem;
-      margin-bottom: 0.25rem;
+      padding-top: 0.8rem;
+      padding-bottom: 0.8rem;
       cursor: pointer;
-
-      &:first-child {
-        border-top-left-radius: 13px;
-        border-top-right-radius: 13px;
-      }
-
-      &:last-child {
-        border-bottom-left-radius: 13px;
-        border-bottom-right-radius: 13px;
-      }
     }
 
     .selected {
+      margin-left: -0.8rem;
+      padding-left: 0.8rem;
+      margin-right: -0.8rem;
+      padding-right: 0.8rem;
       background: var(--neko-colors-primary);
       color: var(--neko-text-inverse);
     }
   }
 
-  @media (min-width: 800px) {
-    min-width: 500px;
+  @media (max-height: 800px) {
+    margin-top: 2.5rem;
+  }
+
+  // , (max-height: 420px)
+  @media (max-width: 940px) {
+    margin-top: 0;
+    width: 100%;
+    .icon {
+      background: var(--neko-colors-primary);
+      margin-right: 0.7rem;
+      padding: 0.5rem;
+      height: 2.65rem;
+      width: 2.65rem;
+      border-radius: 12px;
+      color: var(--neko-text-inverse);
+      cursor: pointer;
+      svg {
+        align-self: center;
+      }
+      display: flex;
+      vertical-align: middle;
+      justify-content: center;
+    }
+
+    .options {
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 100%;
+      min-width: 100%;
+    }
+    .variations,
+    .colors {
+      padding: 0;
+    }
+    h2 {
+      display: flex;
+      align-items: center;
+    }
+    h2 {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
   }
 }

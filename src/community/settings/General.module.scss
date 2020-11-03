@@ -5,7 +5,9 @@
   flex-direction: column;
   padding: 1.5rem;
   margin-top: 0.8rem;
-  border-radius: 10px;
+  border-radius: 16px;
+
+  height: auto;
   button {
     margin-top: 1rem;
     background: var(--neko-colors-primary);
@@ -113,7 +115,7 @@
   margin-top: 1rem;
   .icon {
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 14px;
     height: 124px;
     width: 124px;
     margin: 0;
@@ -121,7 +123,7 @@
 
   .overlay {
     transition: opacity 300ms ease-in-out;
-    border-radius: 10px;
+    border-radius: 14px;
     display: flex;
     opacity: 0;
     position: absolute;
@@ -144,7 +146,7 @@
   .iconWrapper {
     padding: 1rem;
     background: var(--neko-settings-background);
-    border-radius: 10px;
+    border-radius: 14px;
     margin-top: 0.2rem;
     margin-bottom: 0.8rem;
     display: flex;
@@ -178,7 +180,7 @@
 
       width: 100%;
       text-align: center;
-      border-radius: 10px;
+      border-radius: 14px;
     }
   }
   .iconContainer {
@@ -218,6 +220,19 @@
     }
     label {
       margin: 0;
+    }
+  }
+
+  @media (max-width: 940px) {
+    .icon {
+      width: 100%;
+    }
+    .iconWrapper {
+      .iconInfo {
+        margin-top: 0.5rem;
+
+        margin-left: 0;
+      }
     }
   }
 }

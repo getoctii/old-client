@@ -1,38 +1,38 @@
 {
-  "id": "cf77270c-9522-413f-8319-3c8d13091a62",
-  "name": "Eyestrain",
-  "version": "0.0.1",
+  "id": "bdc06bd2-761f-458a-95f3-25508abd5666",
+  "name": "Vapourwave95",
+  "version": "0.0.2",
   "dark": {
     "colors": {
-      "primary": "linear-gradient(224deg, #75C8FF 0%, #007FFF 100%)",
-      "secondary": "linear-gradient(224deg, #A3A3A3 0%, #636363 100%)",
+      "primary": "#8f8f8f",
+      "secondary": "#018281",
       "success": "#8f8f8f",
       "info": "#8f8f8f",
-      "danger": "linear-gradient(224deg, #FC9D9D 0%, #F86464 100%)",
-      "warning": "#8f8f8f",
+      "danger": "#FC9D9D",
+      "warning": "#FFD575",
       "light": "#dadada",
       "dark": "#040a0f"
     },
     "text": {
-      "normal": "#FFFFFF",
-      "inverse": "#FEFEFE",
-      "href": "#1089FF",
+      "normal": "#fff",
+      "inverse": "#c6c6c6",
+      "href": "#404040",
       "danger": "#F86464",
-      "warning": "",
-      "secondary": ""
+      "warning": "#FF7D0E",
+      "secondary": "#646464"
     },
     "sidebar": {
-      "background": "#000000",
-      "seperator": "#000000"
+      "background": "#5f5b5b",
+      "seperator": "#383838"
     },
     "settings": {
-      "background": "#000000",
-      "card": "#000000",
-      "input": "#000000"
+      "background": "#040a0f",
+      "card": "#1A1F2C",
+      "input": "url('https://file.coffee/u/adpCI-Ag-p.png')"
     },
     "channels": {
-      "background": "#000000",
-      "seperator": "#000000",
+      "background": "#c0c0c0",
+      "seperator": "#383838",
       "search": {
         "background": "string",
         "text": "string",
@@ -40,19 +40,19 @@
       }
     },
     "chat": {
-      "background": "#000000",
-      "hover": "#000000",
+      "background": "#018281",
+      "hover": "#1A1F2C",
       "header": {
         "channel": "string",
         "description": "string"
       }
     },
     "context": {
-      "seperator": "#000000",
+      "seperator": "#040a0f",
       "background": "rgba(255, 255, 255, 0.1)"
     },
     "status": {
-      "selected": "#000000",
+      "selected": "#1089FF",
       "online": "#23DB5F",
       "idle": "#FED009",
       "dnd": "#F86464",
@@ -64,49 +64,50 @@
       "message": "string"
     },
     "input": {
-      "background": "#000000",
-      "text": "#FFFFFF"
+      "background": "#1A1F2C",
+      "text": "#ffffff"
     },
     "modal": {
       "background": "rgba(70, 70, 70, 0.5)",
-      "foreground": "#000000"
+      "foreground": "#040a0f"
     },
     "emojis": {
-      "background": "#000000",
-      "input": "#000000"
-    }
+      "background": "#1A1F2C",
+      "input": "#040a0f"
+    },
+    "global": "@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap'); * { border-radius: 0 !important; font-family: 'VT323', monospace !important; };"
   },
   "light": {
     "colors": {
-      "primary": "linear-gradient(224deg, #75C8FF 0%, #007FFF 100%)",
-      "secondary": "linear-gradient(224deg, #A3A3A3 0%, #636363 100%)",
+      "primary": "#018281",
+      "secondary": "#018281",
       "success": "#8f8f8f",
       "info": "#8f8f8f",
       "danger": "linear-gradient(224deg, #FC9D9D 0%, #F86464 100%)",
-      "warning": "#8f8f8f",
+      "warning": "linear-gradient(224deg, #FFD575 0%, #FF7200 100%)",
       "light": "#dadada",
       "dark": "#040a0f"
     },
     "text": {
       "normal": "#000000",
-      "inverse": "#FFFFFF",
+      "inverse": "#FEFEFE",
       "href": "#1089FF",
       "danger": "#F86464",
-      "warning": "",
-      "secondary": ""
+      "warning": "#FF7D0E",
+      "secondary": "#646464"
     },
     "sidebar": {
-      "background": "#FFFFFF",
-      "seperator": "#FFFFFF"
+      "background": "#EEF7FF",
+      "seperator": "#F1F1F1"
     },
     "settings": {
-      "background": "#FFFFFF",
+      "background": "#EEF7FF",
       "card": "#FFFFFF",
-      "input": "#FFFFFF"
+      "input": "#EEF7FF"
     },
     "channels": {
       "background": "#FFFFFF",
-      "seperator": "#FFFFFF",
+      "seperator": "#F1F1F1",
       "search": {
         "background": "string",
         "text": "string",
@@ -114,7 +115,7 @@
       }
     },
     "chat": {
-      "background": "#FFFFFF",
+      "background": "#EEF7FF",
       "hover": "#FFFFFF",
       "header": {
         "channel": "string",
@@ -126,7 +127,7 @@
       "background": "rgba(0, 0, 0, 0.1)"
     },
     "status": {
-      "selected": "#FFFFFF",
+      "selected": "#1089FF",
       "online": "#23DB5F",
       "idle": "#FED009",
       "dnd": "#F86464",
@@ -143,7 +144,7 @@
     },
     "modal": {
       "background": "rgba(70, 70, 70, 0.5)",
-      "foreground": "#FFFFFF"
+      "foreground": "#EEF7FF"
     },
     "emojis": {
       "background": "#ffffff",

@@ -13,7 +13,6 @@
   min-width: 5.5rem;
   min-height: 5.5rem;
   z-index: 0;
-  padding: 1rem 1rem;
   background: var(--neko-sidebar-background);
   border: 0;
 
@@ -52,6 +51,12 @@
       width: 100%;
       height: 100%;
     }
+
+    // , (max-height: 420px)
+    @media (max-width: 940px) {
+      margin-bottom: 0;
+      margin-right: 0.7rem;
+    }
   }
 
   .scrollable {
@@ -60,6 +65,7 @@
     flex-direction: column;
     align-items: center;
     margin-bottom: 7.7rem;
+    padding: 1rem 1rem;
   }
   .separator {
     margin-bottom: 0.9rem;
@@ -69,6 +75,10 @@
     height: 0.5rem;
     width: 0.5rem;
     background: var(--neko-sidebar-seperator);
+    @media (max-width: 940px) {
+      margin-bottom: 0;
+      margin-right: 0.9rem;
+    }
   }
 
   .button {
@@ -81,11 +91,16 @@
     height: 3.5rem;
     min-height: 3.5rem;
     min-width: 3.5rem;
+
+    @media (max-width: 940px) {
+      margin-bottom: 0;
+      margin-right: 0.7rem;
+    }
   }
 
   .selected {
     box-shadow: 0 0 0 2px var(--neko-sidebar-background),
-      0 0 0 4px var(--neko-colors-href);
+      0 0 0 4px var(--neko-text-href);
   }
 
   .messages {
@@ -145,15 +160,7 @@
       width: 3.5rem;
     }
 
-    &:hover {
-      .overlay {
-        opacity: 1;
-      }
-    }
-
     .overlay {
-      transition: opacity 300ms ease-in-out;
-      border-radius: 8px;
       display: flex;
       opacity: 0;
       position: absolute;
@@ -165,13 +172,46 @@
       font-size: 0.7rem;
       height: 3.5rem;
       width: 3.5rem;
-      background: var(--neko-overground);
-      align-items: center;
-      justify-content: center;
       cursor: pointer;
+    }
+  }
+  // , (max-height: 420px)
+  @media (max-width: 940px) {
+    flex-direction: row;
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    height: calc(5.5rem + env(safe-area-inset-bottom));
+    max-height: calc(5.5rem + env(safe-area-inset-bottom));
 
-      svg {
-        color: #fff;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+    padding-top: 1rem;
+    .scrollable {
+      padding-left: 1rem;
+      overflow-x: scroll;
+      overflow-y: hidden;
+    }
+    .avatar {
+      position: relative;
+    }
+    .scrollable,
+    .list {
+      flex-direction: row;
+      max-height: 5.5rem;
+      margin-bottom: 0;
+      display: flex;
+    }
+    .button {
+      margin-top: 0;
+      margin-bottom: 0;
+      margin-right: 0.7rem;
+    }
+    .list {
+      padding-right: 1rem;
+      .icon {
+        margin-top: 0;
       }
     }
   }

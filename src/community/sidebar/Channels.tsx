@@ -8,7 +8,6 @@ import {
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
-import { ContextMenuTrigger, ContextMenu, MenuItem } from 'react-contextmenu'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
 import { CommunityResponse } from '../remote'

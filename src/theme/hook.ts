@@ -5,7 +5,14 @@ import octii from './themes/octii.json'
 import octiiHub from './themes/octii-hub.json'
 import ayu from './themes/ayu-mirage.json'
 import eyestrain from './themes/eyestrain.json'
-
+import { isPlatform } from '@ionic/react'
+import {
+  KeyboardResize,
+  KeyboardStyle,
+  Plugins,
+  StatusBarStyle
+} from '@capacitor/core'
+const { Keyboard, StatusBar } = Plugins
 const isThemeBundle = (theme: Theme | ThemeBundle): theme is ThemeBundle => {
   return (theme as ThemeBundle).dark !== undefined
 }
@@ -38,6 +45,8 @@ interface Theme {
     inverse: string
     href: string
     danger: string
+    warning: string
+    secondary: string
   }
   settings: {
     background: string
@@ -97,6 +106,8 @@ interface Theme {
     background: string
     input: string
   }
+
+  global?: string
 }
 
 const globalStyle = document.createElement('style')
@@ -131,6 +142,20 @@ const useTheme = () => {
 
     if (!theme.version) return
 
+    if (isPlatform('capacitor')) {
+      StatusBar.setOverlaysWebView({ overlay: true })
+      Keyboard.setResizeMode({ mode: KeyboardResize.Native })
+      const isDark =
+        (variations === 'system' && prefersDarkMode) || variations === 'dark'
+      console.log(isDark)
+      Keyboard.setStyle({
+        style: isDark ? KeyboardStyle.Dark : KeyboardStyle.Light
+      })
+      StatusBar.setStyle({
+        style: isDark ? StatusBarStyle.Dark : StatusBarStyle.Light
+      })
+    }
+
     Object.entries({
       '--neko-colors-primary': currentTheme.colors.primary,
       '--neko-colors-secondary': currentTheme.colors.secondary,
@@ -143,6 +168,8 @@ const useTheme = () => {
       '--neko-text-inverse': currentTheme.text.inverse,
       '--neko-text-href': currentTheme.text.href,
       '--neko-text-danger': currentTheme.text.danger,
+      '--neko-text-warning': currentTheme.text.warning,
+      '--neko-text-secondary': currentTheme.text.secondary,
       '--neko-status-selected': currentTheme.status.selected,
       '--neko-status-online': currentTheme.status.online,
       '--neko-status-offline': currentTheme.status.offline,
@@ -166,7 +193,9 @@ const useTheme = () => {
       '--neko-emojis-background': currentTheme.emojis.background,
       '--neko-emojis-input': currentTheme.emojis.input
     }).forEach(([key, value]) => documentStyle.setProperty(key, value))
-  }, [theme, prefersDarkMode, variations])
+    if (currentTheme.global) globalStyle.textContent = currentTheme.global
+    else globalStyle.textContent = ''
+  }, [theme, prefersDarkMode, variations, setThemeId])
   return { theme, themeId, setThemeId, setVariations, variations }
 }
 

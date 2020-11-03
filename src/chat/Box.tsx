@@ -1,12 +1,12 @@
-import styles from './Chat.module.scss'
+import styles from './Box.module.scss'
 import Button from '../components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileUpload, faSmileWink } from '@fortawesome/pro-solid-svg-icons'
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState } from 'react'
 import { useInterval, useMedia } from 'react-use'
 // @ts-ignore
 import Picker from 'emoji-picker-react'
-import { Form, Formik, FastField, FieldProps, FieldInputProps } from 'formik'
+import { Form, Formik, FastField, FieldInputProps } from 'formik'
 
 const adjectives = [
   ' amazing',
@@ -25,11 +25,13 @@ const adjectives = [
 export default ({
   sendMessage,
   uploadFile,
-  postTyping
+  postTyping,
+  typingIndicator
 }: {
   sendMessage: (msg: string) => void
   uploadFile: (file: File) => void
   postTyping: () => void
+  typingIndicator: boolean
 }) => {
   const isMobile = useMedia('(max-width: 800px)')
   const [typing, setTyping] = useState<boolean>(false)
@@ -40,19 +42,14 @@ export default ({
     setAdjectives(adjectives[Math.floor(Math.random() * adjectives.length)])
   }, 30000)
   const uploadInput = useRef<HTMLInputElement>(null)
-  // const [message, setMessage] = useState('')
   const [emojiPicker, setEmojiPicker] = useState(false)
   useInterval(() => typing && postTyping(), 7000)
-  // useEffect(() => {
-  //   if (message.length > 0 && !typing) {
-  //     postTyping()
-  //     setTyping(true)
-  //   } else if (message.length === 0 && typing) {
-  //     setTyping(false)
-  //   }
-  // }, [message, postTyping, typing])
   return (
-    <div className={styles.box}>
+    <div
+      className={`${styles.box} ${
+        typingIndicator ? styles.typingIndicator : ''
+      }`}
+    >
       <Formik
         initialValues={{ message: '' }}
         validate={(values) => {

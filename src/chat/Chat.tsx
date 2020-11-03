@@ -168,7 +168,7 @@ const TypingIndicator = ({ channelID }: { channelID: string }) => {
           : ''}
       </p>
     )
-  else return <></>
+  else return <div className={styles.typingEmpty}></div>
 }
 
 const Chat = ({
@@ -180,7 +180,11 @@ const Chat = ({
   title: string
   status?: string
 }) => {
-  const { token } = Auth.useContainer()
+  const { token, id } = Auth.useContainer()
+  const { typing } = Typing.useContainer()
+  const users = typing[channelID]
+    ?.filter((userID) => userID[0] !== id)
+    .map((t) => t[1])
   const [sendMessage] = useMutation(
     async (content: string) =>
       (
@@ -220,12 +224,12 @@ const Chat = ({
   return (
     <Suspense fallback={<Loader />}>
       <div className={styles.chat} {...bond}>
-        <div
-          onClick={() => isMobile && history.goBack()}
-          className={styles.header}
-        >
+        <div className={styles.header}>
           {isMobile ? (
-            <div className={styles.icon}>
+            <div
+              className={styles.icon}
+              onClick={() => isMobile && history.goBack()}
+            >
               <FontAwesomeIcon
                 className={styles.backButton}
                 icon={faChevronLeft}
@@ -242,7 +246,14 @@ const Chat = ({
           </div>
         </div>
         <Messages channelID={channelID} />
-        <Box {...{ sendMessage, uploadFile, postTyping }} />
+        <Box
+          {...{
+            sendMessage,
+            uploadFile,
+            postTyping,
+            typingIndicator: users?.length > 0
+          }}
+        />
         <TypingIndicator channelID={channelID} />
       </div>
     </Suspense>

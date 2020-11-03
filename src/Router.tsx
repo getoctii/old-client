@@ -1,15 +1,13 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense } from 'react'
 import { useMedia } from 'react-use'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { Authenticate } from './authentication/Authenticate'
 import { PrivateRoute } from './authentication/PrivateRoute'
 import { Conversations } from './conversation/Conversations'
-import { Community } from './community/Community'
+import Community from './community/Community'
 import Empty from './conversation/empty/Empty'
 import { UI } from './state/ui'
 import NewConversation from './conversation/NewConversation'
-import { Plugins, KeyboardResize, KeyboardStyle } from '@capacitor/core'
-import { isPlatform } from '@ionic/react'
 import Settings from './settings/Settings'
 import { Conversation } from './conversation/Conversation'
 import { Sidebar } from './sidebar/Sidebar'
@@ -19,64 +17,70 @@ import Loader from './components/Loader'
 import { Auth } from './authentication/state'
 import Home from './marketing/Home'
 import Status from './components/Status'
-// import Privacy from './marketing/Privacy'
-const { Keyboard, StatusBar } = Plugins
+import { isPlatform } from '@ionic/react'
 
 export const Router = () => {
   const uiStore = UI.useContainer()
   const auth = Auth.useContainer()
-  const isDarkMode = useMedia('(prefers-color-scheme: dark)')
-  const isMobile = useMedia('(max-width: 800px)')
-  useEffect(() => {
-    if (isPlatform('capacitor')) {
-      StatusBar.setOverlaysWebView({ overlay: true })
-      Keyboard.setResizeMode({ mode: KeyboardResize.Native })
-      Keyboard.setStyle({
-        style: isDarkMode ? KeyboardStyle.Dark : KeyboardStyle.Light
-      })
-    }
-  }, [isDarkMode])
+  const isMobile = useMedia('(max-width: 940px)')
 
   return (
     <BrowserRouter>
-      <Route path='/home' component={Home} />
-      {/* <Route path='/privacy' component={Privacy} /> */}
+      {isPlatform('capacitor') ? (
+        <Redirect path='/home' to='/authenticate/login' />
+      ) : (
+        <Route path='/home' component={Home} />
+      )}
       <Route path='/authenticate' component={Authenticate} />
       <div id='main'>
         <AnimatePresence>
           {uiStore.modal === 'newConversation' && <NewConversation />}
           {uiStore.modal === 'newCommunity' && <NewCommunity />}
         </AnimatePresence>
-        {uiStore.modal === 'settings' && <Settings />}
 
         {uiStore.modal === 'status' && <Status />}
         {auth.authenticated && !isMobile && <Sidebar />}
-        <Suspense fallback={<Loader />}>
-          <Switch>
-            <PrivateRoute
-              path='/'
-              component={() => (
-                <>
-                  {isMobile && <Sidebar />}
+
+        <Switch>
+          <PrivateRoute
+            path='/'
+            component={() => (
+              <>
+                {isMobile && <Sidebar />}
+                <Suspense fallback={<Loader />}>
                   <Conversations />
                   {!isMobile && <Empty />}
-                </>
-              )}
-              redirect={'/home'}
-              exact
-            />
-            <PrivateRoute
-              path='/conversations/:channelID'
-              component={() => (
-                <>
-                  {!isMobile && <Conversations />}
-                  <Conversation />
-                </>
-              )}
-            />
-            <PrivateRoute path='/communities/:id' component={Community} />
-          </Switch>
-        </Suspense>
+                </Suspense>
+              </>
+            )}
+            redirect={isPlatform('capacitor') ? '/authenticate/login' : '/home'}
+            exact
+          />
+          <PrivateRoute
+            path='/settings'
+            component={() => (
+              <>
+                {isMobile && <Sidebar />}
+                <Suspense fallback={<Loader />}>
+                  <Settings />
+                </Suspense>
+              </>
+            )}
+          />
+          <PrivateRoute
+            path='/conversations/:channelID'
+            component={() => (
+              <>
+                {!isMobile && <Conversations />}
+                <Conversation />
+              </>
+            )}
+          />
+          <PrivateRoute
+            path='/communities/:id'
+            component={() => <Community.Router />}
+          />
+        </Switch>
       </div>
     </BrowserRouter>
   )

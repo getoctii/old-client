@@ -19,14 +19,14 @@ const Context = ({
   }[]
 }) => {
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} key={id}>
       <ContextMenuTrigger key='trigger' id={id}>
         {children}
       </ContextMenuTrigger>
-      <ContextMenu key='context' id={id} className={styles.menu}>
+      <ContextMenu key='menu' id={id} className={styles.menu}>
         {items.map(({ text, icon, danger, onClick }, index) => (
           <>
-            {danger && <hr />}
+            {danger && <hr key={`hr-${id}`} />}
             <MenuItem
               key={`${index}-${id}`}
               onClick={() => onClick()}

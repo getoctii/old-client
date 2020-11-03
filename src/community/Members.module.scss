@@ -8,11 +8,12 @@
   margin-top: 1rem;
   background: var(--neko-settings-card);
   flex-direction: column;
-}
 
-.backButton {
-  margin-right: 1rem;
-  color: var(--neko-colors-primary);
+  @media (max-width: 940px) {
+    width: auto;
+    margin-top: 4rem;
+    padding: 2rem;
+  }
 }
 
 .members {
@@ -22,9 +23,7 @@
   padding: 2rem;
   h2 {
     margin: 0;
-    margin-left: 2px;
   }
-  margin: -2px;
 
   h3 {
     margin-bottom: 0.3rem;
@@ -97,12 +96,29 @@
       }
     }
   }
-}
 
-@media (max-width: 940px), (max-height: 420px) {
-  .membersEmpty {
-    width: auto;
-    margin-top: 4rem;
-    padding: 2rem;
+  @media (max-width: 940px) {
+    padding-top: calc(env(safe-area-inset-top) + 2rem);
+    .icon {
+      background: var(--neko-colors-primary);
+      margin-right: 0.7rem;
+      padding: 0.5rem;
+      height: 2.65rem;
+      width: 2.65rem;
+      border-radius: 12px;
+      color: var(--neko-text-inverse);
+      cursor: pointer;
+      svg {
+        align-self: center;
+      }
+      display: flex;
+      vertical-align: middle;
+      justify-content: center;
+    }
+    h2 {
+      display: flex;
+      align-items: center;
+      padding-bottom: 1rem;
+    }
   }
 }

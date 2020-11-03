@@ -87,10 +87,20 @@
   }
 }
 
-@media (max-width: 800px) {
+// , (max-height: 420px)
+@media (max-width: 940px) {
   .sidebar {
+    padding-top: calc(env(safe-area-inset-top) + 2rem);
     min-width: 1rem;
     width: 100%;
     max-width: 100%;
+
+    h3 {
+      font-size: 2rem;
+    }
+  }
+
+  body {
+    background: var(--neko-channels-background);
   }
 }

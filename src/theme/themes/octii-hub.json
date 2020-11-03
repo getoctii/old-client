@@ -17,7 +17,9 @@
       "normal": "#FFFFFF",
       "inverse": "#000000",
       "href": "#FF9900",
-      "danger": "#ed5454"
+      "danger": "#ed5454",
+      "warning": "#8f8f8f",
+      "secondary": "#788A9F"
     },
     "sidebar": {
       "background": "#000000",
@@ -25,7 +27,7 @@
     },
     "settings": {
       "background": "#000000",
-      "card": "#232834",
+      "card": "#1B1B1B",
       "input": "#1F2430"
     },
     "channels": {
@@ -39,7 +41,7 @@
     },
     "chat": {
       "background": "#000000",
-      "hover": "#232834",
+      "hover": "#1B1B1B",
       "header": {
         "channel": "string",
         "description": "string"
@@ -89,20 +91,22 @@
       "normal": "#000000",
       "inverse": "#000000",
       "href": "#FF9900",
-      "danger": "#ed5454"
+      "danger": "#ed5454",
+      "warning": "#8f8f8f",
+      "secondary": "#788A9F"
     },
     "sidebar": {
       "background": "#ffffff",
-      "seperator": "#383838"
+      "seperator": "#F1F1F1"
     },
     "settings": {
       "background": "#ffffff",
-      "card": "#232834",
+      "card": "#EEEEEE",
       "input": "#1F2430"
     },
     "channels": {
       "background": "#EEEEEE",
-      "seperator": "#FFFFFF",
+      "seperator": "#F1F1F1",
       "search": {
         "background": "string",
         "text": "string",
@@ -111,7 +115,7 @@
     },
     "chat": {
       "background": "#ffffff",
-      "hover": "#232834",
+      "hover": "#EEEEEE",
       "header": {
         "channel": "string",
         "description": "string"

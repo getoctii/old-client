@@ -26,47 +26,92 @@
   .list {
     margin-top: 0.5rem;
 
-    div {
-      background: var(--neko-sidebar-background);
+    .tab {
+      border-radius: 14px;
       display: flex;
       align-items: center;
-      padding: 0.75rem;
-      margin-bottom: 0.25rem;
+      padding-top: 0.6rem;
+      padding-bottom: 0.6rem;
       cursor: pointer;
+
+      .icon {
+        margin-right: 0.5rem;
+        padding: 0.5rem;
+        color: var(--neko-text-inverse);
+        border-radius: 10px;
+      }
 
       h4 {
         margin: 0 auto 0 0.75rem;
         font-weight: 500;
       }
-
-      svg {
-        margin-right: 0.5rem;
-      }
-
       img {
         border-radius: 25px;
         object-fit: cover;
         height: 2.5rem;
         width: 2.5rem;
       }
+
+      &.profile {
+        .icon {
+          background: var(--neko-colors-primary);
+        }
+      }
+
+      &.security {
+        .icon {
+          background: var(--neko-colors-secondary);
+        }
+      }
+
+      &.themes {
+        .icon {
+          background: var(--neko-colors-warning);
+        }
+      }
     }
 
     .selected {
-      background: var(--neko-colors-primary);
       color: var(--neko-text-inverse);
-    }
+      margin-left: -0.6rem;
+      padding-left: 0.6rem;
+      margin-right: -0.6rem;
+      padding-right: 0.6rem;
 
-    div:first-child {
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
-    }
+      &.profile {
+        background: var(--neko-colors-primary);
 
-    div:last-child {
-      border-bottom-left-radius: 10px;
-      border-bottom-right-radius: 10px;
+        .icon {
+          color: var(--neko-text-href);
+          background: var(--neko-text-inverse);
+        }
+      }
+
+      &.security {
+        background: var(--neko-colors-secondary);
+        .icon {
+          color: var(--neko-text-secondary);
+          background: var(--neko-text-inverse);
+        }
+      }
+
+      &.themes {
+        background: var(--neko-colors-warning);
+        .icon {
+          color: var(--neko-text-warning);
+          background: var(--neko-text-inverse);
+        }
+      }
     }
   }
 
+  hr {
+    margin: 0;
+    margin-left: 3.5rem;
+    border-color: var(--neko-channels-seperator);
+    opacity: 0.5;
+    border-style: solid;
+  }
   .logout {
     margin-top: auto;
     text-align: center;
@@ -75,5 +120,12 @@
     color: var(--neko-text-inverse);
     padding: 0.75rem;
     cursor: pointer;
+  }
+  // , (max-height: 420px)
+  @media (max-width: 940px) {
+    padding-top: 0;
+    max-width: 100%;
+    width: 100%;
+    min-width: 100%;
   }
 }

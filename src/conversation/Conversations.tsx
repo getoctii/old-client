@@ -29,7 +29,7 @@ const ConversationList = () => {
   const [lastConversation, setLastConversation] = useLocalStorage(
     'last_conversation'
   )
-  const isMobile = useMedia('(max-width: 800px)')
+  const isMobile = useMedia('(max-width: 940px)')
   const participants = useQuery(
     'participants',
     async () =>
@@ -123,8 +123,10 @@ const ConversationList = () => {
 }
 
 export const Conversations = () => {
+  const isMobile = useMedia('(max-width: 940px)')
   return (
     <div className={styles.sidebar}>
+      {isMobile && <div className={styles.statusBar} />}
       <h3>Messages</h3>
       <NewConversation />
       <div className={styles.list}>

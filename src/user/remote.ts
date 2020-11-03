@@ -14,6 +14,7 @@ export type UserResponse = {
   discriminator: number
   state: State
   status: string
+  email?: string
 }
 
 export const getUser = async (_: string, userID: string, token: string) =>

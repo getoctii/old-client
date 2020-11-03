@@ -1,9 +1,7 @@
-import React, { useEffect, memo, ReactChildren, useState } from 'react'
+import React, { memo, useState, useMemo } from 'react'
 import styles from './Message.module.scss'
 import moment from 'moment'
-import ReactMarkdown from 'react-markdown'
-import { useAudio, useMeasure } from 'react-use'
-import { faCopy, faPause, faPlay, faTrashAlt } from '@fortawesome/pro-solid-svg-icons'
+import { faCopy, faTrashAlt } from '@fortawesome/pro-solid-svg-icons'
 import { Clipboard } from '@capacitor/core'
 import { Auth } from '../authentication/state'
 import { Confirmation } from '../components/Confirmation'
@@ -11,45 +9,19 @@ import { useMutation, useQuery } from 'react-query'
 import { clientGateway } from '../constants'
 import { AnimatePresence } from 'framer-motion'
 import { UserResponse } from '../user/remote'
+import { Measure } from './embeds/Measure'
 import Context from '../components/Context'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Audio from './embeds/Audio'
+import Image from './embeds/Image'
+import useMarkdown from '@innatical/markdown'
 
-const secondsToTimestamp = (seconds: number) => {
-  const minutes = Math.floor(seconds / 60)
-  return `${minutes}:${Math.floor(seconds - minutes * 60).toString().padStart(2, '0')}`
+type Embed = {
+  embed: React.ReactNode
+  link: React.ReactNode
 }
 
-const AudioEmbed = ({
-  src
-}: {
-  src: string
-}) => {
-  const [audio, state, controls] = useAudio({
-    src
-  })
-
-  return (
-    <div className={styles.audioEmbed}>
-      {audio}
-      <FontAwesomeIcon className={styles.icon} onClick={() => state.paused ? controls.play() : controls.pause()} icon={state.paused ? faPlay : faPause}/>
-      <input value={state.time} max={state.duration} onChange={e => controls.seek(e.target.valueAsNumber)} step='any' type='range' />
-      <span>{secondsToTimestamp(state.time)}/{secondsToTimestamp(state.duration)}</span>
-    </div>
-  )
-}
-
-const ImageEmbed = ({
-  children,
-  onResize
-}: {
-  children: ReactChildren
-  onResize: () => void
-}) => {
-  const [ref, size] = useMeasure<HTMLDivElement>()
-  useEffect(() => {
-    onResize()
-  }, [size, onResize])
-  return <div ref={ref}>{children}</div>
+const isEmbed = (element: any): element is Embed => {
+  return typeof element === 'object' && element['embed'] && element['link']
 }
 
 const Message = memo(
@@ -122,6 +94,42 @@ const Message = memo(
       }
       return items
     }
+    const output = useMarkdown(content, {
+      bold: (str, key) => <strong key={key}>{str}</strong>,
+      italic: (str, key) => <i key={key}>{str}</i>,
+      underlined: (str, key) => <u key={key}>{str}</u>,
+      strikethough: (str, key) => <del key={key}>{str}</del>,
+      link: (str, key) => {
+        const link = (
+          <a href={str} key={key} target='_blank' rel='noopener noreferrer'>
+            {str}
+          </a>
+        )
+        if (Image.isCovfefe(str)) {
+          return {
+            link,
+            embed: <Image.Embed key={key} url={str} />
+          }
+        } else if (Audio.isCovfefe(str)) {
+          return {
+            link,
+            embed: <Audio.Embed key={key} url={str} />
+          }
+        } else {
+          return link
+        }
+      },
+      codeblock: (str, key) => <code key={key}>{str}</code>
+    })
+    const main = useMemo(
+      () =>
+        output.map((element) => (isEmbed(element) ? element.link : element)),
+      [output]
+    )
+    const embeds = useMemo(
+      () => output.filter(isEmbed).map((element) => element.embed),
+      [output]
+    )
     return (
       <>
         <AnimatePresence>
@@ -153,95 +161,8 @@ const Message = memo(
                   <span>{moment.utc(createdAt).local().calendar()}</span>
                 </h2>
               )}
-              <ReactMarkdown
-                skipHtml={false}
-                escapeHtml={true}
-                unwrapDisallowed={true}
-                allowedTypes={[
-                  'root',
-                  'text',
-                  'paragraph',
-                  'strong',
-                  'emphasis',
-                  'delete',
-                  'link',
-                  'heading'
-                ]}
-                renderers={{
-                  heading: (props: { children: any }) => (
-                    <p>{props.children}</p>
-                  ),
-                  paragraph: (props: any) => {
-                    const content = props.children.flatMap((child: any) =>
-                      typeof child === 'object' &&
-                      child.key &&
-                      !!child.key.match(/link/g) ? (
-                        /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(png|jpeg|jpg|gif)/g.test(
-                          child.props.href
-                        ) ? (
-                          [
-                            <p>{child}</p>,
-                            <div className={styles.imageEmbed}>
-                              <img
-                                alt='chat'
-                                src={
-                                  child.props.href.match(
-                                    /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(png|jpeg|jpg|gif)$/g
-                                  )?.[0]
-                                }
-                              />
-                            </div>
-                          ]
-                        ) : /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(aac|flac|m4a|mp3|ogg|wav|mpeg)/g.test(
-                          child.props.href
-                        ) ? ([
-                          <p>{child}</p>,
-                          <div><AudioEmbed src={child.props.href} /></div>
-
-                        ]) : (
-                          <p>{child}</p>
-                        )
-                      ) : (
-                        <p>{child}</p>
-                      )
-                    )
-                    const paragraphs = content.filter(
-                      (element: any) => element.type === 'p'
-                    )
-                    const images = content.filter(
-                      (element: any) => element.type === 'div'
-                    )
-                    return (
-                      <>
-                        {[
-                          <div key='text' className={styles.text}>
-                            <p>
-                              {paragraphs.flatMap(
-                                (paragraph: any) => paragraph.props.children
-                              )}
-                            </p>
-                          </div>,
-                          <ImageEmbed key='images' onResize={onResize}>
-                            {images.map((img: any, index: number) => (
-                              <div {...img.props} key={index} />
-                            ))}
-                          </ImageEmbed>
-                        ]}
-                      </>
-                    )
-                  },
-                  link: (props) => (
-                    <a
-                      href={props.href}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                    >
-                      {props.children}
-                    </a>
-                  )
-                }}
-                source={content}
-              />
+              <p>{main}</p>
+              <Measure onResize={onResize}>{embeds}</Measure>
             </div>
           </div>
         </Context>
@@ -251,3 +172,87 @@ const Message = memo(
 )
 
 export default Message
+
+/* <ReactMarkdown
+skipHtml={false}
+escapeHtml={true}
+unwrapDisallowed={true}
+allowedTypes={[
+  'root',
+  'text',
+  'paragraph',
+  'strong',
+  'emphasis',
+  'delete',
+  'link',
+  'heading'
+]}
+renderers={{
+  heading: (props: { children: any }) => (
+    <p>{props.children}</p>
+  ),
+  paragraph: (props: any) => {
+    const content = props.children.flatMap((child: any) =>
+      typeof child === 'object' &&
+      child.key &&
+      !!child.key.match(/link/g) ? (
+        Image.isCovfefe(child.props.href) ? (
+          [
+            // finnnne
+            // make a new LS
+            // can we please work on a not shit markdown parser, we can open source that ight
+            // https://prod.liveshare.vsengsaas.visualstudio.com/join?65A66F804AA1DF1B833FA9B1AFB0D46D0216
+            <p>{child}</p>,
+            <Image.Embed url={child.props.href} />
+          ]
+        ) : Audio.isCovfefe(child.props.href) ? (
+          [
+            <p>{child}</p>,
+            <div>
+              <Audio.Embed src={child.props.href} />
+            </div>
+          ]
+        ) : (
+          <p>{child}</p>
+        )
+      ) : (
+        <p>{child}</p>
+      )
+    )
+    const paragraphs = content.filter(
+      (element: any) => element.type === 'p'
+    )
+    const images = content.filter(
+      (element: any) => element.type === 'div'
+    )
+    return (
+      <>
+        {[
+          <div key='text' className={styles.text}>
+            <p>
+              {paragraphs.flatMap(
+                (paragraph: any) => paragraph.props.children
+              )}
+            </p>
+          </div>,
+          <Image.Measure key='images' onResize={onResize}>
+            {images.map((img: any, index: number) => (
+              <div {...img.props} key={index} />
+            ))}
+          </Image.Measure>
+        ]}
+      </>
+    )
+  },
+  link: (props) => (
+    <a
+      href={props.href}
+      target='_blank'
+      rel='noopener noreferrer'
+    >
+      {props.children}
+    </a>
+  )
+}}
+source={content}
+/> */

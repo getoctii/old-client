@@ -19,6 +19,7 @@ import { LocalNotifications } from '@capacitor/core'
 import Theme from './theme/hook'
 import ThemeProvider from './theme/Provider'
 import Typing from './state/typing'
+import { ScrollPosition } from './state/scroll'
 
 Sentry.init({
   dsn:
@@ -80,8 +81,10 @@ ReactDOM.render(
               <Typing.Provider>
                 <Theme.Provider>
                   <ThemeProvider>
-                    <Router />
-                    <EventSource />
+                    <ScrollPosition.Provider>
+                      <Router />
+                      <EventSource />
+                    </ScrollPosition.Provider>
                   </ThemeProvider>
                 </Theme.Provider>
               </Typing.Provider>

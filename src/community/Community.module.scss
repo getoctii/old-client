@@ -30,8 +30,17 @@
   }
 }
 
-@media (max-width: 940px), (max-height: 420px) {
+// , (max-height: 420px)
+@media (max-width: 940px) {
+  .community {
+    display: flex;
+    flex-direction: column;
+  }
   .communityEmpty {
+    button {
+      background: var(--neko-colors-primary);
+      margin-bottom: 1rem;
+    }
     padding: 2rem;
     .video {
       height: 300px;

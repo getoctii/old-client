@@ -1,21 +1,19 @@
-import React from 'react'
+import React, { useEffect, useLayoutEffect, useRef } from 'react'
 import styles from './Sidebar.module.scss'
 import { UI } from '../state/ui'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { clientGateway } from '../constants'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faUserCog,
-  faInbox,
-  faPlus,
-  faThLarge
-} from '@fortawesome/pro-solid-svg-icons'
+import { faInbox, faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Button from '../components/Button'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { useLocalStorage } from 'react-use'
-import { State, UserResponse } from '../user/remote'
+import { useLocalStorage, useMedia } from 'react-use'
+import { getUser, State } from '../user/remote'
+import { isPlatform } from '@ionic/react'
+import { useScroll } from 'react-use'
+import { ScrollPosition } from '../state/scroll'
 
 type MembersResponse = {
   id: string
@@ -82,21 +80,10 @@ export const Sidebar = () => {
   const ui = UI.useContainer()
   const auth = Auth.useContainer()
   const history = useHistory()
-  const match = useRouteMatch<{
-    tab?: string
-    id?: string
-  }>('/:tab/:id')
-  const user = useQuery(
-    ['users', auth.id],
-    async (key, userID) =>
-      (
-        await clientGateway.get<UserResponse>(`/users/${userID}`, {
-          headers: {
-            Authorization: auth.token
-          }
-        })
-      ).data
-  )
+  const isMobile = useMedia('(max-width: 940px)')
+  const matchTab = useRouteMatch<{ tab: string }>('/:tab')
+
+  const user = useQuery(['users', auth.id, auth.token], getUser)
   const communities = useQuery(
     ['communities'],
     async () =>
@@ -112,32 +99,78 @@ export const Sidebar = () => {
     'communities',
     communities.data?.map((member) => member.community.id) ?? []
   )
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const currentScrollPosition = useScroll(scrollRef)
+  const [scrollPosition, setScrollPosition] = ScrollPosition.useContainer()
+
+  useEffect(() => {
+    setScrollPosition(currentScrollPosition)
+  }, [currentScrollPosition, setScrollPosition])
+
+  useLayoutEffect(() => {
+    if (scrollRef.current)
+      scrollRef.current.scrollTo(scrollPosition.x, scrollPosition.y)
+    // eslint-disable-next-line
+  }, [])
+  // fuck it ship it
   return (
     <div className={styles.sidebar}>
-      <div className={styles.scrollable}>
+      <div className={styles.scrollable} ref={scrollRef}>
+        {isPlatform('capacitor') && !isMobile && <br />}
+        {isMobile && (
+          <>
+            <Button
+              type='button'
+              className={`${styles.avatar} ${
+                matchTab?.params.tab === 'settings' ? styles.selected : ''
+              }`}
+            >
+              <img
+                src={user.data?.avatar}
+                alt={user.data?.username}
+                onClick={() => history.push('/settings')}
+              />
+              <div
+                className={styles.overlay}
+                onClick={() => history.push('/settings')}
+              ></div>
+              {user.data?.state && (
+                <div
+                  className={`${styles.badge} ${
+                    user.data.state === State.online
+                      ? styles.online
+                      : user.data.state === State.dnd
+                      ? styles.dnd
+                      : user.data.state === State.idle
+                      ? styles.idle
+                      : user.data.state === State.offline
+                      ? styles.offline
+                      : ''
+                  }`}
+                  onClick={() => ui.setModal('status')}
+                />
+              )}
+            </Button>
+            <Button
+              className={styles.plus}
+              type='button'
+              onClick={() => ui.setModal('newCommunity')}
+            >
+              <FontAwesomeIcon
+                className={styles.symbol}
+                icon={faPlus}
+                size='2x'
+              />
+            </Button>
+          </>
+        )}
+
         <Button
-          className={
-            match?.params.tab === 'hub' || !match
-              ? `${styles.hub} ${styles.selected}`
-              : styles.hub
-          }
-          type='button'
-          onClick={() => {
-            history.push('/')
-          }}
-        >
-          <FontAwesomeIcon
-            className={styles.symbol}
-            icon={faThLarge}
-            size='2x'
-          />
-        </Button>
-        <Button
-          className={
-            match?.params.tab === 'conversations' || !match
-              ? `${styles.messages} ${styles.selected}`
-              : styles.messages
-          }
+          className={`${styles.messages} ${
+            matchTab?.params.tab === 'conversations' || !matchTab
+              ? styles.selected
+              : ''
+          }`}
           type='button'
           onClick={() => {
             history.push('/')
@@ -162,9 +195,16 @@ export const Sidebar = () => {
             setCommunitiesOrder(items.map((c) => c.community.id))
           }}
         >
-          <Droppable droppableId='list'>
+          <Droppable
+            droppableId='list'
+            direction={isMobile ? 'horizontal' : 'vertical'}
+          >
             {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef}>
+              <div
+                className={styles.list}
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
                 {(communities?.data ?? [])
                   .sort(
                     (a, b) =>
@@ -183,46 +223,56 @@ export const Sidebar = () => {
             )}
           </Droppable>
         </DragDropContext>
+
         <br />
       </div>
-      <div className={styles.pinned}>
-        <Button className={styles.avatar} type='button'>
-          <img
-            src={user.data?.avatar}
-            alt={user.data?.username}
-            onClick={() => ui.setModal('settings')}
-          />
-          <div
-            className={styles.overlay}
-            onClick={() => ui.setModal('settings')}
+      {!isMobile && (
+        <div className={styles.pinned}>
+          <Button
+            className={`${styles.avatar} ${
+              matchTab?.params.tab === 'settings' ? styles.selected : ''
+            }`}
+            type='button'
           >
-            <FontAwesomeIcon icon={faUserCog} size='2x' />
-          </div>
-          {user.data?.state && (
-            <div
-              className={`${styles.badge} ${
-                user.data.state === State.online
-                  ? styles.online
-                  : user.data.state === State.dnd
-                  ? styles.dnd
-                  : user.data.state === State.idle
-                  ? styles.idle
-                  : user.data.state === State.offline
-                  ? styles.offline
-                  : ''
-              }`}
-              onClick={() => ui.setModal('status')}
+            <img
+              src={user.data?.avatar}
+              alt={user.data?.username}
+              onClick={() => history.push('/settings')}
             />
-          )}
-        </Button>
-        <Button
-          className={styles.plus}
-          type='button'
-          onClick={() => ui.setModal('newCommunity')}
-        >
-          <FontAwesomeIcon className={styles.symbol} icon={faPlus} size='2x' />
-        </Button>
-      </div>
+            <div
+              className={styles.overlay}
+              onClick={() => history.push('/settings')}
+            />
+            {user.data?.state && (
+              <div
+                className={`${styles.badge} ${
+                  user.data.state === State.online
+                    ? styles.online
+                    : user.data.state === State.dnd
+                    ? styles.dnd
+                    : user.data.state === State.idle
+                    ? styles.idle
+                    : user.data.state === State.offline
+                    ? styles.offline
+                    : ''
+                }`}
+                onClick={() => ui.setModal('status')}
+              />
+            )}
+          </Button>
+          <Button
+            className={styles.plus}
+            type='button'
+            onClick={() => ui.setModal('newCommunity')}
+          >
+            <FontAwesomeIcon
+              className={styles.symbol}
+              icon={faPlus}
+              size='2x'
+            />
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

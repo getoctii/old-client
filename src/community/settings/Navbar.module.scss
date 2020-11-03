@@ -21,4 +21,14 @@
     font-size: 1.1rem;
     border-radius: 10px;
   }
+
+  @media (max-width: 940px) {
+    width: 100%;
+    li {
+      width: 100%;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
 }

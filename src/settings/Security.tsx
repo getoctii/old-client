@@ -5,11 +5,12 @@ import { Auth } from '../authentication/state'
 import { clientGateway } from '../constants'
 import Button from '../components/Button'
 import { BarLoader } from 'react-spinners'
-import styles from './shared.module.scss'
+import styles from './Security.module.scss'
 import Input from '../components/Input'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import { useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useHistory } from 'react-router-dom'
 
 type validateFormData = { newPassword: string; oldPassword: string }
 
@@ -29,15 +30,23 @@ type UserResponse = {
   discriminator: number
 }
 
-const Security = ({ setPage }: { setPage: Function }) => {
+const Security = () => {
   const { token, id } = Auth.useContainer()
-  const isMobile = useMedia('(max-width: 800px)')
-
+  const isMobile = useMedia('(max-width: 940px)')
+  const history = useHistory()
   return (
-    <div className={styles.wrapper}>
-      <h2 onClick={() => isMobile && setPage('')}>
+    <div className={styles.security}>
+      <h2>
         {isMobile && (
-          <FontAwesomeIcon className={styles.backButton} icon={faChevronLeft} />
+          <div
+            className={styles.icon}
+            onClick={() => isMobile && history.push('/settings')}
+          >
+            <FontAwesomeIcon
+              className={styles.backButton}
+              icon={faChevronLeft}
+            />
+          </div>
         )}
         Security
       </h2>
@@ -65,18 +74,26 @@ const Security = ({ setPage }: { setPage: Function }) => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <h3>Change Password</h3>
-            <label htmlFor='oldPassword' className={styles.inputName}>
-              Current Password
-            </label>
-            <Field component={Input} name='oldPassword' type={'password'} />
-            <ErrorMessage component='p' name='oldPassword' />
-            <label htmlFor='newPassword' className={styles.inputName}>
-              New Password
-            </label>
-            <Field component={Input} name='newPassword' type={'password'} />
-            <ErrorMessage component='p' name='newPassword' />
-            <Button disabled={isSubmitting} type='submit'>
+            <h4>Change Password</h4>
+            <div className={styles.password}>
+              <label htmlFor='oldPassword' className={styles.inputName}>
+                Current Password
+              </label>
+              <Field component={Input} name='oldPassword' type={'password'} />
+              <ErrorMessage component='p' name='oldPassword' />
+            </div>
+            <div className={styles.password}>
+              <label htmlFor='newPassword' className={styles.inputName}>
+                New Password
+              </label>
+              <Field component={Input} name='newPassword' type={'password'} />
+              <ErrorMessage component='p' name='newPassword' />
+            </div>
+            <Button
+              disabled={isSubmitting}
+              type='submit'
+              className={styles.save}
+            >
               {isSubmitting ? <BarLoader color='#ffffff' /> : 'Change Password'}
             </Button>
           </Form>

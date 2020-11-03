@@ -5,7 +5,7 @@
 
   "dark": {
     "colors": {
-      "primary": "#707A8CCC",
+      "primary": "#707A8C",
       "secondary": "#788A9F",
       "success": "#8f8f8f",
       "info": "#8f8f8f",
@@ -17,8 +17,10 @@
     "text": {
       "normal": "#fafafa",
       "inverse": "#95E6CB",
-      "href": "#707A8CCC",
-      "danger": "#FF3333"
+      "href": "#707A8C",
+      "danger": "#FF3333",
+      "warning": "#8f8f8f",
+      "secondary": "#8f8f8f"
     },
     "sidebar": {
       "background": "#1F2430",
@@ -51,7 +53,7 @@
       "background": "rgba(255, 255, 255, 0.1)"
     },
     "status": {
-      "selected": "#707A8CCC",
+      "selected": "#707A8C",
       "online": "#BAE67E",
       "idle": "#FFCC66",
       "dnd": "#FF3333",
@@ -77,33 +79,35 @@
   },
   "light": {
     "colors": {
-      "primary": "#707A8CCC",
-      "secondary": "linear-gradient(224deg, #A3A3A3 0%, #636363 100%)",
+      "primary": "#707A8C",
+      "secondary": "#707A8C",
       "success": "#8f8f8f",
       "info": "#8f8f8f",
-      "danger": "linear-gradient(224deg, #FC9D9D 0%, #F86464 100%)",
-      "warning": "#8f8f8f",
+      "danger": "#707A8C",
+      "warning": "#707A8C",
       "light": "#dadada",
       "dark": "#1F2430"
     },
     "text": {
       "normal": "#000000",
       "inverse": "#FEFEFE",
-      "href": "#1089FF",
-      "danger": "#F86464"
+      "href": "#707A8C",
+      "danger": "#F86464",
+      "warning": "#8f8f8f",
+      "secondary": "#8f8f8f"
     },
     "sidebar": {
       "background": "#FAFAFA",
-      "seperator": "#F1F1F1"
+      "seperator": "#EEEEEE"
     },
     "settings": {
-      "background": "#EEF7FF",
-      "card": "#FFFFFF",
+      "background": "#FAFAFA",
+      "card": "#8A91991A",
       "input": "#EEF7FF"
     },
     "channels": {
       "background": "#8A91991A",
-      "seperator": "#F1F1F1",
+      "seperator": "#FFFFFF",
       "search": {
         "background": "string",
         "text": "string",
@@ -123,7 +127,7 @@
       "background": "rgba(0, 0, 0, 0.1)"
     },
     "status": {
-      "selected": "#707A8CCC",
+      "selected": "#707A8C",
       "online": "#23DB5F",
       "idle": "#FED009",
       "dnd": "#F86464",
