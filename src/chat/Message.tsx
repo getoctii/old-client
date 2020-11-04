@@ -14,6 +14,12 @@ import Context from '../components/Context'
 import Audio from './embeds/Audio'
 import Image from './embeds/Image'
 import useMarkdown from '@innatical/markdown'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faCatSpace,
+  faUserNinja,
+  faUserShield
+} from '@fortawesome/pro-duotone-svg-icons'
 
 type Embed = {
   embed: React.ReactNode
@@ -157,8 +163,32 @@ const Message = memo(
             >
               {primary && (
                 <h2 key='username'>
-                  {user.data?.username}
-                  <span>{moment.utc(createdAt).local().calendar()}</span>
+                  <span>
+                    {user.data?.username}
+                    {user.data?.id ===
+                    '987d59ba-1979-4cc4-8818-7fe2f3d4b560' ? (
+                      <FontAwesomeIcon
+                        className={styles.badge}
+                        icon={faUserNinja}
+                      />
+                    ) : user.data?.id ===
+                      '99343aac-2301-415d-aece-17b021d3a459' ? (
+                      <FontAwesomeIcon
+                        className={styles.badge}
+                        icon={faCatSpace}
+                      />
+                    ) : (
+                      user.data?.discriminator === 0 && (
+                        <FontAwesomeIcon
+                          className={styles.badge}
+                          icon={faUserShield}
+                        />
+                      )
+                    )}
+                  </span>
+                  <span className={styles.time}>
+                    {moment.utc(createdAt).local().calendar()}
+                  </span>
                 </h2>
               )}
               <p>{main}</p>

@@ -9,9 +9,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     // Override point for customization after application launch.
-    #if !TARGET_OS_MACCATALYST
-//    window?.windowScene?.titlebar?.titleVisibility = .hidden
-    #endif
     return true
   }
 
