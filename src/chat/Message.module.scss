@@ -7,7 +7,7 @@
     font-size: 1rem;
     margin: 0;
 
-    span {
+    .time {
       margin-left: 0.5rem;
       font-size: 0.8rem;
       font-weight: 300;
@@ -65,5 +65,9 @@
     padding: 0;
     line-height: 1.325rem;
     font-size: 1rem;
+  }
+
+  .badge {
+    margin-left: 0.5rem;
   }
 }

@@ -4,7 +4,6 @@
   box-sizing: border-box;
   animation: slide 20s linear infinite;
   display: flex;
-
   .card {
     display: flex;
     flex-direction: column;
@@ -165,6 +164,15 @@
   .wrapper {
     .card {
       min-width: auto;
+    }
+  }
+}
+
+@media (max-width: 940px) {
+  .wrapper {
+    .card {
+      padding: calc(env(safe-area-inset-top)) 2rem env(safe-area-inset-bottom)
+        2rem;
     }
   }
 }

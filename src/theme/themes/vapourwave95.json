@@ -1,6 +1,6 @@
 {
   "id": "bdc06bd2-761f-458a-95f3-25508abd5666",
-  "name": "Vapourwave95",
+  "name": "Inndows95",
   "version": "0.0.2",
   "dark": {
     "colors": {
@@ -8,8 +8,8 @@
       "secondary": "#018281",
       "success": "#8f8f8f",
       "info": "#8f8f8f",
-      "danger": "#FC9D9D",
-      "warning": "#FFD575",
+      "danger": "#ff0000",
+      "warning": "#ffff00",
       "light": "#dadada",
       "dark": "#040a0f"
     },
@@ -22,7 +22,7 @@
       "secondary": "#646464"
     },
     "sidebar": {
-      "background": "#5f5b5b",
+      "background": "center / cover no-repeat url('https://file.coffee/u/I2-YJHJiYc.png')",
       "seperator": "#383838"
     },
     "settings": {
@@ -31,7 +31,7 @@
       "input": "url('https://file.coffee/u/adpCI-Ag-p.png')"
     },
     "channels": {
-      "background": "#c0c0c0",
+      "background": "center / cover no-repeat url('https://file.coffee/u/A6Y9no6w27.png')",
       "seperator": "#383838",
       "search": {
         "background": "string",
