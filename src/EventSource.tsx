@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { queryCache } from 'react-query'
 import { Auth } from './authentication/state'
-// @ts-ignore
 import { EventSourcePolyfill } from 'event-source-polyfill'
-import { CLIENT_GATEWAY_URL } from './constants'
+import { CLIENT_GATEWAY_URL, Events } from './constants'
 import { Plugins, HapticsNotificationType } from '@capacitor/core'
 import { isPlatform } from '@ionic/react'
 import { useLocalStorage } from 'react-use'
@@ -39,9 +38,13 @@ const EventSource = () => {
   const { startTyping, stopTyping } = Typing.useContainer()
   const [mutedCommunities] = useLocalStorage<string[]>('muted_communities', [])
   const [mutedChannels] = useLocalStorage<string[]>('muted_channels', [])
+  const [eventSource, setEventSource] = useState<EventSourcePolyfill | null>(
+    null
+  )
+
   useEffect(() => {
-    if (!token || !id) return
-    const eventSource = new EventSourcePolyfill(
+    if (!token) return
+    const source = new EventSourcePolyfill(
       CLIENT_GATEWAY_URL + '/events/subscribe',
       {
         headers: {
@@ -50,11 +53,16 @@ const EventSource = () => {
       }
     )
 
-    eventSource.onmessage = (e: any) => {
-      console.log(e)
-    }
+    setEventSource(source)
 
-    eventSource.addEventListener('NEW_MESSAGE', async (e: any) => {
+    return () => {
+      source.close()
+    }
+  }, [token])
+
+  useEffect(() => {
+    if (!eventSource) return
+    const handler = (e: MessageEvent) => {
       const message = JSON.parse(e.data) as Message
       const initial = queryCache.getQueryData(['messages', message.channel_id])
       if (initial instanceof Array) {
@@ -118,9 +126,18 @@ const EventSource = () => {
         }
       }
       stopTyping(message.channel_id, message.author.id)
-    })
+    }
 
-    eventSource.addEventListener('DELETED_MESSAGE', async (e: any) => {
+    eventSource.addEventListener(Events.NEW_MESSAGE, handler)
+
+    return () => {
+      eventSource.removeEventListener(Events.NEW_MESSAGE, handler)
+    }
+  }, [eventSource, mutedCommunities, mutedChannels, id, stopTyping])
+
+  useEffect(() => {
+    if (!eventSource) return
+    const handler = (e: MessageEvent) => {
       const message = JSON.parse(e.data) as Message
       const initial = queryCache.getQueryData(['messages', message.channel_id])
 
@@ -132,9 +149,18 @@ const EventSource = () => {
           )
         )
       }
-    })
+    }
 
-    eventSource.addEventListener('NEW_PARTICIPANT', (e: any) => {
+    eventSource.addEventListener(Events.DELETED_MESSAGE, handler)
+
+    return () => {
+      eventSource.removeEventListener(Events.DELETED_MESSAGE, handler)
+    }
+  })
+
+  useEffect(() => {
+    if (!eventSource) return
+    const handler = (e: MessageEvent) => {
       const participant = JSON.parse(e.data)
       queryCache.setQueryData('participants', (initial) => {
         if (initial instanceof Array) {
@@ -142,9 +168,18 @@ const EventSource = () => {
           return initial
         } else return initial
       })
-    })
+    }
 
-    eventSource.addEventListener('DELETED_PARTICIPANT', (e: any) => {
+    eventSource.addEventListener(Events.NEW_PARTICIPANT, handler)
+
+    return () => {
+      eventSource.removeEventListener(Events.NEW_PARTICIPANT, handler)
+    }
+  }, [eventSource])
+
+  useEffect(() => {
+    if (!eventSource) return
+    const handler = (e: MessageEvent) => {
       const participant = JSON.parse(e.data)
       queryCache.setQueryData('participants', (initial) => {
         if (initial instanceof Array) {
@@ -152,9 +187,18 @@ const EventSource = () => {
           return initial.filter((p) => p.id !== participant.id)
         } else return initial
       })
-    })
+    }
 
-    eventSource.addEventListener('NEW_MEMBER', (e: any) => {
+    eventSource.addEventListener(Events.DELETED_PARTICIPANT, handler)
+
+    return () => {
+      eventSource?.removeEventListener(Events.DELETED_PARTICIPANT, handler)
+    }
+  }, [eventSource])
+
+  useEffect(() => {
+    if (!eventSource) return
+    const handler = (e: MessageEvent) => {
       const member = JSON.parse(e.data)
       console.log('member', member)
       queryCache.setQueryData(['communities'], (initial) => {
@@ -163,18 +207,36 @@ const EventSource = () => {
           return initial
         } else return initial
       })
-    })
+    }
 
-    eventSource.addEventListener('DELETE_MEMBER', (e: any) => {
+    eventSource.addEventListener(Events.NEW_MEMBER, handler)
+
+    return () => {
+      eventSource.removeEventListener(Events.NEW_MEMBER, handler)
+    }
+  }, [eventSource])
+
+  useEffect(() => {
+    if (!eventSource) return
+    const handler = (e: MessageEvent) => {
       const member = JSON.parse(e.data)
       queryCache.setQueryData(['communities'], (initial: any) => {
         if (initial) {
           return initial.filter((m: any) => m.id !== member.id)
         } else return initial
       })
-    })
+    }
 
-    eventSource.addEventListener('NEW_CHANNEL', (e: any) => {
+    eventSource.addEventListener(Events.DELETE_MEMBER, handler)
+
+    return () => {
+      eventSource.removeEventListener(Events.DELETE_MEMBER, handler)
+    }
+  }, [eventSource])
+
+  useEffect(() => {
+    if (!eventSource) return
+    const handler = (e: MessageEvent) => {
       const channel = JSON.parse(e.data)
       console.log('channel', channel)
       queryCache.setQueryData(
@@ -190,9 +252,18 @@ const EventSource = () => {
           } else return initial
         }
       )
-    })
+    }
 
-    eventSource.addEventListener('DELETE_CHANNEL', (e: any) => {
+    eventSource.addEventListener(Events.NEW_CHANNEL, handler)
+
+    return () => {
+      eventSource.removeEventListener(Events.NEW_CHANNEL, handler)
+    }
+  }, [eventSource, token])
+
+  useEffect(() => {
+    if (!eventSource) return
+    const handler = (e: MessageEvent) => {
       const channel = JSON.parse(e.data)
       queryCache.setQueryData(
         ['community', channel.community_id, token],
@@ -209,21 +280,32 @@ const EventSource = () => {
           } else return initial
         }
       )
-    })
+    }
 
-    eventSource.addEventListener('TYPING', (e: any) => {
+    eventSource.addEventListener(Events.DELETE_CHANNEL, handler)
+
+    return () => {
+      eventSource.removeEventListener(Events.DELETE_CHANNEL, handler)
+    }
+  }, [eventSource, token])
+
+  useEffect(() => {
+    if (!eventSource) return
+    const handler = (e: MessageEvent) => {
       const event = JSON.parse(e.data) as {
         channel_id: string
         user_id: string
         username: string
       }
       startTyping(event.channel_id, event.user_id, event.username)
-    })
+    }
+
+    eventSource.addEventListener(Events.TYPING, handler)
 
     return () => {
-      eventSource.close()
+      eventSource.removeEventListener(Events.TYPING, handler)
     }
-  }, [token, id, mutedCommunities, mutedChannels, startTyping, stopTyping])
+  })
 
   return <></>
 }
