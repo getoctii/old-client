@@ -41,7 +41,7 @@
     },
     "chat": {
       "background": "#000000",
-      "hover": "#1B1B1B",
+      "hover": "#1B1B1BAC",
       "header": {
         "channel": "string",
         "description": "string"
@@ -115,7 +115,7 @@
     },
     "chat": {
       "background": "#ffffff",
-      "hover": "#EEEEEE",
+      "hover": "#EEEEEEAC",
       "header": {
         "channel": "string",
         "description": "string"
