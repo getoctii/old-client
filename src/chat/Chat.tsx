@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import styles from './Chat.module.scss'
 import { useInfiniteQuery, useMutation } from 'react-query'
-import { clientGateway } from '../constants'
+import { ChannelTypes, clientGateway } from '../constants'
 import { Auth } from '../authentication/state'
 import Message from './Message'
 import { useDropArea } from 'react-use'
@@ -16,12 +16,19 @@ import moment from 'moment'
 import { Waypoint } from 'react-waypoint'
 import Loader from '../components/Loader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft, faHashtag } from '@fortawesome/pro-solid-svg-icons'
+import {
+  faChevronLeft,
+  faHashtag,
+  faPhoneRotary
+} from '@fortawesome/pro-solid-svg-icons'
 import { useMedia } from 'react-use'
 import { useHistory } from 'react-router-dom'
 import axios from 'axios'
 import Box from './Box'
 import Typing from '../state/typing'
+import { Call } from '../state/call'
+import Button from '../components/Button'
+import { UserResponse } from '../user/remote'
 
 interface Message {
   id: string
@@ -172,24 +179,30 @@ const TypingIndicator = ({ channelID }: { channelID: string }) => {
 }
 
 const Chat = ({
-  channelID,
-  title,
-  status
+  type,
+  channel,
+  user
 }: {
-  channelID: string
-  title: string
-  status?: string
+  type: ChannelTypes
+  channel: {
+    id: string
+    name?: string
+    color?: string
+    description?: string
+  }
+  user?: UserResponse
 }) => {
   const { token, id } = Auth.useContainer()
+  const call = Call.useContainer()
   const { typing } = Typing.useContainer()
-  const users = typing[channelID]
+  const users = typing[channel.id]
     ?.filter((userID) => userID[0] !== id)
     .map((t) => t[1])
   const [sendMessage] = useMutation(
     async (content: string) =>
       (
         await clientGateway.post(
-          `/channels/${channelID}/messages`,
+          `/channels/${channel.id}/messages`,
           new URLSearchParams({ content }),
           { headers: { Authorization: token } }
         )
@@ -210,7 +223,7 @@ const Chat = ({
   }
 
   const postTyping = async () => {
-    clientGateway.post(`/channels/${channelID}/typing`, undefined, {
+    clientGateway.post(`/channels/${channel.id}/typing`, undefined, {
       headers: {
         Authorization: token
       }
@@ -241,11 +254,31 @@ const Chat = ({
             </div>
           )}
           <div className={styles.title}>
-            {title}
-            <p className={styles.status}>{status}</p>
+            {channel.name ||
+              `${user?.username}#${
+                user?.discriminator === 0
+                  ? 'inn'
+                  : user?.discriminator.toString().padStart(4, '0')
+              }`}
+            <p className={styles.status}>
+              {channel.description || user?.status}
+            </p>
           </div>
+          {type === ChannelTypes.PrivateChannel &&
+            user?.id &&
+            call.otherUserID !== user.id && (
+              <Button
+                type='button'
+                onClick={() => {
+                  if (call.callState !== 'idle') call.endCall()
+                  call.ringUser(user.id)
+                }}
+              >
+                <FontAwesomeIcon icon={faPhoneRotary} />
+              </Button>
+            )}
         </div>
-        <Messages channelID={channelID} />
+        <Messages channelID={channel.id} />
         <Box
           {...{
             sendMessage,
@@ -254,12 +287,10 @@ const Chat = ({
             typingIndicator: users?.length > 0
           }}
         />
-        <TypingIndicator channelID={channelID} />
+        <TypingIndicator channelID={channel.id} />
       </div>
     </Suspense>
   )
 }
-
-Chat.whyDidYouRender = true
 
 export default Chat

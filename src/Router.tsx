@@ -18,12 +18,15 @@ import { Auth } from './authentication/state'
 import Home from './marketing/Home'
 import Status from './components/Status'
 import { isPlatform } from '@ionic/react'
+import Incoming from './call/Incoming'
+import { Call } from './state/call'
+import Current from './call/Current'
 
 export const Router = () => {
   const uiStore = UI.useContainer()
   const auth = Auth.useContainer()
   const isMobile = useMedia('(max-width: 940px)')
-
+  const call = Call.useContainer()
   return (
     <BrowserRouter>
       {isPlatform('capacitor') ? (
@@ -34,11 +37,21 @@ export const Router = () => {
       <Route path='/authenticate' component={Authenticate} />
       <div id='main'>
         <AnimatePresence>
-          {uiStore.modal === 'newConversation' && <NewConversation />}
-          {uiStore.modal === 'newCommunity' && <NewCommunity />}
+          {uiStore.modal.name === 'newConversation' && <NewConversation />}
+          {uiStore.modal.name === 'newCommunity' && <NewCommunity />}
+          {uiStore.modal.name === 'incomingCall' && (
+            <Incoming {...uiStore.modal.props} />
+          )}
         </AnimatePresence>
+        {auth.authenticated && !isMobile && (
+          <>
+            <Suspense fallback={<></>}>
+              {call.callState !== 'idle' && <Current />}
+            </Suspense>
+          </>
+        )}
 
-        {uiStore.modal === 'status' && <Status />}
+        {uiStore.modal.name === 'status' && <Status />}
         {auth.authenticated && !isMobile && <Sidebar />}
 
         <Switch>

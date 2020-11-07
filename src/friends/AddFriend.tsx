@@ -46,7 +46,7 @@ const AddFriend = () => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
   return (
-    <Modal onDismiss={() => ui.setModal('')}>
+    <Modal onDismiss={() => ui.clearModal()}>
       <div className={styles.friend}>
         <h3>Add Friend</h3>
         <Formik
@@ -65,7 +65,7 @@ const AddFriend = () => {
                 })
               ).data
               await createConversation(token!, { recipient: user.id })
-              ui.setModal('')
+              ui.clearModal()
             } catch (e) {
               if (
                 e.response.data.errors.includes('UserNotFound') ||

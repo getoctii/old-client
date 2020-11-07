@@ -2,15 +2,14 @@ import { faTimesCircle } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ErrorMessage, Field, Formik, Form } from 'formik'
 import React from 'react'
-import Skeleton from 'react-loading-skeleton'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import Modal from '../components/Modal'
 import Input from '../components/Input'
 import { clientGateway } from '../constants'
-import { CommunityResponse } from './Community'
 import { BarLoader } from 'react-spinners'
 import styles from './NewChannel.module.scss'
+import { CommunityResponse } from './remote'
 
 type formData = { name: string }
 
@@ -69,7 +68,7 @@ export const NewChannel = ({
         {({ isSubmitting }) => (
           <Form>
             <div className={styles.newChannel}>
-              <h5>{community?.name || <Skeleton />}</h5>
+              <h5>{community?.name}</h5>
               <h4>
                 Create
                 <span style={{ float: 'right' }}>

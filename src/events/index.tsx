@@ -9,6 +9,8 @@ import useNewChannel from './newChannel'
 import useDeletedChannel from './deletedChannel'
 import useDeletedMember from './deletedMember'
 import useTyping from './typing'
+import useNewVoiceSession from './newVoiceSession'
+import useAcceptedVoiceSession from './acceptedVoiceSession'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
@@ -22,6 +24,8 @@ const EventSource = () => {
   useNewChannel(eventSource)
   useDeletedChannel(eventSource)
   useTyping(eventSource)
+  useNewVoiceSession(eventSource)
+  useAcceptedVoiceSession(eventSource)
 
   return <></>
 }

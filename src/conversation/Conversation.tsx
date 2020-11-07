@@ -4,7 +4,7 @@ import Chat from '../chat/Chat'
 import { useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
-import { clientGateway } from '../constants'
+import { ChannelTypes, clientGateway } from '../constants'
 import Loader from '../components/Loader'
 import { UserResponse } from '../user/remote'
 
@@ -58,13 +58,11 @@ export const Conversation = () => {
         key={participant.conversation.channel_id}
       >
         <Chat
-          title={`${recipient.data?.username}#${
-            recipient.data?.discriminator === 0
-              ? 'inn'
-              : recipient.data?.discriminator.toString().padStart(4, '0')
-          }`}
-          status={recipient.data?.status}
-          channelID={participant.conversation.channel_id}
+          type={ChannelTypes.PrivateChannel}
+          channel={{
+            id: participant.conversation.channel_id
+          }}
+          user={recipient.data}
         />
       </div>
     </Suspense>

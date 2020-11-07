@@ -147,14 +147,14 @@ export const Sidebar = () => {
                       ? styles.offline
                       : ''
                   }`}
-                  onClick={() => ui.setModal('status')}
+                  onClick={() => ui.setModal({ name: 'status' })}
                 />
               )}
             </Button>
             <Button
               className={styles.plus}
               type='button'
-              onClick={() => ui.setModal('newCommunity')}
+              onClick={() => ui.setModal({ name: 'newCommunity' })}
             >
               <FontAwesomeIcon
                 className={styles.symbol}
@@ -256,14 +256,14 @@ export const Sidebar = () => {
                     ? styles.offline
                     : ''
                 }`}
-                onClick={() => ui.setModal('status')}
+                onClick={() => ui.setModal({ name: 'status' })}
               />
             )}
           </Button>
           <Button
             className={styles.plus}
             type='button'
-            onClick={() => ui.setModal('newCommunity')}
+            onClick={() => ui.setModal({ name: 'newCommunity' })}
           >
             <FontAwesomeIcon
               className={styles.symbol}

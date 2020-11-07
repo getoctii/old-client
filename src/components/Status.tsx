@@ -36,7 +36,7 @@ const Status = () => {
     <div className={styles.status}>
       <h1>
         Status
-        <span onClick={() => ui.setModal('')}>
+        <span onClick={() => ui.clearModal()}>
           <FontAwesomeIcon icon={faTimesCircle} />
         </span>
       </h1>

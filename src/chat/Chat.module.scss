@@ -18,6 +18,20 @@
     display: flex;
     min-height: 2.65rem;
     z-index: 5;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    button {
+      background: var(--neko-colors-primary);
+      color: var(--neko-text-inverse);
+      padding: 0.5rem;
+      height: 2.65rem;
+      width: 2.65rem;
+      border-radius: 12px;
+      margin-left: auto;
+    }
+
     .title {
       display: flex;
       flex-direction: column;
