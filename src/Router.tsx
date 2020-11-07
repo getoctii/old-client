@@ -91,7 +91,7 @@ export const Router = () => {
           />
           <PrivateRoute
             path='/communities/:id'
-            component={() => <Community.Router />}
+            component={() => <Community />}
           />
         </Switch>
       </div>

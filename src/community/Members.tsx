@@ -12,7 +12,7 @@ import Loader from '../components/Loader'
 import { clientGateway } from '../constants'
 import styles from './Members.module.scss'
 
-interface Member {
+interface MemberType {
   id: string
   user: {
     id: string
@@ -24,7 +24,7 @@ interface Member {
   updated_at: string
 }
 
-const Member = (member: Member) => {
+const Member = (member: MemberType) => {
   return (
     <motion.tr
       initial={{
@@ -55,13 +55,16 @@ export const Members = () => {
   const { id } = useParams<{ id: string }>()
   const fetchMembers = async (_: string, community: string, date: string) => {
     return (
-      await clientGateway.get<Member[]>(`/communities/${community}/members`, {
-        headers: { Authorization: token },
-        params: { created_at: date }
-      })
+      await clientGateway.get<MemberType[]>(
+        `/communities/${community}/members`,
+        {
+          headers: { Authorization: token },
+          params: { created_at: date }
+        }
+      )
     ).data
   }
-  const { data, canFetchMore, fetchMore } = useInfiniteQuery<Member[], any>(
+  const { data, canFetchMore, fetchMore } = useInfiniteQuery<MemberType[], any>(
     ['members', id],
     fetchMembers,
     {

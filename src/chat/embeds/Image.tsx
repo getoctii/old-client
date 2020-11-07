@@ -19,4 +19,6 @@ const Embed = ({ url }: { url: string }) => {
   )
 }
 
-export default { Embed, isCovfefe }
+const Image = { Embed, isCovfefe }
+
+export default Image

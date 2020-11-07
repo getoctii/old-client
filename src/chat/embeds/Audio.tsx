@@ -47,4 +47,9 @@ const Embed = ({ url }: { url: string }) => {
   )
 }
 
-export default { Embed, isCovfefe }
+const Audio = {
+  Embed,
+  isCovfefe
+}
+
+export default Audio

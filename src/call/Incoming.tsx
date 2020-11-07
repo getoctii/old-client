@@ -30,7 +30,7 @@ const Incoming = ({
   })
   useEffect(() => {
     controls.volume(0.1)
-  }, [])
+  }, [controls])
   return (
     <Modal>
       {audio}

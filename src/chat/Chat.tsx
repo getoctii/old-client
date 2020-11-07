@@ -30,7 +30,7 @@ import { Call } from '../state/call'
 import Button from '../components/Button'
 import { UserResponse } from '../user/remote'
 
-interface Message {
+interface MessageType {
   id: string
   author: {
     id: string
@@ -47,25 +47,24 @@ const Messages = ({ channelID }: { channelID: string }) => {
   const { token } = Auth.useContainer()
   const fetchMessages = async (_: string, channel: string, date: string) => {
     return (
-      await clientGateway.get<Message[]>(`/channels/${channel}/messages`, {
+      await clientGateway.get<MessageType[]>(`/channels/${channel}/messages`, {
         headers: { Authorization: token },
         params: { created_at: date }
       })
     ).data
   }
-  const { data, canFetchMore, fetchMore } = useInfiniteQuery<Message[], any>(
-    ['messages', channelID],
-    fetchMessages,
-    {
-      getFetchMore: (last) => {
-        return last.length < 25 ? undefined : last[last.length - 1]?.created_at
-      }
+  const { data, canFetchMore, fetchMore } = useInfiniteQuery<
+    MessageType[],
+    any
+  >(['messages', channelID], fetchMessages, {
+    getFetchMore: (last) => {
+      return last.length < 25 ? undefined : last[last.length - 1]?.created_at
     }
-  )
+  })
 
   const messages = useMemo(() => data?.flat().reverse(), [data])
 
-  const isPrimary = (message: Message, index: number) => {
+  const isPrimary = (message: MessageType, index: number) => {
     return !(
       messages?.[index - 1] &&
       message.author.id === messages?.[index - 1]?.author?.id &&
