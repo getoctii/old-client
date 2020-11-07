@@ -63,6 +63,7 @@ const Box = ({
         }}
         onSubmit={(values, { resetForm }) => {
           if (values?.message !== '') {
+            setTyping(false)
             sendMessage(values.message)
             resetForm()
           }
