@@ -7,7 +7,12 @@ import { useLocalStorage } from 'react-use'
 
 const useCall = () => {
   const { token } = Auth.useContainer()
-  const [peer] = useState(new Peer())
+  const [peer] = useState(
+    new Peer({
+      host: 'signaling.octii.chat',
+      secure: true
+    })
+  )
   const [peerID, setPeerID] = useState<null | string>(null)
   const [sessionID, setSessionID] = useState<null | string>(null)
   const [callState, setCallState] = useState<
@@ -122,7 +127,11 @@ const useCall = () => {
 
   const ringUser = useCallback(
     async (userID: string) => {
+      console.log(peerID)
+      // uuuuuuh uh oh
+      // uh, well that explains that, peerID is null
       if (!peerID) return
+      console.log(userID)
       const sentSessionID = (
         await clientGateway.post(
           '/voice',

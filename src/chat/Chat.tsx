@@ -19,7 +19,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronLeft,
   faHashtag,
-  faPhoneRotary
+  faPhoneRotary,
+  faPhoneSlash
 } from '@fortawesome/pro-solid-svg-icons'
 import { useMedia } from 'react-use'
 import { useHistory } from 'react-router-dom'
@@ -269,11 +270,16 @@ const Chat = ({
               <Button
                 type='button'
                 onClick={() => {
+                  console.log('calling uwu')
                   if (call.callState !== 'idle') call.endCall()
                   call.ringUser(user.id)
                 }}
               >
-                <FontAwesomeIcon icon={faPhoneRotary} />
+                {call.callState !== 'idle' ? (
+                  <FontAwesomeIcon icon={faPhoneSlash} />
+                ) : (
+                  <FontAwesomeIcon icon={faPhoneRotary} />
+                )}
               </Button>
             )}
         </div>
