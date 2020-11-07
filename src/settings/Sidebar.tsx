@@ -1,6 +1,5 @@
 import React from 'react'
 import styles from './Sidebar.module.scss'
-import { UI } from '../state/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faUser,
@@ -11,7 +10,6 @@ import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 
 const Sidebar = () => {
-  const ui = UI.useContainer()
   const auth = Auth.useContainer()
   const history = useHistory()
 
@@ -61,7 +59,6 @@ const Sidebar = () => {
         onClick={() => {
           localStorage.removeItem('neko-token')
           auth.setToken('')
-          ui.setModal('')
           history.push('/authenticate/login')
         }}
       >

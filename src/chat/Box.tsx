@@ -21,7 +21,7 @@ const adjectives = [
   ' about Innatical'
 ]
 
-export default ({
+const Box = ({
   sendMessage,
   uploadFile,
   postTyping,
@@ -134,3 +134,5 @@ export default ({
     </div>
   )
 }
+
+export default Box

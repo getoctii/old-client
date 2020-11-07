@@ -14,5 +14,13 @@ export enum Events {
   DELETED_MEMBER = 'DELETED_MEMBER',
   NEW_CHANNEL = 'NEW_CHANNEL',
   DELETED_CHANNEL = 'DELETED_CHANNEL',
-  TYPING = 'TYPING'
+  TYPING = 'TYPING',
+  NEW_VOICE_SESSION = 'NEW_VOICE_SESSION',
+  ACCPETED_VOICE_SESSION = 'ACCPETED_VOICE_SESSION'
+}
+
+export enum ChannelTypes {
+  PrivateChannel,
+  GroupChannel,
+  CommunityChannel
 }

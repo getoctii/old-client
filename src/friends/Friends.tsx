@@ -12,7 +12,7 @@ const Friends = () => {
       <h1>
         Yellow Pages
         <FontAwesomeIcon
-          onClick={() => ui.setModal('addFriend')}
+          onClick={() => ui.setModal({ name: 'addFriend' })}
           className={styles.plus}
           icon={faPlus}
         />

@@ -24,14 +24,6 @@ const validateProfile = (values: profileFormData) => {
   return errors
 }
 
-type UserResponse = {
-  id: string
-  avatar: string
-  username: string
-  discriminator: number
-  status?: string
-}
-
 const Profile = () => {
   const { token, id } = Auth.useContainer()
   const user = useQuery(['users', id, token], getUser)

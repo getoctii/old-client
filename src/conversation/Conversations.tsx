@@ -84,7 +84,7 @@ const ConversationList = () => {
               (userID: string) => userID !== auth.id
             )
             if (people.length > 1 || people.length === 0) {
-              return
+              return <></>
             } else {
               return (
                 <div key={conversation.id}>
@@ -113,7 +113,10 @@ const ConversationList = () => {
         <div className={styles.alert}>
           <h3>You aren't in any chats!</h3>
           <p>Would you like to chat with someone?</p>
-          <Button type='button' onClick={() => ui.setModal('newConversation')}>
+          <Button
+            type='button'
+            onClick={() => ui.setModal({ name: 'newConversation' })}
+          >
             Create One
           </Button>
         </div>

@@ -74,7 +74,7 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
               name: values.name,
               icon: values?.icon || ''
             })
-            ui.setModal('')
+            ui.clearModal()
             if (community?.id) history.push(`/communities/${community.id}`)
           } catch (e) {
             if (e.response.data.errors.includes('CommunityNameInvalid'))
@@ -157,7 +157,7 @@ export const NewCommunity = () => {
     ).data
 
   return (
-    <Modal onDismiss={() => ui.setModal('')}>
+    <Modal onDismiss={() => ui.clearModal()}>
       {createCommunityMenu ? (
         <CreateCommunity dismiss={setCreateCommunityMenu} />
       ) : (
@@ -174,7 +174,7 @@ export const NewCommunity = () => {
               try {
                 const id = (await joinCommunity(values.invite)).community_id
                 history.push(`/communities/${id}`)
-                ui.setModal('')
+                ui.clearModal()
               } catch (e) {
                 console.log('joinError', e.response.data.errors)
                 if (e.response.data.errors.includes('InvalidCode'))

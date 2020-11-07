@@ -7,7 +7,6 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Integrations } from './Integrations'
 import React, { useState } from 'react'
-import Skeleton from 'react-loading-skeleton'
 import { useMutation, useQuery } from 'react-query'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
@@ -45,7 +44,7 @@ export const Sidebar = () => {
       <div className={styles.sidebar}>
         <div className={styles.container}>
           <h3>
-            {community.data?.name ? community.data?.name : <Skeleton />}{' '}
+            {community.data?.name ? community.data?.name : ''}{' '}
             <span
               className={styles.leave}
               onClick={() => {

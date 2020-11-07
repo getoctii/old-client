@@ -23,13 +23,6 @@ const validatePassword = (values: validateFormData) => {
   return errors
 }
 
-type UserResponse = {
-  id: string
-  avatar: string
-  username: string
-  discriminator: number
-}
-
 const Security = () => {
   const { token, id } = Auth.useContainer()
   const isMobile = useMedia('(max-width: 940px)')

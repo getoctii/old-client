@@ -6,29 +6,17 @@ import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import Loader from '../components/Loader'
 import { Sidebar as Channels } from './sidebar/Sidebar'
-import Skeleton from 'react-loading-skeleton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/pro-solid-svg-icons'
 import Button from '../components/Button'
 import { NewChannel } from './NewChannel'
 import { Settings } from './settings/Settings'
-import { getCommunity } from './remote'
+import { CommunityResponse, getCommunity } from './remote'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
 import { Sidebar } from '../sidebar/Sidebar'
 import { Members } from './Members'
-
-export interface CommunityResponse {
-  id: string
-  name: string
-  icon: string
-  large: boolean
-  owner_id: string
-  channels: {
-    name: string
-    id: string
-  }[]
-}
+import { ChannelTypes } from '../constants'
 
 const EmptyCommunity = ({
   community,
@@ -42,7 +30,7 @@ const EmptyCommunity = ({
 
   return (
     <div className={styles.communityEmpty}>
-      <small>{community?.name || <Skeleton />}</small>
+      <small>{community?.name}</small>
       {!createMode ? (
         <>
           <h1 style={{ marginTop: 0 }}>
@@ -100,18 +88,11 @@ const Channel = () => {
   const auth = Auth.useContainer()
   const community = useQuery(['community', id, auth.token], getCommunity)
   if (!community?.data) return <></>
-  return (
-    <Chat
-      title={
-        `${
-          community.data.channels.find((channel) => channel.id === channelID)
-            ?.name
-        }` || 'unknown'
-      }
-      status={''}
-      channelID={channelID}
-    />
+  const channel = community.data.channels.find(
+    (channel) => channel.id === channelID
   )
+  if (!channel) return <></>
+  return <Chat type={ChannelTypes.CommunityChannel} channel={channel} />
 }
 
 const Community = () => {
@@ -168,6 +149,4 @@ const Router = () => {
   )
 }
 
-export default {
-  Router
-}
+export default Router
