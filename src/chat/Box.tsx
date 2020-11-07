@@ -2,9 +2,8 @@ import styles from './Box.module.scss'
 import Button from '../components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileUpload, faSmileWink } from '@fortawesome/pro-solid-svg-icons'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useInterval, useMedia } from 'react-use'
-// @ts-ignore
 import Picker from 'emoji-picker-react'
 import { Form, Formik, FastField, FieldInputProps } from 'formik'
 
@@ -43,7 +42,13 @@ export default ({
   }, 30000)
   const uploadInput = useRef<HTMLInputElement>(null)
   const [emojiPicker, setEmojiPicker] = useState(false)
-  useInterval(() => typing && postTyping(), 7000)
+  useEffect(() => {
+    const interval = setInterval(() => typing && postTyping(), 7000)
+    return () => {
+      clearInterval(interval)
+    }
+  }, [typing, postTyping])
+
   return (
     <div
       className={`${styles.box} ${
