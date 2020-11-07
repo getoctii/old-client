@@ -19,6 +19,7 @@
       border-style: solid;
     }
     .channel {
+      cursor: pointer;
       padding-top: 0.6rem;
       padding-bottom: 0.6rem;
       border: inherit;
@@ -61,4 +62,8 @@
       }
     }
   }
+}
+
+.add {
+  cursor: pointer;
 }
