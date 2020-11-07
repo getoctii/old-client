@@ -51,7 +51,7 @@ export const Sidebar = () => {
                 setMenu(!menu)
               }}
             >
-              <FontAwesomeIcon icon={faEllipsisH} />
+              <FontAwesomeIcon icon={faEllipsisH} className={styles.menuIcon} />
             </span>
           </h3>
           {menu && (

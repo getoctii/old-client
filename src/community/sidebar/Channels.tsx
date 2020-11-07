@@ -105,6 +105,7 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
         {community?.owner_id === auth.id && (
           <span>
             <FontAwesomeIcon
+              className={styles.add}
               icon={faPlus}
               onClick={() => setShowCreate(true)}
             />
