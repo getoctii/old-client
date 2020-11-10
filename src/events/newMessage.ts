@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
 import { EventSourcePolyfill } from 'event-source-polyfill'
-import { queryCache } from 'react-query'
+import { queryCache, useQuery } from 'react-query'
 import { useLocalStorage } from 'react-use'
 import { isPlatform } from '@ionic/react'
 import Typing from '../state/typing'
 import { Plugins, HapticsNotificationType } from '@capacitor/core'
 import { Events } from '../constants'
 import { Auth } from '../authentication/state'
+import { getUser, State } from '../user/remote'
 
 interface Message {
   id: string
@@ -32,11 +33,11 @@ declare global {
 }
 
 const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
-  const { id } = Auth.useContainer()
+  const { id, token } = Auth.useContainer()
   const { stopTyping } = Typing.useContainer()
   const [mutedCommunities] = useLocalStorage<string[]>('muted_communities', [])
   const [mutedChannels] = useLocalStorage<string[]>('muted_channels', [])
-
+  const user = useQuery(['users', id, token], getUser)
   useEffect(() => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
@@ -54,7 +55,8 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
       if (
         message.author.id !== id &&
         !mutedCommunities?.includes(message.community_id ?? '') &&
-        !mutedChannels?.includes(message.channel_id)
+        !mutedChannels?.includes(message.channel_id) &&
+        user.data?.state !== State.dnd
       ) {
         if (isPlatform('capacitor')) {
           Plugins.Haptics.notification({
@@ -110,7 +112,7 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
     return () => {
       eventSource.removeEventListener(Events.NEW_MESSAGE, handler)
     }
-  }, [eventSource, mutedCommunities, mutedChannels, id, stopTyping])
+  }, [eventSource, mutedCommunities, mutedChannels, id, stopTyping, user])
 }
 
 export default useNewMessage

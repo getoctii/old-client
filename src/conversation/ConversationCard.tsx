@@ -7,7 +7,7 @@ import styles from './ConversationCard.module.scss'
 import { Auth } from '../authentication/state'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
-import { State, UserResponse } from '../user/remote'
+import { getUser, State } from '../user/remote'
 
 export const ConversationCard = ({
   people,
@@ -24,15 +24,7 @@ export const ConversationCard = ({
   const history = useHistory()
   const [hoverDelete, setHoverDelete] = useState(false)
   const { token } = Auth.useContainer()
-  const recipient = useQuery(
-    ['users', people[0]],
-    async (key, userID) =>
-      (
-        await clientGateway.get<UserResponse>(`/users/${userID}`, {
-          headers: { Authorization: token }
-        })
-      ).data
-  )
+  const recipient = useQuery(['users', people[0], token], getUser)
   const [leaveConversation] = useMutation(
     async () =>
       await clientGateway.delete(`/conversations/${conversationID}`, {
