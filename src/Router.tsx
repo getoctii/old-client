@@ -9,7 +9,7 @@ import Empty from './conversation/empty/Empty'
 import { UI } from './state/ui'
 import NewConversation from './conversation/NewConversation'
 import Settings from './settings/Settings'
-import { Conversation } from './conversation/Conversation'
+import Conversation from './conversation/Conversation'
 import { Sidebar } from './sidebar/Sidebar'
 import { NewCommunity } from './sidebar/NewCommunity'
 import { AnimatePresence } from 'framer-motion'
@@ -82,12 +82,7 @@ export const Router = () => {
           />
           <PrivateRoute
             path='/conversations/:channelID'
-            component={() => (
-              <>
-                {!isMobile && <Conversations />}
-                <Conversation />
-              </>
-            )}
+            component={() => <Conversation />}
           />
           <PrivateRoute
             path='/communities/:id'
