@@ -32,7 +32,7 @@ const View = ({
   postTyping: () => void
   typingIndicator: boolean
 }) => {
-  const isMobile = useMedia('(max-width: 800px)')
+  const isMobile = useMedia('(max-width: 940px)')
   const [typing, setTyping] = useState<boolean>(false)
   const [adjective, setAdjectives] = useState(
     adjectives[Math.floor(Math.random() * adjectives.length)]

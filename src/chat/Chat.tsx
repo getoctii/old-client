@@ -208,7 +208,7 @@ const View = ({
       ).data
   )
 
-  const isMobile = useMedia('(max-width: 800px)')
+  const isMobile = useMedia('(max-width: 940px)')
   const history = useHistory()
 
   const uploadFile = async (file: File) => {

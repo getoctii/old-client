@@ -5,7 +5,7 @@ body {
 }
 
 .subscribed {
-  color: #14c714;
+  color: var(--neko-default-success);
 }
 
 .wrapper {
@@ -129,7 +129,7 @@ body {
   align-items: center;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 940px) {
   .wrapper {
     .hero {
       h1 {

@@ -30,7 +30,6 @@ const useSubscribe = () => {
   const [eventSource, setEventSource] = useState<EventSourcePolyfill | null>(
     null
   )
-  console.log('s', id)
   useEffect(() => {
     if (!token) return
     const source = new EventSourcePolyfill(
@@ -75,7 +74,6 @@ const useSubscribe = () => {
       source.close()
     }
   }, [token, id])
-  // useSubsribe sounds the least weird
   return [eventSource]
 }
 

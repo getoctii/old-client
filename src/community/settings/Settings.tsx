@@ -10,7 +10,7 @@ import styles from './Settings.module.scss'
 
 export const Settings = () => {
   const [selected, setSelected] = useState('general')
-  const isMobile = useMedia('(max-width: 800px)')
+  const isMobile = useMedia('(max-width: 940px)')
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
   return (

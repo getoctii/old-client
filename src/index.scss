@@ -37,10 +37,11 @@ body {
   -webkit-tap-highlight-color: transparent;
   position: fixed;
 
-  --neko-default-background: #eef7ff;
-  --neko-default-foreground: #ffffff;
-  --neko-default-primary: #0081ff;
+  --neko-default-background: #ffffff;
+  --neko-default-foreground: #eef7ff;
+  --neko-default-primary: linear-gradient(224deg, #75c8ff 0%, #007fff 100%);
   --neko-default-secondary: #788a9f;
+  --neko-default-success: #14c714;
   --neko-default-text-inline: #ffffff;
   --neko-default-text: #000000;
   --neko-default-danger: #ed5454;
@@ -52,12 +53,13 @@ body {
 
 @media (prefers-color-scheme: dark) {
   body {
-    --neko-default-background: #202125;
+    --neko-default-background: #1a1f2c;
     --neko-default-foreground: #040a0f;
-    --neko-default-primary: #0081ff;
+    --neko-default-primary: linear-gradient(224deg, #75c8ff 0%, #007fff 100%);
     --neko-default-secondary: #788a9f;
+    --neko-default-success: #14c714;
     --neko-default-text-inline: #ececec;
-    --neko-default-text: #ebebeb;
+    --neko-default-text: #ffffff;
     --neko-default-danger: #ed5454;
     --neko-default-overground: rgba(70, 70, 70, 0.5);
     --neko-default-message-hover: #191919;
