@@ -220,4 +220,6 @@ const Placeholder = () => {
   )
 }
 
-export default { View, Placeholder }
+const Channels = { View, Placeholder }
+
+export default Channels

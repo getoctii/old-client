@@ -9,7 +9,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { getUser, State } from '../user/remote'
 
-const Card = ({
+const View = ({
   people,
   onClick,
   selected,
@@ -94,4 +94,6 @@ const Placeholder = () => {
   )
 }
 
-export default { Placeholder, Card }
+const ConversationCard = { View, Placeholder }
+
+export default ConversationCard

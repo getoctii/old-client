@@ -8,7 +8,7 @@ import React, {
 import styles from './Sidebar.module.scss'
 import { UI } from '../state/ui'
 import { Auth } from '../authentication/state'
-import { queryCache, useQuery } from 'react-query'
+import { useQuery } from 'react-query'
 import { clientGateway } from '../constants'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInbox, faPlus } from '@fortawesome/pro-solid-svg-icons'
@@ -159,7 +159,7 @@ const Communities = () => {
   )
 }
 
-export const Sidebar = () => {
+const Sidebar = () => {
   const ui = UI.useContainer()
   const auth = Auth.useContainer()
   const history = useHistory()
@@ -303,3 +303,5 @@ export const Sidebar = () => {
     </div>
   )
 }
+
+export default Sidebar

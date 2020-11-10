@@ -120,4 +120,6 @@ const Placeholder = () => {
   )
 }
 
-export default { View, Placeholder }
+const Sidebar = { View, Placeholder }
+
+export default Sidebar

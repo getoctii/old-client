@@ -94,7 +94,7 @@ const ConversationList = () => {
                       }
                     />
                   )}
-                  <ConversationCard.Card
+                  <ConversationCard.View
                     selected={selected === conversation.id}
                     onClick={() => {
                       history.push(`/conversations/${conversation.id}`)

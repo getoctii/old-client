@@ -14,7 +14,6 @@ import Message from './Message'
 import { useDropArea } from 'react-use'
 import moment from 'moment'
 import { Waypoint } from 'react-waypoint'
-import Loader from '../components/Loader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronLeft,
@@ -324,4 +323,6 @@ const Placeholder = () => {
   )
 }
 
-export default { View, Placeholder }
+const Chat = { View, Placeholder }
+
+export default Chat

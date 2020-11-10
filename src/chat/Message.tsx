@@ -221,4 +221,6 @@ const Placeholder = () => {
   )
 }
 
-export default { View, Placeholder }
+const Message = { View, Placeholder }
+
+export default Message

@@ -86,4 +86,6 @@ const Placeholder = () => {
   )
 }
 
-export default { View, Placeholder }
+const Ingerations = { View, Placeholder }
+
+export default Ingerations
