@@ -7,6 +7,8 @@ import { useQuery } from 'react-query'
 import { ChannelTypes, clientGateway } from '../constants'
 import Loader from '../components/Loader'
 import { UserResponse } from '../user/remote'
+import { Conversations } from './Conversations'
+import { useMedia } from 'react-use'
 
 type ParticipantsResponse = {
   id: string
@@ -17,7 +19,7 @@ type ParticipantsResponse = {
   }
 }[]
 
-export const Conversation = () => {
+const Conversation = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
   const auth = Auth.useContainer()
   const { data } = useQuery(
@@ -68,3 +70,17 @@ export const Conversation = () => {
     </Suspense>
   )
 }
+
+const Router = () => {
+  const isMobile = useMedia('(max-width: 940px)')
+  return (
+    <>
+      {!isMobile && <Conversations />}
+      <Suspense fallback={<Loader />}>
+        <Conversation />
+      </Suspense>
+    </>
+  )
+}
+
+export default Router
