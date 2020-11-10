@@ -10,7 +10,6 @@ import { Auth } from './authentication/state'
 import { queryCache, ReactQueryConfigProvider } from 'react-query'
 import Loader from './components/Loader'
 import Error from './components/Error'
-import EventSource from './events'
 import { UI } from './state/ui'
 import '@sentry/browser'
 import * as Sentry from '@sentry/react'
@@ -83,7 +82,6 @@ ReactDOM.render(
                   <Theme.Provider>
                     <ScrollPosition.Provider>
                       <Router />
-                      <EventSource />
                     </ScrollPosition.Provider>
                   </Theme.Provider>
                 </Call.Provider>

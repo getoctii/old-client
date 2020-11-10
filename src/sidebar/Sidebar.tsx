@@ -1,4 +1,10 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react'
+import React, {
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef
+} from 'react'
 import styles from './Sidebar.module.scss'
 import { UI } from '../state/ui'
 import { Auth } from '../authentication/state'
@@ -76,14 +82,20 @@ const Community = ({
   )
 }
 
-export const Sidebar = () => {
-  const ui = UI.useContainer()
-  const auth = Auth.useContainer()
-  const history = useHistory()
-  const isMobile = useMedia('(max-width: 940px)')
-  const matchTab = useRouteMatch<{ tab: string }>('/:tab')
+const Placeholder = () => {
+  const length = useMemo(() => Math.floor(Math.random() * 10) + 1, [])
+  return (
+    <>
+      {Array.from(Array(length).keys()).map((_, index) => (
+        <div key={index} className={styles.communityPlaceholder} />
+      ))}
+    </>
+  )
+}
 
-  const user = useQuery(['users', auth.id, auth.token], getUser)
+const Communities = () => {
+  const isMobile = useMedia('(max-width: 940px)')
+  const auth = Auth.useContainer()
   const communities = useQuery(
     ['communities'],
     async () =>
@@ -99,6 +111,63 @@ export const Sidebar = () => {
     'communities',
     communities.data?.map((member) => member.community.id) ?? []
   )
+
+  return (
+    <DragDropContext
+      onDragEnd={(result) => {
+        if (
+          !result.destination ||
+          result.destination.index === result.source.index
+        )
+          return
+        const items = reorder(
+          communities.data || [],
+          result.source.index,
+          result.destination.index
+        )
+        setCommunitiesOrder(items.map((c) => c.community.id))
+      }}
+    >
+      <Droppable
+        droppableId='list'
+        direction={isMobile ? 'horizontal' : 'vertical'}
+      >
+        {(provided) => (
+          <div
+            className={styles.list}
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
+            {(communities?.data ?? [])
+              .sort(
+                (a, b) =>
+                  (communitiesOrder?.indexOf(a.community.id) ?? 0) -
+                  (communitiesOrder?.indexOf(b.community.id) ?? 0)
+              )
+              .map((member, index) => (
+                <Community
+                  key={member.community.id}
+                  community={member.community}
+                  index={index}
+                />
+              ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </DragDropContext>
+  )
+}
+
+const Sidebar = () => {
+  const ui = UI.useContainer()
+  const auth = Auth.useContainer()
+  const history = useHistory()
+  const isMobile = useMedia('(max-width: 940px)')
+  const matchTab = useRouteMatch<{ tab: string }>('/:tab')
+
+  const user = useQuery(['users', auth.id, auth.token], getUser)
+
   const scrollRef = useRef<HTMLDivElement>(null)
   const currentScrollPosition = useScroll(scrollRef)
   const [scrollPosition, setScrollPosition] = ScrollPosition.useContainer()
@@ -178,52 +247,10 @@ export const Sidebar = () => {
         >
           <FontAwesomeIcon className={styles.symbol} icon={faInbox} size='2x' />
         </Button>
-
         <div className={styles.separator} />
-        <DragDropContext
-          onDragEnd={(result) => {
-            if (
-              !result.destination ||
-              result.destination.index === result.source.index
-            )
-              return
-            const items = reorder(
-              communities.data || [],
-              result.source.index,
-              result.destination.index
-            )
-            setCommunitiesOrder(items.map((c) => c.community.id))
-          }}
-        >
-          <Droppable
-            droppableId='list'
-            direction={isMobile ? 'horizontal' : 'vertical'}
-          >
-            {(provided) => (
-              <div
-                className={styles.list}
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {(communities?.data ?? [])
-                  .sort(
-                    (a, b) =>
-                      (communitiesOrder?.indexOf(a.community.id) ?? 0) -
-                      (communitiesOrder?.indexOf(b.community.id) ?? 0)
-                  )
-                  .map((member, index) => (
-                    <Community
-                      key={member.community.id}
-                      community={member.community}
-                      index={index}
-                    />
-                  ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-
+        <Suspense fallback={<Placeholder />}>
+          <Communities />
+        </Suspense>
         <br />
       </div>
       {!isMobile && (
@@ -276,3 +303,5 @@ export const Sidebar = () => {
     </div>
   )
 }
+
+export default Sidebar

@@ -67,3 +67,47 @@
 .add {
   cursor: pointer;
 }
+
+.placeholder {
+  hr {
+    margin: 0;
+    margin-left: 2.6rem;
+    border-color: var(--neko-sidebar-seperator);
+    opacity: 0.5;
+    border-style: solid;
+  }
+  .rooms {
+    margin-top: 0.5rem;
+    height: 1rem;
+    width: 4rem;
+    background: var(--neko-sidebar-background);
+    border-radius: 5px;
+  }
+  .channel {
+    border: inherit;
+    display: flex;
+    align-items: center;
+
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    border: inherit;
+    display: flex;
+    border-radius: 14px;
+    align-items: center;
+
+    .icon {
+      background: var(--neko-sidebar-background);
+      width: 2.25rem;
+      height: 2.25rem;
+      margin-right: 0.5rem;
+      border-radius: 10px;
+    }
+
+    .text {
+      height: 1rem;
+      background: var(--neko-sidebar-background);
+      width: 5rem;
+      border-radius: 4px;
+    }
+  }
+}

@@ -5,18 +5,18 @@ import {
   faHouseLeave
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Integrations } from './Integrations'
+import Integrations from './Integrations'
 import React, { useState } from 'react'
 import { useMutation, useQuery } from 'react-query'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
 import { getCommunity } from '../remote'
 import styles from './Sidebar.module.scss'
-import { Channels } from './Channels'
+import Channels from './Channels'
 import { clientGateway } from '../../constants'
 import { useLocalStorage } from 'react-use'
 
-export const Sidebar = () => {
+const View = () => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const history = useHistory()
@@ -98,10 +98,28 @@ export const Sidebar = () => {
               )}
             </div>
           )}
-          <Integrations community={community.data} />
-          <Channels community={community.data} />
+          <Integrations.View community={community.data} />
+          <Channels.View community={community.data} />
         </div>
       </div>
     </div>
   )
 }
+
+const Placeholder = () => {
+  return (
+    <div className={styles.placeholder}>
+      <div className={styles.sidebar}>
+        <div className={styles.container}>
+          <div className={styles.name} />
+        </div>
+        <Integrations.Placeholder />
+        <Channels.Placeholder />
+      </div>
+    </div>
+  )
+}
+
+const Sidebar = { View, Placeholder }
+
+export default Sidebar

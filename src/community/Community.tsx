@@ -4,8 +4,7 @@ import Chat from '../chat/Chat'
 import { Redirect, Switch, useParams, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
-import Loader from '../components/Loader'
-import { Sidebar as Channels } from './sidebar/Sidebar'
+import Channels from './sidebar/Sidebar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/pro-solid-svg-icons'
 import Button from '../components/Button'
@@ -14,7 +13,7 @@ import { Settings } from './settings/Settings'
 import { CommunityResponse, getCommunity } from './remote'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
-import { Sidebar } from '../sidebar/Sidebar'
+import Sidebar from '../sidebar/Sidebar'
 import { Members } from './Members'
 import { ChannelTypes } from '../constants'
 
@@ -92,7 +91,16 @@ const Channel = () => {
     (channel) => channel.id === channelID
   )
   if (!channel) return <></>
-  return <Chat type={ChannelTypes.CommunityChannel} channel={channel} />
+  return <Chat.View type={ChannelTypes.CommunityChannel} channel={channel} />
+}
+
+const Placeholder = () => {
+  return (
+    <>
+      <Channels.Placeholder />
+      <Chat.Placeholder />
+    </>
+  )
 }
 
 const Community = () => {
@@ -112,8 +120,14 @@ const Community = () => {
     />
   ) : (
     <div className={styles.community} key={id}>
-      {isMobile && !match ? <Channels /> : !isMobile ? <Channels /> : <></>}
-      <Suspense fallback={<Loader />}>
+      {isMobile && !match ? (
+        <Channels.View />
+      ) : !isMobile ? (
+        <Channels.View />
+      ) : (
+        <></>
+      )}
+      <Suspense fallback={<Chat.Placeholder />}>
         <Switch>
           <PrivateRoute path={`${path}/settings`} component={Settings} exact />
           <PrivateRoute path={`${path}/members`} component={Members} exact />
@@ -142,7 +156,7 @@ const Router = () => {
   return (
     <>
       {isMobile && !match && <Sidebar />}
-      <Suspense fallback={<Loader />}>
+      <Suspense fallback={<Placeholder />}>
         <Community />
       </Suspense>
     </>

@@ -71,3 +71,51 @@
     margin-left: 0.5rem;
   }
 }
+
+.placeholder {
+  display: flex;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  margin-top: 0.8rem;
+  .avatar {
+    width: 2.65rem;
+    height: 2.65rem;
+    min-width: 2.65rem;
+    min-height: 2.65rem;
+    border-radius: 12px;
+    background: var(--neko-channels-background);
+  }
+  .content {
+    margin-left: 1rem;
+    overflow: hidden;
+    width: 100%;
+
+    .message {
+      margin-top: 0.5rem;
+      height: 1.15rem;
+      width: 10rem;
+      display: inline-block;
+      clear: both;
+      background: var(--neko-channels-background);
+      border-radius: 6px;
+    }
+
+    .user {
+      display: flex;
+      .username {
+        height: 1rem;
+        margin: 0;
+        width: 5rem;
+        border-radius: 6px;
+        background: var(--neko-channels-background);
+      }
+      .date {
+        height: 1rem;
+        margin-left: 0.25rem;
+        width: 3rem;
+        border-radius: 6px;
+        background: var(--neko-channels-background);
+      }
+    }
+  }
+}

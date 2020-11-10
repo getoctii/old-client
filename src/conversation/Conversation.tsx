@@ -5,7 +5,6 @@ import { useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { ChannelTypes, clientGateway } from '../constants'
-import Loader from '../components/Loader'
 import { UserResponse } from '../user/remote'
 import { Conversations } from './Conversations'
 import { useMedia } from 'react-use'
@@ -54,12 +53,12 @@ const Conversation = () => {
   )
   if (!participant) return <></>
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<Chat.Placeholder />}>
       <div
         className={styles.conversation}
         key={participant.conversation.channel_id}
       >
-        <Chat
+        <Chat.View
           type={ChannelTypes.PrivateChannel}
           channel={{
             id: participant.conversation.channel_id
@@ -76,7 +75,7 @@ const Router = () => {
   return (
     <>
       {!isMobile && <Conversations />}
-      <Suspense fallback={<Loader />}>
+      <Suspense fallback={<Chat.Placeholder />}>
         <Conversation />
       </Suspense>
     </>

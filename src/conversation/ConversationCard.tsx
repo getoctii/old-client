@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight, faTimesCircle } from '@fortawesome/pro-solid-svg-icons'
 import { useQuery, useMutation } from 'react-query'
@@ -9,7 +9,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { getUser, State } from '../user/remote'
 
-export const ConversationCard = ({
+const View = ({
   people,
   onClick,
   selected,
@@ -79,3 +79,21 @@ export const ConversationCard = ({
     </div>
   )
 }
+
+const Placeholder = () => {
+  const username = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
+  const status = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
+  return (
+    <div className={styles.placeholder}>
+      <div className={styles.avatar}></div>
+      <div className={styles.user}>
+        <div className={styles.username} style={{ width: `${username}rem` }} />
+        <div className={styles.status} style={{ width: `${status}rem` }} />
+      </div>
+    </div>
+  )
+}
+
+const ConversationCard = { View, Placeholder }
+
+export default ConversationCard
