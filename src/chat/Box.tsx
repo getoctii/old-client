@@ -146,4 +146,6 @@ const Placeholder = () => {
   )
 }
 
-export default { View, Placeholder }
+const Box = { View, Placeholder }
+
+export default Box
