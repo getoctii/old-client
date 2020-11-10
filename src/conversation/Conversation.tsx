@@ -54,12 +54,12 @@ const Conversation = () => {
   )
   if (!participant) return <></>
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<Chat.Placeholder />}>
       <div
         className={styles.conversation}
         key={participant.conversation.channel_id}
       >
-        <Chat
+        <Chat.View
           type={ChannelTypes.PrivateChannel}
           channel={{
             id: participant.conversation.channel_id
@@ -76,7 +76,7 @@ const Router = () => {
   return (
     <>
       {!isMobile && <Conversations />}
-      <Suspense fallback={<Loader />}>
+      <Suspense fallback={<Chat.Placeholder />}>
         <Conversation />
       </Suspense>
     </>

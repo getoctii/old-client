@@ -130,7 +130,7 @@ const Messages = ({ channelID }: { channelID: string }) => {
       )}
       {messages?.map((message, index) =>
         message ? (
-          <Message
+          <Message.View
             key={message.id}
             primary={isPrimary(message, index)}
             onResize={autoScroll}
@@ -178,7 +178,7 @@ const TypingIndicator = ({ channelID }: { channelID: string }) => {
   else return <div className={styles.typingEmpty}></div>
 }
 
-const Chat = ({
+const View = ({
   type,
   channel,
   user
@@ -235,7 +235,7 @@ const Chat = ({
   })
 
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<Placeholder />}>
       <div className={styles.chat} {...bond}>
         <div className={styles.header}>
           {isMobile ? (
@@ -284,7 +284,7 @@ const Chat = ({
             )}
         </div>
         <Messages channelID={channel.id} />
-        <Box
+        <Box.View
           {...{
             sendMessage,
             uploadFile,
@@ -298,4 +298,30 @@ const Chat = ({
   )
 }
 
-export default Chat
+const Placeholder = () => {
+  const length = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
+  const username = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
+  const status = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
+  return (
+    <div className={styles.placeholder}>
+      <div className={styles.header}>
+        <div className={styles.icon} />
+        <div className={styles.title}>
+          <div className={styles.name} style={{ width: `${username}rem` }} />
+          <div className={styles.status} style={{ width: `${status}rem` }} />
+        </div>
+      </div>
+      <div className={styles.messages}>
+        {Array.from(Array(length).keys()).map((_, index) => (
+          <>
+            <Message.Placeholder key={index} />
+          </>
+        ))}
+      </div>
+      <br />
+      <Box.Placeholder />
+    </div>
+  )
+}
+
+export default { View, Placeholder }

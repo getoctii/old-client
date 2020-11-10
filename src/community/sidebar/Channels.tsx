@@ -21,7 +21,7 @@ import { clientGateway } from '../../constants'
 import { useLocalStorage } from 'react-use'
 import Context from '../../components/Context'
 
-export const Channels = ({ community }: { community?: CommunityResponse }) => {
+const View = ({ community }: { community?: CommunityResponse }) => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string; channelID: string }>(
     '/communities/:id/channels/:channelID'
@@ -202,3 +202,22 @@ export const Channels = ({ community }: { community?: CommunityResponse }) => {
     </div>
   )
 }
+
+const Placeholder = () => {
+  return (
+    <div className={styles.placeholder}>
+      <div className={styles.rooms} />
+      <div className={styles.channel}>
+        <div className={styles.icon} />
+        <div className={styles.text} />
+      </div>
+      <hr />
+      <div className={styles.channel}>
+        <div className={styles.icon} />
+        <div className={styles.text} />
+      </div>
+    </div>
+  )
+}
+
+export default { View, Placeholder }

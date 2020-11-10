@@ -30,7 +30,7 @@ const isEmbed = (element: any): element is Embed => {
   return typeof element === 'object' && element['embed'] && element['link']
 }
 
-const Message = memo(
+const View = memo(
   ({
     id,
     authorID,
@@ -201,88 +201,24 @@ const Message = memo(
   }
 )
 
-export default Message
-
-/* <ReactMarkdown
-skipHtml={false}
-escapeHtml={true}
-unwrapDisallowed={true}
-allowedTypes={[
-  'root',
-  'text',
-  'paragraph',
-  'strong',
-  'emphasis',
-  'delete',
-  'link',
-  'heading'
-]}
-renderers={{
-  heading: (props: { children: any }) => (
-    <p>{props.children}</p>
-  ),
-  paragraph: (props: any) => {
-    const content = props.children.flatMap((child: any) =>
-      typeof child === 'object' &&
-      child.key &&
-      !!child.key.match(/link/g) ? (
-        Image.isCovfefe(child.props.href) ? (
-          [
-            // finnnne
-            // make a new LS
-            // can we please work on a not shit markdown parser, we can open source that ight
-            // https://prod.liveshare.vsengsaas.visualstudio.com/join?65A66F804AA1DF1B833FA9B1AFB0D46D0216
-            <p>{child}</p>,
-            <Image.Embed url={child.props.href} />
-          ]
-        ) : Audio.isCovfefe(child.props.href) ? (
-          [
-            <p>{child}</p>,
-            <div>
-              <Audio.Embed src={child.props.href} />
-            </div>
-          ]
-        ) : (
-          <p>{child}</p>
-        )
-      ) : (
-        <p>{child}</p>
-      )
-    )
-    const paragraphs = content.filter(
-      (element: any) => element.type === 'p'
-    )
-    const images = content.filter(
-      (element: any) => element.type === 'div'
-    )
-    return (
-      <>
-        {[
-          <div key='text' className={styles.text}>
-            <p>
-              {paragraphs.flatMap(
-                (paragraph: any) => paragraph.props.children
-              )}
-            </p>
-          </div>,
-          <Image.Measure key='images' onResize={onResize}>
-            {images.map((img: any, index: number) => (
-              <div {...img.props} key={index} />
-            ))}
-          </Image.Measure>
-        ]}
-      </>
-    )
-  },
-  link: (props) => (
-    <a
-      href={props.href}
-      target='_blank'
-      rel='noopener noreferrer'
-    >
-      {props.children}
-    </a>
+const Placeholder = () => {
+  const username = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
+  const message = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
+  return (
+    <div className={styles.placeholder}>
+      <div className={styles.avatar} />
+      <div className={styles.content}>
+        <div className={styles.user}>
+          <div
+            className={styles.username}
+            style={{ width: `${username}rem` }}
+          />
+          <div className={styles.date} />
+        </div>
+        <div className={styles.message} style={{ width: `${message}rem` }} />
+      </div>
+    </div>
   )
-}}
-source={content}
-/> */
+}
+
+export default { View, Placeholder }

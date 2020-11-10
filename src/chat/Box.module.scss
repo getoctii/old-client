@@ -81,3 +81,39 @@
     }
   }
 }
+
+.placeholder {
+  display: flex;
+  flex-direction: row;
+  vertical-align: middle;
+  align-items: center;
+  margin-bottom: 0;
+  padding-left: 2rem;
+  margin-bottom: 2rem;
+  padding-right: 2rem;
+  justify-content: space-between;
+  width: 100%;
+  .emoji,
+  .upload {
+    height: 3.125rem;
+    width: 3.125rem;
+    background: var(--neko-input-background);
+    color: var(--neko-input-text);
+    margin-left: 0.5rem;
+    font-size: 1.05rem;
+    border-radius: 13px;
+  }
+
+  .input {
+    width: 100%;
+    height: 3.125rem;
+    margin: 0;
+    flex: 1;
+    padding-left: 0.9375rem;
+    padding-right: 0.9375rem;
+    background: var(--neko-input-background);
+    border: none;
+    border-radius: 14px;
+    outline: none;
+  }
+}

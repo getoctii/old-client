@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styles from './Conversations.module.scss'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { clientGateway } from '../constants'
-import { ConversationCard } from './ConversationCard'
+import ConversationCard from './ConversationCard'
 import Button from '../components/Button'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { UI } from '../state/ui'
-import Loader from '../components/Loader'
 import { useLocalStorage, useMedia } from 'react-use'
 import NewConversation from './NewConversation'
 
@@ -95,7 +94,7 @@ const ConversationList = () => {
                       }
                     />
                   )}
-                  <ConversationCard
+                  <ConversationCard.Card
                     selected={selected === conversation.id}
                     onClick={() => {
                       history.push(`/conversations/${conversation.id}`)
@@ -125,6 +124,20 @@ const ConversationList = () => {
   )
 }
 
+const Placeholder = () => {
+  const length = useMemo(() => Math.floor(Math.random() * 10) + 1, [])
+  return (
+    <>
+      {Array.from(Array(length).keys()).map((_, index) => (
+        <>
+          {index !== 0 && <hr />}
+          <ConversationCard.Placeholder key={index} />
+        </>
+      ))}
+    </>
+  )
+}
+
 export const Conversations = () => {
   const isMobile = useMedia('(max-width: 940px)')
   return (
@@ -133,7 +146,7 @@ export const Conversations = () => {
       <h3>Messages</h3>
       <NewConversation />
       <div className={styles.list}>
-        <React.Suspense fallback={<Loader />}>
+        <React.Suspense fallback={<Placeholder />}>
           <ConversationList />
         </React.Suspense>
       </div>

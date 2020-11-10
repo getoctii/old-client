@@ -21,7 +21,7 @@ const adjectives = [
   ' about Innatical'
 ]
 
-const Box = ({
+const View = ({
   sendMessage,
   uploadFile,
   postTyping,
@@ -136,4 +136,14 @@ const Box = ({
   )
 }
 
-export default Box
+const Placeholder = () => {
+  return (
+    <div className={styles.placeholder}>
+      <div className={styles.input} />
+      <div className={styles.upload} />
+      <div className={styles.emoji} />
+    </div>
+  )
+}
+
+export default { View, Placeholder }

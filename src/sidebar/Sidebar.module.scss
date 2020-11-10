@@ -68,7 +68,7 @@
     padding: 1rem 1rem;
   }
   .separator {
-    margin-bottom: 0.9rem;
+    margin-bottom: 0.7rem;
     border-radius: 50%;
     min-height: 0.5rem;
     min-width: 0.5rem;
@@ -175,6 +175,7 @@
       cursor: pointer;
     }
   }
+
   // , (max-height: 420px)
   @media (max-width: 940px) {
     flex-direction: row;
@@ -215,4 +216,17 @@
       }
     }
   }
+}
+
+.communityPlaceholder {
+  margin: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  min-height: 3.5rem;
+  min-width: 3.5rem;
+  margin-bottom: 0.7rem;
+  border-radius: 16px;
+  transition: box-shadow 0.1s ease-in-out;
+  animation: bounce 0.2s easin-in;
+  background: var(--neko-channels-background);
 }

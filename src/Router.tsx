@@ -21,6 +21,7 @@ import { isPlatform } from '@ionic/react'
 import Incoming from './call/Incoming'
 import { Call } from './state/call'
 import Current from './call/Current'
+import EventSource from './events'
 
 export const Router = () => {
   const uiStore = UI.useContainer()
@@ -29,6 +30,7 @@ export const Router = () => {
   const call = Call.useContainer()
   return (
     <BrowserRouter>
+      {auth.authenticated && <EventSource />}
       {isPlatform('capacitor') ? (
         <Redirect path='/home' to='/authenticate/login' />
       ) : (
@@ -53,42 +55,46 @@ export const Router = () => {
 
         {uiStore.modal.name === 'status' && <Status />}
         {auth.authenticated && !isMobile && <Sidebar />}
-
-        <Switch>
-          <PrivateRoute
-            path='/'
-            component={() => (
-              <>
-                {isMobile && <Sidebar />}
-                <Suspense fallback={<Loader />}>
-                  <Conversations />
-                  {!isMobile && <Empty />}
-                </Suspense>
-              </>
-            )}
-            redirect={isPlatform('capacitor') ? '/authenticate/login' : '/home'}
-            exact
-          />
-          <PrivateRoute
-            path='/settings'
-            component={() => (
-              <>
-                {isMobile && <Sidebar />}
-                <Suspense fallback={<Loader />}>
-                  <Settings />
-                </Suspense>
-              </>
-            )}
-          />
-          <PrivateRoute
-            path='/conversations/:channelID'
-            component={() => <Conversation />}
-          />
-          <PrivateRoute
-            path='/communities/:id'
-            component={() => <Community />}
-          />
-        </Switch>
+        {/* debug reasons */}
+        <Suspense fallback={<></>}>
+          <Switch>
+            <PrivateRoute
+              path='/'
+              component={() => (
+                <>
+                  {isMobile && <Sidebar />}
+                  <Suspense fallback={<Loader />}>
+                    <Conversations />
+                    {!isMobile && <Empty />}
+                  </Suspense>
+                </>
+              )}
+              redirect={
+                isPlatform('capacitor') ? '/authenticate/login' : '/home'
+              }
+              exact
+            />
+            <PrivateRoute
+              path='/settings'
+              component={() => (
+                <>
+                  {isMobile && <Sidebar />}
+                  <Suspense fallback={<Loader />}>
+                    <Settings />
+                  </Suspense>
+                </>
+              )}
+            />
+            <PrivateRoute
+              path='/conversations/:channelID'
+              component={() => <Conversation />}
+            />
+            <PrivateRoute
+              path='/communities/:id'
+              component={() => <Community />}
+            />
+          </Switch>
+        </Suspense>
       </div>
     </BrowserRouter>
   )

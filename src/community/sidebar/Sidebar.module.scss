@@ -151,3 +151,30 @@
 .menuIcon {
   cursor: pointer;
 }
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  background: var(--neko-channels-background);
+  min-width: 18rem;
+  min-height: 5rem;
+
+  .sidebar {
+    padding: 1.5rem;
+    overflow-y: scroll;
+    flex: 1;
+
+    .container {
+      position: relative;
+
+      .name {
+        background: var(--neko-sidebar-background);
+        height: 1.5rem;
+        width: 6rem;
+        border-radius: 6px;
+        margin-top: 0;
+        margin-bottom: 0.3rem;
+      }
+    }
+  }
+}
