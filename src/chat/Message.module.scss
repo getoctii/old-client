@@ -39,16 +39,21 @@
   }
 
   .avatar {
+    min-width: 2.65rem;
+    min-height: 2.65rem;
     width: 2.65rem;
     height: 2.65rem;
     object-fit: cover;
     border-radius: 12px;
+    background-size: cover;
   }
 
   .content {
     margin-left: 1rem;
     overflow: hidden;
     width: 100%;
+    display: flex;
+    flex-direction: column;
 
     a {
       color: var(--neko-text-href);
@@ -76,7 +81,6 @@
   display: flex;
   padding-left: 2rem;
   padding-right: 2rem;
-  margin-top: 0.8rem;
   .avatar {
     width: 2.65rem;
     height: 2.65rem;
@@ -117,5 +121,12 @@
         background: var(--neko-channels-background);
       }
     }
+    &.spacer {
+      margin-left: 3.65rem;
+    }
+  }
+
+  &.primary {
+    margin-top: 0.8rem;
   }
 }

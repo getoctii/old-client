@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { EventSourcePolyfill } from 'event-source-polyfill'
-import { Events } from '../constants'
+import { Events } from '../utils/constants'
 import { Call } from '../state/call'
+import { log } from '../utils/logging'
 
 const useAcceptedVoiceSession = (eventSource: EventSourcePolyfill | null) => {
   const call = Call.useContainer()
@@ -12,7 +13,7 @@ const useAcceptedVoiceSession = (eventSource: EventSourcePolyfill | null) => {
         id: string
         peer_id: string
       }
-      console.log('ACCPETED_VOICE_SESSION', event)
+      log('Events', 'purple', 'ACCEPTED_VOICE_SESSION')
       call.establishCall(event.id, event.peer_id)
     }
 

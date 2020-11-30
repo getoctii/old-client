@@ -3,9 +3,7 @@ import { useMedia } from 'react-use'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { Authenticate } from './authentication/Authenticate'
 import { PrivateRoute } from './authentication/PrivateRoute'
-import { Conversations } from './conversation/Conversations'
 import Community from './community/Community'
-import Empty from './conversation/empty/Empty'
 import { UI } from './state/ui'
 import NewConversation from './conversation/NewConversation'
 import Settings from './settings/Settings'
@@ -23,8 +21,24 @@ import { Call } from './state/call'
 import Current from './call/Current'
 import EventSource from './events'
 
-export const Router = () => {
+const Modals = () => {
   const uiStore = UI.useContainer()
+
+  return (
+    <>
+      <AnimatePresence>
+        {uiStore.modal.name === 'newConversation' && <NewConversation />}
+        {uiStore.modal.name === 'newCommunity' && <NewCommunity />}
+        {uiStore.modal.name === 'incomingCall' && (
+          <Incoming {...uiStore.modal.props} />
+        )}
+      </AnimatePresence>
+      {uiStore.modal.name === 'status' && <Status />}
+    </>
+  )
+}
+
+export const Router = () => {
   const auth = Auth.useContainer()
   const isMobile = useMedia('(max-width: 940px)')
   const call = Call.useContainer()
@@ -38,13 +52,7 @@ export const Router = () => {
       )}
       <Route path='/authenticate' component={Authenticate} />
       <div id='main'>
-        <AnimatePresence>
-          {uiStore.modal.name === 'newConversation' && <NewConversation />}
-          {uiStore.modal.name === 'newCommunity' && <NewCommunity />}
-          {uiStore.modal.name === 'incomingCall' && (
-            <Incoming {...uiStore.modal.props} />
-          )}
-        </AnimatePresence>
+        <Modals />
         {auth.authenticated && !isMobile && (
           <>
             <Suspense fallback={<></>}>
@@ -52,28 +60,10 @@ export const Router = () => {
             </Suspense>
           </>
         )}
-
-        {uiStore.modal.name === 'status' && <Status />}
         {auth.authenticated && !isMobile && <Sidebar />}
         {/* debug reasons */}
         <Suspense fallback={<></>}>
           <Switch>
-            <PrivateRoute
-              path='/'
-              component={() => (
-                <>
-                  {isMobile && <Sidebar />}
-                  <Suspense fallback={<Loader />}>
-                    <Conversations />
-                    {!isMobile && <Empty />}
-                  </Suspense>
-                </>
-              )}
-              redirect={
-                isPlatform('capacitor') ? '/authenticate/login' : '/home'
-              }
-              exact
-            />
             <PrivateRoute
               path='/settings'
               component={() => (
@@ -86,12 +76,16 @@ export const Router = () => {
               )}
             />
             <PrivateRoute
-              path='/conversations/:channelID'
-              component={() => <Conversation />}
-            />
-            <PrivateRoute
               path='/communities/:id'
               component={() => <Community />}
+            />
+            <PrivateRoute
+              path={'/(conversations)?/:id?'}
+              component={() => <Conversation />}
+              redirect={
+                isPlatform('capacitor') ? '/authenticate/login' : '/home'
+              }
+              exact
             />
           </Switch>
         </Suspense>

@@ -8,12 +8,12 @@ import { BarLoader } from 'react-spinners'
 import { Auth } from '../../authentication/state'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
-import { clientGateway } from '../../constants'
-import { isUsername } from '../../validations'
+import { clientGateway } from '../../utils/constants'
+import { isUsername } from '../../utils/validations'
 import styles from './General.module.scss'
 import axios from 'axios'
 import { CommunityResponse, getCommunity } from '../remote'
-import { isTag } from '../../validations'
+import { isTag } from '../../utils/validations'
 
 type generalFormData = {
   name: string

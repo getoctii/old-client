@@ -9,27 +9,16 @@ import styles from './Sidebar.module.scss'
 import { UI } from '../state/ui'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
-import { clientGateway } from '../constants'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInbox, faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Button from '../components/Button'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { useLocalStorage, useMedia } from 'react-use'
-import { getUser, State } from '../user/remote'
+import { getCommunities, getUser, State } from '../user/remote'
 import { isPlatform } from '@ionic/react'
 import { useScroll } from 'react-use'
 import { ScrollPosition } from '../state/scroll'
-
-type MembersResponse = {
-  id: string
-  community: {
-    id: string
-    name: string
-    icon?: string
-    large: boolean
-  }
-}[]
 
 const reorder = (list: any[], startIndex: number, endIndex: number): any[] => {
   const result = Array.from(list)
@@ -95,18 +84,8 @@ const Placeholder = () => {
 
 const Communities = () => {
   const isMobile = useMedia('(max-width: 940px)')
-  const auth = Auth.useContainer()
-  const communities = useQuery(
-    ['communities'],
-    async () =>
-      (
-        await clientGateway.get<MembersResponse>(`/users/${auth.id}/members`, {
-          headers: {
-            Authorization: auth.token
-          }
-        })
-      ).data
-  )
+  const { id, token } = Auth.useContainer()
+  const communities = useQuery(['communities', id, token], getCommunities)
   const [communitiesOrder, setCommunitiesOrder] = useLocalStorage<string[]>(
     'communities',
     communities.data?.map((member) => member.community.id) ?? []
@@ -181,7 +160,6 @@ const Sidebar = () => {
       scrollRef.current.scrollTo(scrollPosition.x, scrollPosition.y)
     // eslint-disable-next-line
   }, [])
-  // fuck it ship it
   return (
     <div className={styles.sidebar}>
       <div className={styles.scrollable} ref={scrollRef}>
@@ -264,11 +242,10 @@ const Sidebar = () => {
             <img
               src={user.data?.avatar}
               alt={user.data?.username}
-              onClick={() => history.push('/settings')}
-            />
-            <div
-              className={styles.overlay}
-              onClick={() => history.push('/settings')}
+              onClick={() => {
+                console.log('redirect')
+                history.push('/settings')
+              }}
             />
             {user.data?.state && (
               <div

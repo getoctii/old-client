@@ -8,8 +8,8 @@ import Tilt from 'react-parallax-tilt'
 import { Formik, Form, Field, FormikHelpers, ErrorMessage } from 'formik'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell } from '@fortawesome/pro-solid-svg-icons'
-import { isEmail } from '../validations'
-import { clientGateway } from '../constants'
+import { isEmail } from '../utils/validations'
+import { clientGateway } from '../utils/constants'
 import { useMedia } from 'react-use'
 
 type formData = { email: string }

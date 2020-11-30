@@ -5,9 +5,11 @@ import { useLocalStorage } from 'react-use'
 import { isPlatform } from '@ionic/react'
 import Typing from '../state/typing'
 import { Plugins, HapticsNotificationType } from '@capacitor/core'
-import { Events } from '../constants'
+import { Events } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { getUser, State } from '../user/remote'
+import { log } from '../utils/logging'
+import { Channel } from '../chat/remote'
 
 interface Message {
   id: string
@@ -42,6 +44,7 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
       const message = JSON.parse(e.data) as Message
+      log('Events', 'purple', 'NEW_MESSAGE')
       const initial = queryCache.getQueryData(['messages', message.channel_id])
       if (initial instanceof Array) {
         queryCache.setQueryData(
@@ -49,6 +52,40 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
           initial[0].length < 25
             ? [[message, ...initial[0]], ...initial.slice(1)]
             : [[message], ...initial]
+        )
+      }
+      const initialChannel: Channel | undefined = queryCache.getQueryData([
+        'channel',
+        message.channel_id,
+        token
+      ])
+      if (initialChannel) {
+        queryCache.setQueryData(['channel', message.channel_id, token], {
+          ...initialChannel,
+          last_message_id: message.id
+        })
+      }
+
+      queryCache.setQueryData(['message', message.id, token], {
+        ...message,
+        author_id: message.author.id
+      })
+
+      const participants = queryCache.getQueryData(['participants', id, token])
+      if (participants instanceof Array) {
+        queryCache.setQueryData(
+          ['participants', id, token],
+          participants.map((participant) =>
+            participant?.conversation?.channel_id === message.channel_id
+              ? {
+                  ...participant,
+                  conversation: {
+                    ...participant.conversation,
+                    last_message_id: message.id
+                  }
+                }
+              : participant
+          )
         )
       }
 
@@ -112,7 +149,15 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
     return () => {
       eventSource.removeEventListener(Events.NEW_MESSAGE, handler)
     }
-  }, [eventSource, mutedCommunities, mutedChannels, id, stopTyping, user])
+  }, [
+    eventSource,
+    mutedCommunities,
+    mutedChannels,
+    id,
+    stopTyping,
+    user,
+    token
+  ])
 }
 
 export default useNewMessage

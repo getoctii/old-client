@@ -6,6 +6,19 @@
   border-radius: 16px;
   cursor: pointer;
 
+  .unread {
+    background-color: var(--neko-text-href);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+  }
+
+  .details {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+
   .user {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -67,7 +80,7 @@
   }
 
   svg {
-    margin-left: auto;
+    margin-left: 0.2rem;
   }
 
   @media (hover: hover) and (pointer: fine) {

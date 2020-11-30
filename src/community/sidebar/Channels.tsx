@@ -17,7 +17,7 @@ import { AnimatePresence } from 'framer-motion'
 import { NewChannel } from '../NewChannel'
 import { Confirmation } from '../../components/Confirmation'
 import { useMutation } from 'react-query'
-import { clientGateway } from '../../constants'
+import { clientGateway } from '../../utils/constants'
 import { useLocalStorage } from 'react-use'
 import Context from '../../components/Context'
 

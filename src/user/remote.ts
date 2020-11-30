@@ -1,4 +1,4 @@
-import { clientGateway } from '../constants'
+import { clientGateway } from '../utils/constants'
 
 export enum State {
   offline = 'offline',
@@ -6,6 +6,18 @@ export enum State {
   dnd = 'dnd',
   online = 'online'
 }
+
+export type Participant = {
+  id: string
+  conversation: {
+    id: string
+    channel_id: string
+    last_message_id?: string
+    participants: string[]
+  }
+}
+
+export type ParticipantsResponse = Participant[]
 
 export type UserResponse = {
   id: string
@@ -17,6 +29,18 @@ export type UserResponse = {
   email?: string
 }
 
+export type Member = {
+  id: string
+  community: {
+    id: string
+    name: string
+    icon?: string
+    large: boolean
+  }
+}
+
+export type MembersResponse = Member[]
+
 export const getUser = async (_: string, userID: string, token: string) =>
   (
     await clientGateway.get<UserResponse>(`/users/${userID}`, {
@@ -24,4 +48,33 @@ export const getUser = async (_: string, userID: string, token: string) =>
         Authorization: token
       }
     })
+  ).data
+
+export const getCommunities = async (
+  _: string,
+  userID: string,
+  token: string
+) =>
+  (
+    await clientGateway.get<MembersResponse>(`/users/${userID}/members`, {
+      headers: {
+        Authorization: token
+      }
+    })
+  ).data
+
+export const getParticipants = async (
+  _: string,
+  userID: string,
+  token: string
+) =>
+  (
+    await clientGateway.get<ParticipantsResponse>(
+      `/users/${userID}/participants`,
+      {
+        headers: {
+          Authorization: token
+        }
+      }
+    )
   ).data

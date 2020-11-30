@@ -9,7 +9,7 @@ import { useMedia } from 'react-use'
 import { Waypoint } from 'react-waypoint'
 import { Auth } from '../authentication/state'
 import Loader from '../components/Loader'
-import { clientGateway } from '../constants'
+import { clientGateway } from '../utils/constants'
 import styles from './Members.module.scss'
 
 interface MemberType {
