@@ -19,6 +19,7 @@
     "@sentry/browser": "^5.27.3",
     "@sentry/react": "^5.27.3",
     "@sentry/rrweb": "^0.2.0",
+    "@sentry/tracing": "^5.28.0",
     "@types/node": "^14.14.10",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
