@@ -1,14 +1,18 @@
 import { useEffect } from 'react'
 import { EventSourcePolyfill } from 'event-source-polyfill'
 import { queryCache } from 'react-query'
-import { Events } from '../constants'
+import { Events } from '../utils/constants'
+import { log } from '../utils/logging'
+import { Auth } from '../authentication/state'
 
 const useNewParticipant = (eventSource: EventSourcePolyfill | null) => {
+  const { id, token } = Auth.useContainer()
   useEffect(() => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
       const participant = JSON.parse(e.data)
-      queryCache.setQueryData('participants', (initial) => {
+      log('Events', 'purple', 'NEW_PARTICIPANT')
+      queryCache.setQueryData(['participants', id, token], (initial) => {
         if (initial instanceof Array) {
           initial.push(participant)
           return initial
@@ -21,7 +25,7 @@ const useNewParticipant = (eventSource: EventSourcePolyfill | null) => {
     return () => {
       eventSource.removeEventListener(Events.NEW_PARTICIPANT, handler)
     }
-  }, [eventSource])
+  }, [eventSource, id, token])
 }
 
 export default useNewParticipant

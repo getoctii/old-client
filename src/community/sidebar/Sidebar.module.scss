@@ -177,4 +177,18 @@
       }
     }
   }
+
+  @media (max-width: 940px) {
+    height: 100%;
+    padding-top: calc(env(safe-area-inset-top) + 2rem);
+    min-width: 1rem;
+    width: 100%;
+    max-width: 100%;
+    .sidebar {
+      padding-top: 0;
+    }
+    h3 {
+      font-size: 2rem;
+    }
+  }
 }

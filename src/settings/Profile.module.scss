@@ -1,15 +1,14 @@
 .profile {
-  margin-top: 5rem;
+  padding-top: 5rem;
   overflow-y: scroll;
-  border-bottom-left-radius: 14px;
-  border-bottom-right-radius: 14px;
 
   form {
     background: var(--neko-settings-card);
     padding: 2rem;
-    border-top-left-radius: 14px;
-    border-top-right-radius: 14px;
+    border-radius: 14px;
+    height: auto;
 
+    margin-bottom: 2rem;
     max-width: 500px;
     h2,
     h5,
@@ -74,7 +73,7 @@
     }
   }
   @media (max-height: 940px) {
-    margin-top: 2.5rem;
+    padding-top: 2.5rem;
   }
 
   // , (max-height: 420px)

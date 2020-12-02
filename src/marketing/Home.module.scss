@@ -1,7 +1,9 @@
 html,
 body {
   height: 100vh;
-  height: -webkit-fill-available;
+  @media not all and (display-mode: standalone) {
+    height: -webkit-fill-available;
+  }
 }
 
 .subscribed {

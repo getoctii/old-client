@@ -1,7 +1,7 @@
 import React from 'react'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
 import styles from './shared.module.scss'
-import { isEmail, isPassword, isUsername } from '../../validations'
+import { isEmail, isPassword, isUsername } from '../../utils/validations'
 import { register } from '../remote'
 import { BarLoader } from 'react-spinners'
 import { Auth } from '../state'

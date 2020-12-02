@@ -1,15 +1,19 @@
 import { useEffect } from 'react'
 import { EventSourcePolyfill } from 'event-source-polyfill'
 import { queryCache } from 'react-query'
-import { Events } from '../constants'
+import { Events } from '../utils/constants'
+import { log } from '../utils/logging'
+import { Auth } from '../authentication/state'
 
 const useNewMember = (eventSource: EventSourcePolyfill | null) => {
+  const { id, token } = Auth.useContainer()
+
   useEffect(() => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
       const member = JSON.parse(e.data)
-      console.log('member', member)
-      queryCache.setQueryData(['communities'], (initial) => {
+      log('Events', 'purple', 'NEW_MEMBER')
+      queryCache.setQueryData(['communities', id, token], (initial) => {
         if (initial instanceof Array) {
           initial.push(member)
           return initial
@@ -22,7 +26,7 @@ const useNewMember = (eventSource: EventSourcePolyfill | null) => {
     return () => {
       eventSource.removeEventListener(Events.NEW_MEMBER, handler)
     }
-  }, [eventSource])
+  }, [eventSource, id, token])
 }
 
 export default useNewMember

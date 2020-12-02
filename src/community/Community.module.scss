@@ -28,6 +28,10 @@
   .createButton {
     background: var(--neko-colors-primary);
   }
+
+  iframe {
+    border-radius: 15px;
+  }
 }
 
 // , (max-height: 420px)

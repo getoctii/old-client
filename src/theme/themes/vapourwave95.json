@@ -23,7 +23,8 @@
     },
     "sidebar": {
       "background": "center / cover no-repeat url('https://file.coffee/u/I2-YJHJiYc.png')",
-      "seperator": "#383838"
+      "seperator": "#383838",
+      "shadow": " 0 -9px 10px 0 rgba(0, 0, 0, 0.42)"
     },
     "settings": {
       "background": "#040a0f",
@@ -98,7 +99,8 @@
     },
     "sidebar": {
       "background": "#EEF7FF",
-      "seperator": "#F1F1F1"
+      "seperator": "#F1F1F1",
+      "shadow": " 0 -9px 10px 0 rgba(0, 0, 0, 0.42)"
     },
     "settings": {
       "background": "#EEF7FF",

@@ -1,0 +1,54 @@
+.messages {
+  margin-top: auto;
+  max-height: 100%;
+  overflow-y: scroll;
+
+  .loader {
+    margin: 0;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    margin-bottom: 0.5rem;
+
+    h5 {
+      margin-bottom: 0;
+    }
+  }
+
+  .top {
+    margin-top: auto;
+    h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0;
+    }
+    padding-top: 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .indicator {
+    margin-left: 2rem;
+    margin-right: 2rem;
+    background: var(--neko-text-href);
+    height: 1px;
+
+    margin-top: 0.8rem;
+    border-radius: 12px;
+    position: relative;
+
+    span {
+      position: absolute;
+      right: 0;
+      padding: 0.5rem;
+      border-radius: 10px;
+      top: -0.98rem;
+      font-size: 0.7rem;
+      font-weight: 300;
+      background: var(--neko-text-href);
+    }
+    // border-color: var(--neko-text-href);
+  }
+
+  .buffer {
+    height: 1.5rem;
+  }
+}

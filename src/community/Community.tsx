@@ -1,6 +1,6 @@
 import React, { Suspense, useState } from 'react'
 import styles from './Community.module.scss'
-import Chat from '../chat/Chat'
+import Chat from '../chat/Channel'
 import { Redirect, Switch, useParams, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
@@ -15,7 +15,7 @@ import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
 import Sidebar from '../sidebar/Sidebar'
 import { Members } from './Members'
-import { ChannelTypes } from '../constants'
+import { ChannelTypes } from '../utils/constants'
 
 const EmptyCommunity = ({
   community,
@@ -66,7 +66,7 @@ const EmptyCommunity = ({
           height='543'
           src='https://www.youtube.com/embed/dQw4w9WgXcQ'
           frameBorder={0}
-          allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'
+          allow='autoplay; encrypted-media'
           allowFullScreen={false}
         />
       ) : (
@@ -88,17 +88,24 @@ const Channel = () => {
   const community = useQuery(['community', id, auth.token], getCommunity)
   if (!community?.data) return <></>
   const channel = community.data.channels.find(
-    (channel) => channel.id === channelID
+    (channel) => channel === channelID
   )
-  if (!channel) return <></>
-  return <Chat.View type={ChannelTypes.CommunityChannel} channel={channel} />
+  if (!channel) return <>1</>
+  return (
+    <Chat.View
+      type={ChannelTypes.CommunityChannel}
+      channelID={channel}
+      key={channel}
+    />
+  )
 }
 
 const Placeholder = () => {
+  const isMobile = useMedia('(max-width: 940px)')
   return (
     <>
       <Channels.Placeholder />
-      <Chat.Placeholder />
+      {!isMobile && <Chat.Placeholder />}
     </>
   )
 }
@@ -127,10 +134,12 @@ const Community = () => {
       ) : (
         <></>
       )}
+
       <Suspense fallback={<Chat.Placeholder />}>
         <Switch>
           <PrivateRoute path={`${path}/settings`} component={Settings} exact />
           <PrivateRoute path={`${path}/members`} component={Members} exact />
+
           <PrivateRoute
             path={`${path}/channels/:channelID`}
             component={Channel}
@@ -139,7 +148,7 @@ const Community = () => {
           {!isMobile && (
             <Redirect
               path='*'
-              to={`/communities/${id}/channels/${community.data.channels[0].id}`}
+              to={`/communities/${id}/channels/${community.data.channels[0]}`}
             />
           )}
         </Switch>

@@ -23,7 +23,8 @@
     },
     "sidebar": {
       "background": "#000000",
-      "seperator": "#000000"
+      "seperator": "#000000",
+      "shadow": "0 -9px 10px 0 rgba(0, 0, 0, 0.42)"
     },
     "settings": {
       "background": "#000000",
@@ -97,7 +98,8 @@
     },
     "sidebar": {
       "background": "#FFFFFF",
-      "seperator": "#FFFFFF"
+      "seperator": "#FFFFFF",
+      "shadow": "0 -9px 12px -2px rgba(255, 255, 255, 1)"
     },
     "settings": {
       "background": "#FFFFFF",

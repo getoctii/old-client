@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { EventSourcePolyfill } from 'event-source-polyfill'
 import { queryCache } from 'react-query'
-import { Events } from '../constants'
+import { Events } from '../utils/constants'
+import { log } from '../utils/logging'
 
 interface Message {
   id: string
@@ -25,6 +26,7 @@ const useDeletedMessage = (eventSource: EventSourcePolyfill | null) => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
       const message = JSON.parse(e.data) as Message
+      log('Events', 'purple', 'DELETED_MESSAGE')
       const initial = queryCache.getQueryData(['messages', message.channel_id])
 
       if (initial instanceof Array) {

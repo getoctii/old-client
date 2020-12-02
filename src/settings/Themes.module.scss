@@ -31,7 +31,7 @@
 // }
 
 .themes {
-  margin-top: 5rem;
+  padding-top: 5rem;
   overflow-y: scroll;
 
   .options {
@@ -106,7 +106,7 @@
   }
 
   @media (max-height: 940px) {
-    margin-top: 2.5rem;
+    padding-top: 2.5rem;
   }
 
   // , (max-height: 420px)

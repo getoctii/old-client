@@ -13,7 +13,7 @@ import { Auth } from '../../authentication/state'
 import { getCommunity } from '../remote'
 import styles from './Sidebar.module.scss'
 import Channels from './Channels'
-import { clientGateway } from '../../constants'
+import { clientGateway } from '../../utils/constants'
 import { useLocalStorage } from 'react-use'
 
 const View = () => {
