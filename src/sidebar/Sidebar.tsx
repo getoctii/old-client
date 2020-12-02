@@ -79,10 +79,11 @@ const Community = ({
           }}
         >
           <img src={community.icon} alt={community.name} />
-          {communityFull.data?.channels.some((channelID) => {
-            const channel = unreads.data?.[channelID]
-            return channel?.last_message_id !== channel?.read
-          }) && <div className={`${styles.badge}`} />}
+          {match?.params.id !== community.id &&
+            communityFull.data?.channels.some((channelID) => {
+              const channel = unreads.data?.[channelID]
+              return channel?.last_message_id !== channel?.read
+            }) && <div className={`${styles.badge}`} />}
         </div>
       )}
     </Draggable>
@@ -245,13 +246,15 @@ const Sidebar = () => {
           }}
         >
           <FontAwesomeIcon className={styles.symbol} icon={faInbox} size='2x' />
-          {participants.data
-            ?.filter((part) => part.conversation.participants.length > 1)
-            .some((participant) => {
-              const channel =
-                unreads.data?.[participant.conversation.channel_id]
-              return channel?.last_message_id !== channel?.read
-            }) && <div className={`${styles.badge}`} />}
+          {matchTab?.params.tab !== 'conversations' &&
+            matchTab &&
+            participants.data
+              ?.filter((part) => part.conversation.participants.length > 1)
+              .some((participant) => {
+                const channel =
+                  unreads.data?.[participant.conversation.channel_id]
+                return channel?.last_message_id !== channel?.read
+              }) && <div className={`${styles.badge}`} />}
         </Button>
         <div className={styles.separator} />
         <Suspense fallback={<Placeholder />}>
@@ -276,7 +279,7 @@ const Sidebar = () => {
                   history.push('/settings')
                 }}
               />
-              {user.data?.state && (
+              {matchTab?.params.tab !== 'settings' && user.data?.state && (
                 <div
                   className={`${styles.badge} ${
                     user.data.state === State.online
