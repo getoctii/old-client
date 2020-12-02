@@ -1,3 +1,10 @@
+.unread {
+  background-color: var(--neko-text-href);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
 .channels {
   h4 {
     margin: 0;
@@ -17,49 +24,6 @@
       border-color: var(--neko-channels-seperator);
       opacity: 0.5;
       border-style: solid;
-    }
-    .channel {
-      cursor: pointer;
-      padding-top: 0.6rem;
-      padding-bottom: 0.6rem;
-      border: inherit;
-      display: flex;
-      border-radius: 14px;
-      align-items: center;
-      .icon {
-        margin-right: 0.5rem;
-        padding: 0.5rem;
-        color: var(--neko-text-inverse);
-        border-radius: 10px;
-      }
-      h4 {
-        margin: 0;
-        padding: 0;
-        margin-right: auto;
-        font-weight: 500;
-        width: 100%;
-        display: flex;
-        align-items: center;
-      }
-
-      .muted {
-        margin-left: auto;
-        margin-right: 0;
-      }
-
-      &.selected {
-        color: var(--neko-text-inverse);
-        margin-left: -0.6rem;
-        padding-left: 0.6rem;
-        margin-right: -0.6rem;
-        padding-right: 0.6rem;
-
-        .icon {
-          color: var(--neko-text-normal);
-          background: var(--neko-text-inverse) !important;
-          background-color: var(--neko-text-inverse) !important;
-        }
-      }
     }
   }
 }

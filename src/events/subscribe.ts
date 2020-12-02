@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { queryCache } from 'react-query'
 import { Auth } from '../authentication/state'
 import { CLIENT_GATEWAY_URL } from '../utils/constants'
-import { getCommunities, getParticipants } from '../user/remote'
+import { getCommunities, getParticipants, getUnreads } from '../user/remote'
 
 const useSubscribe = () => {
   const { token, id } = Auth.useContainer()
@@ -25,6 +25,7 @@ const useSubscribe = () => {
 
     queryCache.prefetchQuery(['communities', id, token], getCommunities)
     queryCache.prefetchQuery(['participants', id, token], getParticipants)
+    queryCache.prefetchQuery(['unreads', id, token], getUnreads)
 
     return () => {
       source.close()

@@ -39,6 +39,12 @@ export type Member = {
   }
 }
 
+interface Unreads {
+  [key: string]: {
+    read: string
+    last_message_id: string
+  }
+}
 export type MembersResponse = Member[]
 
 export const getUser = async (_: string, userID: string, token: string) =>
@@ -77,4 +83,13 @@ export const getParticipants = async (
         }
       }
     )
+  ).data
+
+export const getUnreads = async (_: string, userID: string, token: string) =>
+  (
+    await clientGateway.get<Unreads>(`/users/${userID}/read`, {
+      headers: {
+        Authorization: token
+      }
+    })
   ).data

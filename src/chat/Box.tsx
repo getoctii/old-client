@@ -6,6 +6,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useInterval, useMedia } from 'react-use'
 import Picker from 'emoji-picker-react'
 import { Form, Formik, FastField, FieldInputProps } from 'formik'
+import { postTyping, uploadFile } from './remote'
+import { Auth } from '../authentication/state'
+import { Chat } from './state'
 
 const adjectives = [
   ' amazing',
@@ -22,16 +25,14 @@ const adjectives = [
 ]
 
 const View = ({
-  sendMessage,
-  uploadFile,
-  postTyping,
+  channelID,
   typingIndicator
 }: {
-  sendMessage: (msg: string) => void
-  uploadFile: (file: File) => void
-  postTyping: () => void
+  channelID: string
   typingIndicator: boolean
 }) => {
+  const { sendMessage } = Chat.useContainer()
+  const { token } = Auth.useContainer()
   const isMobile = useMedia('(max-width: 940px)')
   const [typing, setTyping] = useState<boolean>(false)
   const [adjective, setAdjectives] = useState(
@@ -43,11 +44,15 @@ const View = ({
   const uploadInput = useRef<HTMLInputElement>(null)
   const [emojiPicker, setEmojiPicker] = useState(false)
   useEffect(() => {
-    const interval = setInterval(() => typing && postTyping(), 7000)
+    if (!token) return
+    const interval = setInterval(
+      () => typing && postTyping(channelID, token),
+      7000
+    )
     return () => {
       clearInterval(interval)
     }
-  }, [typing, postTyping])
+  }, [typing, channelID, token])
 
   return (
     <div
@@ -83,8 +88,9 @@ const View = ({
                     type='text'
                     autoComplete='off'
                     onChange={(event) => {
+                      if (!token) return
                       if (event.target.value.length > 0 && !typing) {
-                        postTyping()
+                        postTyping(channelID, token)
                         setTyping(true)
                       } else if (event.target.value.length === 0 && typing) {
                         setTyping(false)
@@ -104,7 +110,12 @@ const View = ({
                 type='file'
                 accept='.jpg, .png, .jpeg, .gif'
                 onChange={async (event) => {
-                  await uploadFile(event.target.files?.item(0) as any)
+                  if (!token) return
+                  await uploadFile(
+                    channelID,
+                    event.target.files?.item(0) as any,
+                    token
+                  )
                 }}
               />
             </Button>

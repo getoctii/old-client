@@ -9,7 +9,7 @@ import { Events } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { getUser, State } from '../user/remote'
 import { log } from '../utils/logging'
-import { Channel } from '../chat/remote'
+import { Chat } from '../chat/state'
 
 interface Message {
   id: string
@@ -35,6 +35,7 @@ declare global {
 }
 
 const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
+  const { autoRead, channelID } = Chat.useContainer()
   const { id, token } = Auth.useContainer()
   const { stopTyping } = Typing.useContainer()
   const [mutedCommunities] = useLocalStorage<string[]>('muted_communities', [])
@@ -54,18 +55,20 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
             : [[message], ...initial]
         )
       }
-      const initialChannel: Channel | undefined = queryCache.getQueryData([
-        'channel',
-        message.channel_id,
-        token
-      ])
-      if (initialChannel) {
-        queryCache.setQueryData(['channel', message.channel_id, token], {
-          ...initialChannel,
-          last_message_id: message.id
-        })
-      }
-
+      // channel id cna be undefined btw
+      queryCache.setQueryData(['unreads', id, token], (initial: any) => ({
+        ...initial,
+        [message.channel_id]: {
+          ...(initial[message.channel_id] ?? {}),
+          last_message_id: message.id,
+          read:
+            id === message.author.id ||
+            (autoRead && message.channel_id === channelID)
+              ? message.id
+              : initial[message.channel_id]?.read
+        }
+      }))
+      // NO FUCK U
       queryCache.setQueryData(['message', message.id, token], {
         ...message,
         author_id: message.author.id
@@ -112,8 +115,8 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
             }`
           )
         } else {
-          try {
-            Plugins.LocalNotifications.requestPermission().then((granted) => {
+          Plugins.LocalNotifications.requestPermission()
+            .then((granted) => {
               if (granted) {
                 Plugins.LocalNotifications.schedule({
                   notifications: [
@@ -136,9 +139,9 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
                 })
               }
             })
-          } catch {
-            console.warn('Failed to send notification')
-          }
+            .catch(() => {
+              console.warn('Failed to send notification')
+            })
         }
       }
       stopTyping(message.channel_id, message.author.id)
@@ -156,7 +159,9 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
     id,
     stopTyping,
     user,
-    token
+    token,
+    autoRead,
+    channelID
   ])
 }
 

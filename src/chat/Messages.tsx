@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import styles from './Messages.module.scss'
-import { queryCache, useInfiniteQuery } from 'react-query'
+import { queryCache, useInfiniteQuery, useQuery } from 'react-query'
 import { clientGateway } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import Message from './Message'
@@ -8,6 +8,8 @@ import moment from 'moment'
 import { Waypoint } from 'react-waypoint'
 import { Channel } from './remote'
 import { useDebounce } from 'react-use'
+import { getUnreads } from '../user/remote'
+import { Chat } from './state'
 
 interface MessageType {
   id: string
@@ -24,14 +26,13 @@ interface MessageType {
 
 const View = ({
   channel,
-  onTrackChange,
   autoRead
 }: {
   channel: Channel
-  onTrackChange: (tracking: boolean) => void
   autoRead: boolean
 }) => {
-  const { token } = Auth.useContainer()
+  const { tracking, setTracking } = Chat.useContainer()
+  const { token, id } = Auth.useContainer()
   const fetchMessages = async (_: string, channelID: string, date: string) => {
     return (
       await clientGateway.get<MessageType[]>(
@@ -66,11 +67,6 @@ const View = ({
 
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
-  const [tracking, setTracking] = useState(true)
-
-  useEffect(() => {
-    onTrackChange(tracking)
-  }, [tracking, onTrackChange])
 
   const autoScroll = useCallback(() => {
     const scrollRef = ref?.current
@@ -80,13 +76,16 @@ const View = ({
   }, [tracking, ref])
 
   useEffect(autoScroll, [messages, autoScroll])
+  const unreads = useQuery(['unreads', id, token], getUnreads)
 
   const setAsRead = useCallback(async () => {
     console.log(tracking, messages, channel)
     if (
       tracking &&
       messages &&
-      messages[messages.length - 1]?.id !== channel.read
+      unreads.data &&
+      unreads.data[channel.id] &&
+      messages[messages.length - 1]?.id !== unreads.data[channel.id].read
     ) {
       await clientGateway.post(
         `/channels/${channel.id}/read`,
@@ -98,15 +97,19 @@ const View = ({
         }
       )
       // TODO: Maybe we want to push a gateway event instead?
-      console.log(['channel', channel.id, token])
-      queryCache.setQueryData(['channel', channel.id, token], {
-        ...channel,
-        read: messages[messages.length - 1]?.id
-      })
+      queryCache.setQueryData(['unreads', id, token], (initial: any) => ({
+        ...initial,
+        [channel.id]: {
+          ...initial[channel.id],
+          read: messages[messages.length - 1]?.id
+        }
+      }))
     }
-  }, [tracking, messages, channel, token])
+  }, [tracking, messages, channel, token, unreads, id])
 
   const setAsReadHack = useRef(setAsRead)
+  // oh this is more sus then my code
+  // stop saying _it_
 
   useEffect(() => {
     setAsReadHack.current = setAsRead
@@ -155,9 +158,7 @@ const View = ({
       {loading && (
         <div className={styles.messages}>
           {Array.from(Array(length).keys()).map((_, index) => (
-            <>
-              <Message.Placeholder key={index} />
-            </>
+            <Message.Placeholder key={index} />
           ))}
         </div>
       )}
@@ -175,7 +176,7 @@ const View = ({
       )}
       {messages?.map((message, index) =>
         message ? (
-          <>
+          <React.Fragment key={message.id}>
             <Message.View
               key={message.id}
               primary={isPrimary(message, index)}
@@ -186,13 +187,15 @@ const View = ({
               content={message.content}
               updatedAt={message.updated_at}
             />
-            {channel?.read === message.id &&
-              channel.read !== messages[messages.length - 1]?.id && (
+            {unreads.data &&
+              unreads.data[channel.id]?.read === message.id &&
+              unreads.data[channel.id]?.read !==
+                messages[messages.length - 1]?.id && (
                 <div key={`read-${message.id}`} className={styles.indicator}>
                   <span>Last Read</span>
                 </div>
               )}
-          </>
+          </React.Fragment>
         ) : (
           <></>
         )
@@ -211,9 +214,7 @@ const Placeholder = () => {
   return (
     <div className={styles.messages}>
       {Array.from(Array(length).keys()).map((_, index) => (
-        <>
-          <Message.Placeholder key={index} />
-        </>
+        <Message.Placeholder key={index} />
       ))}
     </div>
   )

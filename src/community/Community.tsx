@@ -88,23 +88,24 @@ const Channel = () => {
   const community = useQuery(['community', id, auth.token], getCommunity)
   if (!community?.data) return <></>
   const channel = community.data.channels.find(
-    (channel) => channel.id === channelID
+    (channel) => channel === channelID
   )
-  if (!channel) return <></>
+  if (!channel) return <>1</>
   return (
     <Chat.View
       type={ChannelTypes.CommunityChannel}
-      channelID={channel.id}
-      key={channel.id}
+      channelID={channel}
+      key={channel}
     />
   )
 }
 
 const Placeholder = () => {
+  const isMobile = useMedia('(max-width: 940px)')
   return (
     <>
       <Channels.Placeholder />
-      <Chat.Placeholder />
+      {!isMobile && <Chat.Placeholder />}
     </>
   )
 }
@@ -133,10 +134,12 @@ const Community = () => {
       ) : (
         <></>
       )}
+
       <Suspense fallback={<Chat.Placeholder />}>
         <Switch>
           <PrivateRoute path={`${path}/settings`} component={Settings} exact />
           <PrivateRoute path={`${path}/members`} component={Members} exact />
+
           <PrivateRoute
             path={`${path}/channels/:channelID`}
             component={Channel}
@@ -145,7 +148,7 @@ const Community = () => {
           {!isMobile && (
             <Redirect
               path='*'
-              to={`/communities/${id}/channels/${community.data.channels[0].id}`}
+              to={`/communities/${id}/channels/${community.data.channels[0]}`}
             />
           )}
         </Switch>

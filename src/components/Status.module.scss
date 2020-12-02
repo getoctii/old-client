@@ -51,6 +51,13 @@
   .form {
     input {
       margin-bottom: 1rem;
+
+      &::placeholder {
+        font-family: Inter, sans-serif;
+        opacity: 0.65;
+        font-weight: 300;
+        color: var(--neko-input-text);
+      }
     }
 
     p {

@@ -9,6 +9,7 @@ import { getParticipants } from '../user/remote'
 import { Conversations } from './Conversations'
 import { useLocalStorage, useMedia } from 'react-use'
 import Empty from './empty/Empty'
+import Sidebar from '../sidebar/Sidebar'
 
 const Conversation = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
@@ -87,7 +88,10 @@ const Router = () => {
           </Suspense>
         </>
       ) : isMobile ? (
-        <Conversations />
+        <>
+          <Sidebar />
+          <Conversations />
+        </>
       ) : (
         <Empty />
       )}

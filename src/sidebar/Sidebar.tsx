@@ -15,10 +15,17 @@ import { useHistory, useRouteMatch } from 'react-router-dom'
 import Button from '../components/Button'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { useLocalStorage, useMedia } from 'react-use'
-import { getCommunities, getUser, State } from '../user/remote'
+import {
+  getCommunities,
+  getParticipants,
+  getUnreads,
+  getUser,
+  State
+} from '../user/remote'
 import { isPlatform } from '@ionic/react'
 import { useScroll } from 'react-use'
 import { ScrollPosition } from '../state/scroll'
+import { getCommunity } from '../community/remote'
 
 const reorder = (list: any[], startIndex: number, endIndex: number): any[] => {
   const result = Array.from(list)
@@ -40,11 +47,18 @@ const Community = ({
   }
   index: number
 }) => {
+  const { token, id } = Auth.useContainer()
   const match = useRouteMatch<{
     tab?: string
     id?: string
   }>('/:tab/:id')
   const history = useHistory()
+  const communityFull = useQuery(
+    ['community', community.id, token],
+    getCommunity
+  )
+  const unreads = useQuery(['unreads', id, token], getUnreads)
+
   return (
     <Draggable draggableId={community.id} index={index}>
       {(provided) => (
@@ -65,6 +79,10 @@ const Community = ({
           }}
         >
           <img src={community.icon} alt={community.name} />
+          {communityFull.data?.channels.some((channelID) => {
+            const channel = unreads.data?.[channelID]
+            return channel?.last_message_id !== channel?.read
+          }) && <div className={`${styles.badge}`} />}
         </div>
       )}
     </Draggable>
@@ -144,13 +162,16 @@ const Sidebar = () => {
   const history = useHistory()
   const isMobile = useMedia('(max-width: 940px)')
   const matchTab = useRouteMatch<{ tab: string }>('/:tab')
-
   const user = useQuery(['users', auth.id, auth.token], getUser)
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const currentScrollPosition = useScroll(scrollRef)
   const [scrollPosition, setScrollPosition] = ScrollPosition.useContainer()
-
+  const unreads = useQuery(['unreads', auth.id, auth.token], getUnreads)
+  const participants = useQuery(
+    ['participants', auth.id, auth.token],
+    getParticipants
+  )
   useEffect(() => {
     setScrollPosition(currentScrollPosition)
   }, [currentScrollPosition, setScrollPosition])
@@ -224,6 +245,13 @@ const Sidebar = () => {
           }}
         >
           <FontAwesomeIcon className={styles.symbol} icon={faInbox} size='2x' />
+          {participants.data
+            ?.filter((part) => part.conversation.participants.length > 1)
+            .some((participant) => {
+              const channel =
+                unreads.data?.[participant.conversation.channel_id]
+              return channel?.last_message_id !== channel?.read
+            }) && <div className={`${styles.badge}`} />}
         </Button>
         <div className={styles.separator} />
         <Suspense fallback={<Placeholder />}>
@@ -233,48 +261,50 @@ const Sidebar = () => {
       </div>
       {!isMobile && (
         <div className={styles.pinned}>
-          <Button
-            className={`${styles.avatar} ${
-              matchTab?.params.tab === 'settings' ? styles.selected : ''
-            }`}
-            type='button'
-          >
-            <img
-              src={user.data?.avatar}
-              alt={user.data?.username}
-              onClick={() => {
-                console.log('redirect')
-                history.push('/settings')
-              }}
-            />
-            {user.data?.state && (
-              <div
-                className={`${styles.badge} ${
-                  user.data.state === State.online
-                    ? styles.online
-                    : user.data.state === State.dnd
-                    ? styles.dnd
-                    : user.data.state === State.idle
-                    ? styles.idle
-                    : user.data.state === State.offline
-                    ? styles.offline
-                    : ''
-                }`}
-                onClick={() => ui.setModal({ name: 'status' })}
+          <div className={styles.pinnedWrapper}>
+            <Button
+              className={`${styles.avatar} ${
+                matchTab?.params.tab === 'settings' ? styles.selected : ''
+              }`}
+              type='button'
+            >
+              <img
+                src={user.data?.avatar}
+                alt={user.data?.username}
+                onClick={() => {
+                  console.log('redirect')
+                  history.push('/settings')
+                }}
               />
-            )}
-          </Button>
-          <Button
-            className={styles.plus}
-            type='button'
-            onClick={() => ui.setModal({ name: 'newCommunity' })}
-          >
-            <FontAwesomeIcon
-              className={styles.symbol}
-              icon={faPlus}
-              size='2x'
-            />
-          </Button>
+              {user.data?.state && (
+                <div
+                  className={`${styles.badge} ${
+                    user.data.state === State.online
+                      ? styles.online
+                      : user.data.state === State.dnd
+                      ? styles.dnd
+                      : user.data.state === State.idle
+                      ? styles.idle
+                      : user.data.state === State.offline
+                      ? styles.offline
+                      : ''
+                  }`}
+                  onClick={() => ui.setModal({ name: 'status' })}
+                />
+              )}
+            </Button>
+            <Button
+              className={styles.plus}
+              type='button'
+              onClick={() => ui.setModal({ name: 'newCommunity' })}
+            >
+              <FontAwesomeIcon
+                className={styles.symbol}
+                icon={faPlus}
+                size='2x'
+              />
+            </Button>
+          </div>
         </div>
       )}
     </div>

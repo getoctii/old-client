@@ -1,7 +1,7 @@
-import React, { Suspense, useMemo, useState } from 'react'
+import React, { Suspense, useEffect, useMemo } from 'react'
 import styles from './Channel.module.scss'
-import { queryCache, useMutation, useQuery } from 'react-query'
-import { ChannelTypes, clientGateway } from '../utils/constants'
+import { useQuery } from 'react-query'
+import { ChannelTypes } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { useDropArea } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -13,14 +13,14 @@ import {
 } from '@fortawesome/pro-solid-svg-icons'
 import { useMedia } from 'react-use'
 import { useHistory } from 'react-router-dom'
-import axios from 'axios'
 import Box from './Box'
 import Typing from '../state/typing'
 import { Call } from '../state/call'
 import Button from '../components/Button'
-import { getChannel } from './remote'
+import { getChannel, uploadFile } from './remote'
 import Messages from './Messages'
 import { getUser } from '../user/remote'
+import { Chat } from './state'
 
 const TypingIndicator = ({ channelID }: { channelID: string }) => {
   const { id } = Auth.useContainer()
@@ -47,20 +47,23 @@ const TypingIndicator = ({ channelID }: { channelID: string }) => {
   else return <div className={styles.typingEmpty}></div>
 }
 
-const Name = ({ id, dm }: { id: string; dm: boolean }) => {
+const Name = ({ id }: { id: string }) => {
+  const { token } = Auth.useContainer()
+  const user = useQuery(['users', id, token], getUser)
+  return <>{user.data?.username}</>
+}
+
+const PrivateName = ({ id }: { id?: string }) => {
   const { token } = Auth.useContainer()
   const user = useQuery(['users', id, token], getUser)
   return (
-    <>
-      {user.data?.username}
-      {dm
-        ? `#${
-            user.data?.discriminator === 0
-              ? 'inn'
-              : user.data?.discriminator.toString().padStart(4, '0')
-          }`
-        : ''}
-    </>
+    <div className={styles.title}>
+      {user.data?.username}#
+      {user.data?.discriminator === 0
+        ? 'inn'
+        : user.data?.discriminator.toString().padStart(4, '0')}
+      <p className={styles.status}>{user.data?.status}</p>
+    </div>
   )
 }
 
@@ -73,55 +76,35 @@ const View = ({
   channelID: string
   participants?: string[]
 }) => {
+  const {
+    autoRead,
+    setTracking,
+    setAutoRead,
+    setChannelID
+  } = Chat.useContainer()
   const { token, id } = Auth.useContainer()
   const call = Call.useContainer()
   const { typing } = Typing.useContainer()
   const users = typing[channelID]
     ?.filter((userID) => userID[0] !== id)
     .map((t) => t[1])
-  const [tracking, setTracking] = useState(true)
-  const [autoRead, setAutoRead] = useState(false)
-  const [sendMessage] = useMutation(async (content: string) => {
-    const data = (
-      await clientGateway.post(
-        `/channels/${channelID}/messages`,
-        new URLSearchParams({ content }),
-        { headers: { Authorization: token } }
-      )
-    ).data
-    queryCache.setQueryData(['channel', channel.data?.id, token], (c: any) => ({
-      ...c,
-      read: data.id
-    }))
-    if (tracking) setAutoRead(true)
-  })
 
   const isMobile = useMedia('(max-width: 940px)')
   const history = useHistory()
 
-  const uploadFile = async (file: File) => {
-    const formData = new FormData()
-    formData.append('file', file)
-    const response = await axios.post(
-      'https://covfefe.innatical.com/api/v1/upload',
-      formData
-    )
-    await sendMessage(response.data.url)
-  }
-
-  const postTyping = async () => {
-    clientGateway.post(`/channels/${channelID}/typing`, undefined, {
-      headers: {
-        Authorization: token
-      }
-    })
-  }
-
   const channel = useQuery(['channel', channelID, token], getChannel)
 
   const [bond] = useDropArea({
-    onFiles: (files) => uploadFile(files[0])
+    onFiles: (files) =>
+      token ? uploadFile(channelID, files[0], token) : undefined
   })
+
+  useEffect(() => {
+    setChannelID(channelID)
+    setTracking(true)
+    setAutoRead(false)
+    console.log('reset')
+  }, [setAutoRead, setTracking, setChannelID, channelID])
 
   return (
     <Suspense fallback={<Placeholder />}>
@@ -130,7 +113,15 @@ const View = ({
           {isMobile ? (
             <div
               className={styles.icon}
-              onClick={() => isMobile && history.goBack()}
+              onClick={() => {
+                if (isMobile) {
+                  if (type === ChannelTypes.CommunityChannel) {
+                    history.push(`/communities/${channel.data?.community_id}`)
+                  } else {
+                    history.push('/')
+                  }
+                }
+              }}
             >
               <FontAwesomeIcon
                 className={styles.backButton}
@@ -142,14 +133,16 @@ const View = ({
               <FontAwesomeIcon icon={faHashtag} />
             </div>
           )}
-          <div className={styles.title}>
-            {type === ChannelTypes.PrivateChannel
-              ? participants?.map((i) => (
-                  <Name id={i} dm={type === ChannelTypes.PrivateChannel} />
-                ))
-              : channel.data?.name}
-            <p className={styles.status}>{channel.data?.description}</p>
-          </div>
+          {type === ChannelTypes.PrivateChannel ? (
+            <PrivateName id={participants?.[0]} />
+          ) : (
+            <div className={styles.title}>
+              {type === ChannelTypes.GroupChannel
+                ? participants?.map((i) => <Name key={i} id={i} />)
+                : channel.data?.name}
+              <p className={styles.status}>{channel.data?.description}</p>
+            </div>
+          )}
           {type === ChannelTypes.PrivateChannel && participants ? (
             [0] &&
             call.otherUserID !== participants[0] && (
@@ -173,22 +166,13 @@ const View = ({
           )}
         </div>
         {channel.data ? (
-          <Messages.View
-            channel={channel.data}
-            onTrackChange={(t) => {
-              setTracking(t)
-              setAutoRead(false)
-            }}
-            autoRead={autoRead}
-          />
+          <Messages.View channel={channel.data} autoRead={autoRead} />
         ) : (
           <Messages.Placeholder />
         )}
         <Box.View
           {...{
-            sendMessage,
-            uploadFile,
-            postTyping,
+            channelID,
             typingIndicator: users?.length > 0
           }}
         />

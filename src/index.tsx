@@ -19,6 +19,7 @@ import Theme from './theme/hook'
 import Typing from './state/typing'
 import { ScrollPosition } from './state/scroll'
 import { Call } from './state/call'
+import { Chat } from './chat/state'
 
 Sentry.init({
   dsn:
@@ -79,11 +80,13 @@ ReactDOM.render(
             <UI.Provider>
               <Typing.Provider>
                 <Call.Provider>
-                  <Theme.Provider>
-                    <ScrollPosition.Provider>
-                      <Router />
-                    </ScrollPosition.Provider>
-                  </Theme.Provider>
+                  <Chat.Provider>
+                    <Theme.Provider>
+                      <ScrollPosition.Provider>
+                        <Router />
+                      </ScrollPosition.Provider>
+                    </Theme.Provider>
+                  </Chat.Provider>
                 </Call.Provider>
               </Typing.Provider>
             </UI.Provider>

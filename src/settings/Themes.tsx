@@ -60,7 +60,7 @@ const Themes = () => {
         <h4>Color Themes</h4>
         <div className={styles.colors}>
           {themes.map((t, index) => (
-            <>
+            <React.Fragment key={t.id}>
               {index !== 0 && <hr />}
               <div
                 onClick={() => setThemeId(t.id)}
@@ -70,7 +70,7 @@ const Themes = () => {
               >
                 {t.name}
               </div>
-            </>
+            </React.Fragment>
           ))}
         </div>
       </div>

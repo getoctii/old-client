@@ -151,6 +151,13 @@
     }
   }
 
+  @media (max-width: 940px) {
+    padding-top: calc(env(safe-area-inset-top) + 0.8rem);
+    .header {
+      margin-top: 0.5rem;
+    }
+  }
+
   .messages {
     margin-top: auto;
     max-height: 100%;

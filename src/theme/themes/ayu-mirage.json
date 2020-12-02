@@ -10,7 +10,7 @@
       "success": "#8f8f8f",
       "info": "#8f8f8f",
       "danger": "#FF3333",
-      "warning": "#8f8f8f",
+      "warning": "#788A9F",
       "light": "#dadada",
       "dark": "#1F2430"
     },
@@ -24,7 +24,8 @@
     },
     "sidebar": {
       "background": "#1F2430",
-      "seperator": "#383838"
+      "seperator": "#383838",
+      "shadow": " 0 -9px 10px 0 rgba(0, 0, 0, 0.42)"
     },
     "settings": {
       "background": "#1F2430",
@@ -81,8 +82,8 @@
     "colors": {
       "primary": "#707A8C",
       "secondary": "#707A8C",
-      "success": "#8f8f8f",
-      "info": "#8f8f8f",
+      "success": "#707A8C",
+      "info": "#707A8C",
       "danger": "#707A8C",
       "warning": "#707A8C",
       "light": "#dadada",
@@ -98,7 +99,8 @@
     },
     "sidebar": {
       "background": "#FAFAFA",
-      "seperator": "#EEEEEE"
+      "seperator": "#EEEEEE",
+      "shadow": "0 -9px 12px -2px rgba(255, 255, 255, 1)"
     },
     "settings": {
       "background": "#FAFAFA",

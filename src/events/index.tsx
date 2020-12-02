@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react'
 import useSubscribe from './subscribe'
 import useNewMessage from './newMessage'
 import useDeletedMessage from './deletedMessage'
