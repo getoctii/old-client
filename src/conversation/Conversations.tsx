@@ -1,82 +1,61 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { Suspense, useMemo } from 'react'
 import styles from './Conversations.module.scss'
 import { Auth } from '../authentication/state'
-import { useQuery } from 'react-query'
-import { clientGateway } from '../constants'
+import { queryCache, useQuery } from 'react-query'
 import ConversationCard from './ConversationCard'
-import Button from '../components/Button'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { UI } from '../state/ui'
-import { useLocalStorage, useMedia } from 'react-use'
+import { useLocalStorage, useMedia, useUpdate } from 'react-use'
 import NewConversation from './NewConversation'
-
-type Participant = {
-  id: string
-  conversation: {
-    id: string
-    channel_id: string
-    participants: string[]
-  }
-}
-
-type ParticipantsResponse = Participant[]
+import { MessageResponse } from '../message/remote'
+import moment from 'moment'
+import { getParticipants, Participant } from '../user/remote'
 
 const ConversationList = () => {
   const auth = Auth.useContainer()
-  const ui = UI.useContainer()
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
-  const [lastConversation, setLastConversation] = useLocalStorage(
-    'last_conversation'
-  )
-  const isMobile = useMedia('(max-width: 940px)')
   const participants = useQuery(
-    'participants',
-    async () =>
-      (
-        await clientGateway.get<ParticipantsResponse>(
-          `/users/${auth.id}/participants`,
-          {
-            headers: {
-              Authorization: auth.token
-            }
-          }
-        )
-      ).data
+    ['participants', auth.id, auth.token],
+    getParticipants
   )
-  const [selected, setSelected] = useState(match?.params.id || undefined)
   const history = useHistory()
   const filteredParticipants = participants.data?.filter(
     (part) => part.conversation.participants.length > 1
   )
+  const [, setLastConversation] = useLocalStorage('last_conversation')
 
-  useEffect(() => {
-    setSelected(match?.params.id || undefined)
-  }, [match])
-
-  if (
-    !selected &&
-    filteredParticipants &&
-    filteredParticipants.length > 0 &&
-    !isMobile
-  ) {
-    history.push(
-      `/conversations/${
-        lastConversation &&
-        filteredParticipants.find((p) => p.conversation.id === lastConversation)
-          ? lastConversation
-          : filteredParticipants[0].conversation.id
-      }`
-    )
-  }
+  const update = useUpdate()
   return (
     <>
-      {participants.data && participants.data.length > 0 ? (
-        participants.data
+      {filteredParticipants && filteredParticipants.length > 0 ? (
+        filteredParticipants
           ?.filter(({ conversation }: Participant) => {
             const people = conversation.participants.filter(
               (userID: string) => userID !== auth.id
             )
             return people.length > 1 || people.length !== 0
+          })
+          .sort((a, b) => {
+            const firstMessage = moment
+              .utc(
+                (queryCache.getQueryData([
+                  'message',
+                  a.conversation.last_message_id,
+                  auth.token
+                ]) as MessageResponse | undefined)?.created_at ?? 0
+              )
+              .unix()
+            const lastMessage = moment
+              .utc(
+                (queryCache.getQueryData([
+                  'message',
+                  b.conversation.last_message_id,
+                  auth.token
+                ]) as MessageResponse | undefined)?.created_at ?? 0
+              )
+              .unix()
+            if (lastMessage > firstMessage) return 1
+            else if (lastMessage < firstMessage) return -1
+            else return 0
           })
           .map(({ conversation }: Participant, index) => {
             const people = conversation.participants.filter(
@@ -90,34 +69,34 @@ const ConversationList = () => {
                   {index !== 0 && (
                     <hr
                       className={
-                        selected === conversation.id ? styles.hidden : ''
+                        match?.params.id === conversation.id
+                          ? styles.hidden
+                          : ''
                       }
                     />
                   )}
-                  <ConversationCard.View
-                    selected={selected === conversation.id}
-                    onClick={() => {
-                      history.push(`/conversations/${conversation.id}`)
-                      setSelected(conversation.id)
-                      setLastConversation(conversation.id)
-                    }}
-                    people={people}
-                    conversationID={conversation.id}
-                  />
+                  <Suspense fallback={<ConversationCard.Placeholder />}>
+                    <ConversationCard.View
+                      selected={match?.params.id === conversation.id}
+                      onClick={() => {
+                        history.push(`/conversations/${conversation.id}`)
+                        setLastConversation(conversation.id)
+                      }}
+                      people={people}
+                      conversationID={conversation.id}
+                      lastMessageID={conversation.last_message_id}
+                      messageUpdated={update}
+                      channelID={conversation.channel_id}
+                    />
+                  </Suspense>
                 </div>
               )
             }
           })
       ) : (
         <div className={styles.alert}>
-          <h3>You aren't in any chats!</h3>
-          <p>Would you like to chat with someone?</p>
-          <Button
-            type='button'
-            onClick={() => ui.setModal({ name: 'newConversation' })}
-          >
-            Create One
-          </Button>
+          <h4>You aren't in any chats!</h4>
+          <p>Use the search bar to create new chats using usernames.</p>
         </div>
       )}
     </>

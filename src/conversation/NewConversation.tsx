@@ -2,14 +2,15 @@ import React from 'react'
 import styles from './NewConversation.module.scss'
 import Input from '../components/Input'
 import { Field, Form, Formik } from 'formik'
-import { clientGateway } from '../constants'
+import { clientGateway } from '../utils/constants'
 import { Auth } from '../authentication/state'
-import { isTag } from '../validations'
+import { isTag } from '../utils/validations'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExclamationCircle, faSearch } from '@fortawesome/pro-solid-svg-icons'
 import Button from '../components/Button'
 import { queryCache } from 'react-query'
 import { useHistory } from 'react-router-dom'
+import { ParticipantsResponse } from '../user/remote'
 
 interface ConversationResponse {
   id: string
@@ -24,17 +25,6 @@ type FindResponse = {
 }
 
 type formData = { tag: string }
-
-type Participant = {
-  id: string
-  conversation: {
-    id: string
-    channel_id: string
-    participants: string[]
-  }
-}
-
-type ParticipantsResponse = Participant[]
 
 const validate = (values: formData) => {
   const errors: { tag?: string } = {}
@@ -57,7 +47,7 @@ const createConversation = async (
   ).data
 
 const NewConversation = () => {
-  const { token } = Auth.useContainer()
+  const { id, token } = Auth.useContainer()
   const history = useHistory()
   return (
     <div className={styles.newConversation}>
@@ -83,7 +73,9 @@ const NewConversation = () => {
               })
             ).data
             const cache = queryCache.getQueryData([
-              'participants'
+              'participants',
+              id,
+              token
             ]) as ParticipantsResponse
             const participant = cache?.find((participant) =>
               participant.conversation.participants.includes(user.id)
@@ -135,7 +127,11 @@ const NewConversation = () => {
                 <FontAwesomeIcon icon={faSearch} />
               </Button>
             ) : (
-              <Button type='submit' className={styles.search}>
+              <Button
+                type='submit'
+                className={styles.search}
+                disabled={isSubmitting}
+              >
                 <FontAwesomeIcon icon={faSearch} />
               </Button>
             )}

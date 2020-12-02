@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createContainer } from 'unstated-next'
 import Peer from 'peerjs'
-import { clientGateway } from '../constants'
+import { clientGateway } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { useLocalStorage } from 'react-use'
 

@@ -29,9 +29,14 @@
     position: absolute;
     bottom: 0;
     padding-bottom: 1rem;
+    box-shadow: var(--neko-sidebar-shadow);
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    background-color: var(--neko-sidebar-background);
+    .pinnedWrapper {
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      background-color: var(--neko-sidebar-background);
+    }
   }
   .icon {
     background-size: cover;
@@ -44,10 +49,22 @@
     border-radius: 16px;
     transition: box-shadow 0.1s ease-in-out;
     animation: bounce 0.2s easin-in;
-
+    position: relative;
+    .badge {
+      position: absolute;
+      height: 18px;
+      border-radius: 50%;
+      width: 18px;
+      bottom: -3.45px;
+      right: -3.45px;
+      border-color: var(--neko-sidebar-background);
+      border-width: 3.5px;
+      border-style: solid;
+      background: var(--neko-colors-primary);
+    }
     img {
       border-radius: 16px;
-      object-fit: fill;
+      object-fit: cover;
       width: 100%;
       height: 100%;
     }
@@ -91,10 +108,23 @@
     height: 3.5rem;
     min-height: 3.5rem;
     min-width: 3.5rem;
-
+    position: relative;
     @media (max-width: 940px) {
       margin-bottom: 0;
       margin-right: 0.7rem;
+    }
+
+    .badge {
+      position: absolute;
+      height: 18px;
+      border-radius: 50%;
+      width: 18px;
+      bottom: -3.45px;
+      right: -3.45px;
+      border-color: var(--neko-sidebar-background);
+      border-width: 3.5px;
+      border-style: solid;
+      background: var(--neko-colors-primary);
     }
   }
 
@@ -154,6 +184,7 @@
       }
     }
     img {
+      pointer-events: all;
       border-radius: 16px;
       object-fit: cover;
       height: 3.5rem;

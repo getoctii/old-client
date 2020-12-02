@@ -23,7 +23,8 @@
     },
     "sidebar": {
       "background": "#040a0f",
-      "seperator": "#383838"
+      "seperator": "#383838",
+      "shadow": " 0 -9px 10px 0 rgba(0, 0, 0, 0.42)"
     },
     "settings": {
       "background": "#040a0f",
@@ -49,7 +50,7 @@
     },
     "context": {
       "seperator": "#040a0f",
-      "background": "rgba(255, 255, 255, 0.1)"
+      "background": "rgba(227, 242, 256, 0.1)"
     },
     "status": {
       "selected": "#1089FF",
@@ -97,7 +98,8 @@
     },
     "sidebar": {
       "background": "#EEF7FF",
-      "seperator": "#F1F1F1"
+      "seperator": "#F1F1F1",
+      "shadow": "0 -9px 12px -2px rgba(255, 255, 255, 1)"
     },
     "settings": {
       "background": "#EEF7FF",

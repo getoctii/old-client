@@ -31,6 +31,9 @@ body {
   color: var(--neko-text-normal);
   height: 100vh;
   width: 100vw;
+  @media not all and (display-mode: standalone) {
+    height: -webkit-fill-available;
+  }
   font-family: Inter, sans-serif;
   user-select: none;
   background: var(--neko-chat-background);

@@ -56,6 +56,7 @@ interface Theme {
   sidebar: {
     background: string
     seperator: string
+    shadow: string
   }
   context: {
     background: string
@@ -183,6 +184,7 @@ const useTheme = () => {
       '--neko-chat-hover': currentTheme.chat.hover,
       '--neko-sidebar-background': currentTheme.sidebar.background,
       '--neko-sidebar-seperator': currentTheme.sidebar.seperator,
+      '--neko-sidebar-shadow': currentTheme.sidebar.shadow,
       '--neko-input-background': currentTheme.input.background,
       '--neko-input-text': currentTheme.input.text,
       '--neko-settings-background': currentTheme.settings.background,

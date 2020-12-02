@@ -3,7 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.scss'
 import 'typeface-inter'
-import * as serviceWorker from './serviceWorker'
+import * as serviceWorker from './utils/serviceWorker'
 import { Router } from './Router'
 import { ReactQueryDevtools } from 'react-query-devtools'
 import { Auth } from './authentication/state'
@@ -19,6 +19,7 @@ import Theme from './theme/hook'
 import Typing from './state/typing'
 import { ScrollPosition } from './state/scroll'
 import { Call } from './state/call'
+import { Chat } from './chat/state'
 
 Sentry.init({
   dsn:
@@ -79,11 +80,13 @@ ReactDOM.render(
             <UI.Provider>
               <Typing.Provider>
                 <Call.Provider>
-                  <Theme.Provider>
-                    <ScrollPosition.Provider>
-                      <Router />
-                    </ScrollPosition.Provider>
-                  </Theme.Provider>
+                  <Chat.Provider>
+                    <Theme.Provider>
+                      <ScrollPosition.Provider>
+                        <Router />
+                      </ScrollPosition.Provider>
+                    </Theme.Provider>
+                  </Chat.Provider>
                 </Call.Provider>
               </Typing.Provider>
             </UI.Provider>

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import decode from 'jwt-decode'
 import { createContainer } from 'unstated-next'
-import { clientGateway } from '../constants'
+import { clientGateway } from '../utils/constants'
 import { queryCache } from 'react-query'
 
 const useAuth = () => {

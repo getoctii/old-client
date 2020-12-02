@@ -1,4 +1,4 @@
-import { clientGateway } from '../constants'
+import { clientGateway } from '../utils/constants'
 
 export interface CommunityResponse {
   id: string
@@ -6,11 +6,7 @@ export interface CommunityResponse {
   icon: string
   large: boolean
   owner_id: string
-  channels: {
-    name: string
-    id: string
-    color: string
-  }[]
+  channels: string[]
 }
 
 export interface Invite {

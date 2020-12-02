@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 import { EventSourcePolyfill } from 'event-source-polyfill'
 import { queryCache } from 'react-query'
-import { Events } from '../constants'
+import { Events } from '../utils/constants'
 import { Auth } from '../authentication/state'
+import { log } from '../utils/logging'
 
 const useDeletedChannel = (eventSource: EventSourcePolyfill | null) => {
   const { token } = Auth.useContainer()
@@ -10,6 +11,7 @@ const useDeletedChannel = (eventSource: EventSourcePolyfill | null) => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
       const channel = JSON.parse(e.data)
+      log('Events', 'purple', 'DELETED_CHANNEL')
       queryCache.setQueryData(
         ['community', channel.community_id, token],
         (initial: any) => {

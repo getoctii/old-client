@@ -2,7 +2,7 @@ import React from 'react'
 import styles from './FriendCard.module.scss'
 import { useQuery } from 'react-query'
 import { Auth } from '../authentication/state'
-import { clientGateway } from '../constants'
+import { clientGateway } from '../utils/constants'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserTimes, faUserCheck } from '@fortawesome/pro-solid-svg-icons'
 

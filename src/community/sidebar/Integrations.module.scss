@@ -58,8 +58,8 @@
       background: var(--neko-colors-primary);
       .icon {
         color: var(--neko-text-normal);
-        background: var(--neko-channels-background) !important;
-        background-color: var(--neko-channels-background) !important;
+        background: var(--neko-text-inverse) !important;
+        background-color: var(--neko-text-inverse) !important;
       }
     }
   }
@@ -85,6 +85,9 @@
     }
     &.selected {
       background: var(--neko-colors-secondary);
+      .icon {
+        color: vaR(--neko-text-secondary);
+      }
     }
   }
 }

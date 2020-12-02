@@ -6,9 +6,9 @@ import { Clipboard } from '@capacitor/core'
 import { Auth } from '../authentication/state'
 import { Confirmation } from '../components/Confirmation'
 import { useMutation, useQuery } from 'react-query'
-import { clientGateway } from '../constants'
+import { clientGateway } from '../utils/constants'
 import { AnimatePresence } from 'framer-motion'
-import { UserResponse } from '../user/remote'
+import { getUser } from '../user/remote'
 import { Measure } from './embeds/Measure'
 import Context from '../components/Context'
 import Audio from './embeds/Audio'
@@ -57,15 +57,7 @@ const View = memo(
           })
         ).data
     )
-    const user = useQuery(
-      ['users', authorID],
-      async (_, userID) =>
-        (
-          await clientGateway.get<UserResponse>(`/users/${userID}`, {
-            headers: { Authorization: auth.token }
-          })
-        ).data
-    )
+    const user = useQuery(['users', authorID, auth.token], getUser)
     const getItems = () => {
       const items = [
         {
@@ -152,10 +144,9 @@ const View = memo(
         <Context id={id} key={id} items={getItems()}>
           <div className={`${styles.message} ${primary ? styles.primary : ''}`}>
             {primary && (
-              <img
+              <div
                 className={styles.avatar}
-                src={user.data?.avatar}
-                alt={`${user.data?.username}'s Profile`}
+                style={{ backgroundImage: `url(${user.data?.avatar})` }}
               />
             )}
             <div
@@ -204,16 +195,27 @@ const View = memo(
 const Placeholder = () => {
   const username = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
   const message = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
+  const isPrimary = useMemo(() => Math.floor(Math.random() * 1000000) + 1, [])
   return (
-    <div className={styles.placeholder}>
-      <div className={styles.avatar} />
-      <div className={styles.content}>
+    <div
+      className={`${styles.placeholder} ${
+        isPrimary % 2 === 0 ? styles.primary : ''
+      }`}
+    >
+      {isPrimary % 2 === 0 && <div className={styles.avatar} />}
+      <div
+        className={`${styles.content} ${
+          isPrimary % 2 !== 0 ? styles.spacer : ''
+        }`}
+      >
         <div className={styles.user}>
-          <div
-            className={styles.username}
-            style={{ width: `${username}rem` }}
-          />
-          <div className={styles.date} />
+          {isPrimary % 2 === 0 && (
+            <div
+              className={styles.username}
+              style={{ width: `${username}rem` }}
+            />
+          )}
+          {isPrimary % 2 === 0 && <div className={styles.date} />}
         </div>
         <div className={styles.message} style={{ width: `${message}rem` }} />
       </div>

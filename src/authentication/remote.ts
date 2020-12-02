@@ -1,4 +1,4 @@
-import { clientGateway } from '../constants'
+import { clientGateway } from '../utils/constants'
 
 type LoginResponse = {
   authorization: string

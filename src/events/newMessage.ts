@@ -5,9 +5,11 @@ import { useLocalStorage } from 'react-use'
 import { isPlatform } from '@ionic/react'
 import Typing from '../state/typing'
 import { Plugins, HapticsNotificationType } from '@capacitor/core'
-import { Events } from '../constants'
+import { Events } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { getUser, State } from '../user/remote'
+import { log } from '../utils/logging'
+import { Chat } from '../chat/state'
 
 interface Message {
   id: string
@@ -33,6 +35,7 @@ declare global {
 }
 
 const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
+  const { autoRead, channelID } = Chat.useContainer()
   const { id, token } = Auth.useContainer()
   const { stopTyping } = Typing.useContainer()
   const [mutedCommunities] = useLocalStorage<string[]>('muted_communities', [])
@@ -42,6 +45,7 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
       const message = JSON.parse(e.data) as Message
+      log('Events', 'purple', 'NEW_MESSAGE')
       const initial = queryCache.getQueryData(['messages', message.channel_id])
       if (initial instanceof Array) {
         queryCache.setQueryData(
@@ -49,6 +53,42 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
           initial[0].length < 25
             ? [[message, ...initial[0]], ...initial.slice(1)]
             : [[message], ...initial]
+        )
+      }
+      // channel id cna be undefined btw
+      queryCache.setQueryData(['unreads', id, token], (initial: any) => ({
+        ...initial,
+        [message.channel_id]: {
+          ...(initial[message.channel_id] ?? {}),
+          last_message_id: message.id,
+          read:
+            id === message.author.id ||
+            (autoRead && message.channel_id === channelID)
+              ? message.id
+              : initial[message.channel_id]?.read
+        }
+      }))
+      // NO FUCK U
+      queryCache.setQueryData(['message', message.id, token], {
+        ...message,
+        author_id: message.author.id
+      })
+
+      const participants = queryCache.getQueryData(['participants', id, token])
+      if (participants instanceof Array) {
+        queryCache.setQueryData(
+          ['participants', id, token],
+          participants.map((participant) =>
+            participant?.conversation?.channel_id === message.channel_id
+              ? {
+                  ...participant,
+                  conversation: {
+                    ...participant.conversation,
+                    last_message_id: message.id
+                  }
+                }
+              : participant
+          )
         )
       }
 
@@ -75,8 +115,8 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
             }`
           )
         } else {
-          try {
-            Plugins.LocalNotifications.requestPermission().then((granted) => {
+          Plugins.LocalNotifications.requestPermission()
+            .then((granted) => {
               if (granted) {
                 Plugins.LocalNotifications.schedule({
                   notifications: [
@@ -99,9 +139,9 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
                 })
               }
             })
-          } catch {
-            console.warn('Failed to send notification')
-          }
+            .catch(() => {
+              console.warn('Failed to send notification')
+            })
         }
       }
       stopTyping(message.channel_id, message.author.id)
@@ -112,7 +152,17 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
     return () => {
       eventSource.removeEventListener(Events.NEW_MESSAGE, handler)
     }
-  }, [eventSource, mutedCommunities, mutedChannels, id, stopTyping, user])
+  }, [
+    eventSource,
+    mutedCommunities,
+    mutedChannels,
+    id,
+    stopTyping,
+    user,
+    token,
+    autoRead,
+    channelID
+  ])
 }
 
 export default useNewMessage

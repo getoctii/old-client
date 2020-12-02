@@ -1,4 +1,3 @@
-import React from 'react'
 import useSubscribe from './subscribe'
 import useNewMessage from './newMessage'
 import useDeletedMessage from './deletedMessage'
@@ -11,10 +10,12 @@ import useDeletedMember from './deletedMember'
 import useTyping from './typing'
 import useNewVoiceSession from './newVoiceSession'
 import useAcceptedVoiceSession from './acceptedVoiceSession'
+import useLog from './log'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
 
+  useLog(eventSource)
   useNewMessage(eventSource)
   useDeletedMessage(eventSource)
   useNewParticipant(eventSource)

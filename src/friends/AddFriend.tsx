@@ -5,9 +5,9 @@ import Input from '../components/Input'
 import Button from '../components/Button'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { BarLoader } from 'react-spinners'
-import { clientGateway } from '../constants'
+import { clientGateway } from '../utils/constants'
 import { Auth } from '../authentication/state'
-import { isTag } from '../validations'
+import { isTag } from '../utils/validations'
 import { UI } from '../state/ui'
 
 interface ConversationResponse {

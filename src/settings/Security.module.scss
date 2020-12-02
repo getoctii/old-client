@@ -1,15 +1,18 @@
 .security {
-  margin-top: 5rem;
+  padding-top: 5rem;
   overflow-y: scroll;
-  border-bottom-left-radius: 14px;
-  border-bottom-right-radius: 14px;
 
-  form {
+  .form {
+    margin-top: 1rem;
+  }
+
+  form,
+  .form {
     background: var(--neko-settings-card);
     padding: 2rem;
-    border-top-left-radius: 14px;
-    border-top-right-radius: 14px;
-
+    margin-bottom: 2rem;
+    border-radius: 14px;
+    height: auto;
     max-width: 500px;
     h2,
     h5,
@@ -38,10 +41,16 @@
       margin-top: 1rem;
       background: var(--neko-colors-primary);
     }
+
+    .generateKeychain {
+      width: 100%;
+      margin-top: 1rem;
+      background: var(--neko-colors-primary);
+    }
   }
 
   @media (max-height: 940px) {
-    margin-top: 2.5rem;
+    padding-top: 2.5rem;
   }
 
   // , (max-height: 420px)

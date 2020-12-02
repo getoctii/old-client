@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { EventSourcePolyfill } from 'event-source-polyfill'
-import { Events } from '../constants'
+import { Events } from '../utils/constants'
 import Typing from '../state/typing'
+import { log } from '../utils/logging'
 
 const useTyping = (eventSource: EventSourcePolyfill | null) => {
   const { startTyping } = Typing.useContainer()
@@ -13,6 +14,7 @@ const useTyping = (eventSource: EventSourcePolyfill | null) => {
         user_id: string
         username: string
       }
+      log('Events', 'purple', 'TYPING')
       startTyping(event.channel_id, event.user_id, event.username)
     }
 
