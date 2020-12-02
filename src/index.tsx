@@ -21,12 +21,14 @@ import { ScrollPosition } from './state/scroll'
 import { Call } from './state/call'
 import { Chat } from './chat/state'
 
-Sentry.init({
-  dsn:
-    'https://ed58056045ea4fb599148359fa30aac0@o271654.ingest.sentry.io/5400867',
-  integrations: [new SentryRRWeb()],
-  release: process.env.REACT_APP_VERSION
-})
+if (process.env.NODE_ENV === 'production') {
+  Sentry.init({
+    dsn:
+      'https://ed58056045ea4fb599148359fa30aac0@o271654.ingest.sentry.io/5400867',
+    integrations: [new SentryRRWeb()],
+    release: process.env.REACT_APP_VERSION
+  })
+}
 
 console.log(
   '%c+',
