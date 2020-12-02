@@ -25,7 +25,7 @@ import { Integrations } from '@sentry/tracing'
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
     dsn:
-      'https://ed58056045ea4fb599148359fa30aac0@o271654.ingest.sentry.io/5400867',
+      'https://6f9ffeb08c814b15971d8241698bee28@o271654.ingest.sentry.io/5541960',
     integrations: [new SentryRRWeb(), new Integrations.BrowserTracing()],
     release: process.env.REACT_APP_VERSION,
     tracesSampleRate: 1.0
