@@ -1,7 +1,6 @@
 import { faFileUpload, faSpinner } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useCallback, useEffect, useState } from 'react'
-import { BeatLoader } from 'react-spinners'
+import React, { useEffect, useState } from 'react'
 import styles from './Upload.module.scss'
 
 interface UploadDetails {
@@ -21,7 +20,9 @@ const Upload = ({ status, file, onUpload }: UploadDetails) => {
   })
   return (
     <div className={styles.upload}>
-      {uploadURL && typeof uploadURL === 'string' && <img src={uploadURL} />}
+      {uploadURL && typeof uploadURL === 'string' && (
+        <img alt={file.name} src={uploadURL} />
+      )}
       <div className={styles.uploadInfo}>
         <h5>{file.name}</h5>
         <button
