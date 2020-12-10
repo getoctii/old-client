@@ -17,7 +17,7 @@ import Box from './Box'
 import Typing from '../state/typing'
 import { Call } from '../state/call'
 import Button from '../components/Button'
-import { getChannel, uploadFile } from './remote'
+import { getChannel } from './remote'
 import Messages from './Messages'
 import { getUser } from '../user/remote'
 import { Chat } from './state'
@@ -67,6 +67,7 @@ const PrivateName = ({ id }: { id?: string }) => {
   )
 }
 
+const supportedFiles = new Set(['image/png', 'image/gif', 'image/jpeg'])
 const View = ({
   type,
   channelID,
@@ -80,7 +81,8 @@ const View = ({
     autoRead,
     setTracking,
     setAutoRead,
-    setChannelID
+    setChannelID,
+    setUploadDetails
   } = Chat.useContainer()
   const { token, id } = Auth.useContainer()
   const call = Call.useContainer()
@@ -95,15 +97,19 @@ const View = ({
   const channel = useQuery(['channel', channelID, token], getChannel)
 
   const [bond] = useDropArea({
-    onFiles: (files) =>
-      token ? uploadFile(channelID, files[0], token) : undefined
+    onFiles: (files) => {
+      if (supportedFiles.has(files[0].type))
+        setUploadDetails({
+          status: 'pending',
+          file: files[0]
+        })
+    }
   })
 
   useEffect(() => {
     setChannelID(channelID)
     setTracking(true)
     setAutoRead(false)
-    console.log('reset')
   }, [setAutoRead, setTracking, setChannelID, channelID])
 
   return (

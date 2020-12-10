@@ -171,8 +171,8 @@
 @media (max-width: 940px) {
   .wrapper {
     .card {
-      padding: calc(env(safe-area-inset-top)) 2rem env(safe-area-inset-bottom)
-        2rem;
+      padding: calc(env(safe-area-inset-top) + 2rem) 2rem
+        calc(env(safe-area-inset-bottom) + 2rem) 2rem;
     }
   }
 }

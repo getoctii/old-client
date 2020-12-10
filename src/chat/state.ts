@@ -3,11 +3,17 @@ import { createContainer } from 'unstated-next'
 import { Auth } from '../authentication/state'
 import { postMessage } from './remote'
 
+interface UploadDetails {
+  status: 'uploading' | 'uploaded' | 'pending'
+  file: File
+}
+
 const useChat = () => {
   const { token } = Auth.useContainer()
   const [tracking, setTracking] = useState(true)
   const [autoRead, setAutoRead] = useState(false)
   const [channelID, setChannelID] = useState<string | undefined>()
+  const [uploadDetails, setUploadDetails] = useState<UploadDetails | null>(null)
   const sendMessage = useCallback(
     async (content: string) => {
       if (!token || !channelID) return
@@ -29,7 +35,9 @@ const useChat = () => {
     setAutoRead,
     sendMessage,
     channelID,
-    setChannelID
+    setChannelID,
+    uploadDetails,
+    setUploadDetails
   }
 }
 

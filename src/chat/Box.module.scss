@@ -1,4 +1,6 @@
 .box {
+  height: 3.125rem;
+  min-height: 3.125rem;
   display: flex;
   flex-direction: row;
   vertical-align: middle;
@@ -20,6 +22,19 @@
     color: var(--neko-input-text);
     margin-left: 0.5rem;
     font-size: 1.05rem;
+    position: relative;
+    .badge {
+      position: absolute;
+      height: 18px;
+      border-radius: 50%;
+      width: 18px;
+      bottom: -3.45px;
+      right: -3.45px;
+      border-color: var(--neko-sidebar-background);
+      border-width: 3.5px;
+      border-style: solid;
+      background: var(--neko-colors-primary);
+    }
   }
 
   .uploadInput {
@@ -95,6 +110,8 @@
   padding-right: 2rem;
   justify-content: space-between;
   width: 100%;
+  height: 3.125rem;
+  min-height: 3.125rem;
   .emoji,
   .upload {
     height: 3.125rem;

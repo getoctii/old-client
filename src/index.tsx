@@ -3,7 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.scss'
 import 'typeface-inter'
-import * as serviceWorker from './utils/serviceWorker'
+import * as serviceWorkerRegistration from './utils/serviceWorkerRegistration'
 import { Router } from './Router'
 import { ReactQueryDevtools } from 'react-query-devtools'
 import { Auth } from './authentication/state'
@@ -103,4 +103,4 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-serviceWorker.unregister()
+serviceWorkerRegistration.register()

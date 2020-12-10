@@ -41,11 +41,12 @@ const Modals = () => {
 export const Router = () => {
   const auth = Auth.useContainer()
   const isMobile = useMedia('(max-width: 940px)')
+  const isPWA = useMedia('(display-mode: standalone)')
   const call = Call.useContainer()
   return (
     <BrowserRouter>
       {auth.authenticated && <EventSource />}
-      {isPlatform('capacitor') ? (
+      {isPlatform('capacitor') || isPWA ? (
         <Redirect path='/home' to='/authenticate/login' />
       ) : (
         <Route path='/home' component={Home} />
@@ -83,7 +84,9 @@ export const Router = () => {
               path={'/(conversations)?/:id?'}
               component={() => <Conversation />}
               redirect={
-                isPlatform('capacitor') ? '/authenticate/login' : '/home'
+                isPlatform('capacitor') || isPWA
+                  ? '/authenticate/login'
+                  : '/home'
               }
               exact
             />

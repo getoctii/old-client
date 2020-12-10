@@ -1,3 +1,5 @@
+import { Plugins } from '@capacitor/core'
+
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
@@ -8,7 +10,7 @@
 // resources are updated in the background.
 
 // To learn more about the benefits of this model and instructions on how to
-// opt-in, read https://bit.ly/CRA-PWA
+// opt-in, read https://cra.link/PWA
 
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
@@ -48,7 +50,7 @@ export function register(config?: Config) {
         navigator.serviceWorker.ready.then(() => {
           console.log(
             'This web app is being served cache-first by a service ' +
-              'worker. To learn more, visit https://bit.ly/CRA-PWA'
+              'worker. To learn more, visit https://cra.link/PWA'
           )
         })
       } else {
@@ -74,10 +76,31 @@ function registerValidSW(swUrl: string, config?: Config) {
               // At this point, the updated precached content has been fetched,
               // but the previous service worker will still serve the older
               // content until all client tabs are closed.
-              console.log(
-                'New content is available and will be used when all ' +
-                  'tabs for this page are closed. See https://bit.ly/CRA-PWA.'
-              )
+              if (window.inntronNotify) {
+                window.inntronNotify(
+                  'Update Ready',
+                  'Please restart the app to complete updating'
+                )
+              } else {
+                Plugins.LocalNotifications.requestPermission()
+                  .then((granted) => {
+                    if (granted) {
+                      Plugins.LocalNotifications.schedule({
+                        notifications: [
+                          {
+                            title: 'Update Ready',
+                            body:
+                              'Please close all tabs and reopen Octii to complete updating',
+                            id: 1
+                          }
+                        ]
+                      })
+                    }
+                  })
+                  .catch(() => {
+                    console.warn('Failed to send notification')
+                  })
+              }
 
               // Execute callback
               if (config && config.onUpdate) {

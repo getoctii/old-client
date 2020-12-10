@@ -1,0 +1,46 @@
+.upload {
+  border-radius: 15px;
+  position: absolute;
+  z-index: 10;
+  bottom: 5.5rem;
+  right: 2rem;
+  border: none;
+  color: var(--neko-text-normal);
+  background: var(--neko-emojis-background);
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  overflow: hidden;
+  padding: 1.5rem;
+  img {
+    border-radius: 10px;
+    max-height: 200px;
+    object-fit: cover;
+  }
+  .uploadInfo {
+    display: flex;
+    margin-top: 0.8rem;
+    border-radius: 8px;
+    background: var(--neko-chat-background);
+    align-items: center;
+    h5 {
+      margin: 1rem;
+      font-size: 1rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    button {
+      border-radius: 12px;
+      border: 0;
+      background: var(--neko-colors-primary);
+      margin-left: auto;
+      min-width: 51px;
+      min-height: 51px;
+      height: 51px;
+      width: 51px;
+    }
+  }
+}

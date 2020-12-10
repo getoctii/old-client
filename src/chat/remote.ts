@@ -42,16 +42,12 @@ export const postMessage = async (
     )
   ).data
 
-export const uploadFile = async (
-  channelID: string,
-  file: File,
-  token: string
-) => {
+export const uploadFile = async (file: File) => {
   const formData = new FormData()
   formData.append('file', file)
   const response = await axios.post(
     'https://covfefe.innatical.com/api/v1/upload',
     formData
   )
-  await postMessage(channelID, response.data.url, token)
+  return response.data.url
 }

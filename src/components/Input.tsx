@@ -10,7 +10,15 @@ const Input = ({
   field: FieldInputProps<string>
   form: FormikFormProps
 }) => {
-  return <input className={styles.input} type='text' {...field} {...props} />
+  return (
+    <input
+      className={styles.input}
+      type='text'
+      inputMode={'text'}
+      {...field}
+      {...props}
+    />
+  )
 }
 
 export default Input
