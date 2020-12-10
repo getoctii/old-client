@@ -1,7 +1,11 @@
 import styles from './Box.module.scss'
 import Button from '../components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFileUpload, faSmileWink } from '@fortawesome/pro-solid-svg-icons'
+import {
+  faFileUpload,
+  faSmileWink,
+  faTimes
+} from '@fortawesome/pro-solid-svg-icons'
 import React, { useEffect, useRef, useState } from 'react'
 import { useInterval, useMedia } from 'react-use'
 import Picker from 'emoji-picker-react'
@@ -9,6 +13,7 @@ import { Form, Formik, FastField, FieldInputProps } from 'formik'
 import { postTyping, uploadFile } from './remote'
 import { Auth } from '../authentication/state'
 import { Chat } from './state'
+import Upload from './Upload'
 
 const adjectives = [
   ' amazing',
@@ -31,7 +36,7 @@ const View = ({
   channelID: string
   typingIndicator: boolean
 }) => {
-  const { sendMessage } = Chat.useContainer()
+  const { sendMessage, uploadDetails, setUploadDetails } = Chat.useContainer()
   const { token } = Auth.useContainer()
   const isMobile = useMedia('(max-width: 940px)')
   const [typing, setTyping] = useState<boolean>(false)
@@ -66,11 +71,23 @@ const View = ({
           if (values?.message !== '') return {}
           return { message: 'No message content' }
         }}
-        onSubmit={(values, { resetForm }) => {
+        onSubmit={async (values, { resetForm }) => {
           if (values?.message !== '') {
-            setTyping(false)
-            sendMessage(values.message)
-            resetForm()
+            if (uploadDetails) {
+              setUploadDetails({
+                status: 'uploading',
+                file: uploadDetails.file
+              })
+              const url = await uploadFile(uploadDetails.file)
+              setTyping(false)
+              sendMessage(`${values.message}\n${url}`)
+              setUploadDetails(null)
+              resetForm()
+            } else {
+              setTyping(false)
+              sendMessage(values.message)
+              resetForm()
+            }
           }
         }}
       >
@@ -86,6 +103,7 @@ const View = ({
                     {...field}
                     placeholder={`Say something${adjective}...`}
                     type='text'
+                    inputMode={'text'}
                     autoComplete='off'
                     onChange={(event) => {
                       if (!token) return
@@ -102,23 +120,50 @@ const View = ({
                 )}
               </FastField>
             </Form>
-            <Button type='button' onClick={() => uploadInput.current?.click()}>
-              <FontAwesomeIcon icon={faFileUpload} />
+            <Button
+              type='button'
+              onClick={() => {
+                if (!!uploadDetails && emojiPicker) setEmojiPicker(false)
+                else if (!!uploadDetails) {
+                  if (uploadInput.current) uploadInput.current.value = ''
+                  setUploadDetails(null)
+                } else {
+                  uploadInput.current?.click()
+                }
+              }}
+            >
+              <FontAwesomeIcon icon={uploadDetails ? faTimes : faFileUpload} />
               <input
                 ref={uploadInput}
                 className={styles.uploadInput}
                 type='file'
                 accept='.jpg, .png, .jpeg, .gif'
                 onChange={async (event) => {
-                  if (!token) return
-                  await uploadFile(
-                    channelID,
-                    event.target.files?.item(0) as any,
-                    token
-                  )
+                  if (!token || !event.target.files?.item(0)) return
+                  setUploadDetails({
+                    status: 'pending',
+                    file: event.target.files.item(0) as File
+                  })
                 }}
               />
+              {uploadDetails && emojiPicker && (
+                <div className={`${styles.badge}`} />
+              )}
             </Button>
+            {uploadDetails && !emojiPicker && (
+              <Upload
+                {...uploadDetails}
+                onUpload={async (file) => {
+                  setUploadDetails({
+                    status: 'uploading',
+                    file
+                  })
+                  const url = await uploadFile(file)
+                  await sendMessage(url)
+                  setUploadDetails(null)
+                }}
+              />
+            )}
             {emojiPicker && (
               <Picker
                 onEmojiClick={(_, data) =>
