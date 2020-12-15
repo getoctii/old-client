@@ -1,4 +1,10 @@
-import React, { useMemo, useState, useEffect, useCallback } from 'react'
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+  Suspense
+} from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronRight,
@@ -14,9 +20,12 @@ import { getUnreads, getUser, State } from '../user/remote'
 import { getMessage } from '../message/remote'
 import { getChannel } from '../chat/remote'
 import { Clipboard } from '@capacitor/core'
-import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { faGlasses } from '@fortawesome/free-solid-svg-icons'
 import Context from '../components/Context'
+import { ContextMenuItems } from '../state/ui'
+import useMarkdown from '@innatical/markdown'
+import { ErrorBoundary } from 'react-error-boundary'
+import Message from '../chat/Message'
 
 const View = ({
   people,
@@ -62,12 +71,7 @@ const View = ({
   const unreads = useQuery(['unreads', id, token], getUnreads)
 
   const getItems = useCallback(() => {
-    const items: {
-      text: string
-      icon: IconProp
-      danger?: boolean
-      onClick: (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => void
-    }[] = [
+    const items: ContextMenuItems = [
       {
         text: 'Copy ID',
         icon: faCopy,
@@ -137,8 +141,35 @@ const View = ({
     unreads.data
   ])
 
+  const output = useMarkdown(message?.content || '', {
+    bold: (str, key) => <strong key={key}>{str}</strong>,
+    italic: (str, key) => <i key={key}>{str}</i>,
+    underlined: (str, key) => <u key={key}>{str}</u>,
+    strikethough: (str, key) => <del key={key}>{str}</del>,
+    link: (str, key) => {
+      return (
+        <span key={key} className={styles.link}>
+          {str}
+        </span>
+      )
+    },
+    codeblock: (str, key) => <code key={key}>{str}</code>,
+    custom: [
+      [
+        /<@([A-Za-z0-9-]+?)>/g,
+        (str, key) => (
+          <Suspense fallback={<>&lt;@{str}&gt;</>}>
+            <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
+              <Message.Mention key={key} userID={str} />
+            </ErrorBoundary>
+          </Suspense>
+        )
+      ]
+    ]
+  })
+
   return (
-    <Context id={conversationID} key={conversationID} items={getItems()}>
+    <Context.Wrapper key={conversationID} items={getItems()}>
       <div
         className={`${styles.card} ${selected ? styles.selected : ''}`}
         onClick={onClick}
@@ -165,7 +196,7 @@ const View = ({
           <h4>{recipient.data?.username}</h4>
           <p>
             {message?.author_id === id ? 'You: ' : ''}
-            {message?.content}
+            {output}
           </p>
         </div>
         <div className={styles.details}>
@@ -182,7 +213,7 @@ const View = ({
           <FontAwesomeIcon icon={faChevronRight} fixedWidth />
         </div>
       </div>
-    </Context>
+    </Context.Wrapper>
   )
 }
 

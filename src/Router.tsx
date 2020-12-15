@@ -20,6 +20,7 @@ import Incoming from './call/Incoming'
 import { Call } from './state/call'
 import Current from './call/Current'
 import EventSource from './events'
+import Context from './components/Context'
 
 const Modals = () => {
   const uiStore = UI.useContainer()
@@ -34,6 +35,8 @@ const Modals = () => {
         )}
       </AnimatePresence>
       {uiStore.modal.name === 'status' && <Status />}
+
+      {uiStore.contextMenu && <Context.Menu {...uiStore.contextMenu} />}
     </>
   )
 }
@@ -46,6 +49,7 @@ export const Router = () => {
   return (
     <BrowserRouter>
       {auth.authenticated && <EventSource />}
+      <Context.Global />
       {isPlatform('capacitor') || isPWA ? (
         <Redirect path='/home' to='/authenticate/login' />
       ) : (

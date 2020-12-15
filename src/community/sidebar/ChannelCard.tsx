@@ -90,7 +90,7 @@ export const ChannelCard = ({
   if (!channel) return <></>
 
   return (
-    <Context id={channel.id} key={channel.id} items={getItems(channel.id)}>
+    <Context.Wrapper key={channel.id} items={getItems(channel.id)}>
       <>
         {index !== 0 && (
           <hr
@@ -170,6 +170,6 @@ export const ChannelCard = ({
           </h4>
         </div>
       </>
-    </Context>
+    </Context.Wrapper>
   )
 }

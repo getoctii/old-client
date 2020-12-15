@@ -1,4 +1,4 @@
-import React, { memo, useState, useMemo } from 'react'
+import React, { memo, useState, useMemo, Suspense } from 'react'
 import styles from './Message.module.scss'
 import moment from 'moment'
 import { faCopy, faTrashAlt } from '@fortawesome/pro-solid-svg-icons'
@@ -20,6 +20,7 @@ import {
   faUserNinja,
   faUserShield
 } from '@fortawesome/pro-duotone-svg-icons'
+import { ErrorBoundary } from 'react-error-boundary'
 
 type Embed = {
   embed: React.ReactNode
@@ -28,6 +29,16 @@ type Embed = {
 
 const isEmbed = (element: any): element is Embed => {
   return typeof element === 'object' && element['embed'] && element['link']
+}
+
+const Mention = ({ userID }: { userID: string }) => {
+  const { token, id } = Auth.useContainer()
+  const user = useQuery(['users', userID, token], getUser)
+  return (
+    <span className={`${styles.mention} ${userID === id ? styles.isMe : ''}`}>
+      @{user.data?.username}
+    </span>
+  )
 }
 
 const View = memo(
@@ -117,7 +128,19 @@ const View = memo(
           return link
         }
       },
-      codeblock: (str, key) => <code key={key}>{str}</code>
+      codeblock: (str, key) => <code key={key}>{str}</code>,
+      custom: [
+        [
+          /<@([A-Za-z0-9-]+?)>/g,
+          (str, key) => (
+            <Suspense fallback={<>&lt;@{str}&gt;</>}>
+              <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
+                <Mention key={key} userID={str} />
+              </ErrorBoundary>
+            </Suspense>
+          )
+        ]
+      ]
     })
     const main = useMemo(
       () =>
@@ -141,7 +164,7 @@ const View = memo(
             />
           )}
         </AnimatePresence>
-        <Context id={id} key={id} items={getItems()}>
+        <Context.Wrapper key={id} items={getItems()}>
           <div className={`${styles.message} ${primary ? styles.primary : ''}`}>
             {primary && (
               <div
@@ -186,7 +209,7 @@ const View = memo(
               <Measure onResize={onResize}>{embeds}</Measure>
             </div>
           </div>
-        </Context>
+        </Context.Wrapper>
       </>
     )
   }
@@ -223,6 +246,6 @@ const Placeholder = () => {
   )
 }
 
-const Message = { View, Placeholder }
+const Message = { View, Placeholder, Mention }
 
 export default Message

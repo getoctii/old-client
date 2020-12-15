@@ -14,6 +14,10 @@
       "light": "#dadada",
       "dark": "#1F2430"
     },
+    "mention": {
+      "me": "#1089FF",
+      "other": "#8BA0D8"
+    },
     "text": {
       "normal": "#fafafa",
       "inverse": "#95E6CB",
@@ -96,6 +100,10 @@
       "danger": "#F86464",
       "warning": "#8f8f8f",
       "secondary": "#8f8f8f"
+    },
+    "mention": {
+      "me": "#1089FF",
+      "other": "#8BA0D8"
     },
     "sidebar": {
       "background": "#FAFAFA",

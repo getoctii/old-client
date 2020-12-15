@@ -93,6 +93,11 @@ interface Theme {
     message: string
   }
 
+  mention: {
+    me: string
+    other: string
+  }
+
   input: {
     background: string
     text: string
@@ -193,7 +198,9 @@ const useTheme = () => {
       '--neko-context-background': currentTheme.context.background,
       '--neko-context-seperator': currentTheme.context.seperator,
       '--neko-emojis-background': currentTheme.emojis.background,
-      '--neko-emojis-input': currentTheme.emojis.input
+      '--neko-emojis-input': currentTheme.emojis.input,
+      '--neko-mention-me': currentTheme.mention.me,
+      '--neko-mention-other': currentTheme.mention.other
     }).forEach(([key, value]) => documentStyle.setProperty(key, value))
     if (currentTheme.global) globalStyle.textContent = currentTheme.global
     else globalStyle.textContent = ''

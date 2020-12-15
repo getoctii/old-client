@@ -1,3 +1,13 @@
+.mention {
+  font-weight: 600;
+  color: var(--neko-mention-other);
+
+  &.isMe {
+    color: var(--neko-mention-me);
+    border-radius: 4px;
+  }
+}
+
 .message {
   display: flex;
   padding-left: 2rem;
@@ -6,11 +16,14 @@
   h2 {
     font-size: 1rem;
     margin: 0;
+    cursor: pointer;
 
     .time {
+      cursor: default;
       margin-left: 0.5rem;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       font-weight: 300;
+      opacity: 0.5;
     }
   }
 
@@ -25,7 +38,7 @@
     clear: both;
     margin: 0;
     font-size: 1rem;
-    font-weight: 400;
+    font-weight: 300;
     user-select: text;
   }
   @media (hover: hover) and (pointer: fine) {

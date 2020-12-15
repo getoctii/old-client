@@ -40,6 +40,10 @@
         "placeholder": "string"
       }
     },
+    "mention": {
+      "me": "#1089FF",
+      "other": "#8BA0D8"
+    },
     "chat": {
       "background": "#000000",
       "hover": "#000000",
@@ -95,6 +99,10 @@
       "danger": "#F86464",
       "warning": "",
       "secondary": ""
+    },
+    "mention": {
+      "me": "#1089FF",
+      "other": "#8BA0D8"
     },
     "sidebar": {
       "background": "#FFFFFF",

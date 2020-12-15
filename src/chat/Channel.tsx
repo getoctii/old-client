@@ -178,6 +178,7 @@ const View = ({
         )}
         <Box.View
           {...{
+            participants,
             channelID,
             typingIndicator: users?.length > 0
           }}

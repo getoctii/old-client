@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useMemo } from 'react'
 import styles from './Conversation.module.scss'
 import Chat from '../chat/Channel'
 import { useHistory, useRouteMatch } from 'react-router-dom'
@@ -15,11 +15,18 @@ const Conversation = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
   const { id, token } = Auth.useContainer()
   const { data } = useQuery(['participants', id, token], getParticipants)
-  const participant = data?.find(
-    (participant) => participant.conversation.id === match?.params.id
+
+  const participant = useMemo(
+    () =>
+      data?.find(
+        (participant) => participant.conversation.id === match?.params.id
+      ),
+    [data, match]
   )
-  const people = participant?.conversation.participants.filter(
-    (userID) => userID !== id
+  const people = useMemo(
+    () =>
+      participant?.conversation.participants.filter((userID) => userID !== id),
+    [participant, id]
   )
 
   if (!participant) return <></>

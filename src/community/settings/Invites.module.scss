@@ -29,18 +29,6 @@
   color: lightgrey;
 }
 
-.invitesEmpty {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  align-items: center;
-  padding: 2rem;
-  border-radius: 10px;
-  margin-top: 1rem;
-  background: var(--neko-settings-card);
-  flex-direction: column;
-}
-
 .invites {
   height: 100%;
   margin: -2px;
@@ -118,12 +106,22 @@
       }
     }
   }
-}
 
-@media (max-width: 940px), (max-height: 420px) {
-  .invitesEmpty {
-    width: auto;
-    margin-top: 4rem;
+  .empty {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
     padding: 2rem;
+    border-radius: 12px;
+    margin-top: 1rem;
+    background: var(--neko-settings-card);
+    flex-direction: column;
+
+    @media (max-width: 940px), (max-height: 420px) {
+      width: auto;
+      margin-top: 4rem;
+      padding: 2rem;
+    }
   }
 }

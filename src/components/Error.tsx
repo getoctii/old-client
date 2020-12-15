@@ -8,11 +8,8 @@ const Error = ({ resetErrorBoundary }: { resetErrorBoundary: () => void }) => {
   return (
     <div className={styles.error}>
       <FontAwesomeIcon icon={faPoo} size='4x' />
-      <h1>OOPSIE WOOPSIE!!</h1>
-      <p>
-        Uwu We made a Hecky Wecky!! Owo hecko boingo! The code monkeys at our
-        headquarters are working VEWY HAWD to fix this!
-      </p>
+      <h1>Beep Boop!</h1>
+      <p>Beep Boooop Beeep Beeep Booooop Beep Boop Bep</p>
       <Button type='button' onClick={() => resetErrorBoundary()}>
         Try again
       </Button>

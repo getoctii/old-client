@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+  useLayoutEffect
+} from 'react'
 import styles from './Messages.module.scss'
 import { queryCache, useInfiniteQuery, useQuery } from 'react-query'
 import { clientGateway } from '../utils/constants'
@@ -65,17 +72,19 @@ const View = ({
     )
   }
 
+  const trackingRef = useRef(tracking)
+
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
 
   const autoScroll = useCallback(() => {
     const scrollRef = ref?.current
-    if (tracking && scrollRef) {
-      scrollRef.scrollTop = scrollRef.scrollHeight - scrollRef.clientHeight
+    if (trackingRef.current && scrollRef) {
+      scrollRef.scrollTop = scrollRef.scrollHeight
     }
-  }, [tracking, ref])
+  }, [])
 
-  useEffect(autoScroll, [messages, autoScroll])
+  useLayoutEffect(autoScroll, [messages, autoScroll])
   const unreads = useQuery(['unreads', id, token], getUnreads)
 
   const setAsRead = useCallback(async () => {

@@ -45,6 +45,13 @@ interface Unreads {
     last_message_id: string
   }
 }
+
+interface Mention {
+  id: string
+  message_id: string
+  user_id: string
+}
+
 export type MembersResponse = Member[]
 
 export const getUser = async (_: string, userID: string, token: string) =>
@@ -88,6 +95,15 @@ export const getParticipants = async (
 export const getUnreads = async (_: string, userID: string, token: string) =>
   (
     await clientGateway.get<Unreads>(`/users/${userID}/read`, {
+      headers: {
+        Authorization: token
+      }
+    })
+  ).data
+
+export const getMentions = async (_: string, userID: string, token: string) =>
+  (
+    await clientGateway.get<Mention[]>(`/users/${userID}/mentions`, {
       headers: {
         Authorization: token
       }
