@@ -39,6 +39,7 @@
     }
   }
   .icon {
+    background-color: var(--neko-channels-background);
     background-size: cover;
     margin: 0;
     width: 3.5rem;
@@ -157,6 +158,8 @@
     height: 3.5rem;
     width: 3.5rem;
     position: relative;
+
+    background-color: var(--neko-channels-background);
     .badge {
       position: absolute;
       height: 18px;

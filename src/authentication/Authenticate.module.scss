@@ -12,7 +12,8 @@
     height: 100%;
     background: var(--neko-default-foreground);
 
-    img {
+    img,
+    picture {
       width: 2.5rem;
       height: 2.5rem;
     }

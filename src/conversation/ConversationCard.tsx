@@ -160,7 +160,7 @@ const View = ({
         (str, key) => (
           <Suspense fallback={<>&lt;@{str}&gt;</>}>
             <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
-              <Message.Mention key={key} userID={str} />
+              <Message.Mention selected={selected} key={key} userID={str} />
             </ErrorBoundary>
           </Suspense>
         )

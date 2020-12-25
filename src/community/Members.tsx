@@ -17,7 +17,7 @@ import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import Loader from '../components/Loader'
 import { createConversation } from '../conversation/remote'
-import { ParticipantsResponse } from '../user/remote'
+import { ParticipantsResponse, State } from '../user/remote'
 import { clientGateway } from '../utils/constants'
 import styles from './Members.module.scss'
 import { getCommunity } from './remote'
@@ -28,6 +28,7 @@ interface MemberType {
     id: string
     username: string
     avatar: string
+    state: State
     discriminator: number
   }
   created_at: string
@@ -55,7 +56,24 @@ const Member = ({ member, owner }: { member: MemberType; owner?: string }) => {
       <div
         className={styles.icon}
         style={{ backgroundImage: `url('${member.user.avatar}')` }}
-      />
+      >
+        {' '}
+        {member.user && (
+          <div
+            className={`${styles.badge} ${
+              member.user.state === State.online
+                ? styles.online
+                : member.user.state === State.dnd
+                ? styles.dnd
+                : member.user.state === State.idle
+                ? styles.idle
+                : member.user.state === State.offline
+                ? styles.offline
+                : ''
+            }`}
+          />
+        )}
+      </div>
       <div className={styles.info}>
         <h4>
           {member.user?.username}#

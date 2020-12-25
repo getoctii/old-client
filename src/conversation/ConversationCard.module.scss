@@ -49,6 +49,7 @@
     height: 3rem;
     width: 3rem;
     position: relative;
+
     .badge {
       position: absolute;
       height: 16.45px;
@@ -78,6 +79,8 @@
     img {
       border-radius: 14px;
       object-fit: cover;
+
+      background-color: var(--neko-sidebar-background);
       height: 3rem;
       width: 3rem;
     }

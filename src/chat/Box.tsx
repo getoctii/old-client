@@ -42,7 +42,7 @@ import underlineFromMarkdown from '@innatical/mdast-util-underline/from-markdown
 // @ts-ignore
 import underlineToMarkdown from '@innatical/mdast-util-underline/to-markdown'
 import Mentions from './Mentions'
-import { getUser } from '../user/remote'
+import { getUser, UserResponse } from '../user/remote'
 import messageStyles from './Message.module.scss'
 import { useQuery } from 'react-query'
 
@@ -75,7 +75,9 @@ const Mention = ({
     <span
       {...attributes}
       contentEditable={false}
-      className={`${messageStyles.mention} ${userID === id ? styles.isMe : ''}`}
+      className={`${messageStyles.mention} ${
+        userID === id ? messageStyles.isMe : ''
+      }`}
     >
       @{user.data?.username}
       {children}
@@ -165,7 +167,6 @@ const View = ({
     }
   }, [editor])
   const [value, setValue] = useState<Node[]>(emptyEditor)
-  const [mentionPopup, setMentionPopup] = useState(false)
   const [target, setTarget] = useState<Range | undefined>()
   const [search, setSearch] = useState('')
 
@@ -256,7 +257,6 @@ const View = ({
     (props: RenderLeafProps) => <Leaf {...props} />,
     []
   )
-  const [mentionSearch, setMentionSearch] = useState('')
   const [selected, setSelected] = useState(0)
 
   const mentionable = useMemo(
@@ -267,14 +267,35 @@ const View = ({
     []
   )
 
-  useEffect(() => {
-    setSelected(0)
-  }, [target, mentionable])
+  const onMention = useCallback(
+    (id: string) => {
+      if (!target) return
+      Transforms.select(editor, target)
+      Transforms.insertNodes(editor, {
+        type: 'mention',
+        mentionID: id,
+        children: [
+          {
+            text: `<@${id}>`
+          }
+        ]
+      })
+      editor.insertText(' ')
+      Transforms.move(editor)
+      setTarget(undefined)
+    },
+    [editor, target]
+  )
+
+  const [filtered, setFiltered] = useState<UserResponse[]>([])
+
+  const onFiltered = useCallback((users: UserResponse[]) => {
+    setFiltered(users)
+  }, [])
 
   useEffect(() => {
-    console.log('mentionable changed', mentionable)
-  }, [mentionable])
-  console.log('selected', selected)
+    setSelected(0)
+  }, [target, filtered])
 
   return (
     <>
@@ -285,20 +306,8 @@ const View = ({
               ids={mentionable}
               search={search}
               selected={selected}
-              onMention={(id) => {
-                Transforms.select(editor, target)
-                Transforms.insertNodes(editor, {
-                  type: 'mention',
-                  mentionID: id,
-                  children: [
-                    {
-                      text: `<@${id}>`
-                    }
-                  ]
-                })
-                Transforms.move(editor)
-                setTarget(undefined)
-              }}
+              onMention={onMention}
+              onFiltered={onFiltered}
             />
           </Suspense>
         )}
@@ -317,12 +326,7 @@ const View = ({
 
                 if (selection && Range.isCollapsed(selection)) {
                   const [start] = Range.edges(selection)
-                  const wordBefore = Editor.before(editor, start, {
-                    unit: 'word'
-                  })
-                  const before =
-                    (wordBefore && Editor.before(editor, wordBefore)) ||
-                    wordBefore
+                  const before = Editor.before(editor, start)
                   const beforeRange =
                     before && Editor.range(editor, before, start)
                   const beforeText =
@@ -332,6 +336,7 @@ const View = ({
                   const afterRange = Editor.range(editor, start, after)
                   const afterText = Editor.string(editor, afterRange)
                   const afterMatch = afterText.match(/^(\s|$)/)
+
                   if (beforeMatch && afterMatch) {
                     setTarget(beforeRange)
                     setSearch(beforeMatch[1])
@@ -359,9 +364,12 @@ const View = ({
                       if (event.shiftKey) {
                         event.preventDefault()
                         editor.insertBreak()
+                      } else if (target) {
+                        event.preventDefault()
+                        if (filtered[selected].id)
+                          onMention(filtered[selected].id)
                       } else {
                         event.preventDefault()
-                        setMentionPopup(false)
                         const content = serialize(value)
                         if (content !== '' || uploadDetails) {
                           if (uploadDetails) {
@@ -397,22 +405,12 @@ const View = ({
                       event.preventDefault()
                       if (event.shiftKey) {
                         setSelected(
-                          selected - 1 < 0
-                            ? mentionable.length - 1
-                            : selected - 1
+                          selected - 1 < 0 ? filtered.length - 1 : selected - 1
                         )
                       } else {
                         setSelected(
-                          selected + 1 > mentionable.length - 1
-                            ? 0
-                            : selected + 1
+                          selected + 1 > filtered.length - 1 ? 0 : selected + 1
                         )
-                      }
-                      break
-                    }
-                    default: {
-                      if (mentionPopup) {
-                        setMentionSearch(mentionSearch + event.key)
                       }
                     }
                   }

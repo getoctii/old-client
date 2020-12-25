@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { queryCache, useQuery } from 'react-query'
 import styles from './Mentions.module.scss'
 import { getUser, UserResponse } from '../user/remote'
@@ -31,7 +31,6 @@ const Mention = ({
   )
 }
 
-// Until react-query 3
 const fetchManyUsers = (_: string, ids: string[], token: string) => {
   return Promise.all(
     ids.map((id) => queryCache.fetchQuery(['users', id, token], getUser))
@@ -42,12 +41,14 @@ const Mentions = ({
   ids,
   search,
   onMention,
-  selected
+  selected,
+  onFiltered
 }: {
   ids: string[]
   search: string
   onMention: onMention
   selected: number
+  onFiltered: (users: UserResponse[]) => void
 }) => {
   const { token } = Auth.useContainer()
   const { data: users } = useQuery(['users', ids, token], fetchManyUsers)
@@ -58,6 +59,10 @@ const Mentions = ({
         : users,
     [users, search]
   )
+
+  useEffect(() => {
+    onFiltered(results ?? [])
+  }, [results, onFiltered])
 
   return (
     <div

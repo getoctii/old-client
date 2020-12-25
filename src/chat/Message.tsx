@@ -31,11 +31,21 @@ const isEmbed = (element: any): element is Embed => {
   return typeof element === 'object' && element['embed'] && element['link']
 }
 
-const Mention = ({ userID }: { userID: string }) => {
+const Mention = ({
+  userID,
+  selected
+}: {
+  userID: string
+  selected?: boolean
+}) => {
   const { token, id } = Auth.useContainer()
   const user = useQuery(['users', userID, token], getUser)
   return (
-    <span className={`${styles.mention} ${userID === id ? styles.isMe : ''}`}>
+    <span
+      className={`${styles.mention} ${userID === id ? styles.isMe : ''} ${
+        selected ? styles.selected : ''
+      }`}
+    >
       @{user.data?.username}
     </span>
   )

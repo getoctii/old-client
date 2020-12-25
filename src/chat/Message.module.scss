@@ -6,6 +6,11 @@
     color: var(--neko-mention-me);
     border-radius: 4px;
   }
+
+  &.selected {
+    color: var(--neko-text-inverse);
+    font-weight: 700;
+  }
 }
 
 .message {
