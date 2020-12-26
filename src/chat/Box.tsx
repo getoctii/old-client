@@ -109,7 +109,6 @@ const emptyEditor = [
 ]
 
 const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
-  console.log('leaf', leaf)
   return leaf.underline ? (
     <u {...attributes}>{children}</u>
   ) : leaf.strong ? (
@@ -162,8 +161,7 @@ const View = ({
   )
   useEffect(() => {
     editor.isInline = (element: Element) => {
-      if (element.type === 'mention') return true
-      return false
+      return element.type === 'mention'
     }
   }, [editor])
   const [value, setValue] = useState<Node[]>(emptyEditor)
@@ -259,13 +257,7 @@ const View = ({
   )
   const [selected, setSelected] = useState(0)
 
-  const mentionable = useMemo(
-    () => /*participants ?? []*/ [
-      '987d59ba-1979-4cc4-8818-7fe2f3d4b560',
-      '99343aac-2301-415d-aece-17b021d3a459'
-    ],
-    []
-  )
+  const mentionable = useMemo(() => participants ?? [], [participants])
 
   const onMention = useCallback(
     (id: string) => {
@@ -326,7 +318,20 @@ const View = ({
 
                 if (selection && Range.isCollapsed(selection)) {
                   const [start] = Range.edges(selection)
-                  const before = Editor.before(editor, start)
+                  const characterBefore = Editor.before(editor, start, {
+                    unit: 'character'
+                  })
+                  const wordBefore = Editor.before(editor, start, {
+                    unit: 'word'
+                  })
+                  const before =
+                    characterBefore &&
+                    Editor.string(
+                      editor,
+                      Editor.range(editor, characterBefore, start)
+                    ) === '@'
+                      ? characterBefore
+                      : wordBefore && Editor.before(editor, wordBefore)
                   const beforeRange =
                     before && Editor.range(editor, before, start)
                   const beforeText =
