@@ -6,7 +6,7 @@ import {
   faTrashAlt
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { useLocalStorage } from 'react-use'
 import { Auth } from '../../authentication/state'
@@ -16,7 +16,7 @@ import Context from '../../components/Context'
 import styles from './ChannelCard.module.scss'
 import { useQuery } from 'react-query'
 import { getChannel } from '../../chat/remote'
-import { getUnreads } from '../../user/remote'
+import { getMentions, getUnreads } from '../../user/remote'
 
 export const ChannelCard = ({
   channelID,
@@ -86,6 +86,14 @@ export const ChannelCard = ({
     [mutedChannels, auth, community, setMutedChannels, setShowDelete]
   )
   const unreads = useQuery(['unreads', auth.id, auth.token], getUnreads)
+  const mentions = useQuery(['mentions', auth.id, auth.token], getMentions)
+
+  const mentionsCount = useMemo(
+    () =>
+      channel &&
+      mentions.data?.[channel.id]?.filter((mention) => !mention.read).length,
+    [mentions]
+  )
 
   if (!channel) return <></>
 
@@ -150,15 +158,20 @@ export const ChannelCard = ({
             {channel.name}
             <div className={styles.indicators}>
               {!(match?.params.channelID === channel.id) &&
-              channel &&
-              unreads.data &&
-              unreads.data[channel.id] &&
-              unreads.data[channel.id].last_message_id !==
-                unreads.data[channel.id].read ? (
-                <div className={styles.unread} />
-              ) : (
-                <></>
-              )}
+                (mentionsCount && mentionsCount > 0 ? (
+                  <div
+                    className={`${styles.mention} ${
+                      mentionsCount > 9 ? styles.pill : ''
+                    }`}
+                  >
+                    <span>{mentionsCount > 999 ? '999+' : mentionsCount}</span>
+                  </div>
+                ) : unreads.data?.[channel.id]?.last_message_id !==
+                  unreads.data?.[channel.id]?.read ? (
+                  <div className={styles.unread} />
+                ) : (
+                  <></>
+                ))}
               {mutedChannels?.includes(channel.id) && (
                 <FontAwesomeIcon
                   className={styles.muted}

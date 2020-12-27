@@ -17,9 +17,11 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { useLocalStorage, useMedia } from 'react-use'
 import {
   getCommunities,
+  getMentions,
   getParticipants,
   getUnreads,
   getUser,
+  Participant,
   State
 } from '../user/remote'
 import { isPlatform } from '@ionic/react'
@@ -169,10 +171,39 @@ const Sidebar = () => {
   const currentScrollPosition = useScroll(scrollRef)
   const [scrollPosition, setScrollPosition] = ScrollPosition.useContainer()
   const unreads = useQuery(['unreads', auth.id, auth.token], getUnreads)
+  const mentions = useQuery(['mentions', auth.id, auth.token], getMentions)
+
   const participants = useQuery(
     ['participants', auth.id, auth.token],
     getParticipants
   )
+
+  const mentionsCount = useMemo(
+    () =>
+      participants.data
+        ?.filter((part) => part.conversation.participants.length > 1)
+        .map(
+          (part) =>
+            mentions.data?.[part.conversation.channel_id]?.filter(
+              (mention) => !mention.read
+            ).length ?? 0
+        )
+        .reduce((acc, curr) => acc + curr),
+    [participants, mentions]
+  )
+
+  //const mentionsCount = useMemo(
+  //     () => mentions.data?.[channelID]?.filter((mention) => !mention.read).length,
+  //     [mentions, channelID]
+  //   )
+
+  //participants.data
+  //               ?.filter((part) => part.conversation.participants.length > 1)
+  //               .some((participant) => {
+  //                 const channel =
+  //                   unreads.data?.[participant.conversation.channel_id]
+  //                 return channel?.last_message_id !== channel?.read
+  //               })
   useEffect(() => {
     setScrollPosition(currentScrollPosition)
   }, [currentScrollPosition, setScrollPosition])
@@ -202,7 +233,7 @@ const Sidebar = () => {
               <div
                 className={styles.overlay}
                 onClick={() => history.push('/settings')}
-              ></div>
+              />
               {user.data?.state && (
                 <div
                   className={`${styles.badge} ${
@@ -248,13 +279,23 @@ const Sidebar = () => {
           <FontAwesomeIcon className={styles.symbol} icon={faInbox} size='2x' />
           {matchTab?.params.tab !== 'conversations' &&
             matchTab &&
-            participants.data
-              ?.filter((part) => part.conversation.participants.length > 1)
-              .some((participant) => {
-                const channel =
-                  unreads.data?.[participant.conversation.channel_id]
-                return channel?.last_message_id !== channel?.read
-              }) && <div className={`${styles.badge}`} />}
+            (mentionsCount && mentionsCount > 0 ? (
+              <div
+                className={`${styles.mention} ${
+                  mentionsCount > 9 ? styles.pill : ''
+                }`}
+              >
+                <span>{mentionsCount > 99 ? '99+' : mentionsCount}</span>
+              </div>
+            ) : (
+              participants.data
+                ?.filter((part) => part.conversation.participants.length > 1)
+                .some((participant) => {
+                  const channel =
+                    unreads.data?.[participant.conversation.channel_id]
+                  return channel?.last_message_id !== channel?.read
+                }) && <div className={`${styles.badge}`} />
+            ))}
         </Button>
         <div className={styles.separator} />
         <Suspense fallback={<Placeholder />}>

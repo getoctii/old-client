@@ -16,7 +16,7 @@ import { clientGateway } from '../utils/constants'
 import styles from './ConversationCard.module.scss'
 import { Auth } from '../authentication/state'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { getUnreads, getUser, State } from '../user/remote'
+import { getMentions, getUnreads, getUser, State } from '../user/remote'
 import { getMessage } from '../message/remote'
 import { getChannel } from '../chat/remote'
 import { Clipboard } from '@capacitor/core'
@@ -69,6 +69,12 @@ const View = ({
     }
   }, [message, messageUpdated, ready])
   const unreads = useQuery(['unreads', id, token], getUnreads)
+  const mentions = useQuery(['mentions', id, token], getMentions)
+
+  const mentionsCount = useMemo(
+    () => mentions.data?.[channelID]?.filter((mention) => !mention.read).length,
+    [mentions, channelID]
+  )
 
   const getItems = useCallback(() => {
     const items: ContextMenuItems = [
@@ -85,11 +91,8 @@ const View = ({
     ]
 
     if (
-      channel.data &&
-      unreads.data &&
-      unreads.data[channel.data.id] &&
-      unreads.data[channel.data.id].last_message_id !==
-        unreads.data[channel.data.id].read
+      unreads?.data?.[channelID]?.last_message_id !==
+      unreads?.data?.[channelID]?.read
     ) {
       items.push({
         text: 'Mark as Read',
@@ -201,15 +204,20 @@ const View = ({
         </div>
         <div className={styles.details}>
           {!selected &&
-          channel.data &&
-          unreads.data &&
-          unreads.data[channel.data.id] &&
-          unreads.data[channel.data.id].last_message_id !==
-            unreads.data[channel.data.id].read ? (
-            <div className={styles.unread} />
-          ) : (
-            <></>
-          )}
+            (mentionsCount && mentionsCount > 0 ? (
+              <div
+                className={`${styles.mention} ${
+                  mentionsCount > 9 ? styles.pill : ''
+                }`}
+              >
+                <span>{mentionsCount > 999 ? '999+' : mentionsCount}</span>
+              </div>
+            ) : unreads?.data?.[channelID]?.last_message_id !==
+              unreads?.data?.[channelID]?.read ? (
+              <div className={styles.unread} />
+            ) : (
+              <></>
+            ))}
           <FontAwesomeIcon icon={faChevronRight} fixedWidth />
         </div>
       </div>
