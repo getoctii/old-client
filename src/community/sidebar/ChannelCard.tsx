@@ -92,7 +92,7 @@ export const ChannelCard = ({
     () =>
       channel &&
       mentions.data?.[channel.id]?.filter((mention) => !mention.read).length,
-    [mentions]
+    [mentions, channel]
   )
 
   if (!channel) return <></>

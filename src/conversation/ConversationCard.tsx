@@ -141,7 +141,8 @@ const View = ({
     leaveConversation,
     match?.params.id,
     token,
-    unreads.data
+    unreads.data,
+    channelID
   ])
 
   const output = useMarkdown(message?.content || '', {
@@ -230,7 +231,7 @@ const Placeholder = () => {
   const status = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
   return (
     <div className={styles.placeholder}>
-      <div className={styles.avatar}></div>
+      <div className={styles.avatar} />
       <div className={styles.user}>
         <div className={styles.username} style={{ width: `${username}rem` }} />
         <div className={styles.status} style={{ width: `${status}rem` }} />

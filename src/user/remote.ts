@@ -39,14 +39,14 @@ export type Member = {
   }
 }
 
-interface Unreads {
+export interface Unreads {
   [key: string]: {
     read: string
     last_message_id: string
   }
 }
 
-interface Mentions {
+export interface Mentions {
   [key: string]: {
     id: string
     message_id: string

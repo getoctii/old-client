@@ -11,6 +11,7 @@ import useTyping from './typing'
 import useNewVoiceSession from './newVoiceSession'
 import useAcceptedVoiceSession from './acceptedVoiceSession'
 import useLog from './log'
+import useNewMention from './newMention'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
@@ -27,6 +28,7 @@ const EventSource = () => {
   useTyping(eventSource)
   useNewVoiceSession(eventSource)
   useAcceptedVoiceSession(eventSource)
+  useNewMention(eventSource)
 
   return <></>
 }

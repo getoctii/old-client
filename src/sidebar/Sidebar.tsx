@@ -21,7 +21,6 @@ import {
   getParticipants,
   getUnreads,
   getUser,
-  Participant,
   State
 } from '../user/remote'
 import { isPlatform } from '@ionic/react'
