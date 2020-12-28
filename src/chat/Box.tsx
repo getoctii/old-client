@@ -129,11 +129,13 @@ const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
 const View = ({
   channelID,
   typingIndicator,
-  participants
+  participants,
+  communityID
 }: {
   channelID: string
   typingIndicator: boolean
   participants?: string[]
+  communityID?: string
 }) => {
   const { sendMessage, uploadDetails, setUploadDetails } = Chat.useContainer()
   const { token } = Auth.useContainer()
@@ -294,13 +296,25 @@ const View = ({
       <div className={styles.boxWrapper}>
         {target && (
           <Suspense fallback={<></>}>
-            <Mentions
-              ids={mentionable}
-              search={search}
-              selected={selected}
-              onMention={onMention}
-              onFiltered={onFiltered}
-            />
+            {participants ? (
+              <Mentions.Conversation
+                ids={mentionable}
+                search={search}
+                selected={selected}
+                onMention={onMention}
+                onFiltered={onFiltered}
+              />
+            ) : communityID ? (
+              <Mentions.Community
+                communityID={communityID}
+                search={search}
+                onMention={onMention}
+                selected={selected}
+                onFiltered={onFiltered}
+              />
+            ) : (
+              <></>
+            )}
           </Suspense>
         )}
         <div

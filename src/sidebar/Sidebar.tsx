@@ -59,6 +59,19 @@ const Community = ({
     getCommunity
   )
   const unreads = useQuery(['unreads', id, token], getUnreads)
+  const mentions = useQuery(['mentions', id, token], getMentions)
+
+  const mentionsCount = useMemo(
+    () =>
+      communityFull.data?.channels
+        .map(
+          (channel) =>
+            mentions.data?.[channel]?.filter((mention) => !mention.read)
+              .length ?? 0
+        )
+        .reduce((acc, curr) => acc + curr),
+    [communityFull, mentions]
+  )
 
   return (
     <Draggable draggableId={community.id} index={index}>
@@ -81,10 +94,20 @@ const Community = ({
         >
           <img src={community.icon} alt={community.name} />
           {match?.params.id !== community.id &&
-            communityFull.data?.channels.some((channelID) => {
-              const channel = unreads.data?.[channelID]
-              return channel?.last_message_id !== channel?.read
-            }) && <div className={`${styles.badge}`} />}
+            (mentionsCount && mentionsCount > 0 ? (
+              <div
+                className={`${styles.mention} ${
+                  mentionsCount > 9 ? styles.pill : ''
+                }`}
+              >
+                <span>{mentionsCount > 99 ? '99+' : mentionsCount}</span>
+              </div>
+            ) : (
+              communityFull.data?.channels.some((channelID) => {
+                const channel = unreads.data?.[channelID]
+                return channel?.last_message_id !== channel?.read
+              }) && <div className={`${styles.badge}`} />
+            ))}
         </div>
       )}
     </Draggable>
@@ -191,18 +214,6 @@ const Sidebar = () => {
     [participants, mentions]
   )
 
-  //const mentionsCount = useMemo(
-  //     () => mentions.data?.[channelID]?.filter((mention) => !mention.read).length,
-  //     [mentions, channelID]
-  //   )
-
-  //participants.data
-  //               ?.filter((part) => part.conversation.participants.length > 1)
-  //               .some((participant) => {
-  //                 const channel =
-  //                   unreads.data?.[participant.conversation.channel_id]
-  //                 return channel?.last_message_id !== channel?.read
-  //               })
   useEffect(() => {
     setScrollPosition(currentScrollPosition)
   }, [currentScrollPosition, setScrollPosition])

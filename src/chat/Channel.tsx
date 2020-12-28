@@ -44,7 +44,7 @@ const TypingIndicator = ({ channelID }: { channelID: string }) => {
           : ''}
       </p>
     )
-  else return <div className={styles.typingEmpty}></div>
+  else return <div className={styles.typingEmpty} />
 }
 
 const Name = ({ id }: { id: string }) => {
@@ -71,11 +71,13 @@ const supportedFiles = new Set(['image/png', 'image/gif', 'image/jpeg'])
 const View = ({
   type,
   channelID,
-  participants
+  participants,
+  communityID
 }: {
   type: ChannelTypes
   channelID: string
   participants?: string[]
+  communityID?: string
 }) => {
   const {
     autoRead,
@@ -180,7 +182,8 @@ const View = ({
           {...{
             participants,
             channelID,
-            typingIndicator: users?.length > 0
+            typingIndicator: users?.length > 0,
+            communityID
           }}
         />
         <TypingIndicator channelID={channelID} />
