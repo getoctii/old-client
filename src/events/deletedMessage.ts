@@ -3,6 +3,8 @@ import { EventSourcePolyfill } from 'event-source-polyfill'
 import { queryCache } from 'react-query'
 import { Events } from '../utils/constants'
 import { log } from '../utils/logging'
+import { Auth } from '../authentication/state'
+import { Mentions } from '../user/remote'
 
 interface Message {
   id: string
@@ -22,6 +24,7 @@ interface Message {
 }
 
 const useDeletedMessage = (eventSource: EventSourcePolyfill | null) => {
+  const { id, token } = Auth.useContainer()
   useEffect(() => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
@@ -34,6 +37,24 @@ const useDeletedMessage = (eventSource: EventSourcePolyfill | null) => {
           ['messages', message.channel_id],
           initial.map((sub) =>
             sub.filter((msg: Message) => msg.id !== message.id)
+          )
+        )
+      }
+
+      const initialMentions: Mentions | undefined = queryCache.getQueryData([
+        'mentions',
+        id,
+        token
+      ])
+
+      if (initialMentions) {
+        queryCache.setQueryData(
+          ['mentions', id, token],
+          Object.fromEntries(
+            Object.entries(initialMentions).map(([channel, mentions]) => [
+              channel,
+              mentions.filter((mention) => mention.message_id !== message.id)
+            ])
           )
         )
       }
