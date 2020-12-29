@@ -21,6 +21,129 @@
   height: 100%;
   width: 100%;
   padding: 2rem;
+
+  .body {
+    margin-top: 1rem;
+    .member {
+      background-color: var(--neko-settings-card);
+      padding: 1rem;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+
+      .actions {
+        display: flex;
+        margin-left: auto;
+
+        height: 46px;
+        button {
+          svg {
+            margin-right: 0.5rem;
+          }
+          background: var(--neko-colors-primary);
+
+          &.kick {
+            margin-left: 0.6rem;
+            width: 46px;
+            background: var(--neko-colors-warning);
+            svg {
+              margin-right: auto;
+            }
+          }
+        }
+      }
+      .info {
+        svg {
+          margin-left: 0.25rem;
+          color: var(--neko-text-href);
+        }
+        overflow: hidden;
+      }
+      .icon {
+        width: 45px;
+        height: 45px;
+        min-width: 45px;
+        min-height: 45px;
+        border-radius: 10px;
+        position: relative;
+        background-size: contain;
+        margin-right: 0.5rem;
+
+        .badge {
+          position: absolute;
+          height: 16.45px;
+          border-radius: 50%;
+          width: 16.45px;
+          bottom: -3.45px;
+          right: -3.45px;
+          border-color: var(--neko-channels-background);
+          border-width: 3.45px;
+          border-style: solid;
+          &.selectedBadge {
+            border-color: var(--neko-status-selected);
+          }
+          &.online {
+            background: var(--neko-status-online);
+          }
+          &.dnd {
+            background: var(--neko-status-dnd);
+          }
+          &.idle {
+            background: var(--neko-status-idle);
+          }
+          &.offline {
+            background: var(--neko-status-offline);
+          }
+        }
+      }
+      h4 {
+        margin: 0;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      time {
+        font-size: 0.8rem;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      &:first-child {
+        border-top-left-radius: 14px;
+        border-top-right-radius: 14px;
+      }
+
+      &:last-of-type {
+        border-bottom-left-radius: 14px;
+        border-bottom-right-radius: 14px;
+      }
+    }
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    h2 {
+      font-size: 1.3125rem;
+    }
+    small {
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+    .title {
+      height: 2.65rem;
+    }
+    .icon {
+      margin-right: 0.8rem;
+      height: 2.65rem;
+      width: 2.65rem;
+      min-height: 2.65rem;
+      min-width: 2.65rem;
+      background-color: var(--neko-settings-card);
+      background-size: contain;
+      border-radius: 12px;
+    }
+  }
   h2 {
     margin: 0;
   }
@@ -32,7 +155,7 @@
     }
   }
 
-  table {
+  i table {
     @media (max-width: 940px) {
       display: block;
       overflow-x: scroll;
@@ -105,7 +228,9 @@
       padding: 0.5rem;
       height: 2.65rem;
       width: 2.65rem;
+
       border-radius: 12px;
+      font-size: 1.5rem;
       color: var(--neko-text-inverse);
       cursor: pointer;
       svg {
@@ -114,11 +239,6 @@
       display: flex;
       vertical-align: middle;
       justify-content: center;
-    }
-    h2 {
-      display: flex;
-      align-items: center;
-      padding-bottom: 1rem;
     }
   }
 }

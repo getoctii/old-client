@@ -1,4 +1,10 @@
-import React, { useMemo, useState, useEffect, useCallback } from 'react'
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+  Suspense
+} from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronRight,
@@ -10,13 +16,22 @@ import { clientGateway } from '../utils/constants'
 import styles from './ConversationCard.module.scss'
 import { Auth } from '../authentication/state'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { getUnreads, getUser, State } from '../user/remote'
+import {
+  getMentions,
+  getUnreads,
+  getUser,
+  Mentions,
+  State
+} from '../user/remote'
 import { getMessage } from '../message/remote'
 import { getChannel } from '../chat/remote'
 import { Clipboard } from '@capacitor/core'
-import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { faGlasses } from '@fortawesome/free-solid-svg-icons'
 import Context from '../components/Context'
+import { ContextMenuItems } from '../state/ui'
+import useMarkdown from '@innatical/markdown'
+import { ErrorBoundary } from 'react-error-boundary'
+import Message from '../chat/Message'
 
 const View = ({
   people,
@@ -60,14 +75,15 @@ const View = ({
     }
   }, [message, messageUpdated, ready])
   const unreads = useQuery(['unreads', id, token], getUnreads)
+  const mentions = useQuery(['mentions', id, token], getMentions)
+
+  const mentionsCount = useMemo(
+    () => mentions.data?.[channelID]?.filter((mention) => !mention.read).length,
+    [mentions, channelID]
+  )
 
   const getItems = useCallback(() => {
-    const items: {
-      text: string
-      icon: IconProp
-      danger?: boolean
-      onClick: (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => void
-    }[] = [
+    const items: ContextMenuItems = [
       {
         text: 'Copy ID',
         icon: faCopy,
@@ -81,11 +97,8 @@ const View = ({
     ]
 
     if (
-      channel.data &&
-      unreads.data &&
-      unreads.data[channel.data.id] &&
-      unreads.data[channel.data.id].last_message_id !==
-        unreads.data[channel.data.id].read
+      unreads?.data?.[channelID]?.last_message_id !==
+      unreads?.data?.[channelID]?.read
     ) {
       items.push({
         text: 'Mark as Read',
@@ -93,10 +106,10 @@ const View = ({
         danger: false,
         onClick: async () => {
           if (!channel.data) return
-          const id = channel.data.id
+          const channelId = channel.data.id
 
           await clientGateway.post(
-            `/channels/${id}/read`,
+            `/channels/${channelId}/read`,
             {},
             {
               headers: {
@@ -107,11 +120,27 @@ const View = ({
           // TODO: Maybe we want to push a gateway event instead?
           queryCache.setQueryData(['unreads', id, token], (initial: any) => ({
             ...initial,
-            [id]: {
-              ...initial[id],
-              read: initial[id].last_message_id
+            [channelId]: {
+              ...initial[channelId],
+              read: initial[channelId].last_message_id
             }
           }))
+
+          const initialMentions = queryCache.getQueryData<Mentions>([
+            'mentions',
+            id,
+            token
+          ])
+
+          if (initialMentions) {
+            queryCache.setQueryData(['mentions', id, token], {
+              ...initialMentions,
+              [channelId]: initialMentions[channelId]?.map((m) => ({
+                ...m,
+                read: true
+              }))
+            })
+          }
         }
       })
     }
@@ -134,11 +163,40 @@ const View = ({
     leaveConversation,
     match?.params.id,
     token,
-    unreads.data
+    unreads.data,
+    channelID,
+    id
   ])
 
+  const output = useMarkdown(message?.content || '', {
+    bold: (str, key) => <strong key={key}>{str}</strong>,
+    italic: (str, key) => <i key={key}>{str}</i>,
+    underlined: (str, key) => <u key={key}>{str}</u>,
+    strikethough: (str, key) => <del key={key}>{str}</del>,
+    link: (str, key) => {
+      return (
+        <span key={key} className={styles.link}>
+          {str}
+        </span>
+      )
+    },
+    codeblock: (str, key) => <code key={key}>{str}</code>,
+    custom: [
+      [
+        /<@([A-Za-z0-9-]+?)>/g,
+        (str, key) => (
+          <Suspense fallback={<>&lt;@{str}&gt;</>}>
+            <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
+              <Message.Mention selected={selected} key={key} userID={str} />
+            </ErrorBoundary>
+          </Suspense>
+        )
+      ]
+    ]
+  })
+
   return (
-    <Context id={conversationID} key={conversationID} items={getItems()}>
+    <Context.Wrapper key={conversationID} items={getItems()}>
       <div
         className={`${styles.card} ${selected ? styles.selected : ''}`}
         onClick={onClick}
@@ -165,24 +223,29 @@ const View = ({
           <h4>{recipient.data?.username}</h4>
           <p>
             {message?.author_id === id ? 'You: ' : ''}
-            {message?.content}
+            {output}
           </p>
         </div>
         <div className={styles.details}>
           {!selected &&
-          channel.data &&
-          unreads.data &&
-          unreads.data[channel.data.id] &&
-          unreads.data[channel.data.id].last_message_id !==
-            unreads.data[channel.data.id].read ? (
-            <div className={styles.unread} />
-          ) : (
-            <></>
-          )}
+            (mentionsCount && mentionsCount > 0 ? (
+              <div
+                className={`${styles.mention} ${
+                  mentionsCount > 9 ? styles.pill : ''
+                }`}
+              >
+                <span>{mentionsCount > 999 ? '999+' : mentionsCount}</span>
+              </div>
+            ) : unreads?.data?.[channelID]?.last_message_id !==
+              unreads?.data?.[channelID]?.read ? (
+              <div className={styles.unread} />
+            ) : (
+              <></>
+            ))}
           <FontAwesomeIcon icon={faChevronRight} fixedWidth />
         </div>
       </div>
-    </Context>
+    </Context.Wrapper>
   )
 }
 
@@ -191,7 +254,7 @@ const Placeholder = () => {
   const status = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
   return (
     <div className={styles.placeholder}>
-      <div className={styles.avatar}></div>
+      <div className={styles.avatar} />
       <div className={styles.user}>
         <div className={styles.username} style={{ width: `${username}rem` }} />
         <div className={styles.status} style={{ width: `${status}rem` }} />

@@ -25,7 +25,7 @@ const useChat = () => {
   )
 
   useEffect(() => {
-    if (tracking === false && autoRead === true) setAutoRead(false)
+    if (!tracking && autoRead) setAutoRead(false)
   }, [tracking, autoRead])
 
   return {

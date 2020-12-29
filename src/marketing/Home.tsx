@@ -20,8 +20,6 @@ const validate = (values: formData) => {
   return errors
 }
 
-// modal stupid, just do a temporoary success msg instead of we don't spam
-// also maybe we should add a check for localstorage to see if they subsribed?
 const Home = () => {
   const isDarkMode = useMedia('(prefers-color-scheme: dark)')
   const [submitted, setSubmitted] = useState(false)

@@ -21,6 +21,10 @@
       "warning": "#FF7D0E",
       "secondary": "#646464"
     },
+    "mention": {
+      "me": "#007FFF",
+      "other": "#687DB2"
+    },
     "sidebar": {
       "background": "#040a0f",
       "seperator": "#383838",
@@ -122,6 +126,10 @@
         "channel": "string",
         "description": "string"
       }
+    },
+    "mention": {
+      "me": "#007FFF",
+      "other": "#687DB2"
     },
     "context": {
       "seperator": "#ffffff",

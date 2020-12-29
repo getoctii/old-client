@@ -13,6 +13,28 @@
     border-radius: 50%;
   }
 
+  .mention {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--neko-text-href);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 12px;
+
+    &.pill {
+      border-radius: 10px;
+      width: auto;
+      height: auto;
+      padding-left: 8px;
+      padding-right: 8px;
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+  }
+
   .details {
     display: flex;
     align-items: center;
@@ -38,6 +60,10 @@
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
+
+      .link {
+        color: var(--neko-text-href);
+      }
     }
   }
 
@@ -45,6 +71,7 @@
     height: 3rem;
     width: 3rem;
     position: relative;
+
     .badge {
       position: absolute;
       height: 16.45px;
@@ -74,6 +101,8 @@
     img {
       border-radius: 14px;
       object-fit: cover;
+
+      background-color: var(--neko-sidebar-background);
       height: 3rem;
       width: 3rem;
     }
