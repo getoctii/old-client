@@ -1,7 +1,6 @@
 import axios from 'axios'
 
-export const CLIENT_GATEWAY_URL =
-  'https://drinking-comp-grown-fever.trycloudflare.com'
+export const CLIENT_GATEWAY_URL = process.env.REACT_APP_GATEWAY_URL
 export const clientGateway = axios.create({
   baseURL: CLIENT_GATEWAY_URL
 })
