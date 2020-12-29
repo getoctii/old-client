@@ -39,6 +39,7 @@
     }
   }
   .icon {
+    background-color: var(--neko-channels-background);
     background-size: cover;
     margin: 0;
     width: 3.5rem;
@@ -48,7 +49,7 @@
     margin-bottom: 0.7rem;
     border-radius: 16px;
     transition: box-shadow 0.1s ease-in-out;
-    animation: bounce 0.2s easin-in;
+    animation: bounce 0.2s easing-in;
     position: relative;
     outline: none;
     .badge {
@@ -63,6 +64,7 @@
       border-style: solid;
       background: var(--neko-colors-primary);
     }
+
     img {
       border-radius: 16px;
       object-fit: cover;
@@ -157,6 +159,8 @@
     height: 3.5rem;
     width: 3.5rem;
     position: relative;
+
+    background-color: var(--neko-channels-background);
     .badge {
       position: absolute;
       height: 18px;
@@ -259,4 +263,33 @@
   transition: box-shadow 0.1s ease-in-out;
   animation: bounce 0.2s easin-in;
   background: var(--neko-channels-background);
+}
+
+.mention {
+  position: absolute;
+  bottom: -3.45px;
+  right: -3.45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--neko-text-href);
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 12px;
+  border-color: var(--neko-sidebar-background);
+  border-width: 3.5px;
+  border-style: solid;
+
+
+  &.pill {
+    border-radius: 15px;
+    width: auto;
+    height: auto;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
 }

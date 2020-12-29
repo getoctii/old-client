@@ -55,7 +55,6 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
             : [[message], ...initial]
         )
       }
-      // channel id cna be undefined btw
       queryCache.setQueryData(['unreads', id, token], (initial: any) => ({
         ...initial,
         [message.channel_id]: {

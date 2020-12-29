@@ -2,49 +2,14 @@ import React from 'react'
 import styles from './NewConversation.module.scss'
 import Input from '../components/Input'
 import { Field, Form, Formik } from 'formik'
-import { clientGateway } from '../utils/constants'
 import { Auth } from '../authentication/state'
-import { isTag } from '../utils/validations'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExclamationCircle, faSearch } from '@fortawesome/pro-solid-svg-icons'
 import Button from '../components/Button'
 import { queryCache } from 'react-query'
 import { useHistory } from 'react-router-dom'
 import { ParticipantsResponse } from '../user/remote'
-
-interface ConversationResponse {
-  id: string
-  channel_id: string
-}
-
-type FindResponse = {
-  id: string
-  avatar: string
-  username: string
-  discriminator: number
-}
-
-type formData = { tag: string }
-
-const validate = (values: formData) => {
-  const errors: { tag?: string } = {}
-  console.log(values)
-  if (!values.tag || !isTag(values.tag))
-    errors.tag = 'A valid username is required'
-  return errors
-}
-
-const createConversation = async (
-  token: string,
-  values: { recipient: string }
-) =>
-  (
-    await clientGateway.post<ConversationResponse>(
-      '/conversations',
-      new URLSearchParams(values),
-      { headers: { Authorization: token } }
-    )
-  ).data
+import { createConversation, findUser, validate } from './remote'
 
 const NewConversation = () => {
   const { id, token } = Auth.useContainer()
@@ -59,19 +24,14 @@ const NewConversation = () => {
           values,
           { setSubmitting, setErrors, setFieldError, resetForm }
         ) => {
-          console.log('e')
           if (!values?.tag) return setFieldError('tag', 'Required')
           try {
             const splitted = values.tag.split('#')
-            const user = (
-              await clientGateway.get<FindResponse>('/users/find', {
-                headers: { Authorization: token },
-                params: {
-                  username: splitted[0],
-                  discriminator: splitted[1] === 'inn' ? '0' : splitted[1]
-                }
-              })
-            ).data
+            const user = await findUser(
+              token,
+              splitted[0],
+              splitted[1] === 'inn' ? '0' : splitted[1]
+            )
             const cache = queryCache.getQueryData([
               'participants',
               id,

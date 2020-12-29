@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styles from './Invites.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -9,7 +9,6 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { faPlus } from '@fortawesome/pro-solid-svg-icons'
 import moment from 'moment'
-import { IonToast } from '@ionic/react'
 import { Auth } from '../../authentication/state'
 import { useRouteMatch } from 'react-router-dom'
 import { useMutation, useQuery, queryCache } from 'react-query'
@@ -104,8 +103,6 @@ const Invites = () => {
     ['invites', match?.params.id, auth.token],
     getInvites
   )
-  const [showCreate, setShowCreate] = useState(false)
-
   const [createInvite] = useMutation(
     async () =>
       (
@@ -123,23 +120,6 @@ const Invites = () => {
   )
   return (
     <div className={styles.invites}>
-      <IonToast
-        mode='ios'
-        isOpen={showCreate}
-        onDidDismiss={() => setShowCreate(false)}
-        message='Generated and copied new invite: e9321ig'
-        position='bottom'
-        translucent={true}
-        buttons={[
-          {
-            text: 'Dismiss',
-            role: 'cancel',
-            handler: () => {
-              console.log('Cancel clicked')
-            }
-          }
-        ]}
-      />
       {invites.data && invites.data.length > 0 ? (
         <div className={styles.invitesBody}>
           <h3>
@@ -169,7 +149,7 @@ const Invites = () => {
         </div>
       ) : (
         <>
-          <div className={styles.invitesEmpty}>
+          <div className={styles.empty}>
             <FontAwesomeIcon size={'5x'} icon={faBoxOpen} />
             <br />
             <h2>Hi, this community has no invites!</h2>

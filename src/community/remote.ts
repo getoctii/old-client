@@ -1,4 +1,19 @@
+import { State } from '../user/remote'
 import { clientGateway } from '../utils/constants'
+
+export interface Member {
+  id: string
+  user: {
+    id: string
+    username: string
+    avatar: string
+    state: State
+    status: string
+    discriminator: number
+  }
+  created_at: string
+  updated_at: string
+}
 
 export interface CommunityResponse {
   id: string
@@ -41,5 +56,18 @@ export const getInvites = async (
       headers: {
         Authorization: token
       }
+    })
+  ).data
+
+export const getMembers = async (
+  _: string,
+  communityID: string,
+  token: string,
+  date: string
+) =>
+  (
+    await clientGateway.get<Member[]>(`/communities/${communityID}/members`, {
+      headers: { Authorization: token },
+      params: { created_at: date }
     })
   ).data

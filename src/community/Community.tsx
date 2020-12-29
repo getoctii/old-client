@@ -96,6 +96,7 @@ const Channel = () => {
       type={ChannelTypes.CommunityChannel}
       channelID={channel}
       key={channel}
+      communityID={community.data.id}
     />
   )
 }

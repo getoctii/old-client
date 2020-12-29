@@ -59,6 +59,10 @@
       "dnd": "#FF3333",
       "offline": "#D8D8D8"
     },
+    "mention": {
+      "me": "#1089FF",
+      "other": "#8BA0D8"
+    },
     "message": {
       "author": "string",
       "date": "string",
@@ -100,6 +104,10 @@
       "background": "#ffffff",
       "seperator": "#F1F1F1",
       "shadow": "0 -9px 12px -2px rgba(255, 255, 255, 1)"
+    },
+    "mention": {
+      "me": "#1089FF",
+      "other": "#8BA0D8"
     },
     "settings": {
       "background": "#ffffff",
