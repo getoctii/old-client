@@ -69,7 +69,7 @@ const Community = ({
             mentions.data?.[channel]?.filter((mention) => !mention.read)
               .length ?? 0
         )
-        .reduce((acc, curr) => acc + curr),
+        .reduce((acc, curr) => acc + curr, 0),
     [communityFull, mentions]
   )
 
@@ -210,7 +210,7 @@ const Sidebar = () => {
               (mention) => !mention.read
             ).length ?? 0
         )
-        .reduce((acc, curr) => acc + curr),
+        .reduce((acc, curr) => acc + curr, 0),
     [participants, mentions]
   )
 
