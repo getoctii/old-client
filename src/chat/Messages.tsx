@@ -15,7 +15,7 @@ import moment from 'moment'
 import { Waypoint } from 'react-waypoint'
 import { Channel } from './remote'
 import { useDebounce } from 'react-use'
-import { getUnreads } from '../user/remote'
+import { getUnreads, Mentions } from '../user/remote'
 import { Chat } from './state'
 
 interface MessageType {
@@ -113,6 +113,22 @@ const View = ({
           read: messages[messages.length - 1]?.id
         }
       }))
+
+      const initialMentions = queryCache.getQueryData<Mentions>([
+        'mentions',
+        id,
+        token
+      ])
+
+      if (initialMentions) {
+        queryCache.setQueryData(['mentions', id, token], {
+          ...initialMentions,
+          [channel.id]: initialMentions[channel.id]?.map((m) => ({
+            ...m,
+            read: true
+          }))
+        })
+      }
     }
   }, [tracking, messages, channel, token, unreads, id])
 

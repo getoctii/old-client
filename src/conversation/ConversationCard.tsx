@@ -16,7 +16,13 @@ import { clientGateway } from '../utils/constants'
 import styles from './ConversationCard.module.scss'
 import { Auth } from '../authentication/state'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { getMentions, getUnreads, getUser, State } from '../user/remote'
+import {
+  getMentions,
+  getUnreads,
+  getUser,
+  Mentions,
+  State
+} from '../user/remote'
 import { getMessage } from '../message/remote'
 import { getChannel } from '../chat/remote'
 import { Clipboard } from '@capacitor/core'
@@ -100,10 +106,10 @@ const View = ({
         danger: false,
         onClick: async () => {
           if (!channel.data) return
-          const id = channel.data.id
+          const channelId = channel.data.id
 
           await clientGateway.post(
-            `/channels/${id}/read`,
+            `/channels/${channelId}/read`,
             {},
             {
               headers: {
@@ -114,11 +120,27 @@ const View = ({
           // TODO: Maybe we want to push a gateway event instead?
           queryCache.setQueryData(['unreads', id, token], (initial: any) => ({
             ...initial,
-            [id]: {
-              ...initial[id],
-              read: initial[id].last_message_id
+            [channelId]: {
+              ...initial[channelId],
+              read: initial[channelId].last_message_id
             }
           }))
+
+          const initialMentions = queryCache.getQueryData<Mentions>([
+            'mentions',
+            id,
+            token
+          ])
+
+          if (initialMentions) {
+            queryCache.setQueryData(['mentions', id, token], {
+              ...initialMentions,
+              [channelId]: initialMentions[channelId]?.map((m) => ({
+                ...m,
+                read: true
+              }))
+            })
+          }
         }
       })
     }
@@ -142,7 +164,8 @@ const View = ({
     match?.params.id,
     token,
     unreads.data,
-    channelID
+    channelID,
+    id
   ])
 
   const output = useMarkdown(message?.content || '', {
