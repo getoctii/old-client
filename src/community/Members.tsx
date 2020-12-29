@@ -2,7 +2,6 @@ import {
   faBoxOpen,
   faChevronLeft,
   faCrown,
-  faHouseLeave,
   faPaperPlane
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -18,22 +17,8 @@ import Button from '../components/Button'
 import Loader from '../components/Loader'
 import { createConversation } from '../conversation/remote'
 import { ParticipantsResponse, State } from '../user/remote'
-import { clientGateway } from '../utils/constants'
 import styles from './Members.module.scss'
-import { getCommunity } from './remote'
-
-interface MemberType {
-  id: string
-  user: {
-    id: string
-    username: string
-    avatar: string
-    state: State
-    discriminator: number
-  }
-  created_at: string
-  updated_at: string
-}
+import { getCommunity, getMembers, Member as MemberType } from './remote'
 
 const Member = ({ member, owner }: { member: MemberType; owner?: string }) => {
   const isMobile = useMedia('(max-width: 940px)')
@@ -112,11 +97,12 @@ const Member = ({ member, owner }: { member: MemberType; owner?: string }) => {
               Message
             </Button>
           )}
-          {id === owner && member.user.id !== id && (
+          {/* NOTE: Kick Button. Disabled until impl in backend */}
+          {/* {id === owner && member.user.id !== id && (
             <Button type='button' className={styles.kick}>
               <FontAwesomeIcon icon={faHouseLeave} />
             </Button>
-          )}
+          )} */}
         </div>
       )}
     </motion.div>
@@ -128,29 +114,16 @@ export const Members = () => {
   const { token } = Auth.useContainer()
   const { id } = useParams<{ id: string }>()
   const community = useQuery(['community', id, token], getCommunity)
-  const fetchMembers = async (_: string, community: string, date: string) => {
-    return (
-      await clientGateway.get<MemberType[]>(
-        `/communities/${community}/members`,
-        {
-          headers: { Authorization: token },
-          params: { created_at: date }
-        }
-      )
-    ).data
-  }
   const { data, canFetchMore, fetchMore } = useInfiniteQuery<MemberType[], any>(
-    ['members', id],
-    fetchMembers,
+    ['members', id, token],
+    getMembers,
     {
       getFetchMore: (last) => {
         return last.length < 25 ? undefined : last[last.length - 1]?.created_at
       }
     }
   )
-
   const members = data?.flat() || []
-
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
   const isMobile = useMedia('(max-width: 940px)')

@@ -5,6 +5,7 @@ import { getUser, UserResponse } from '../user/remote'
 import { Auth } from '../authentication/state'
 import { clientGateway } from '../utils/constants'
 import { useDebounce } from 'react-use'
+import { getMembers } from '../community/remote'
 
 type onMention = (id: string) => void
 
@@ -126,11 +127,12 @@ const Community = ({
 }) => {
   const { token, id } = Auth.useContainer()
   const [debouncedSearch, setDebouncedSearch] = useState(search)
-  useDebounce(() => setDebouncedSearch(search), 500, [search])
+  useDebounce(() => setDebouncedSearch(search), 300, [search])
   const { data: members } = useQuery(
     ['members', communityID, debouncedSearch, token],
     searchCommunityMembers
   )
+  const defaultMembers = useQuery(['members', communityID, token], getMembers)
 
   const filteredMembers = useMemo(
     () => members?.filter((member) => member.id !== id),
@@ -149,14 +151,25 @@ const Community = ({
       }}
     >
       <div className={styles.mentions}>
-        {filteredMembers?.map((member, index) => (
-          <Mention
-            key={member.id}
-            user={member.user}
-            onMention={onMention}
-            selected={index === selected}
-          />
-        ))}
+        {filteredMembers && filteredMembers.length > 0
+          ? filteredMembers.map((member, index) => (
+              <Mention
+                key={member.id}
+                user={member.user}
+                onMention={onMention}
+                selected={index === selected}
+              />
+            ))
+          : defaultMembers?.data
+              ?.filter((member) => member.user.id !== id)
+              .map((member, index) => (
+                <Mention
+                  key={member.id}
+                  user={member.user}
+                  onMention={onMention}
+                  selected={index === selected}
+                />
+              ))}
       </div>
     </div>
   )
