@@ -11,17 +11,19 @@
   height: 100%;
 
   .header {
-    margin-top: 2rem;
-    margin-bottom: 0.5rem;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
     padding-left: 2rem;
     padding-right: 2rem;
     display: flex;
-    min-height: 2.65rem;
-    z-index: 5;
-    display: flex;
+    height: 5.65rem;
+    min-height: 5.65rem;
+    z-index: 3;
     flex-direction: row;
     align-items: center;
-
+    backdrop-filter: blur(25px);
+    position: absolute;
+    width: 100%;
     button {
       background: var(--neko-colors-primary);
       color: var(--neko-text-inverse);
@@ -79,9 +81,10 @@
   }
 
   @media (max-width: 940px) {
-    padding-top: calc(env(safe-area-inset-top) + 0.8rem);
     .header {
-      margin-top: 0.5rem;
+      height: calc(env(safe-area-inset-top) + 4.65rem);
+      min-height: calc(env(safe-area-inset-top) + 4.65rem);
+      padding-top: calc(env(safe-area-inset-top) + 1rem);
     }
   }
 }

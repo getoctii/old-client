@@ -4,7 +4,7 @@ import { queryCache } from 'react-query'
 import { Events } from '../utils/constants'
 import { log } from '../utils/logging'
 import { Auth } from '../authentication/state'
-import { Mentions } from '../user/remote'
+import { Mentions, Unreads } from '../user/remote'
 
 interface Message {
   id: string
@@ -30,11 +30,15 @@ const useDeletedMessage = (eventSource: EventSourcePolyfill | null) => {
     const handler = (e: MessageEvent) => {
       const message = JSON.parse(e.data) as Message
       log('Events', 'purple', 'DELETED_MESSAGE')
-      const initial = queryCache.getQueryData(['messages', message.channel_id])
+      const initial = queryCache.getQueryData([
+        'messages',
+        message.channel_id,
+        token
+      ])
 
       if (initial instanceof Array) {
         queryCache.setQueryData(
-          ['messages', message.channel_id],
+          ['messages', message.channel_id, token],
           initial.map((sub) =>
             sub.filter((msg: Message) => msg.id !== message.id)
           )
@@ -53,8 +57,27 @@ const useDeletedMessage = (eventSource: EventSourcePolyfill | null) => {
           Object.fromEntries(
             Object.entries(initialMentions).map(([channel, mentions]) => [
               channel,
-              mentions.filter((mention) => mention.message_id !== message.id)
+              mentions?.filter(
+                (mention) => mention.message_id !== message.id
+              ) || []
             ])
+          )
+        )
+      }
+
+      const initialUnreads: Unreads | undefined = queryCache.getQueryData([
+        'unreads',
+        id,
+        token
+      ])
+
+      if (initialUnreads) {
+        queryCache.setQueryData(
+          ['unreads', id, token],
+          Object.fromEntries(
+            Object.entries(initialUnreads).filter(
+              ([_, unreads]) => unreads.last_message_id !== message.id
+            )
           )
         )
       }

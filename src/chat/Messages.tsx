@@ -13,23 +13,10 @@ import { Auth } from '../authentication/state'
 import Message from './Message'
 import moment from 'moment'
 import { Waypoint } from 'react-waypoint'
-import { Channel } from './remote'
+import { Channel, getMessages, Message as MessageType } from './remote'
 import { useDebounce } from 'react-use'
 import { getUnreads, Mentions } from '../user/remote'
 import { Chat } from './state'
-
-interface MessageType {
-  id: string
-  author: {
-    id: string
-    username: string
-    avatar: string
-    discriminator: number
-  }
-  created_at: string
-  updated_at: string
-  content: string
-}
 
 const View = ({
   channel,
@@ -40,21 +27,10 @@ const View = ({
 }) => {
   const { tracking, setTracking } = Chat.useContainer()
   const { token, id } = Auth.useContainer()
-  const fetchMessages = async (_: string, channelID: string, date: string) => {
-    return (
-      await clientGateway.get<MessageType[]>(
-        `/channels/${channelID}/messages`,
-        {
-          headers: { Authorization: token },
-          params: { created_at: date }
-        }
-      )
-    ).data
-  }
   const { data, canFetchMore, fetchMore } = useInfiniteQuery<
     MessageType[],
     any
-  >(['messages', channel.id], fetchMessages, {
+  >(['messages', channel.id, token], getMessages, {
     getFetchMore: (last) => {
       return last.length < 25 ? undefined : last[last.length - 1]?.created_at
     }
@@ -62,33 +38,41 @@ const View = ({
 
   const messages = useMemo(() => data?.flat().reverse(), [data])
 
-  const isPrimary = (message: MessageType, index: number) => {
-    return !(
-      messages?.[index - 1] &&
-      message.author.id === messages?.[index - 1]?.author?.id &&
-      moment.utc(message?.created_at)?.valueOf() -
-        moment.utc(messages?.[index - 1]?.created_at)?.valueOf() <
-        300000
-    )
-  }
-
-  const trackingRef = useRef(tracking)
+  const isPrimary = useCallback(
+    (message: MessageType, index: number) => {
+      return !(
+        messages?.[index - 1] &&
+        message.author.id === messages?.[index - 1]?.author?.id &&
+        moment.utc(message?.created_at)?.valueOf() -
+          moment.utc(messages?.[index - 1]?.created_at)?.valueOf() <
+          300000
+      )
+    },
+    [messages]
+  )
 
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
+  const trackingRef = useRef(tracking)
 
   const autoScroll = useCallback(() => {
     const scrollRef = ref?.current
     if (trackingRef.current && scrollRef) {
-      scrollRef.scrollTop = scrollRef.scrollHeight
+      scrollRef.scroll({
+        top: scrollRef.scrollHeight,
+        behavior: 'smooth'
+      })
     }
   }, [])
+
+  useEffect(() => {
+    trackingRef.current = tracking
+  }, [tracking])
 
   useLayoutEffect(autoScroll, [messages, autoScroll])
   const unreads = useQuery(['unreads', id, token], getUnreads)
 
   const setAsRead = useCallback(async () => {
-    console.log(tracking, messages, channel)
     if (
       tracking &&
       messages &&
@@ -133,8 +117,6 @@ const View = ({
   }, [tracking, messages, channel, token, unreads, id])
 
   const setAsReadHack = useRef(setAsRead)
-  // oh this is more sus then my code
-  // stop saying _it_
 
   useEffect(() => {
     setAsReadHack.current = setAsRead
@@ -164,9 +146,9 @@ const View = ({
             try {
               const current = ref.current
               if (!current || !current.scrollHeight) return
-              setLoading(true)
               const oldHeight = current.scrollHeight
               const oldTop = current.scrollTop
+              setLoading(true)
               await fetchMore()
               if (!ref.current) return
               ref.current.scrollTop = current.scrollHeight
@@ -226,6 +208,7 @@ const View = ({
         )
       )}
       <Waypoint
+        topOffset={5}
         onEnter={() => setTracking(true)}
         onLeave={() => setTracking(false)}
       />

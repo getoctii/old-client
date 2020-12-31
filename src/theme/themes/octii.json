@@ -73,7 +73,7 @@
       "text": "#ffffff"
     },
     "modal": {
-      "background": "rgba(70, 70, 70, 0.5)",
+      "background": "rgba(30, 30, 38, 0.6)",
       "foreground": "#040a0f"
     },
     "emojis": {

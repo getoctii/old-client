@@ -4,7 +4,7 @@ import styles from './Mentions.module.scss'
 import { getUser, UserResponse } from '../user/remote'
 import { Auth } from '../authentication/state'
 import { clientGateway } from '../utils/constants'
-import { useDebounce } from 'react-use'
+import { useDebounce, useMedia } from 'react-use'
 import { getMembers } from '../community/remote'
 
 type onMention = (id: string) => void
@@ -126,6 +126,7 @@ const Community = ({
   onFiltered: (users: UserResponse[]) => void
 }) => {
   const { token, id } = Auth.useContainer()
+  const isMobile = useMedia('(max-width: 940px)')
   const [debouncedSearch, setDebouncedSearch] = useState(search)
   useDebounce(() => setDebouncedSearch(search), 300, [search])
   const { data: members } = useQuery(
@@ -139,9 +140,24 @@ const Community = ({
     [members, id]
   )
 
+  const truncatedDefaultMembers = useMemo(
+    () =>
+      isMobile
+        ? defaultMembers.data?.slice(0, 4)
+        : defaultMembers.data?.slice(0, 9),
+    [defaultMembers, isMobile]
+  )
+  const truncatedFilteredMembers = useMemo(() => filteredMembers?.slice(0, 9), [
+    filteredMembers
+  ])
+
   useEffect(() => {
-    onFiltered(filteredMembers?.map((member) => member.user) ?? [])
-  }, [filteredMembers, onFiltered])
+    onFiltered(
+      truncatedFilteredMembers && truncatedFilteredMembers.length > 0
+        ? truncatedFilteredMembers?.map((member) => member.user)
+        : truncatedDefaultMembers?.map((m) => m.user) ?? []
+    )
+  }, [truncatedDefaultMembers, onFiltered, truncatedFilteredMembers])
 
   return (
     <div
@@ -151,8 +167,8 @@ const Community = ({
       }}
     >
       <div className={styles.mentions}>
-        {filteredMembers && filteredMembers.length > 0
-          ? filteredMembers.map((member, index) => (
+        {truncatedFilteredMembers && truncatedFilteredMembers.length > 0
+          ? truncatedFilteredMembers.map((member, index) => (
               <Mention
                 key={member.id}
                 user={member.user}
@@ -160,7 +176,7 @@ const Community = ({
                 selected={index === selected}
               />
             ))
-          : defaultMembers?.data
+          : truncatedDefaultMembers
               ?.filter((member) => member.user.id !== id)
               .map((member, index) => (
                 <Mention

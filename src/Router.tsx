@@ -21,6 +21,7 @@ import { Call } from './state/call'
 import Current from './call/Current'
 import EventSource from './events'
 import Context from './components/Context'
+import Image from './chat/embeds/Image'
 
 const Modals = () => {
   const uiStore = UI.useContainer()
@@ -30,6 +31,9 @@ const Modals = () => {
       <AnimatePresence>
         {uiStore.modal.name === 'newConversation' && <NewConversation />}
         {uiStore.modal.name === 'newCommunity' && <NewCommunity />}
+        {uiStore.modal.name === 'previewImage' && (
+          <Image.Preview {...uiStore.modal.props} />
+        )}
         {uiStore.modal.name === 'incomingCall' && (
           <Incoming {...uiStore.modal.props} />
         )}

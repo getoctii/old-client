@@ -1,20 +1,27 @@
 .mentionPopup {
   position: absolute;
+  // position: fixed;
   margin-left: 2rem;
   margin-right: 2rem;
-  margin-top: -3.625rem;
-  background: transparent;
-
+  bottom: 0rem;
+  //
+  // bottom: 5.225rem;
+  // margin-top: -;
+  // background: transparent;
+  z-index: 3;
   .mentions {
     display: flex;
-
+    flex-wrap: wrap;
+    overflow-x: hidden;
+    flex-direction: row;
     .mention {
       cursor: default;
       background: var(--neko-chat-background);
       font-weight: 400;
       font-size: 1rem;
       padding: 0.5rem;
-      margin-right: 0.25rem;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
       border-radius: 12px;
       height: 3.125rem;
       display: flex;
