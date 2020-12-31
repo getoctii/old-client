@@ -1,16 +1,8 @@
 image: node:latest
 
-include:
-  - template: Code-Quality.gitlab-ci.yml
-
 cache:
   paths:
     - node_modules/
-
-stages:
-  - build
-  - test
-  - deploy
 
 build:
   stage: build
