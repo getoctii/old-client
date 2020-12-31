@@ -122,6 +122,17 @@
       padding-right: 0.6rem;
     }
   }
+
+  &.selected {
+    .user {
+      p {
+        .link {
+          color: var(--neko-text-normal);
+          font-weight: 500;
+        }
+      }
+    }
+  }
 }
 
 .placeholder {

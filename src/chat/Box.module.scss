@@ -1,120 +1,128 @@
-.boxWrapper {
+.mentionsWrapper {
   position: relative;
+  height: 0;
+}
 
-  .box {
-    a {
-      color: var(--neko-text-href);
-    }
-    min-height: 3.125rem;
+.box {
+  .buttons {
     display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    margin-bottom: 0;
-    padding-left: 2rem;
-    margin-bottom: 2rem;
-    padding-right: 2rem;
-    justify-content: space-between;
-    bottom: 0;
-    width: 100%;
-    &.typingIndicator {
-      margin-bottom: 0.5rem;
+  }
+  a {
+    color: var(--neko-text-href);
+  }
+  min-height: 3.125rem;
+  display: flex;
+  flex-direction: row;
+  // align-items: flex-end;
+  margin-bottom: 0;
+  padding-left: 2rem;
+  margin-bottom: 2rem;
+  z-index: 2;
+  padding-right: 2rem;
+  justify-content: space-between;
+  bottom: 0;
+  width: 100%;
+  &.typingIndicator {
+    margin-bottom: 0.5rem;
+  }
+
+  button {
+    height: 3.125rem;
+    width: 3.125rem;
+    background: var(--neko-input-background);
+    color: var(--neko-input-text);
+    margin-left: 0.5rem;
+    font-size: 1.05rem;
+    position: relative;
+    .badge {
+      position: absolute;
+      height: 18px;
+      border-radius: 50%;
+      width: 18px;
+      bottom: -3.45px;
+      right: -3.45px;
+      border-color: var(--neko-sidebar-background);
+      border-width: 3.5px;
+      border-style: solid;
+      background: var(--neko-colors-primary);
+    }
+  }
+
+  .uploadInput {
+    display: none;
+  }
+
+  .ph {
+    font-family: Inter, sans-serif;
+    opacity: 0.8;
+    font-weight: 300;
+    color: var(--neko-input-text);
+    user-select: none;
+    font-size: 1.05rem;
+    -webkit-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  aside {
+    border-radius: 10px !important;
+    position: absolute !important;
+    z-index: 2 !important;
+    bottom: 0.5rem;
+    right: 0rem;
+    border: none !important;
+    color: var(--neko-text-normal) !important;
+    background: var(--neko-emojis-background) !important;
+    box-shadow: none !important;
+    input {
+      background: var(--neko-emojis-input);
+      border: none !important;
+      color: var(--neko-text-normal);
+    }
+    ul::before {
+      background: var(--neko-emojis-background) !important;
+      color: var(--neko-text-normal) !important;
     }
 
     button {
-      height: 3.125rem;
-      width: 3.125rem;
-      background: var(--neko-input-background);
-      color: var(--neko-input-text);
-      margin-left: 0.5rem;
-      font-size: 1.05rem;
-      position: relative;
-      .badge {
-        position: absolute;
-        height: 18px;
-        border-radius: 50%;
-        width: 18px;
-        bottom: -3.45px;
-        right: -3.45px;
-        border-color: var(--neko-sidebar-background);
-        border-width: 3.5px;
-        border-style: solid;
-        background: var(--neko-colors-primary);
-      }
+      color: var(--neko-text-normal) !important;
+    }
+    button:first-child {
+      margin-left: 0;
+    }
+  }
+
+  .input {
+    overflow-y: auto;
+    width: 100%;
+    min-height: 3.125rem;
+    max-height: 16.125rem;
+    font-size: 1.05rem;
+    margin: 0;
+    padding-left: 0.9375rem;
+    padding-right: 0.9375rem;
+    padding-top: 0.9375rem;
+    padding-bottom: 0.9375rem;
+    color: var(--neko-input-text);
+    background: var(--neko-input-background);
+    border-radius: 14px;
+    font-weight: 300;
+    overflow-x: hidden;
+    &::-webkit-scrollbar {
+      width: 5px;
+      display: block;
     }
 
-    .uploadInput {
-      display: none;
-    }
-
-    .ph {
+    &::placeholder {
       font-family: Inter, sans-serif;
-      opacity: 0.8;
+      opacity: 0.65;
       font-weight: 300;
       color: var(--neko-input-text);
       user-select: none;
       font-size: 1.05rem;
       -webkit-user-select: none;
       user-select: none;
-    }
-    aside {
-      border-radius: 10px !important;
-      position: absolute !important;
-      z-index: 10;
-      bottom: 5.6rem;
-      right: 2rem;
-      border: none !important;
-      color: var(--neko-text-normal) !important;
-      background: var(--neko-emojis-background) !important;
-      box-shadow: none !important;
-      input {
-        background: var(--neko-emojis-input);
-        border: none !important;
-        color: var(--neko-text-normal);
-      }
-      ul::before {
-        background: var(--neko-emojis-background) !important;
-        color: var(--neko-text-normal) !important;
-      }
-
-      button {
-        color: var(--neko-text-normal) !important;
-      }
-      button:first-child {
-        margin-left: 0;
-      }
-    }
-
-    .input {
-      overflow-y: auto;
-      width: 100%;
-      min-height: 3.125rem;
-      max-height: 16.125rem;
-      font-size: 1.05rem;
-      margin: 0;
-      padding-left: 0.9375rem;
-      padding-right: 0.9375rem;
-      padding-top: 0.9375rem;
-      padding-bottom: 0.9375rem;
-      color: var(--neko-input-text);
-      background: var(--neko-input-background);
-      border-radius: 14px;
-      font-weight: 300;
-
-      &::-webkit-scrollbar {
-        width: 5px;
-        display: block;
-      }
-
-      &::placeholder {
-        font-family: Inter, sans-serif;
-        opacity: 0.65;
-        font-weight: 300;
-        color: var(--neko-input-text);
-        user-select: none;
-        font-size: 1.05rem;
-        -webkit-user-select: none;
-        user-select: none;
-      }
+      white-space: nowrap;
     }
   }
 }

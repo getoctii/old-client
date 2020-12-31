@@ -292,9 +292,9 @@ const View = ({
   }, [target, filtered])
 
   return (
-    <>
-      <div className={styles.boxWrapper}>
-        {target && (
+    <div className={styles.boxWrapper}>
+      {target && (
+        <div className={styles.mentionsWrapper}>
           <Suspense fallback={<></>}>
             {participants ? (
               <Mentions.Conversation
@@ -316,126 +316,151 @@ const View = ({
               <></>
             )}
           </Suspense>
-        )}
-        <div
-          className={`${styles.box} ${
-            typingIndicator ? styles.typingIndicator : ''
-          }`}
-        >
-          <>
-            <Slate
-              editor={editor}
-              value={value}
-              onChange={(value) => {
-                setValue(value)
-                const { selection } = editor
+        </div>
+      )}
+      <div
+        className={`${styles.box} ${
+          typingIndicator ? styles.typingIndicator : ''
+        }`}
+      >
+        <>
+          <Slate
+            editor={editor}
+            value={value}
+            onChange={(value) => {
+              setValue(value)
+              const { selection } = editor
 
-                if (selection && Range.isCollapsed(selection)) {
-                  const [start] = Range.edges(selection)
-                  const characterBefore = Editor.before(editor, start, {
-                    unit: 'character'
-                  })
-                  const wordBefore = Editor.before(editor, start, {
-                    unit: 'word'
-                  })
-                  const before =
-                    characterBefore &&
-                    Editor.string(
-                      editor,
-                      Editor.range(editor, characterBefore, start)
-                    ) === '@'
-                      ? characterBefore
-                      : wordBefore && Editor.before(editor, wordBefore)
-                  const beforeRange =
-                    before && Editor.range(editor, before, start)
-                  const beforeText =
-                    beforeRange && Editor.string(editor, beforeRange)
-                  const beforeMatch = beforeText && beforeText.match(/^@(\w*)$/)
-                  const after = Editor.after(editor, start)
-                  const afterRange = Editor.range(editor, start, after)
-                  const afterText = Editor.string(editor, afterRange)
-                  const afterMatch = afterText.match(/^(\s|$)/)
+              if (selection && Range.isCollapsed(selection)) {
+                const [start] = Range.edges(selection)
+                const characterBefore = Editor.before(editor, start, {
+                  unit: 'character'
+                })
+                const wordBefore = Editor.before(editor, start, {
+                  unit: 'word'
+                })
+                const before =
+                  characterBefore &&
+                  Editor.string(
+                    editor,
+                    Editor.range(editor, characterBefore, start)
+                  ) === '@'
+                    ? characterBefore
+                    : wordBefore && Editor.before(editor, wordBefore)
+                const beforeRange =
+                  before && Editor.range(editor, before, start)
+                const beforeText =
+                  beforeRange && Editor.string(editor, beforeRange)
+                const beforeMatch = beforeText && beforeText.match(/^@(\w*)$/)
+                const after = Editor.after(editor, start)
+                const afterRange = Editor.range(editor, start, after)
+                const afterText = Editor.string(editor, afterRange)
+                const afterMatch = afterText.match(/^(\s|$)/)
 
-                  if (beforeMatch && afterMatch) {
-                    setTarget(beforeRange)
-                    setSearch(beforeMatch[1])
-                    return
-                  }
-
-                  setTarget(undefined)
+                if (beforeMatch && afterMatch) {
+                  setTarget(beforeRange)
+                  setSearch(beforeMatch[1])
+                  return
                 }
-              }}
-            >
-              <Editable
-                autoFocus={!isMobile}
-                className={styles.input}
-                spellCheck
-                // @ts-ignore
-                placeholder={
-                  <span className={styles.ph}>Say something{adjective}...</span>
-                }
-                renderLeaf={renderLeaf}
-                renderElement={renderElement}
-                decorate={decorate}
-                onKeyDown={async (event) => {
-                  switch (event.key) {
-                    case 'Enter': {
-                      if (event.shiftKey) {
-                        event.preventDefault()
-                        editor.insertBreak()
-                      } else if (target) {
-                        event.preventDefault()
-                        if (filtered[selected].id)
-                          onMention(filtered[selected].id)
-                      } else {
-                        event.preventDefault()
-                        const content = serialize(value)
-                        if (content !== '' || uploadDetails) {
-                          if (uploadDetails) {
-                            setUploadDetails({
-                              status: 'uploading',
-                              file: uploadDetails.file
-                            })
-                            const url = await uploadFile(uploadDetails.file)
-                            setTyping(false)
 
-                            if (content !== '') {
-                              sendMessage(`${content}\n${url}`)
-                              Transforms.select(
-                                editor,
-                                Editor.start(editor, [])
-                              )
-                              setValue(emptyEditor)
-                            } else {
-                              sendMessage(url)
-                            }
-                            setUploadDetails(null)
-                          } else {
-                            setTyping(false)
-                            sendMessage(content)
+                setTarget(undefined)
+              }
+            }}
+          >
+            <Editable
+              autoFocus={!isMobile}
+              className={styles.input}
+              spellCheck
+              // @ts-ignore
+              placeholder={
+                <span className={styles.ph}>Say something{adjective}...</span>
+              }
+              renderLeaf={renderLeaf}
+              renderElement={renderElement}
+              decorate={decorate}
+              onKeyDown={async (event) => {
+                if (!typing && token) postTyping(channelID, token)
+                setTyping(true)
+                switch (event.key) {
+                  case 'Enter': {
+                    if (event.shiftKey) {
+                      event.preventDefault()
+                      editor.insertBreak()
+                    } else if (target) {
+                      event.preventDefault()
+                      if (filtered[selected].id)
+                        onMention(filtered[selected].id)
+                    } else {
+                      event.preventDefault()
+                      const content = serialize(value)
+                      if (content !== '' || uploadDetails) {
+                        if (uploadDetails) {
+                          setUploadDetails({
+                            status: 'uploading',
+                            file: uploadDetails.file
+                          })
+                          const url = await uploadFile(uploadDetails.file)
+                          setTyping(false)
+
+                          if (content !== '') {
+                            sendMessage(`${content}\n${url}`)
                             Transforms.select(editor, Editor.start(editor, []))
                             setValue(emptyEditor)
+                          } else {
+                            sendMessage(url)
                           }
+                          setUploadDetails(null)
+                        } else {
+                          setTyping(false)
+                          sendMessage(content)
+                          Transforms.select(editor, Editor.start(editor, []))
+                          setValue(emptyEditor)
                         }
                       }
-                      break
                     }
-                    case 'Tab': {
-                      event.preventDefault()
-                      if (event.shiftKey) {
-                        setSelected(
-                          selected - 1 < 0 ? filtered.length - 1 : selected - 1
-                        )
-                      } else {
-                        setSelected(
-                          selected + 1 > filtered.length - 1 ? 0 : selected + 1
-                        )
-                      }
+                    break
+                  }
+                  case 'Tab': {
+                    event.preventDefault()
+                    if (event.shiftKey) {
+                      setSelected(
+                        selected - 1 < 0 ? filtered.length - 1 : selected - 1
+                      )
+                    } else {
+                      setSelected(
+                        selected + 1 > filtered.length - 1 ? 0 : selected + 1
+                      )
                     }
                   }
-                }}
-              />
-            </Slate>
+                }
+              }}
+            />
+          </Slate>
+          <div className={styles.buttons}>
+            {!isMobile && (
+              <Button
+                type='button'
+                onClick={() => setEmojiPicker(!emojiPicker)}
+              >
+                <FontAwesomeIcon icon={faSmileWink} />
+              </Button>
+            )}
+            <div className={styles.mentionsWrapper}>
+              {emojiPicker && (
+                <Picker
+                  onEmojiClick={(_, data) => {
+                    if (editor.selection) {
+                      editor.insertText(data.emoji)
+                    } else {
+                      Transforms.insertText(editor, data.emoji, {
+                        at: Editor.end(editor, [])
+                      })
+                    }
+                  }}
+                  native
+                />
+              )}
+            </div>
             <Button
               type='button'
               onClick={() => {
@@ -448,7 +473,9 @@ const View = ({
                 }
               }}
             >
-              <FontAwesomeIcon icon={uploadDetails ? faTimes : faFileUpload} />
+              <FontAwesomeIcon
+                icon={uploadDetails && !emojiPicker ? faTimes : faFileUpload}
+              />
               <input
                 ref={uploadInput}
                 className={styles.uploadInput}
@@ -467,39 +494,25 @@ const View = ({
               )}
             </Button>
             {uploadDetails && !emojiPicker && (
-              <Upload
-                {...uploadDetails}
-                onUpload={async (file) => {
-                  setUploadDetails({
-                    status: 'uploading',
-                    file
-                  })
-                  const url = await uploadFile(file)
-                  await sendMessage(url)
-                  setUploadDetails(null)
-                }}
-              />
+              <div className={styles.mentionsWrapper}>
+                <Upload
+                  {...uploadDetails}
+                  onUpload={async (file) => {
+                    setUploadDetails({
+                      status: 'uploading',
+                      file
+                    })
+                    const url = await uploadFile(file)
+                    await sendMessage(url)
+                    setUploadDetails(null)
+                  }}
+                />
+              </div>
             )}
-            {emojiPicker && (
-              <Picker
-                onEmojiClick={(_, data) => {
-                  editor.insertText(data.emoji)
-                }}
-                native
-              />
-            )}
-            {!isMobile && (
-              <Button
-                type='button'
-                onClick={() => setEmojiPicker(!emojiPicker)}
-              >
-                <FontAwesomeIcon icon={faSmileWink} />
-              </Button>
-            )}
-          </>
-        </div>
+          </div>
+        </>
       </div>
-    </>
+    </div>
   )
 }
 

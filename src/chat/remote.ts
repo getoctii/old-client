@@ -11,6 +11,19 @@ export interface Channel {
   community_id?: string
 }
 
+export interface Message {
+  id: string
+  author: {
+    id: string
+    username: string
+    avatar: string
+    discriminator: number
+  }
+  created_at: string
+  updated_at: string
+  content: string
+}
+
 export const getChannel = async (_: string, channelID: string, token: string) =>
   (
     await clientGateway.get<Channel>(`/channels/${channelID}`, {
@@ -51,3 +64,16 @@ export const uploadFile = async (file: File) => {
   )
   return response.data.url
 }
+
+export const getMessages = async (
+  _: string,
+  channelID: string,
+  token: string,
+  date: string
+) =>
+  (
+    await clientGateway.get<Message[]>(`/channels/${channelID}/messages`, {
+      headers: { Authorization: token },
+      params: { created_at: date }
+    })
+  ).data

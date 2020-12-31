@@ -7,9 +7,10 @@ import Typing from '../state/typing'
 import { Plugins, HapticsNotificationType } from '@capacitor/core'
 import { Events } from '../utils/constants'
 import { Auth } from '../authentication/state'
-import { getUser, State } from '../user/remote'
+import { getUser, State, UserResponse } from '../user/remote'
 import { log } from '../utils/logging'
 import { Chat } from '../chat/state'
+import { parseMarkdown } from '@innatical/markdown'
 
 interface Message {
   id: string
@@ -46,10 +47,14 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
     const handler = (e: MessageEvent) => {
       const message = JSON.parse(e.data) as Message
       log('Events', 'purple', 'NEW_MESSAGE')
-      const initial = queryCache.getQueryData(['messages', message.channel_id])
+      const initial = queryCache.getQueryData([
+        'messages',
+        message.channel_id,
+        token
+      ])
       if (initial instanceof Array) {
         queryCache.setQueryData(
-          ['messages', message.channel_id],
+          ['messages', message.channel_id, token],
           initial[0].length < 25
             ? [[message, ...initial[0]], ...initial.slice(1)]
             : [[message], ...initial]
@@ -67,7 +72,6 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
               : initial[message.channel_id]?.read
         }
       }))
-      // NO FUCK U
       queryCache.setQueryData(['message', message.id, token], {
         ...message,
         author_id: message.author.id
@@ -102,6 +106,28 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
             type: HapticsNotificationType.SUCCESS
           })
         }
+
+        const output = parseMarkdown(message.content, {
+          bold: (str) => str,
+          italic: (str) => str,
+          underlined: (str) => str,
+          strikethough: (str) => str,
+          link: (str) => str,
+          codeblock: (str) => str,
+          custom: [
+            [
+              /<@([A-Za-z0-9-]+?)>/g,
+              (str) => {
+                const mention = queryCache.getQueryData<UserResponse>([
+                  'users',
+                  str,
+                  token
+                ])
+                return `@${mention?.username || 'unknown'}`
+              }
+            ]
+          ]
+        }).join('')
         if (window.inntronNotify) {
           window.inntronNotify(
             `${
@@ -109,9 +135,9 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
                 ? message.community_name
                 : message.author.username
             }${message.channel_name ? ` #${message.channel_name}` : ''}`,
-            `${message.community_name ? `${message.author.username}: ` : ''}${
-              message.content
-            }`
+            `${
+              message.community_name ? `${message.author.username}: ` : ''
+            }${output}`
           )
         } else {
           Plugins.LocalNotifications.requestPermission()
@@ -131,7 +157,7 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
                         message.community_name
                           ? `${message.author.username}: `
                           : ''
-                      }${message.content}`,
+                      }${output}`,
                       id: 1
                     }
                   ]
