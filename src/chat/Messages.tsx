@@ -11,12 +11,15 @@ import { queryCache, useInfiniteQuery, useQuery } from 'react-query'
 import { clientGateway } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import Message from './Message'
-import moment from 'moment'
+import dayjs from 'dayjs'
+import dayjsUTC from 'dayjs/plugin/utc'
 import { Waypoint } from 'react-waypoint'
 import { Channel, getMessages, Message as MessageType } from './remote'
 import { useDebounce } from 'react-use'
 import { getUnreads, Mentions } from '../user/remote'
 import { Chat } from './state'
+
+dayjs.extend(dayjsUTC)
 
 const View = ({
   channel,
@@ -43,8 +46,8 @@ const View = ({
       return !(
         messages?.[index - 1] &&
         message.author.id === messages?.[index - 1]?.author?.id &&
-        moment.utc(message?.created_at)?.valueOf() -
-          moment.utc(messages?.[index - 1]?.created_at)?.valueOf() <
+        dayjs.utc(message?.created_at)?.valueOf() -
+        dayjs.utc(messages?.[index - 1]?.created_at)?.valueOf() <
           300000
       )
     },

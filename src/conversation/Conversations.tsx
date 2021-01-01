@@ -7,8 +7,11 @@ import { useHistory, useRouteMatch } from 'react-router-dom'
 import { useLocalStorage, useMedia, useUpdate } from 'react-use'
 import NewConversation from './NewConversation'
 import { MessageResponse } from '../message/remote'
-import moment from 'moment'
+import dayjs from 'dayjs'
+import dayjsUTC from 'dayjs/plugin/utc'
 import { getParticipants, Participant } from '../user/remote'
+
+dayjs.extend(dayjsUTC)
 
 const ConversationList = () => {
   const auth = Auth.useContainer()
@@ -35,7 +38,7 @@ const ConversationList = () => {
             return people.length > 1 || people.length !== 0
           })
           .sort((a, b) => {
-            const firstMessage = moment
+            const firstMessage = dayjs
               .utc(
                 (queryCache.getQueryData([
                   'message',
@@ -44,7 +47,7 @@ const ConversationList = () => {
                 ]) as MessageResponse | undefined)?.created_at ?? 0
               )
               .unix()
-            const lastMessage = moment
+            const lastMessage = dayjs
               .utc(
                 (queryCache.getQueryData([
                   'message',

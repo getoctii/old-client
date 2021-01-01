@@ -1,6 +1,8 @@
 import React, { memo, useState, useMemo, Suspense } from 'react'
 import styles from './Message.module.scss'
-import moment from 'moment'
+import dayjs from 'dayjs'
+import dayjsUTC from 'dayjs/plugin/utc'
+import dayjsCalendar from 'dayjs/plugin/calendar'
 import { faCopy, faTrashAlt } from '@fortawesome/pro-solid-svg-icons'
 import { Clipboard } from '@capacitor/core'
 import { Auth } from '../authentication/state'
@@ -21,6 +23,9 @@ import {
   faUserShield
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
+
+dayjs.extend(dayjsUTC)
+dayjs.extend(dayjsCalendar)
 
 type Embed = {
   embed: React.ReactNode
@@ -211,7 +216,7 @@ const View = memo(
                     )}
                   </span>
                   <span className={styles.time}>
-                    {moment.utc(createdAt).local().calendar()}
+                    {dayjs.utc(createdAt).local().calendar()}
                   </span>
                 </h2>
               )}

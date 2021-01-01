@@ -6,7 +6,9 @@ import {
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AnimatePresence, motion } from 'framer-motion'
-import moment from 'moment'
+import dayjs from 'dayjs'
+import dayjsUTC from 'dayjs/plugin/utc'
+import dayjsCalendar from 'dayjs/plugin/calendar'
 import React, { Suspense, useRef, useState } from 'react'
 import { queryCache, useInfiniteQuery, useQuery } from 'react-query'
 import { useHistory, useParams } from 'react-router-dom'
@@ -19,6 +21,9 @@ import { createConversation } from '../conversation/remote'
 import { ParticipantsResponse, State } from '../user/remote'
 import styles from './Members.module.scss'
 import { getCommunity, getMembers, Member as MemberType } from './remote'
+
+dayjs.extend(dayjsUTC)
+dayjs.extend(dayjsCalendar)
 
 const Member = ({ member, owner }: { member: MemberType; owner?: string }) => {
   const isMobile = useMedia('(max-width: 940px)')
@@ -67,7 +72,7 @@ const Member = ({ member, owner }: { member: MemberType; owner?: string }) => {
             : member.user?.discriminator.toString().padStart(4, '0')}
           {member.user.id === owner && <FontAwesomeIcon icon={faCrown} />}
         </h4>
-        <time>{moment.utc(member.created_at).local().calendar()}</time>
+        <time>{dayjs.utc(member.created_at).local().calendar()}</time>
       </div>
       {!isMobile && (
         <div className={styles.actions}>

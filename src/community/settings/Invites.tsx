@@ -8,7 +8,9 @@ import {
   faBoxOpen
 } from '@fortawesome/pro-duotone-svg-icons'
 import { faPlus } from '@fortawesome/pro-solid-svg-icons'
-import moment from 'moment'
+import dayjs from 'dayjs'
+import dayjsUTC from 'dayjs/plugin/utc'
+import dayjsCalendar from 'dayjs/plugin/calendar'
 import { Auth } from '../../authentication/state'
 import { useRouteMatch } from 'react-router-dom'
 import { useMutation, useQuery, queryCache } from 'react-query'
@@ -18,6 +20,9 @@ import { Clipboard } from '@capacitor/core'
 import { getInvites, Invite as InviteType } from '../remote'
 import { getUser } from '../../user/remote'
 import { AnimatePresence, motion } from 'framer-motion'
+
+dayjs.extend(dayjsUTC)
+dayjs.extend(dayjsCalendar)
 
 const Invite = (invite: InviteType) => {
   const auth = Auth.useContainer()
@@ -59,7 +64,7 @@ const Invite = (invite: InviteType) => {
       </td>
       <td>{invite.code}</td>
       <td>{invite.uses}</td>
-      <td>{moment.utc(invite.created_at).local().calendar()}</td>
+      <td>{dayjs.utc(invite.created_at).local().calendar()}</td>
       <motion.td
         whileTap={{
           scale: 1.2,
