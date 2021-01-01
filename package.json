@@ -16,6 +16,7 @@
     "@innatical/markdown": "^0.3.5",
     "@innatical/mdast-util-underline": "^0.1.0",
     "@innatical/micromark-extension-underline": "^0.1.0",
+    "@ionic/cli": "^6.12.3",
     "@ionic/pwa-elements": "^3.0.2",
     "@ionic/react": "^5.4.2",
     "@popperjs/core": "^2.5.4",
@@ -70,7 +71,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "ios": "ionic capacitor run ios -l --external",
+    "ios": "REACT_APP_GATEWAY_URL=https://gateway.octii.chat ionic capacitor run ios -l --external",
     "android": "ionic capacitor run android -l --external"
   },
   "eslintConfig": {
