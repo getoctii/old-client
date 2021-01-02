@@ -1,5 +1,5 @@
 {
-  "appId": "com.innatical.neko",
+  "appId": "chat.octii",
   "appName": "Octii",
   "bundledWebRuntime": false,
   "npmClient": "yarn",
@@ -7,11 +7,14 @@
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 0
+    },
+    "PushNotifications": {
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
     }
   },
-  "cordova": {},
-  "server": {
-    "url": "http://192.168.0.75:8100",
-    "cleartext": true
-  }
+  "cordova": {}
 }
