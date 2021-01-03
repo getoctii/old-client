@@ -139,7 +139,7 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
               message.community_name ? `${message.author.username}: ` : ''
             }${output}`
           )
-        } else {
+        } else if (!isPlatform('capacitor')) {
           Plugins.LocalNotifications.requestPermission()
             .then((granted) => {
               if (granted) {
