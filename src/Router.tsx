@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { useMedia } from 'react-use'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { Authenticate } from './authentication/Authenticate'
@@ -22,6 +22,10 @@ import Current from './call/Current'
 import EventSource from './events'
 import Context from './components/Context'
 import Image from './chat/embeds/Image'
+import { Plugins } from '@capacitor/core'
+import { clientGateway } from './utils/constants'
+
+const { PushNotifications } = Plugins
 
 const Modals = () => {
   const uiStore = UI.useContainer()
@@ -50,6 +54,43 @@ export const Router = () => {
   const isMobile = useMedia('(max-width: 940px)')
   const isPWA = useMedia('(display-mode: standalone)')
   const call = Call.useContainer()
+
+  useEffect(() => {
+    if (auth.authenticated) {
+      PushNotifications.addListener('registration', async (token) => {
+        await clientGateway.post(
+          `/users/${auth.id}/notifications`,
+          new URLSearchParams({
+            token: token.value,
+            platform: 'ios'
+          }),
+          {
+            headers: {
+              authorization: auth.token
+            }
+          }
+        )
+      })
+
+      if (
+        isPlatform('capacitor') &&
+        localStorage.getItem('requested-notifications') !== 'true'
+      ) {
+        PushNotifications.requestPermission()
+          .then(({ granted }) => {
+            if (granted) {
+              PushNotifications.register()
+              localStorage.setItem('requested-notifications', 'true')
+            }
+          })
+          .catch(console.error)
+      }
+    }
+    return () => {
+      PushNotifications.removeAllListeners()
+    }
+  }, [auth])
+
   return (
     <BrowserRouter>
       {auth.authenticated && <EventSource />}
@@ -70,7 +111,6 @@ export const Router = () => {
           </>
         )}
         {auth.authenticated && !isMobile && <Sidebar />}
-        {/* debug reasons */}
         <Suspense fallback={<></>}>
           <Switch>
             <PrivateRoute
