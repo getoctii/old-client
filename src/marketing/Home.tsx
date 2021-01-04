@@ -63,7 +63,7 @@ const Home = () => {
                 {({ isSubmitting, errors, touched }) => (
                   <Form className={styles.form}>
                     <label htmlFor='email'>
-                      Enter your email to receive updates.
+                      Enter your email for a chance to receive beta access.
                     </label>
                     <div className={styles.input}>
                       <Field
@@ -85,7 +85,7 @@ const Home = () => {
                       />
                     ) : submitted ? (
                       <p className={styles.subscribed}>
-                        Subscribed! We will email you soon...
+                        Entered! We will email you soon...
                       </p>
                     ) : (
                       <p>We don't spam. Promise.</p>
