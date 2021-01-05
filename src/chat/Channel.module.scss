@@ -82,9 +82,9 @@
 
   @media (max-width: 940px) {
     .header {
-      height: calc(env(safe-area-inset-top) + 4.65rem);
-      min-height: calc(env(safe-area-inset-top) + 4.65rem);
-      padding-top: calc(env(safe-area-inset-top) + 1rem);
+      height: calc(env(safe-area-inset-top) + 5.65rem);
+      min-height: calc(env(safe-area-inset-top) + 5.65rem);
+      padding-top: calc(env(safe-area-inset-top) + 2rem);
     }
   }
 }
@@ -155,9 +155,9 @@
   }
 
   @media (max-width: 940px) {
-    padding-top: calc(env(safe-area-inset-top) + 0.8rem);
+    padding-top: calc(env(safe-area-inset-top) + 2rem);
     .header {
-      margin-top: 0.5rem;
+      margin-top: 0;
     }
   }
 

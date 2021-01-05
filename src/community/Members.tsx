@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import dayjsCalendar from 'dayjs/plugin/calendar'
-import React, { Suspense, useRef, useState } from 'react'
+import React, { memo, Suspense, useMemo, useRef, useState } from 'react'
 import { queryCache, useInfiniteQuery, useQuery } from 'react-query'
 import { useHistory, useParams } from 'react-router-dom'
 import { useMedia } from 'react-use'
@@ -25,94 +25,100 @@ import { getCommunity, getMembers, Member as MemberType } from './remote'
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
 
-const Member = ({ member, owner }: { member: MemberType; owner?: string }) => {
-  const isMobile = useMedia('(max-width: 940px)')
-  const { id, token } = Auth.useContainer()
-  const history = useHistory()
-  return (
-    <motion.div
-      className={styles.member}
-      initial={{
-        opacity: 0
-      }}
-      animate={{
-        opacity: 1,
-        transition: { y: { stiffness: 1000, velocity: -100 } }
-      }}
-      exit={{
-        opacity: 0
-      }}
-    >
-      <div
-        className={styles.icon}
-        style={{ backgroundImage: `url('${member.user.avatar}')` }}
+const Member = memo(
+  ({ member, owner }: { member: MemberType; owner?: string }) => {
+    const isMobile = useMedia('(max-width: 940px)')
+    const { id, token } = Auth.useContainer()
+    const history = useHistory()
+    return (
+      <motion.div
+        className={styles.member}
+        initial={{
+          opacity: 0
+        }}
+        animate={{
+          opacity: 1,
+          transition: { y: { stiffness: 1000, velocity: -100 } }
+        }}
+        exit={{
+          opacity: 0
+        }}
       >
-        {' '}
-        {member.user && (
-          <div
-            className={`${styles.badge} ${
-              member.user.state === State.online
-                ? styles.online
-                : member.user.state === State.dnd
-                ? styles.dnd
-                : member.user.state === State.idle
-                ? styles.idle
-                : member.user.state === State.offline
-                ? styles.offline
-                : ''
-            }`}
-          />
-        )}
-      </div>
-      <div className={styles.info}>
-        <h4>
-          {member.user?.username}#
-          {member.user?.discriminator === 0
-            ? 'inn'
-            : member.user?.discriminator.toString().padStart(4, '0')}
-          {member.user.id === owner && <FontAwesomeIcon icon={faCrown} />}
-        </h4>
-        <time>{dayjs.utc(member.created_at).local().calendar()}</time>
-      </div>
-      {!isMobile && (
-        <div className={styles.actions}>
-          {member.user.id !== id && (
-            <Button
-              type='button'
-              onClick={async () => {
-                const cache = queryCache.getQueryData([
-                  'participants',
-                  id,
-                  token
-                ]) as ParticipantsResponse
-                const participant = cache?.find((participant) =>
-                  participant.conversation.participants.includes(member.user.id)
-                )
-                if (!cache || !participant) {
-                  const result = await createConversation(token!, {
-                    recipient: member.user.id
-                  })
-                  if (result.id) history.push(`/conversations/${result.id}`)
-                } else {
-                  history.push(`/conversations/${participant.conversation.id}`)
-                }
-              }}
-            >
-              <FontAwesomeIcon icon={faPaperPlane} />
-              Message
-            </Button>
+        <div
+          className={styles.icon}
+          style={{ backgroundImage: `url('${member.user.avatar}')` }}
+        >
+          {' '}
+          {member.user && (
+            <div
+              className={`${styles.badge} ${
+                member.user.state === State.online
+                  ? styles.online
+                  : member.user.state === State.dnd
+                  ? styles.dnd
+                  : member.user.state === State.idle
+                  ? styles.idle
+                  : member.user.state === State.offline
+                  ? styles.offline
+                  : ''
+              }`}
+            />
           )}
-          {/* NOTE: Kick Button. Disabled until impl in backend */}
-          {/* {id === owner && member.user.id !== id && (
+        </div>
+        <div className={styles.info}>
+          <h4>
+            {member.user?.username}#
+            {member.user?.discriminator === 0
+              ? 'inn'
+              : member.user?.discriminator.toString().padStart(4, '0')}
+            {member.user.id === owner && <FontAwesomeIcon icon={faCrown} />}
+          </h4>
+          <time>{dayjs.utc(member.created_at).local().calendar()}</time>
+        </div>
+        {!isMobile && (
+          <div className={styles.actions}>
+            {member.user.id !== id && (
+              <Button
+                type='button'
+                onClick={async () => {
+                  const cache = queryCache.getQueryData([
+                    'participants',
+                    id,
+                    token
+                  ]) as ParticipantsResponse
+                  const participant = cache?.find((participant) =>
+                    participant.conversation.participants.includes(
+                      member.user.id
+                    )
+                  )
+                  if (!cache || !participant) {
+                    const result = await createConversation(token!, {
+                      recipient: member.user.id
+                    })
+                    if (result.id) history.push(`/conversations/${result.id}`)
+                  } else {
+                    history.push(
+                      `/conversations/${participant.conversation.id}`
+                    )
+                  }
+                }}
+              >
+                <FontAwesomeIcon icon={faPaperPlane} />
+                Message
+              </Button>
+            )}
+            {/* NOTE: Kick Button. Disabled until impl in backend */}
+            {/* {id === owner && member.user.id !== id && (
             <Button type='button' className={styles.kick}>
               <FontAwesomeIcon icon={faHouseLeave} />
             </Button>
           )} */}
-        </div>
-      )}
-    </motion.div>
-  )
-}
+          </div>
+        )}
+      </motion.div>
+    )
+  }
+)
 
 export const Members = () => {
   const history = useHistory()
@@ -128,92 +134,97 @@ export const Members = () => {
       }
     }
   )
-  const members = data?.flat() || []
+  const members = useMemo(() => data?.flat() || [], [data])
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
   const isMobile = useMedia('(max-width: 940px)')
   return (
     <Suspense fallback={<Loader />}>
-      <div className={styles.members}>
-        {members.length > 0 ? (
-          <>
-            <div className={styles.header}>
-              {isMobile ? (
-                <div
-                  className={styles.icon}
-                  onClick={() =>
-                    isMobile &&
-                    history.push(`/communities/${community.data?.id}`)
-                  }
-                >
-                  <FontAwesomeIcon
-                    className={styles.backButton}
-                    icon={faChevronLeft}
-                  />
-                </div>
-              ) : (
-                <div
-                  className={styles.icon}
-                  style={{ backgroundImage: `url('${community.data?.icon}')` }}
-                />
-              )}
-              <div className={styles.title}>
-                <small>{community.data?.name}</small>
-                <h2>Members</h2>
-              </div>
-            </div>
-            <div className={styles.body}>
-              <AnimatePresence>
-                {members.map(
-                  (member) =>
-                    member && (
-                      <Member
-                        member={member}
-                        owner={community.data?.owner_id}
-                        key={member.id}
-                      />
-                    )
-                )}
-                {loading && (
-                  <div key='loader' className={styles.loader}>
-                    <h5>Loading more...</h5>
+      <div className={styles.wrapper}>
+        <div className={styles.members}>
+          {members.length > 0 ? (
+            <>
+              <div className={styles.header}>
+                {isMobile ? (
+                  <div
+                    className={styles.icon}
+                    onClick={() =>
+                      isMobile &&
+                      history.push(`/communities/${community.data?.id}`)
+                    }
+                  >
+                    <FontAwesomeIcon
+                      className={styles.backButton}
+                      icon={faChevronLeft}
+                    />
                   </div>
-                )}
-                {!loading && canFetchMore ? (
-                  <Waypoint
-                    bottomOffset={20}
-                    onEnter={async () => {
-                      try {
-                        if (!ref.current || !ref.current.scrollHeight) return
-                        setLoading(true)
-                        const oldHeight = ref.current.scrollHeight
-                        const oldTop = ref.current.scrollTop
-                        await fetchMore()
-                        ref.current.scrollTop = ref?.current?.scrollHeight
-                          ? ref.current.scrollHeight - oldHeight + oldTop
-                          : 0
-                      } finally {
-                        setLoading(false)
-                      }
+                ) : (
+                  <div
+                    className={styles.icon}
+                    style={{
+                      backgroundImage: `url('${community.data?.icon}')`
                     }}
                   />
-                ) : (
-                  <></>
                 )}
-              </AnimatePresence>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className={styles.membersEmpty}>
-              <FontAwesomeIcon size={'5x'} icon={faBoxOpen} />
-              <br />
-              <h2>No members in this community!</h2>
-              <br />
-              <br />
-            </div>
-          </>
-        )}
+                <div className={styles.title}>
+                  <small>{community.data?.name}</small>
+                  <h2>Members</h2>
+                </div>
+              </div>
+              <div className={styles.body} ref={ref}>
+                <AnimatePresence>
+                  {members.map(
+                    (member) =>
+                      member && (
+                        <Member
+                          member={member}
+                          owner={community.data?.owner_id}
+                          key={member.id}
+                        />
+                      )
+                  )}
+                  {loading && (
+                    <div key='loader' className={styles.loader}>
+                      <h5>Loading more...</h5>
+                    </div>
+                  )}
+                  {!loading && canFetchMore ? (
+                    <Waypoint
+                      bottomOffset={20}
+                      onEnter={async () => {
+                        try {
+                          const current = ref.current
+                          if (!current || !current.scrollHeight) return
+                          setLoading(true)
+                          const oldHeight = current.scrollHeight
+                          const oldTop = current.scrollTop
+                          await fetchMore()
+                          current.scrollTop = current.scrollHeight
+                            ? current.scrollHeight - oldHeight + oldTop
+                            : 0
+                        } finally {
+                          setLoading(false)
+                        }
+                      }}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </AnimatePresence>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={styles.membersEmpty}>
+                <FontAwesomeIcon size={'5x'} icon={faBoxOpen} />
+                <br />
+                <h2>No members in this community!</h2>
+                <br />
+                <br />
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </Suspense>
   )

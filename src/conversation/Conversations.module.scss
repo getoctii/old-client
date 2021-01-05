@@ -85,11 +85,10 @@
   }
 }
 
-// , (max-height: 420px)
 @media (max-width: 940px) {
   .sidebar {
     margin-top: env(safe-area-inset-top);
-    padding-top: calc(2rem);
+    padding-top: 2rem;
     min-width: 1rem;
     width: 100%;
     max-width: 100%;
