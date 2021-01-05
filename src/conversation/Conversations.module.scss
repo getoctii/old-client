@@ -88,7 +88,8 @@
 // , (max-height: 420px)
 @media (max-width: 940px) {
   .sidebar {
-    padding-top: calc(env(safe-area-inset-top) + 2rem);
+    margin-top: env(safe-area-inset-top);
+    padding-top: calc(2rem);
     min-width: 1rem;
     width: 100%;
     max-width: 100%;

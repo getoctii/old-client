@@ -34,13 +34,13 @@ const Modal = ({
           animate: { scale: 1 },
           transition: {
             type: 'spring',
-            duration: 0.5,
+            duration: 0.25,
             bounce: 0.5
           },
           exit: {
             scale: 0,
             transition: {
-              bounce: 0,
+              bounce: 0.15,
               duration: 0.25
             }
           }

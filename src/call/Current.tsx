@@ -41,16 +41,16 @@ const Current = () => {
       <nav>
         <button onClick={() => call.setMuted(!call.muted)}>
           {call.muted ? (
-            <FontAwesomeIcon icon={faMicrophoneSlash} />
+            <FontAwesomeIcon icon={faMicrophoneSlash} fixedWidth />
           ) : (
-            <FontAwesomeIcon icon={faMicrophone} />
+            <FontAwesomeIcon icon={faMicrophone} fixedWidth />
           )}
         </button>
         <button onClick={() => call.setDeafened(!call.deafened)}>
           {call.deafened ? (
-            <FontAwesomeIcon icon={faVolumeMute} />
+            <FontAwesomeIcon icon={faVolumeMute} fixedWidth />
           ) : (
-            <FontAwesomeIcon icon={faVolume} />
+            <FontAwesomeIcon icon={faVolume} fixedWidth />
           )}
         </button>
         <button onClick={() => call.endCall()}>End Call</button>
