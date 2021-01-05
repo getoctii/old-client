@@ -4,7 +4,8 @@ import Peer from 'peerjs'
 import { clientGateway } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { useLocalStorage } from 'react-use'
-
+import { isPlatform } from '@ionic/react'
+import { Permissions, PermissionType } from '@capacitor/core'
 const useCall = () => {
   const { token } = Auth.useContainer()
   const [peer] = useState(
@@ -105,6 +106,17 @@ const useCall = () => {
       console.log('CALL EVENT', call)
       setCall(call)
       try {
+        if (isPlatform('capacitor')) {
+          console.log('requesting... 2')
+          const hasPermission = await Permissions.query({
+            name: PermissionType.Microphone
+          })
+          console.log(hasPermission)
+          if (hasPermission.state !== 'granted') {
+            console.error('Permission must be granted to start a call')
+            return
+          }
+        }
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
           video: false
@@ -178,6 +190,17 @@ const useCall = () => {
       console.log('establishing...', receivedPeerID)
       setCallState('waiting')
       try {
+        if (isPlatform('capacitor')) {
+          console.log('requesting... 2')
+          const hasPermission = await Permissions.query({
+            name: PermissionType.Microphone
+          })
+          console.log(hasPermission)
+          if (hasPermission.state !== 'granted') {
+            console.error('Permission must be granted to start a call')
+            return
+          }
+        }
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
           video: false
