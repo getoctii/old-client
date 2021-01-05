@@ -8,8 +8,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronLeft,
   faHashtag,
-  faPhoneRotary,
-  faPhoneSlash
+  faPhone,
+  faPhoneSlash,
+  faUserPlus
 } from '@fortawesome/pro-solid-svg-icons'
 import { useMedia } from 'react-use'
 import { useHistory } from 'react-router-dom'
@@ -19,8 +20,9 @@ import { Call } from '../state/call'
 import Button from '../components/Button'
 import { getChannel } from './remote'
 import Messages from './Messages'
-import { getUser } from '../user/remote'
+import { fetchManyUsers, getUser } from '../user/remote'
 import { Chat } from './state'
+import { UI } from '../state/ui'
 
 const TypingIndicator = ({ channelID }: { channelID: string }) => {
   const { id } = Auth.useContainer()
@@ -47,12 +49,6 @@ const TypingIndicator = ({ channelID }: { channelID: string }) => {
   else return <div className={styles.typingEmpty} />
 }
 
-const Name = ({ id }: { id: string }) => {
-  const { token } = Auth.useContainer()
-  const user = useQuery(['users', id, token], getUser)
-  return <>{user.data?.username}</>
-}
-
 const PrivateName = ({ id }: { id?: string }) => {
   const { token } = Auth.useContainer()
   const user = useQuery(['users', id, token], getUser)
@@ -72,12 +68,14 @@ const View = ({
   type,
   channelID,
   participants,
-  communityID
+  communityID,
+  conversationID
 }: {
   type: ChannelTypes
   channelID: string
   participants?: string[]
   communityID?: string
+  conversationID?: string
 }) => {
   const {
     autoRead,
@@ -88,8 +86,9 @@ const View = ({
   } = Chat.useContainer()
   const { token, id } = Auth.useContainer()
   const call = Call.useContainer()
+  const uiStore = UI.useContainer()
   const { typing } = Typing.useContainer()
-  const users = typing[channelID]
+  const typingUsers = typing[channelID]
     ?.filter((userID) => userID[0] !== id)
     .map((t) => t[1])
 
@@ -97,7 +96,10 @@ const View = ({
   const history = useHistory()
 
   const channel = useQuery(['channel', channelID, token], getChannel)
-
+  const { data: users } = useQuery(
+    ['users', participants ?? [], token],
+    fetchManyUsers
+  )
   const [bond] = useDropArea({
     onFiles: (files) => {
       if (supportedFiles.has(files[0].type))
@@ -113,7 +115,7 @@ const View = ({
     setTracking(true)
     setAutoRead(false)
   }, [setAutoRead, setTracking, setChannelID, channelID])
-
+  console.log(participants?.[0])
   return (
     <Suspense fallback={<Placeholder />}>
       <div className={styles.chat} {...bond}>
@@ -146,32 +148,59 @@ const View = ({
           ) : (
             <div className={styles.title}>
               {type === ChannelTypes.GroupChannel
-                ? participants?.map((i) => <Name key={i} id={i} />)
+                ? users?.map((i) => i.username).join(', ')
                 : channel.data?.name}
               <p className={styles.status}>{channel.data?.description}</p>
             </div>
           )}
-          {type === ChannelTypes.PrivateChannel && participants ? (
-            [0] &&
-            call.otherUserID !== participants[0] && (
+          <div className={styles.buttonGroup}>
+            {type === ChannelTypes.PrivateChannel ||
+            type === ChannelTypes.GroupChannel ? (
               <Button
                 type='button'
                 onClick={() => {
-                  console.log('calling uwu')
-                  if (call.callState !== 'idle') call.endCall()
-                  call.ringUser(participants[0])
+                  uiStore.setModal({
+                    name: 'addParticipant',
+                    props: {
+                      participant:
+                        type === ChannelTypes.PrivateChannel
+                          ? participants?.[0]
+                          : undefined,
+                      isPrivate: type === ChannelTypes.PrivateChannel,
+                      groupID:
+                        type === ChannelTypes.GroupChannel
+                          ? conversationID
+                          : undefined
+                    }
+                  })
                 }}
               >
-                {call.callState !== 'idle' ? (
-                  <FontAwesomeIcon icon={faPhoneSlash} />
-                ) : (
-                  <FontAwesomeIcon icon={faPhoneRotary} />
-                )}
+                <FontAwesomeIcon icon={faUserPlus} />
               </Button>
-            )
-          ) : (
-            <></>
-          )}
+            ) : (
+              <></>
+            )}
+            {type === ChannelTypes.PrivateChannel && participants ? (
+              call.otherUserID !== participants[0] && [0] && (
+                <Button
+                  type='button'
+                  onClick={() => {
+                    console.log('calling uwu')
+                    if (call.callState !== 'idle') call.endCall()
+                    call.ringUser(participants[0])
+                  }}
+                >
+                  {call.callState !== 'idle' ? (
+                    <FontAwesomeIcon icon={faPhoneSlash} />
+                  ) : (
+                    <FontAwesomeIcon icon={faPhone} />
+                  )}
+                </Button>
+              )
+            ) : (
+              <></>
+            )}
+          </div>
         </div>
         {channel.data ? (
           <Messages.View channel={channel.data} autoRead={autoRead} />
@@ -182,7 +211,7 @@ const View = ({
           {...{
             participants,
             channelID,
-            typingIndicator: users?.length > 0,
+            typingIndicator: typingUsers?.length > 0,
             communityID
           }}
         />

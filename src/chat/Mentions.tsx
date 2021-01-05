@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { queryCache, useQuery } from 'react-query'
+import { useQuery } from 'react-query'
 import styles from './Mentions.module.scss'
-import { getUser, UserResponse } from '../user/remote'
+import { fetchManyUsers, UserResponse } from '../user/remote'
 import { Auth } from '../authentication/state'
 import { clientGateway } from '../utils/constants'
 import { useDebounce, useMedia } from 'react-use'
@@ -31,12 +31,6 @@ const Mention = ({
       />
       {username}#0001
     </div>
-  )
-}
-
-const fetchManyUsers = (_: string, ids: string[], token: string) => {
-  return Promise.all(
-    ids.map((id) => queryCache.fetchQuery(['users', id, token], getUser))
   )
 }
 

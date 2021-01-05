@@ -9,7 +9,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronRight,
   faCopy,
-  faTrashAlt
+  faTrashAlt,
+  faUserFriends
 } from '@fortawesome/pro-solid-svg-icons'
 import { useQuery, useMutation, queryCache } from 'react-query'
 import { clientGateway } from '../utils/constants'
@@ -17,9 +18,9 @@ import styles from './ConversationCard.module.scss'
 import { Auth } from '../authentication/state'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import {
+  fetchManyUsers,
   getMentions,
   getUnreads,
-  getUser,
   Mentions,
   State
 } from '../user/remote'
@@ -53,7 +54,7 @@ const View = ({
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
   const history = useHistory()
   const { token, id } = Auth.useContainer()
-  const recipient = useQuery(['users', people[0], token], getUser)
+  // const recipient = useQuery(['users', people[0], token], getUser)
   const channel = useQuery(['channel', channelID, token], getChannel)
   const [leaveConversation] = useMutation(
     async () =>
@@ -195,6 +196,7 @@ const View = ({
     ]
   })
 
+  const { data: users } = useQuery(['users', people, token], fetchManyUsers)
   return (
     <Context.Wrapper key={conversationID} items={getItems()}>
       <div
@@ -202,29 +204,46 @@ const View = ({
         onClick={onClick}
       >
         <div className={styles.avatar}>
-          <img src={recipient.data?.avatar} alt={recipient.data?.username} />
-          {recipient.data?.state && (
-            <div
-              className={`${styles.badge} ${
-                recipient.data.state === State.online
-                  ? styles.online
-                  : recipient.data.state === State.dnd
-                  ? styles.dnd
-                  : recipient.data.state === State.idle
-                  ? styles.idle
-                  : recipient.data.state === State.offline
-                  ? styles.offline
-                  : ''
-              } ${selected ? styles.selectedBadge : ''}`}
-            />
+          {(people?.length ?? 1) === 1 ? (
+            <>
+              <img src={users?.[0].avatar} alt={users?.[0].username} />
+              {users?.[0].state && (
+                <div
+                  className={`${styles.badge} ${
+                    users?.[0].state === State.online
+                      ? styles.online
+                      : users?.[0].state === State.dnd
+                      ? styles.dnd
+                      : users?.[0].state === State.idle
+                      ? styles.idle
+                      : users?.[0].state === State.offline
+                      ? styles.offline
+                      : ''
+                  } ${selected ? styles.selectedBadge : ''}`}
+                />
+              )}
+            </>
+          ) : (
+            <div className={styles.groupIcon}>
+              <FontAwesomeIcon icon={faUserFriends} />
+            </div>
           )}
         </div>
         <div className={styles.user}>
-          <h4>{recipient.data?.username}</h4>
-          <p>
-            {message?.author_id === id ? 'You: ' : ''}
-            {output}
-          </p>
+          <h4>{users?.map((user) => user.username).join(', ')}</h4>
+          {message?.content && (
+            <p>
+              {message?.author_id === id
+                ? 'You: '
+                : (people?.length ?? 1) === 1
+                ? ''
+                : `${
+                    users?.find((user) => user.id === message?.author_id)
+                      ?.username ?? 'Unknown'
+                  }: `}
+              {output}
+            </p>
+          )}
         </div>
         <div className={styles.details}>
           {!selected &&
