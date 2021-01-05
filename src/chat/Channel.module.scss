@@ -167,3 +167,18 @@
     overflow-y: scroll;
   }
 }
+
+.buttonGroup {
+  display: flex;
+  margin-left: auto;
+
+  :not(:first-child) {
+    margin-left: 0.4rem;
+  }
+
+  :not(:last-child) {
+    background: var(--neko-colors-secondary) !important;
+
+    margin-right: 0.4rem;
+  }
+}

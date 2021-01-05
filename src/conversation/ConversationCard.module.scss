@@ -68,6 +68,19 @@
   }
 
   .avatar {
+    .groupIcon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 14px;
+      background: var(--neko-colors-primary);
+      height: 3rem;
+      width: 3rem;
+
+      svg {
+        margin-left: 0;
+      }
+    }
     height: 3rem;
     width: 3rem;
     position: relative;
@@ -130,6 +143,11 @@
           color: var(--neko-text-normal);
           font-weight: 500;
         }
+      }
+    }
+    .avatar {
+      .groupIcon {
+        background: var(--neko-channels-background);
       }
     }
   }

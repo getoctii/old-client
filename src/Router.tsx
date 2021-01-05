@@ -24,6 +24,7 @@ import Context from './components/Context'
 import Image from './chat/embeds/Image'
 import { Plugins } from '@capacitor/core'
 import { clientGateway } from './utils/constants'
+import AddParticipant from './chat/AddParticipant'
 
 const { PushNotifications } = Plugins
 
@@ -35,6 +36,9 @@ const Modals = () => {
       <AnimatePresence>
         {uiStore.modal.name === 'newConversation' && <NewConversation />}
         {uiStore.modal.name === 'newCommunity' && <NewCommunity />}
+        {uiStore.modal.name === 'addParticipant' && (
+          <AddParticipant {...uiStore.modal.props} />
+        )}
         {uiStore.modal.name === 'previewImage' && (
           <Image.Preview {...uiStore.modal.props} />
         )}
@@ -56,7 +60,7 @@ export const Router = () => {
   const call = Call.useContainer()
   const uiStore = UI.useContainer()
   useEffect(() => {
-    if (auth.authenticated) {
+    if (auth.authenticated && isPlatform('capacitor')) {
       PushNotifications.addListener('registration', async (token) => {
         await clientGateway.post(
           `/users/${auth.id}/notifications`,
@@ -72,10 +76,7 @@ export const Router = () => {
         )
       })
 
-      if (
-        isPlatform('capacitor') &&
-        localStorage.getItem('requested-notifications') !== 'true'
-      ) {
+      if (localStorage.getItem('requested-notifications') !== 'true') {
         PushNotifications.requestPermission()
           .then(({ granted }) => {
             if (granted) {
