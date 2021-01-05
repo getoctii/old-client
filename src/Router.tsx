@@ -29,7 +29,7 @@ const { PushNotifications } = Plugins
 
 const Modals = () => {
   const uiStore = UI.useContainer()
-
+  const isMobile = useMedia('(max-width: 940px)')
   return (
     <>
       <AnimatePresence>
@@ -38,7 +38,7 @@ const Modals = () => {
         {uiStore.modal.name === 'previewImage' && (
           <Image.Preview {...uiStore.modal.props} />
         )}
-        {uiStore.modal.name === 'incomingCall' && (
+        {!isMobile && uiStore.modal.name === 'incomingCall' && (
           <Incoming {...uiStore.modal.props} />
         )}
       </AnimatePresence>
@@ -54,7 +54,7 @@ export const Router = () => {
   const isMobile = useMedia('(max-width: 940px)')
   const isPWA = useMedia('(display-mode: standalone)')
   const call = Call.useContainer()
-
+  const uiStore = UI.useContainer()
   useEffect(() => {
     if (auth.authenticated) {
       PushNotifications.addListener('registration', async (token) => {
@@ -93,6 +93,16 @@ export const Router = () => {
 
   return (
     <BrowserRouter>
+      {auth.authenticated && isMobile && (
+        <>
+          <Suspense fallback={<></>}>
+            {call.callState !== 'idle' && <Current />}
+            {uiStore.modal.name === 'incomingCall' && (
+              <Incoming {...uiStore.modal.props} />
+            )}
+          </Suspense>
+        </>
+      )}
       {auth.authenticated && <EventSource />}
       <Context.Global />
       {isPlatform('capacitor') || isPWA ? (
@@ -103,13 +113,6 @@ export const Router = () => {
       <Route path='/authenticate' component={Authenticate} />
       <div id='main'>
         <Modals />
-        {auth.authenticated && !isMobile && (
-          <>
-            <Suspense fallback={<></>}>
-              {call.callState !== 'idle' && <Current />}
-            </Suspense>
-          </>
-        )}
         {auth.authenticated && !isMobile && <Sidebar />}
         <Suspense fallback={<></>}>
           <Switch>
@@ -140,6 +143,13 @@ export const Router = () => {
             />
           </Switch>
         </Suspense>
+        {auth.authenticated && !isMobile && (
+          <>
+            <Suspense fallback={<></>}>
+              {call.callState !== 'idle' && <Current />}
+            </Suspense>
+          </>
+        )}
       </div>
     </BrowserRouter>
   )

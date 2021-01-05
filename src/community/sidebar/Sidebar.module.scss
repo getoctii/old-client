@@ -127,16 +127,16 @@
   }
 }
 
-// , (max-height: 420px)
 @media (max-width: 940px) {
   .wrapper {
     height: 100%;
-    padding-top: calc(env(safe-area-inset-top) + 2rem);
     min-width: 1rem;
     width: 100%;
     max-width: 100%;
+    background: var(--neko-channels-background);
+    padding-top: env(safe-area-inset-top);
     .sidebar {
-      padding-top: 0;
+      padding-top: 2rem;
     }
     h3 {
       font-size: 2rem;
@@ -180,12 +180,14 @@
 
   @media (max-width: 940px) {
     height: 100%;
-    padding-top: calc(env(safe-area-inset-top) + 2rem);
+    // padding-top: calc(env(safe-area-inset-top) + 2rem);
     min-width: 1rem;
     width: 100%;
     max-width: 100%;
     .sidebar {
-      padding-top: 0;
+      padding-top: 2rem;
+      margin-top: env(safe-area-inset-top);
+      // padding-top: 0;
     }
     h3 {
       font-size: 2rem;

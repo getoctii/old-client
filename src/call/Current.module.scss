@@ -45,4 +45,25 @@
     background: var(--neko-colors-danger);
     width: 100%;
   }
+
+  @media (max-width: 940px) {
+    button {
+      width: auto;
+      min-width: auto;
+      background: var(--neko-text-inverse);
+      color: var(--neko-text-href);
+    }
+    button:last-child {
+      background: var(--neko-text-danger);
+      color: var(--neko-text-inverse);
+    }
+    position: static;
+    margin: 0;
+    padding-top: calc(env(safe-area-inset-top) + 10px);
+    height: auto;
+    background: var(--neko-colors-primary);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    width: 100%;
+  }
 }

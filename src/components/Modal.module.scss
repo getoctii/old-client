@@ -29,6 +29,13 @@
     border-radius: 16px;
     background: var(--neko-modal-foreground);
   }
+
+  @media (max-width: 940px) {
+    .content {
+      width: 90%;
+      max-width: 90%;
+    }
+  }
 }
 
 .fullscreen {

@@ -18,6 +18,10 @@ import { Channel, getMessages, Message as MessageType } from './remote'
 import { useDebounce } from 'react-use'
 import { getUnreads, Mentions } from '../user/remote'
 import { Chat } from './state'
+import { isPlatform } from '@ionic/react'
+import { Plugins } from '@capacitor/core'
+
+const { Keyboard } = Plugins
 
 dayjs.extend(dayjsUTC)
 
@@ -47,7 +51,7 @@ const View = ({
         messages?.[index - 1] &&
         message.author.id === messages?.[index - 1]?.author?.id &&
         dayjs.utc(message?.created_at)?.valueOf() -
-        dayjs.utc(messages?.[index - 1]?.created_at)?.valueOf() <
+          dayjs.utc(messages?.[index - 1]?.created_at)?.valueOf() <
           300000
       )
     },
@@ -67,6 +71,25 @@ const View = ({
       })
     }
   }, [])
+
+  useEffect(() => {
+    if (isPlatform('capacitor')) {
+      Keyboard.addListener('keyboardDidShow', () => {
+        const scrollRef = ref?.current
+        setTracking(true)
+        if (scrollRef) {
+          scrollRef.scroll({
+            top: scrollRef.scrollHeight,
+            behavior: 'smooth'
+          })
+        }
+      })
+    }
+
+    return () => {
+      Keyboard.removeAllListeners()
+    }
+  }, [setTracking, autoScroll])
 
   useEffect(() => {
     trackingRef.current = tracking
