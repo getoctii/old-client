@@ -12,6 +12,7 @@ import useNewVoiceSession from './newVoiceSession'
 import useAcceptedVoiceSession from './acceptedVoiceSession'
 import useLog from './log'
 import useNewMention from './newMention'
+import useUpdatedConversation from './updatedConversation'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
@@ -29,6 +30,7 @@ const EventSource = () => {
   useNewVoiceSession(eventSource)
   useAcceptedVoiceSession(eventSource)
   useNewMention(eventSource)
+  useUpdatedConversation(eventSource)
 
   return <></>
 }

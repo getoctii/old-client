@@ -1,4 +1,11 @@
+import { queryCache } from 'react-query'
 import { clientGateway } from '../utils/constants'
+
+export const fetchManyUsers = (_: string, ids: string[], token: string) => {
+  return Promise.all(
+    ids.map((id) => queryCache.fetchQuery(['users', id, token], getUser))
+  )
+}
 
 export enum State {
   offline = 'offline',

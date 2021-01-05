@@ -37,8 +37,13 @@ const Conversation = () => {
         key={participant.conversation.channel_id}
       >
         <Chat.View
-          type={ChannelTypes.PrivateChannel}
+          type={
+            (people?.length ?? 0) > 1
+              ? ChannelTypes.GroupChannel
+              : ChannelTypes.PrivateChannel
+          }
           channelID={participant.conversation.channel_id}
+          conversationID={match?.params.id}
           participants={people}
           key={participant.conversation.channel_id}
         />

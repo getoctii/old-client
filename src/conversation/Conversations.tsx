@@ -35,7 +35,7 @@ const ConversationList = () => {
             const people = conversation.participants.filter(
               (userID: string) => userID !== auth.id
             )
-            return people.length > 1 || people.length !== 0
+            return people.length !== 0
           })
           .sort((a, b) => {
             const firstMessage = dayjs
@@ -64,7 +64,7 @@ const ConversationList = () => {
             const people = conversation.participants.filter(
               (userID: string) => userID !== auth.id
             )
-            if (people.length > 1 || people.length === 0) {
+            if (people.length === 0) {
               return <></>
             } else {
               return (
