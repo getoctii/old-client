@@ -19,8 +19,9 @@ export const Settings = () => {
   const community = useQuery(['community', id, token], getCommunity)
   const history = useHistory()
   return (
-    <div className={styles.settings}>
-      {/* <h2>
+    <div className={styles.wrapper}>
+      <div className={styles.settings}>
+        {/* <h2>
         {isMobile && (
           <div
             className={styles.icon}
@@ -32,32 +33,33 @@ export const Settings = () => {
         Settings
       </h2> */}
 
-      <div className={styles.header}>
-        {isMobile ? (
-          <div
-            className={styles.icon}
-            onClick={() => isMobile && history.push(`/communities/${id}`)}
-          >
-            <FontAwesomeIcon
-              className={styles.backButton}
-              icon={faChevronLeft}
+        <div className={styles.header}>
+          {isMobile ? (
+            <div
+              className={styles.icon}
+              onClick={() => isMobile && history.push(`/communities/${id}`)}
+            >
+              <FontAwesomeIcon
+                className={styles.backButton}
+                icon={faChevronLeft}
+              />
+            </div>
+          ) : (
+            <div
+              className={styles.icon}
+              style={{ backgroundImage: `url('${community.data?.icon}')` }}
             />
+          )}
+          <div className={styles.title}>
+            <small>{community.data?.name}</small>
+            <h2>Settings</h2>
           </div>
-        ) : (
-          <div
-            className={styles.icon}
-            style={{ backgroundImage: `url('${community.data?.icon}')` }}
-          />
-        )}
-        <div className={styles.title}>
-          <small>{community.data?.name}</small>
-          <h2>Settings</h2>
         </div>
-      </div>
 
-      <Navbar selected={selected} setSelected={setSelected} />
-      {selected === 'general' && <General />}
-      {selected === 'invites' && <Invites />}
+        <Navbar selected={selected} setSelected={setSelected} />
+        {selected === 'general' && <General />}
+        {selected === 'invites' && <Invites />}
+      </div>
     </div>
   )
 }
