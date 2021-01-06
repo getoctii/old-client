@@ -18,6 +18,10 @@
     height: 100%;
     z-index: 5;
     background: var(--neko-modal-background);
+
+    &.blur {
+      backdrop-filter: blur(20px);
+    }
   }
 
   .content {

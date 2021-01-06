@@ -115,7 +115,7 @@ const View = ({
     setTracking(true)
     setAutoRead(false)
   }, [setAutoRead, setTracking, setChannelID, channelID])
-  console.log(participants?.[0])
+
   return (
     <Suspense fallback={<Placeholder />}>
       <div className={styles.chat} {...bond}>

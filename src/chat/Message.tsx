@@ -1,4 +1,4 @@
-import React, { memo, useState, useMemo, Suspense } from 'react'
+import React, { memo, useMemo, Suspense } from 'react'
 import styles from './Message.module.scss'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
@@ -6,10 +6,8 @@ import dayjsCalendar from 'dayjs/plugin/calendar'
 import { faCopy, faTrashAlt } from '@fortawesome/pro-solid-svg-icons'
 import { Clipboard } from '@capacitor/core'
 import { Auth } from '../authentication/state'
-import { Confirmation } from '../components/Confirmation'
 import { useMutation, useQuery } from 'react-query'
 import { clientGateway } from '../utils/constants'
-import { AnimatePresence } from 'framer-motion'
 import { getUser } from '../user/remote'
 import { Measure } from './embeds/Measure'
 import Context from '../components/Context'
@@ -23,6 +21,7 @@ import {
   faUserShield
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
+import { UI } from '../state/ui'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
@@ -73,8 +72,8 @@ const View = memo(
     primary: boolean
     onResize: () => void
   }) => {
+    const uiStore = UI.useContainer()
     const auth = Auth.useContainer()
-    const [deleteMessageModal, setDeleteMessageModal] = useState(false)
     const [deleteMessage] = useMutation(
       async () =>
         (
@@ -113,7 +112,18 @@ const View = memo(
           text: 'Delete Message',
           icon: faTrashAlt,
           danger: true,
-          onClick: () => setDeleteMessageModal(true)
+          onClick: () =>
+            uiStore.setModal({
+              name: 'deleteMessage',
+              props: {
+                type: 'message',
+                onConfirm: () => {
+                  deleteMessage()
+                  uiStore.clearModal()
+                },
+                onDismiss: () => uiStore.clearModal()
+              }
+            })
         })
       }
       return items
@@ -168,8 +178,8 @@ const View = memo(
     )
     return (
       <>
-        <AnimatePresence>
-          {deleteMessageModal && (
+        {/* <AnimatePresence> */}
+        {/* {deleteMessageModal && (
             <Confirmation
               type='message'
               onConfirm={() => {
@@ -177,8 +187,8 @@ const View = memo(
               }}
               onDismiss={() => setDeleteMessageModal(false)}
             />
-          )}
-        </AnimatePresence>
+          )} */}
+        {/* </AnimatePresence> */}
         <Context.Wrapper key={id} items={getItems()}>
           <div className={`${styles.message} ${primary ? styles.primary : ''}`}>
             {primary && (

@@ -87,7 +87,7 @@ const View = ({
     }
 
     return () => {
-      Keyboard.removeAllListeners()
+      if (isPlatform('capacitor')) Keyboard.removeAllListeners()
     }
   }, [setTracking, autoScroll])
 
