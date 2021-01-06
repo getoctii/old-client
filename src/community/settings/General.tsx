@@ -171,7 +171,7 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
       <p>
         Transfering ownership will give the specficed person full control of
         this community. You will lose the ability to manage the server and won’t
-        be able to regan control unless you ask the specfifed person to transfer
+        be able to regain control unless you ask the specfifed person to transfer
         the community back.{' '}
       </p>
       <Formik
