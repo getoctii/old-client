@@ -15,12 +15,8 @@ const useNewChannel = (eventSource: EventSourcePolyfill | null) => {
       queryCache.setQueryData(
         ['community', channel.community_id, token],
         (initial: any) => {
-          console.log('initial', initial)
           if (initial) {
-            initial.channels.push({
-              id: channel.id,
-              name: channel.name
-            })
+            initial.channels.push(channel.id)
             return initial
           } else return initial
         }

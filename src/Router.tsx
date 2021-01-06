@@ -25,7 +25,8 @@ import Image from './chat/embeds/Image'
 import { Plugins } from '@capacitor/core'
 import { clientGateway } from './utils/constants'
 import AddParticipant from './chat/AddParticipant'
-
+import { Confirmation } from './components/Confirmation'
+import { Update } from './components/Update'
 const { PushNotifications } = Plugins
 
 const Modals = () => {
@@ -42,9 +43,13 @@ const Modals = () => {
         {uiStore.modal.name === 'previewImage' && (
           <Image.Preview {...uiStore.modal.props} />
         )}
+        {uiStore.modal.name === 'deleteMessage' && (
+          <Confirmation {...uiStore.modal.props} />
+        )}
         {!isMobile && uiStore.modal.name === 'incomingCall' && (
           <Incoming {...uiStore.modal.props} />
         )}
+        {uiStore.modal.name === 'update' && <Update {...uiStore.modal.props} />}
       </AnimatePresence>
       {uiStore.modal.name === 'status' && <Status />}
 
@@ -59,6 +64,10 @@ export const Router = () => {
   const isPWA = useMedia('(display-mode: standalone)')
   const call = Call.useContainer()
   const uiStore = UI.useContainer()
+  useEffect(() => {
+    // @ts-ignore
+    window.setModal = uiStore.setModal
+  }, [uiStore])
   useEffect(() => {
     if (auth.authenticated && isPlatform('capacitor')) {
       PushNotifications.addListener('registration', async (token) => {
@@ -88,7 +97,7 @@ export const Router = () => {
       }
     }
     return () => {
-      PushNotifications.removeAllListeners()
+      if (isPlatform('capacitor')) PushNotifications.removeAllListeners()
     }
   }, [auth])
 

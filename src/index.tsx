@@ -103,4 +103,22 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-serviceWorkerRegistration.register()
+serviceWorkerRegistration.register({
+  onUpdate: (regristration) => {
+    const waitingServiceWorker = regristration.waiting
+    // u spelled it wrong i fixed it already
+    if (waitingServiceWorker) {
+      waitingServiceWorker.addEventListener('statechange', (event) => {
+        // state does not exist
+        // @ts-ignore
+        if (event?.target?.state === 'activated') {
+          window.location.reload()
+        }
+      })
+    }
+    // @ts-ignore
+    window.waitingServiceWorker = waitingServiceWorker
+    // @ts-ignore
+    window.setModal({ name: 'update' })
+  }
+})

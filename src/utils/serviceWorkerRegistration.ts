@@ -1,5 +1,3 @@
-import { Plugins } from '@capacitor/core'
-
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
@@ -76,31 +74,6 @@ function registerValidSW(swUrl: string, config?: Config) {
               // At this point, the updated precached content has been fetched,
               // but the previous service worker will still serve the older
               // content until all client tabs are closed.
-              if (window.inntronNotify) {
-                window.inntronNotify(
-                  'Update Ready',
-                  'Please restart the app to complete updating'
-                )
-              } else {
-                Plugins.LocalNotifications.requestPermission()
-                  .then((granted) => {
-                    if (granted) {
-                      Plugins.LocalNotifications.schedule({
-                        notifications: [
-                          {
-                            title: 'Update Ready',
-                            body:
-                              'Please close all tabs and reopen Octii to complete updating',
-                            id: 1
-                          }
-                        ]
-                      })
-                    }
-                  })
-                  .catch(() => {
-                    console.warn('Failed to send notification')
-                  })
-              }
 
               // Execute callback
               if (config && config.onUpdate) {

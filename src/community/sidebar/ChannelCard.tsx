@@ -38,6 +38,7 @@ export const ChannelCard = ({
     []
   )
   const auth = Auth.useContainer()
+  console.log('owouwuowo', channelID)
   const { data: channel } = useQuery(
     ['channel', channelID, auth.token],
     getChannel

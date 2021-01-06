@@ -56,7 +56,6 @@ export const Menu = ({
           <div
             className={danger ? styles.danger : ''}
             onMouseDown={(event) => {
-              console.log('Click')
               event.persist()
               event.stopPropagation()
               if (event.buttons === 1) {
@@ -98,11 +97,6 @@ export const Wrapper = ({
         style={{ zIndex: 2 }}
         onMouseDown={(event) => {
           if (event.buttons === 2) {
-            console.log(
-              event.currentTarget.clientHeight,
-              event.pageY,
-              window.innerHeight
-            )
             const itemsSize = items.length * 34 + 15
             if (window.innerHeight - (event.pageY + itemsSize) < 20) {
               setContextMenu({
@@ -123,7 +117,6 @@ export const Wrapper = ({
                 items
               })
             }
-            // if (window.screen.height - (event.pageY))
           }
         }}
       >

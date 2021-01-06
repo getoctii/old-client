@@ -6,12 +6,14 @@ const Modal = ({
   children,
   onDismiss,
   fullscreen,
-  className
+  className,
+  blur
 }: {
   children: React.ReactNode
   onDismiss?: any
   fullscreen?: boolean
   className?: string
+  blur?: boolean
 }) => {
   return (
     <div
@@ -25,7 +27,7 @@ const Modal = ({
           animate: { opacity: 1 },
           exit: { opacity: 0 }
         })}
-        className={styles.background}
+        className={`${styles.background} ${blur ? styles.blur : ''}`}
         onClick={onDismiss}
       ></motion.div>
       <motion.div
