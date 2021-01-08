@@ -22,6 +22,7 @@
 }
 
 .sidebar {
+  height: 100vh;
   padding: 1.5rem;
   overflow-y: scroll;
   flex: 1;
@@ -38,6 +39,10 @@
   padding: 0.5rem;
   border-radius: 10px;
 
+  @-moz-document url-prefix() {
+    // NOTE: Fireshit disables blur by default
+    background: var(--neko-sidebar-background);
+  }
   div {
     padding: 0.5rem;
     border-radius: 8px;
@@ -84,6 +89,10 @@
   width: 100%;
   z-index: 100;
   background: var(--neko-context-background);
+  @-moz-document url-prefix() {
+    // NOTE: Fireshit disables blur by default
+    background: var(--neko-sidebar-background);
+  }
   padding: 0.5rem;
   border-radius: 10px;
   backdrop-filter: blur(20px);

@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import Modal from '../../components/Modal'
 import { UI } from '../../state/ui'
+import { ModalTypes } from '../../utils/constants'
 import styles from './Image.module.scss'
 
 const isCovfefe = (url: string) =>
@@ -44,7 +45,10 @@ const Embed = ({ url }: { url: string }) => {
     <div
       className={styles.imageEmbed}
       onClick={() => {
-        ui.setModal({ name: 'previewImage', props: { url: matches[0] } })
+        ui.setModal({
+          name: ModalTypes.PREVIEW_IMAGE,
+          props: { url: matches[0] }
+        })
       }}
     >
       <img alt={url} src={matches[0]} />

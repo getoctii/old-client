@@ -1,25 +1,23 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useMemo, useEffect } from 'react'
 import decode from 'jwt-decode'
 import { createContainer } from 'unstated-next'
 import { clientGateway } from '../utils/constants'
 import { queryCache } from 'react-query'
+import { useStorageItem } from '@capacitor-community/react-hooks/storage'
 
 const useAuth = () => {
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem('neko-token') || null
-  )
+  const [token, setToken] = useStorageItem<string | null>('neko-token', null)
+
   const authenticated = !!token
-  const payload = useMemo<{ sub: string; exp: number } | null>(
+  const payload = useMemo<{ sub: string; exp: number } | undefined>(
     () => (token ? (decode(token) as any) : null),
     [token]
   )
-  // TODO: Check every second for token expiry
+
   useEffect(() => {
-    if (payload?.exp && payload.exp <= Math.floor(Date.now() / 1000)) {
+    if (payload?.exp && payload.exp <= Math.floor(Date.now() / 1000))
       setToken(null)
-      localStorage.removeItem('neko-token')
-    }
-  }, [payload])
+  }, [payload, setToken])
 
   useEffect(() => {
     // @ts-ignore
@@ -42,7 +40,12 @@ const useAuth = () => {
       return 'success'
     }
   }, [token, payload])
-  return { token, id: payload?.sub ?? null, authenticated, setToken }
+  return {
+    id: payload?.sub ?? null,
+    authenticated,
+    token: token || null,
+    setToken
+  }
 }
 
 export const Auth = createContainer(useAuth)

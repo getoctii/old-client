@@ -5,6 +5,16 @@ export const clientGateway = axios.create({
   baseURL: CLIENT_GATEWAY_URL
 })
 
+export enum ModalTypes {
+  ADD_PARTICIPANT,
+  DELETE_MESSAGE,
+  INCOMING_CALL,
+  NEW_COMMUNITY,
+  NEW_CONVERSATION,
+  PREVIEW_IMAGE,
+  STATUS
+}
+
 export enum Events {
   NEW_MESSAGE = 'NEW_MESSAGE',
   DELETED_MESSAGE = 'DELETED_MESSAGE',

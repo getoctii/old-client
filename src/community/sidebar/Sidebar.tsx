@@ -14,14 +14,14 @@ import { getCommunity } from '../remote'
 import styles from './Sidebar.module.scss'
 import Channels from './Channels'
 import { clientGateway } from '../../utils/constants'
-import { useLocalStorage } from 'react-use'
+import { useStorageItem } from '@capacitor-community/react-hooks/storage'
 
 const View = () => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const history = useHistory()
   const [menu, setMenu] = useState(false)
-  const [muted, setMuted] = useLocalStorage<string[]>('muted_communities', [])
+  const [muted, setMuted] = useStorageItem<string[]>('muted-communities', [])
   const community = useQuery(
     ['community', match?.params.id, auth.token],
     getCommunity

@@ -152,7 +152,7 @@ const View = ({
       danger: true,
       onClick: (event) => {
         if (match?.params.id === conversationID) history.push('/')
-        event.stopPropagation()
+        event?.stopPropagation()
         leaveConversation()
       }
     })
@@ -198,7 +198,12 @@ const View = ({
 
   const { data: users } = useQuery(['users', people, token], fetchManyUsers)
   return (
-    <Context.Wrapper key={conversationID} items={getItems()}>
+    <Context.Wrapper
+      title={users?.map((user) => user.username).join(', ') || ''}
+      message={(people?.length ?? 1) === 1 ? users?.[0]?.status : 'Group Chat'}
+      key={conversationID}
+      items={getItems()}
+    >
       <div
         className={`${styles.card} ${selected ? styles.selected : ''}`}
         onClick={onClick}

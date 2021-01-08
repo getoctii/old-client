@@ -3,19 +3,13 @@ import styles from './Friends.module.scss'
 import FriendCard from './FriendCard'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/pro-solid-svg-icons'
-import { UI } from '../state/ui'
 
 const Friends = () => {
-  const ui = UI.useContainer()
   return (
     <div className={styles.container}>
       <h1>
         Yellow Pages
-        <FontAwesomeIcon
-          onClick={() => ui.setModal({ name: 'addFriend' })}
-          className={styles.plus}
-          icon={faPlus}
-        />
+        <FontAwesomeIcon className={styles.plus} icon={faPlus} />
       </h1>
       <h3>Pending</h3>
       <div>

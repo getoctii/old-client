@@ -8,7 +8,6 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useCallback, useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { useLocalStorage } from 'react-use'
 import { Auth } from '../../authentication/state'
 import { CommunityResponse } from '../remote'
 import { Clipboard } from '@capacitor/core'
@@ -17,6 +16,7 @@ import styles from './ChannelCard.module.scss'
 import { useQuery } from 'react-query'
 import { getChannel } from '../../chat/remote'
 import { getMentions, getUnreads } from '../../user/remote'
+import { useStorageItem } from '@capacitor-community/react-hooks/storage'
 
 export const ChannelCard = ({
   channelID,
@@ -33,8 +33,8 @@ export const ChannelCard = ({
     '/communities/:id/channels/:channelID'
   )
   const history = useHistory()
-  const [mutedChannels, setMutedChannels] = useLocalStorage<string[]>(
-    'muted_channels',
+  const [mutedChannels, setMutedChannels] = useStorageItem<string[]>(
+    'muted-channels',
     []
   )
   const auth = Auth.useContainer()
@@ -99,7 +99,12 @@ export const ChannelCard = ({
   if (!channel) return <></>
 
   return (
-    <Context.Wrapper key={channel.id} items={getItems(channel.id)}>
+    <Context.Wrapper
+      title={community.name}
+      message={`#${channel.name}`}
+      key={channel.id}
+      items={getItems(channel.id)}
+    >
       <>
         {index !== 0 && (
           <hr

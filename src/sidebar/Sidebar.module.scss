@@ -5,6 +5,7 @@
 }
 
 .sidebar {
+  height: 100vh;
   position: relative;
   display: flex;
   flex-shrink: 0;
@@ -281,7 +282,6 @@
   border-color: var(--neko-sidebar-background);
   border-width: 3.5px;
   border-style: solid;
-
 
   &.pill {
     border-radius: 15px;

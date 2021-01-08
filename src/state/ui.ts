@@ -1,21 +1,21 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { useState } from 'react'
 import { createContainer } from 'unstated-next'
+import { ModalTypes } from '../utils/constants'
 
 export interface ContextMenuItem {
   text: string
   icon: IconProp
   danger?: boolean
-  onClick: (event: React.MouseEvent) => void
+  onClick: (event?: React.MouseEvent) => void
 }
 
 export type ContextMenuItems = ContextMenuItem[]
 
 const useUI = () => {
-  const [modal, setModal] = useState<{ name: string; props?: any }>({
-    name: '',
-    props: null
-  })
+  const [modal, setModal] = useState<
+    { name: ModalTypes; props?: any } | undefined
+  >(undefined)
   const [contextMenu, setContextMenu] = useState<{
     position: { top?: number; left: number; bottom?: number }
     items: ContextMenuItems
@@ -25,7 +25,7 @@ const useUI = () => {
     setModal,
     contextMenu,
     setContextMenu,
-    clearModal: () => setModal({ name: '', props: {} })
+    clearModal: () => setModal(undefined)
   }
 }
 
