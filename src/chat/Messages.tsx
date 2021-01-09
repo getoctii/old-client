@@ -95,6 +95,14 @@ const View = ({
     trackingRef.current = tracking
   }, [tracking])
 
+  useLayoutEffect(() => {
+    const scrollRef = ref?.current
+    if (trackingRef.current && scrollRef) {
+      scrollRef.scroll({
+        top: scrollRef.scrollHeight
+      })
+    }
+  }, [])
   useLayoutEffect(autoScroll, [messages, autoScroll])
   const unreads = useQuery(['unreads', id, token], getUnreads)
 
