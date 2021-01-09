@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { EventSourcePolyfill } from 'event-source-polyfill'
-import { Events } from '../utils/constants'
+import { Events, ModalTypes } from '../utils/constants'
 import { UI } from '../state/ui'
 import { log } from '../utils/logging'
 
@@ -17,7 +17,7 @@ const useNewVoiceSession = (eventSource: EventSourcePolyfill | null) => {
       log('Events', 'purple', 'NEW_VOICE_SESSION')
 
       ui.setModal({
-        name: 'incomingCall',
+        name: ModalTypes.INCOMING_CALL,
         props: { id: event.id, userID: event.user_id, peerID: event.peer_id }
       })
     }

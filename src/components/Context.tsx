@@ -1,28 +1,36 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useEffect } from 'react'
+import { isPlatform } from '@ionic/react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { ContextMenuItems, UI } from '../state/ui'
 import styles from './Context.module.scss'
+import { ActionSheetOptionStyle, Plugins } from '@capacitor/core'
+
+const { Modals } = Plugins
 
 export const Global = () => {
   const { contextMenu, setContextMenu } = UI.useContainer()
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (contextMenu) {
       setContextMenu(null)
     }
-  }
-  const handleResize = () => {
+  }, [contextMenu, setContextMenu])
+  const handleResize = useCallback(() => {
     if (contextMenu) {
       setContextMenu(null)
     }
-  }
+  }, [contextMenu, setContextMenu])
   useEffect(() => {
-    window.addEventListener('resize', handleResize)
-    window.addEventListener('mousedown', handleClick)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-      window.removeEventListener('mousedown', handleClick)
+    if (!isPlatform('mobile')) {
+      window.addEventListener('resize', handleResize)
+      window.addEventListener('mousedown', handleClick)
     }
-  })
+    return () => {
+      if (!isPlatform('mobile')) {
+        window.removeEventListener('resize', handleResize)
+        window.removeEventListener('mousedown', handleClick)
+      }
+    }
+  }, [handleClick, handleResize])
 
   return <></>
 }
@@ -74,29 +82,71 @@ export const Menu = ({
 }
 
 export const Wrapper = ({
+  title,
+  message,
   children,
   items
 }: {
+  title: string
+  message?: string
   children: React.ReactNode
   items: ContextMenuItems
 }) => {
   const { setContextMenu } = UI.useContainer()
-
+  const [touchTimeout, setTouchTimeout] = useState<any>()
   return (
     <div
       className={styles.wrapper}
       onMouseDown={(event) => {
         event.persist()
         event.stopPropagation()
-        if (event.buttons === 1) {
+        if (event.buttons === 1 && !isPlatform('mobile')) {
           setContextMenu(null)
         }
       }}
     >
       <div
         style={{ zIndex: 2 }}
+        onTouchStart={(event) => {
+          console.log('start')
+          if (isPlatform('mobile')) {
+            event.preventDefault()
+            setTouchTimeout(
+              setTimeout(() => {
+                Modals.showActions({
+                  title,
+                  message,
+                  options: [
+                    ...items.map((item) => ({
+                      title: item.text,
+                      style: item.danger
+                        ? ActionSheetOptionStyle.Destructive
+                        : ActionSheetOptionStyle.Default
+                    })),
+                    {
+                      title: 'Cancel',
+                      style: ActionSheetOptionStyle.Cancel
+                    }
+                  ]
+                }).then(async (action) => {
+                  if (action.index + 1 <= items.length) {
+                    await items[action.index].onClick(undefined)
+                  }
+                })
+              }, 500)
+            )
+          }
+        }}
+        onTouchEnd={() => {
+          console.log('end')
+          if (touchTimeout && isPlatform('mobile')) {
+            clearTimeout(touchTimeout)
+            setTouchTimeout(undefined)
+          }
+        }}
         onMouseDown={(event) => {
-          if (event.buttons === 2) {
+          console.log(event.buttons)
+          if (event.buttons === 2 && !isPlatform('mobile')) {
             const itemsSize = items.length * 34 + 15
             if (window.innerHeight - (event.pageY + itemsSize) < 20) {
               setContextMenu({

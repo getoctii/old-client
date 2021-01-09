@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useMemo } from 'react'
 import styles from './Channel.module.scss'
 import { useQuery } from 'react-query'
-import { ChannelTypes } from '../utils/constants'
+import { ChannelTypes, ModalTypes } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { useDropArea } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -160,7 +160,7 @@ const View = ({
                 type='button'
                 onClick={() => {
                   uiStore.setModal({
-                    name: 'addParticipant',
+                    name: ModalTypes.ADD_PARTICIPANT,
                     props: {
                       participant:
                         type === ChannelTypes.PrivateChannel
@@ -201,12 +201,16 @@ const View = ({
               <></>
             )}
           </div>
+
+          <div className={styles.bg} />
         </div>
-        {channel.data ? (
-          <Messages.View channel={channel.data} autoRead={autoRead} />
-        ) : (
-          <Messages.Placeholder />
-        )}
+        <Suspense fallback={<Messages.Placeholder />}>
+          {channel.data ? (
+            <Messages.View channel={channel.data} autoRead={autoRead} />
+          ) : (
+            <Messages.Placeholder />
+          )}
+        </Suspense>
         <Box.View
           {...{
             participants,
@@ -239,6 +243,8 @@ const Placeholder = () => {
     </div>
   )
 }
+
+View.wdyr = true
 
 const Channel = { View, Placeholder }
 

@@ -44,7 +44,10 @@
     margin: 0;
     font-size: 1rem;
     font-weight: 300;
-    user-select: text;
+
+    @media (min-width: 941px) {
+      user-select: text;
+    }
   }
   @media (hover: hover) and (pointer: fine) {
     &:hover {

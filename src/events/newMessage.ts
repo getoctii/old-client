@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { EventSourcePolyfill } from 'event-source-polyfill'
 import { queryCache, useQuery } from 'react-query'
-import { useLocalStorage } from 'react-use'
 import { isPlatform } from '@ionic/react'
 import Typing from '../state/typing'
 import { Plugins, HapticsNotificationType } from '@capacitor/core'
@@ -11,6 +10,7 @@ import { getUser, State, UserResponse } from '../user/remote'
 import { log } from '../utils/logging'
 import { Chat } from '../chat/state'
 import { parseMarkdown } from '@innatical/markdown'
+import { useStorageItem } from '@capacitor-community/react-hooks/storage'
 
 interface Message {
   id: string
@@ -39,8 +39,8 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
   const { autoRead, channelID } = Chat.useContainer()
   const { id, token } = Auth.useContainer()
   const { stopTyping } = Typing.useContainer()
-  const [mutedCommunities] = useLocalStorage<string[]>('muted_communities', [])
-  const [mutedChannels] = useLocalStorage<string[]>('muted_channels', [])
+  const [mutedCommunities] = useStorageItem<string[]>('muted-communities', [])
+  const [mutedChannels] = useStorageItem<string[]>('muted-channels', [])
   const user = useQuery(['users', id, token], getUser)
   useEffect(() => {
     if (!eventSource) return

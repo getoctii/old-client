@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { memo, Suspense, useEffect } from 'react'
 import { useMedia } from 'react-use'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { Authenticate } from './authentication/Authenticate'
@@ -23,47 +23,56 @@ import EventSource from './events'
 import Context from './components/Context'
 import Image from './chat/embeds/Image'
 import { Plugins } from '@capacitor/core'
-import { clientGateway } from './utils/constants'
+import { clientGateway, ModalTypes } from './utils/constants'
 import AddParticipant from './chat/AddParticipant'
 import { Confirmation } from './components/Confirmation'
-import { Update } from './components/Update'
+
 const { PushNotifications } = Plugins
+
+const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
+  const isMobile = useMedia('(max-width: 940px)')
+  switch (name) {
+    case ModalTypes.ADD_PARTICIPANT:
+      return <AddParticipant {...props} />
+    case ModalTypes.DELETE_MESSAGE:
+      return <Confirmation {...props} />
+    case ModalTypes.INCOMING_CALL:
+      return !isMobile ? <Incoming {...props} /> : <></>
+    case ModalTypes.NEW_COMMUNITY:
+      return <NewCommunity />
+    case ModalTypes.NEW_CONVERSATION:
+      return <NewConversation />
+    case ModalTypes.PREVIEW_IMAGE:
+      return <Image.Preview {...props} />
+    case ModalTypes.STATUS:
+      return <Status />
+    default:
+      return <></>
+  }
+}
 
 const Modals = () => {
   const uiStore = UI.useContainer()
-  const isMobile = useMedia('(max-width: 940px)')
-  return (
-    <>
+  if (uiStore.modal) {
+    return (
       <AnimatePresence>
-        {uiStore.modal.name === 'newConversation' && <NewConversation />}
-        {uiStore.modal.name === 'newCommunity' && <NewCommunity />}
-        {uiStore.modal.name === 'addParticipant' && (
-          <AddParticipant {...uiStore.modal.props} />
-        )}
-        {uiStore.modal.name === 'previewImage' && (
-          <Image.Preview {...uiStore.modal.props} />
-        )}
-        {uiStore.modal.name === 'deleteMessage' && (
-          <Confirmation {...uiStore.modal.props} />
-        )}
-        {!isMobile && uiStore.modal.name === 'incomingCall' && (
-          <Incoming {...uiStore.modal.props} />
-        )}
-        {uiStore.modal.name === 'update' && <Update {...uiStore.modal.props} />}
+        <ResolveModal {...uiStore.modal} />
       </AnimatePresence>
-      {uiStore.modal.name === 'status' && <Status />}
-
-      {uiStore.contextMenu && <Context.Menu {...uiStore.contextMenu} />}
-    </>
-  )
+    )
+  } else if (uiStore.contextMenu) {
+    return <Context.Menu {...uiStore.contextMenu} />
+  } else {
+    return <></>
+  }
 }
 
-export const Router = () => {
+export const Router = memo(() => {
   const auth = Auth.useContainer()
   const isMobile = useMedia('(max-width: 940px)')
   const isPWA = useMedia('(display-mode: standalone)')
   const call = Call.useContainer()
   const uiStore = UI.useContainer()
+
   useEffect(() => {
     // @ts-ignore
     window.setModal = uiStore.setModal
@@ -107,7 +116,7 @@ export const Router = () => {
         <>
           <Suspense fallback={<></>}>
             {call.callState !== 'idle' && <Current />}
-            {uiStore.modal.name === 'incomingCall' && (
+            {uiStore.modal?.name === ModalTypes.INCOMING_CALL && (
               <Incoming {...uiStore.modal.props} />
             )}
           </Suspense>
@@ -115,7 +124,7 @@ export const Router = () => {
       )}
       {auth.authenticated && <EventSource />}
       <Context.Global />
-      {isPlatform('capacitor') || isPWA ? (
+      {isPlatform('mobile') || isPWA ? (
         <Redirect path='/home' to='/authenticate/login' />
       ) : (
         <Route path='/home' component={Home} />
@@ -145,9 +154,7 @@ export const Router = () => {
               path={'/(conversations)?/:id?'}
               component={() => <Conversation />}
               redirect={
-                isPlatform('capacitor') || isPWA
-                  ? '/authenticate/login'
-                  : '/home'
+                isPlatform('mobile') || isPWA ? '/authenticate/login' : '/home'
               }
               exact
             />
@@ -163,4 +170,6 @@ export const Router = () => {
       </div>
     </BrowserRouter>
   )
-}
+})
+
+// Router.whyDidYouRender = true

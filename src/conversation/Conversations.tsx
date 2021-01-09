@@ -4,12 +4,13 @@ import { Auth } from '../authentication/state'
 import { queryCache, useQuery } from 'react-query'
 import ConversationCard from './ConversationCard'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { useLocalStorage, useMedia, useUpdate } from 'react-use'
+import { useMedia, useUpdate } from 'react-use'
 import NewConversation from './NewConversation'
 import { MessageResponse } from '../message/remote'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import { getParticipants, Participant } from '../user/remote'
+import { useStorageItem } from '@capacitor-community/react-hooks/storage'
 
 dayjs.extend(dayjsUTC)
 
@@ -24,7 +25,7 @@ const ConversationList = () => {
   const filteredParticipants = participants.data?.filter(
     (part) => part.conversation.participants.length > 1
   )
-  const [, setLastConversation] = useLocalStorage('last_conversation')
+  const [, setLastConversation] = useStorageItem('last-conversation')
 
   const update = useUpdate()
   return (

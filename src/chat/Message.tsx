@@ -1,13 +1,17 @@
-import React, { memo, useMemo, Suspense } from 'react'
+import React, { memo, useMemo, Suspense, useCallback } from 'react'
 import styles from './Message.module.scss'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import dayjsCalendar from 'dayjs/plugin/calendar'
-import { faCopy, faTrashAlt } from '@fortawesome/pro-solid-svg-icons'
-import { Clipboard } from '@capacitor/core'
+import {
+  faCopy,
+  faTrashAlt,
+  IconDefinition
+} from '@fortawesome/pro-solid-svg-icons'
+import { Plugins, PermissionType } from '@capacitor/core'
 import { Auth } from '../authentication/state'
 import { useMutation, useQuery } from 'react-query'
-import { clientGateway } from '../utils/constants'
+import { clientGateway, ModalTypes } from '../utils/constants'
 import { getUser } from '../user/remote'
 import { Measure } from './embeds/Measure'
 import Context from '../components/Context'
@@ -22,7 +26,7 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
-
+const { Clipboard, Permissions } = Plugins
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
 
@@ -83,26 +87,41 @@ const View = memo(
         ).data
     )
     const user = useQuery(['users', authorID, auth.token], getUser)
-    const getItems = () => {
-      const items = [
+    const getItems = useCallback(() => {
+      const items: {
+        text: string
+        icon: IconDefinition
+        danger: boolean
+        onClick: any
+      }[] = [
         {
           text: 'Copy Message',
           icon: faCopy,
           danger: false,
-          onClick: () => {
-            Clipboard.write({
-              string: content
+          onClick: async () => {
+            const permission = await Permissions.query({
+              name: PermissionType.ClipboardWrite
             })
+            if (permission.state === 'granted') {
+              await Clipboard.write({
+                string: content
+              })
+            }
           }
         },
         {
           text: 'Copy ID',
           icon: faCopy,
           danger: false,
-          onClick: () => {
-            Clipboard.write({
-              string: id
+          onClick: async () => {
+            const permission = await Permissions.query({
+              name: PermissionType.ClipboardWrite
             })
+            if (permission.state === 'granted') {
+              await Clipboard.write({
+                string: id
+              })
+            }
           }
         }
       ]
@@ -114,7 +133,7 @@ const View = memo(
           danger: true,
           onClick: () =>
             uiStore.setModal({
-              name: 'deleteMessage',
+              name: ModalTypes.DELETE_MESSAGE,
               props: {
                 type: 'message',
                 onConfirm: () => {
@@ -127,7 +146,7 @@ const View = memo(
         })
       }
       return items
-    }
+    }, [authorID, content, deleteMessage, id, uiStore, auth.id])
     const output = useMarkdown(content, {
       bold: (str, key) => <strong key={key}>{str}</strong>,
       italic: (str, key) => <i key={key}>{str}</i>,
@@ -189,7 +208,12 @@ const View = memo(
             />
           )} */}
         {/* </AnimatePresence> */}
-        <Context.Wrapper key={id} items={getItems()}>
+        <Context.Wrapper
+          title={`${user.data?.username || 'Unknown'}'s Message`}
+          message={content}
+          key={id}
+          items={getItems()}
+        >
           <div className={`${styles.message} ${primary ? styles.primary : ''}`}>
             {primary && (
               <div

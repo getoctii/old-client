@@ -1,6 +1,6 @@
 import { createContainer } from 'unstated-next'
 import { useEffect, useMemo } from 'react'
-import { useLocalStorage, useMedia } from 'react-use'
+import { useMedia } from 'react-use'
 import octii from './themes/octii.json'
 import octiiHub from './themes/octii-hub.json'
 import ayu from './themes/ayu-mirage.json'
@@ -12,6 +12,7 @@ import {
   Plugins,
   StatusBarStyle
 } from '@capacitor/core'
+import { useStorageItem } from '@capacitor-community/react-hooks/storage'
 const { Keyboard, StatusBar } = Plugins
 const isThemeBundle = (theme: Theme | ThemeBundle): theme is ThemeBundle => {
   return (theme as ThemeBundle).dark !== undefined
@@ -123,17 +124,16 @@ document.head.appendChild(globalStyle)
 export const themes = [octii, octiiHub, ayu, eyestrain]
 
 const useTheme = () => {
-  const [themeId, setThemeId] = useLocalStorage<string>('themeId', octii.id)
-  const theme = useMemo<Theme | ThemeBundle | undefined>(
-    () => themes.find((t) => t.id === themeId),
-    [themeId]
-  )
-  const [variations, setVariations] = useLocalStorage<
+  const [themeID, setThemeID] = useStorageItem<string>('theme-id', octii.id)
+  const [variations, setVariations] = useStorageItem<
     'light' | 'dark' | 'system'
-  >('variations', 'system')
+  >('theme-variations', 'system')
+  const theme = useMemo<Theme | ThemeBundle>(
+    () => themes.find((t) => t.id === themeID) || octii,
+    [themeID]
+  )
   const prefersDarkMode = useMedia('(prefers-color-scheme: dark)')
   useEffect(() => {
-    if (!theme) return setThemeId(octii.id)
     const documentStyle = document.documentElement.style
 
     const currentTheme = isThemeBundle(theme)
@@ -204,8 +204,8 @@ const useTheme = () => {
     }).forEach(([key, value]) => documentStyle.setProperty(key, value))
     if (currentTheme.global) globalStyle.textContent = currentTheme.global
     else globalStyle.textContent = ''
-  }, [theme, prefersDarkMode, variations, setThemeId])
-  return { theme, themeId, setThemeId, setVariations, variations }
+  }, [theme, prefersDarkMode, variations, setThemeID])
+  return { theme, themeID, setThemeID, setVariations, variations }
 }
 
 export default createContainer(useTheme)

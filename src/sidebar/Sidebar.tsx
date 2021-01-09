@@ -1,5 +1,6 @@
 import React, {
   Suspense,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -14,7 +15,7 @@ import { faInbox, faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Button from '../components/Button'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { useLocalStorage, useMedia } from 'react-use'
+import { useMedia } from 'react-use'
 import {
   getCommunities,
   getMentions,
@@ -27,6 +28,8 @@ import { isPlatform } from '@ionic/react'
 import { useScroll } from 'react-use'
 import { ScrollPosition } from '../state/scroll'
 import { getCommunity } from '../community/remote'
+import { useStorageItem } from '@capacitor-community/react-hooks/storage'
+import { ModalTypes } from '../utils/constants'
 
 const reorder = (list: any[], startIndex: number, endIndex: number): any[] => {
   const result = Array.from(list)
@@ -73,43 +76,48 @@ const Community = ({
     [communityFull, mentions]
   )
 
+  const draggableChild = useCallback(
+    (provided) => (
+      <div
+        key={community.id}
+        style={provided.draggableProps.style}
+        className={
+          match?.params.tab === 'communities' &&
+          match.params.id === community.id
+            ? `${styles.icon} ${styles.selected}`
+            : styles.icon
+        }
+        ref={provided.innerRef}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+        onClick={() => {
+          return history.push(`/communities/${community.id}`)
+        }}
+      >
+        <img src={community.icon} alt={community.name} />
+        {match?.params.id !== community.id &&
+          (mentionsCount && mentionsCount > 0 ? (
+            <div
+              className={`${styles.mention} ${
+                mentionsCount > 9 ? styles.pill : ''
+              }`}
+            >
+              <span>{mentionsCount > 99 ? '99+' : mentionsCount}</span>
+            </div>
+          ) : (
+            communityFull.data?.channels.some((channelID) => {
+              const channel = unreads.data?.[channelID]
+              return channel?.last_message_id !== channel?.read
+            }) && <div className={`${styles.badge}`} />
+          ))}
+      </div>
+    ),
+    [community, match, unreads, mentionsCount, communityFull, history]
+  )
+
   return (
     <Draggable draggableId={community.id} index={index}>
-      {(provided) => (
-        <div
-          key={community.id}
-          style={provided.draggableProps.style}
-          className={
-            match?.params.tab === 'communities' &&
-            match.params.id === community.id
-              ? `${styles.icon} ${styles.selected}`
-              : styles.icon
-          }
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          onClick={() => {
-            return history.push(`/communities/${community.id}`)
-          }}
-        >
-          <img src={community.icon} alt={community.name} />
-          {match?.params.id !== community.id &&
-            (mentionsCount && mentionsCount > 0 ? (
-              <div
-                className={`${styles.mention} ${
-                  mentionsCount > 9 ? styles.pill : ''
-                }`}
-              >
-                <span>{mentionsCount > 99 ? '99+' : mentionsCount}</span>
-              </div>
-            ) : (
-              communityFull.data?.channels.some((channelID) => {
-                const channel = unreads.data?.[channelID]
-                return channel?.last_message_id !== channel?.read
-              }) && <div className={`${styles.badge}`} />
-            ))}
-        </div>
-      )}
+      {draggableChild}
     </Draggable>
   )
 }
@@ -129,53 +137,61 @@ const Communities = () => {
   const isMobile = useMedia('(max-width: 940px)')
   const { id, token } = Auth.useContainer()
   const communities = useQuery(['communities', id, token], getCommunities)
-  const [communitiesOrder, setCommunitiesOrder] = useLocalStorage<string[]>(
+  const [communitiesOrder, setCommunitiesOrder] = useStorageItem<string[]>(
     'communities',
     communities.data?.map((member) => member.community.id) ?? []
   )
 
+  const onDragEnd = useCallback(
+    (result) => {
+      if (
+        !result.destination ||
+        result.destination.index === result.source.index
+      )
+        return
+      const items = reorder(
+        communities.data || [],
+        result.source.index,
+        result.destination.index
+      )
+      setCommunitiesOrder(items.map((c) => c.community.id))
+    },
+    [communities.data, setCommunitiesOrder]
+  )
+
+  const DroppableComponent = useCallback(
+    (provided) => (
+      <div
+        className={styles.list}
+        {...provided.droppableProps}
+        ref={provided.innerRef}
+      >
+        {(communities?.data ?? [])
+          .sort(
+            (a, b) =>
+              (communitiesOrder?.indexOf(a.community.id) ?? 0) -
+              (communitiesOrder?.indexOf(b.community.id) ?? 0)
+          )
+          .map((member, index) => (
+            <Community
+              key={member.community.id}
+              community={member.community}
+              index={index}
+            />
+          ))}
+        {provided.placeholder}
+      </div>
+    ),
+    [communities, communitiesOrder]
+  )
+
   return (
-    <DragDropContext
-      onDragEnd={(result) => {
-        if (
-          !result.destination ||
-          result.destination.index === result.source.index
-        )
-          return
-        const items = reorder(
-          communities.data || [],
-          result.source.index,
-          result.destination.index
-        )
-        setCommunitiesOrder(items.map((c) => c.community.id))
-      }}
-    >
+    <DragDropContext onDragEnd={onDragEnd}>
       <Droppable
         droppableId='list'
         direction={isMobile ? 'horizontal' : 'vertical'}
       >
-        {(provided) => (
-          <div
-            className={styles.list}
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
-            {(communities?.data ?? [])
-              .sort(
-                (a, b) =>
-                  (communitiesOrder?.indexOf(a.community.id) ?? 0) -
-                  (communitiesOrder?.indexOf(b.community.id) ?? 0)
-              )
-              .map((member, index) => (
-                <Community
-                  key={member.community.id}
-                  community={member.community}
-                  index={index}
-                />
-              ))}
-            {provided.placeholder}
-          </div>
-        )}
+        {DroppableComponent}
       </Droppable>
     </DragDropContext>
   )
@@ -257,14 +273,14 @@ const Sidebar = () => {
                       ? styles.offline
                       : ''
                   }`}
-                  onClick={() => ui.setModal({ name: 'status' })}
+                  onClick={() => ui.setModal({ name: ModalTypes.STATUS })}
                 />
               )}
             </Button>
             <Button
               className={styles.plus}
               type='button'
-              onClick={() => ui.setModal({ name: 'newCommunity' })}
+              onClick={() => ui.setModal({ name: ModalTypes.NEW_COMMUNITY })}
             >
               <FontAwesomeIcon
                 className={styles.symbol}
@@ -343,14 +359,14 @@ const Sidebar = () => {
                       ? styles.offline
                       : ''
                   }`}
-                  onClick={() => ui.setModal({ name: 'status' })}
+                  onClick={() => ui.setModal({ name: ModalTypes.STATUS })}
                 />
               )}
             </Button>
             <Button
               className={styles.plus}
               type='button'
-              onClick={() => ui.setModal({ name: 'newCommunity' })}
+              onClick={() => ui.setModal({ name: ModalTypes.NEW_COMMUNITY })}
             >
               <FontAwesomeIcon
                 className={styles.symbol}

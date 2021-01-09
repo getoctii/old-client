@@ -3,9 +3,27 @@ import { createContainer } from 'unstated-next'
 import Peer from 'peerjs'
 import { clientGateway } from '../utils/constants'
 import { Auth } from '../authentication/state'
-import { useLocalStorage } from 'react-use'
 import { isPlatform } from '@ionic/react'
-import { Permissions, PermissionType } from '@capacitor/core'
+import { useStorageItem } from '@capacitor-community/react-hooks/storage'
+
+declare global {
+  interface Window {
+    cordova?: {
+      plugins?: {
+        iosrtc?: {
+          getUserMedia: (
+            constraints?: MediaStreamConstraints | undefined
+          ) => Promise<MediaStream>
+          registerGlobals: () => void
+          debug: {
+            enable: (s: string, b: boolean) => void
+          }
+        }
+      }
+    }
+  }
+}
+
 const useCall = () => {
   const { token } = Auth.useContainer()
   const [peer] = useState(
@@ -24,8 +42,11 @@ const useCall = () => {
   const [call, setCall] = useState<null | Peer.MediaConnection>(null)
   const [inputStream, setInputStream] = useState<null | MediaStream>(null)
   const [stream, setStream] = useState<null | MediaStream>(null)
-  const [muted, setMuted] = useLocalStorage<boolean>('muted', false)
-  const [deafened, setDeafened] = useLocalStorage<boolean>('deafened', false)
+  const [muted, setMuted] = useStorageItem<boolean>('voice-muted', false)
+  const [deafened, setDeafened] = useStorageItem<boolean>(
+    'voice-deafened',
+    false
+  )
 
   useEffect(() => {
     if (inputStream && !muted) {
@@ -106,24 +127,36 @@ const useCall = () => {
       console.log('CALL EVENT', call)
       setCall(call)
       try {
-        if (isPlatform('capacitor')) {
-          console.log('requesting... 2')
-          const hasPermission = await Permissions.query({
-            name: PermissionType.Microphone
-          })
-          console.log(hasPermission)
-          if (hasPermission.state !== 'granted') {
-            console.error('Permission must be granted to start a call')
-            return
-          }
+        if (isPlatform('ios') && window.cordova?.plugins?.iosrtc) {
+          window.cordova.plugins.iosrtc.registerGlobals()
+          window.cordova.plugins.iosrtc.debug.enable('*', true)
         }
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: false
-        })
+
+        // if (isPlatform('capacitor')) {
+        //   console.log('requesting... 1')
+        //   const hasPermission = await Permissions.query({
+        //     name: PermissionType.Microphone
+        //   })
+        //   console.log(hasPermission.state)
+        //   if (hasPermission.state !== 'granted') {
+        //     console.error('Permission must be granted to start a call')
+        //     return
+        //   }
+        // }
+
+        const stream = isPlatform('ios')
+          ? await window.cordova?.plugins?.iosrtc?.getUserMedia({
+              audio: true,
+              video: false
+            })!
+          : await navigator.mediaDevices.getUserMedia({
+              audio: true,
+              video: false
+            })
         setInputStream(stream)
         call.answer(stream)
       } catch (error) {
+        console.log(error)
         const stream = new MediaStream()
         setInputStream(stream)
         call.answer(stream)
@@ -190,24 +223,35 @@ const useCall = () => {
       console.log('establishing...', receivedPeerID)
       setCallState('waiting')
       try {
-        if (isPlatform('capacitor')) {
-          console.log('requesting... 2')
-          const hasPermission = await Permissions.query({
-            name: PermissionType.Microphone
-          })
-          console.log(hasPermission)
-          if (hasPermission.state !== 'granted') {
-            console.error('Permission must be granted to start a call')
-            return
-          }
+        if (isPlatform('ios') && window.cordova?.plugins?.iosrtc) {
+          window.cordova.plugins.iosrtc.registerGlobals()
+          window.cordova.plugins.iosrtc.debug.enable('*', true)
         }
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: false
-        })
+
+        // if (isPlatform('capacitor')) {
+        //   console.log('requesting... 2')
+        //   const hasPermission = await Permissions.query({
+        //     name: PermissionType.Microphone
+        //   })
+        //   console.log(hasPermission)
+        //   if (hasPermission.state !== 'granted') {
+        //     console.error('Permission must be granted to start a call')
+        //     return
+        //   }
+        // }
+        const stream = isPlatform('ios')
+          ? await window.cordova?.plugins?.iosrtc?.getUserMedia({
+              audio: true,
+              video: false
+            })!
+          : await navigator.mediaDevices.getUserMedia({
+              audio: true,
+              video: false
+            })
         setInputStream(stream)
         setCall(peer.call(receivedPeerID, stream))
       } catch (error) {
+        console.log(error)
         const stream = new MediaStream()
         setInputStream(stream)
         setCall(peer.call(receivedPeerID, stream))

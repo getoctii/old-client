@@ -7,6 +7,11 @@
   padding: 0.5rem;
   border-radius: 10px;
   backdrop-filter: blur(35px);
+
+  @-moz-document url-prefix() {
+    // NOTE: Fireshit disables blur by default
+    background: var(--neko-channels-background);
+  }
   cursor: pointer;
   div {
     padding: 0.5rem;
@@ -63,5 +68,10 @@
     left: 0;
     right: 0;
     bottom: 0;
+
+    @-moz-document url-prefix() {
+      // NOTE: Fireshit disables blur by default
+      background: var(--neko-channels-background);
+    }
   }
 }

@@ -9,8 +9,8 @@ import { useHistory } from 'react-router-dom'
 
 const Themes = () => {
   const {
-    themeId,
-    setThemeId,
+    themeID,
+    setThemeID,
     setVariations,
     variations
   } = Theme.useContainer()
@@ -63,9 +63,9 @@ const Themes = () => {
             <React.Fragment key={t.id}>
               {index !== 0 && <hr />}
               <div
-                onClick={() => setThemeId(t.id)}
+                onClick={() => setThemeID(t.id)}
                 className={`${styles.theme} ${
-                  themeId === t.id ? styles.selected : ''
+                  themeID === t.id ? styles.selected : ''
                 }`}
               >
                 {t.name}
