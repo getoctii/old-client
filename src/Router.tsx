@@ -53,6 +53,10 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
 
 const Modals = () => {
   const uiStore = UI.useContainer()
+  useEffect(() => {
+    // @ts-ignore
+    window.setModal = uiStore.setModal
+  }, [uiStore])
   if (uiStore.modal) {
     return (
       <AnimatePresence>
@@ -66,17 +70,31 @@ const Modals = () => {
   }
 }
 
+const IncomingCall = () => {
+  const auth = Auth.useContainer()
+  const call = Call.useContainer()
+  const uiStore = UI.useContainer()
+  const isMobile = useMedia('(max-width: 940px)')
+
+  return auth.authenticated && isMobile ? (
+    <>
+      <Suspense fallback={<></>}>
+        {call.callState !== 'idle' && <Current />}
+        {uiStore.modal?.name === ModalTypes.INCOMING_CALL && (
+          <Incoming {...uiStore.modal.props} />
+        )}
+      </Suspense>
+    </>
+  ) : (
+    <></>
+  )
+}
+
 export const Router = memo(() => {
   const auth = Auth.useContainer()
   const isMobile = useMedia('(max-width: 940px)')
   const isPWA = useMedia('(display-mode: standalone)')
   const call = Call.useContainer()
-  const uiStore = UI.useContainer()
-
-  useEffect(() => {
-    // @ts-ignore
-    window.setModal = uiStore.setModal
-  }, [uiStore])
   useEffect(() => {
     if (auth.authenticated && isPlatform('capacitor')) {
       PushNotifications.addListener('registration', async (token) => {
@@ -112,16 +130,7 @@ export const Router = memo(() => {
 
   return (
     <BrowserRouter>
-      {auth.authenticated && isMobile && (
-        <>
-          <Suspense fallback={<></>}>
-            {call.callState !== 'idle' && <Current />}
-            {uiStore.modal?.name === ModalTypes.INCOMING_CALL && (
-              <Incoming {...uiStore.modal.props} />
-            )}
-          </Suspense>
-        </>
-      )}
+      <IncomingCall />
       {auth.authenticated && <EventSource />}
       <Context.Global />
       {isPlatform('mobile') || isPWA ? (
