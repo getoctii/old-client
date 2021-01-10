@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo } from 'react'
+import React, { Suspense, useEffect, useMemo } from 'react'
 import styles from './Conversation.module.scss'
 import Chat from '../chat/Channel'
 import { useHistory, useRouteMatch } from 'react-router-dom'
@@ -10,7 +10,8 @@ import { Conversations } from './Conversations'
 import { useMedia } from 'react-use'
 import Empty from './empty/Empty'
 import Sidebar from '../sidebar/Sidebar'
-import { useStorageItem } from '@capacitor-community/react-hooks/storage'
+import dayjs from 'dayjs'
+import { useSuspenseStorageItem } from '../utils/storage'
 
 const Conversation = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
@@ -55,38 +56,65 @@ const Conversation = () => {
 
 const Router = () => {
   const { id, token } = Auth.useContainer()
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
-  const [lastConversation] = useStorageItem('last-conversation')
+  const [lastConversation] = useSuspenseStorageItem<string>('last-conversation')
   const participants = useQuery(['participants', id, token], getParticipants)
   const history = useHistory()
-  const filteredParticipants =
-    participants.data?.filter(
-      (part) => part.conversation.participants.length > 1
-    ) || []
+  const filteredParticipants = useMemo(
+    () =>
+      participants.data
+        ?.filter((part) => part.conversation.participants.length > 1)
+        .sort((a, b) => {
+          const firstMessage = dayjs
+            .utc(a.conversation.last_message_date ?? 0)
+            .unix()
+          const lastMessage = dayjs
+            .utc(b.conversation.last_message_date ?? 0)
+            .unix()
+          if (lastMessage > firstMessage) return 1
+          else if (lastMessage < firstMessage) return -1
+          else return 0
+        }) || [],
+    [participants]
+  )
 
-  if (!match?.params.id && filteredParticipants.length > 0 && !isMobile) {
-    history.push(
-      `/conversations/${
-        lastConversation &&
-        filteredParticipants.find((p) => p.conversation.id === lastConversation)
-          ? lastConversation
-          : filteredParticipants[0].conversation.id
-      }`
-    )
-  } else if (
-    match?.params.id &&
-    filteredParticipants.length === 0 &&
-    filteredParticipants.find((p) => p.conversation.id !== match.params.id)
-  ) {
-    history.push('/')
-  } else if (
-    match?.params.id &&
-    filteredParticipants.length > 0 &&
-    !filteredParticipants.find((p) => p.conversation.id === match.params.id)
-  ) {
-    history.push(`/conversations/${filteredParticipants[0].conversation.id}`)
-  }
+  useEffect(() => {
+    console.log(!match?.params.id, filteredParticipants.length > 0, !isMobile)
+    if (!match?.params.id && filteredParticipants.length > 0 && !isMobile) {
+      console.log('found', lastConversation) // uh its undefined??
+      /// uhhhhhhhhhhhh
+      history.push(
+        `/conversations/${
+          lastConversation &&
+          filteredParticipants.find(
+            (p) => p.conversation.id === lastConversation
+          )
+            ? lastConversation
+            : filteredParticipants[0].conversation.id
+        }`
+      )
+    } else if (
+      match?.params.id &&
+      filteredParticipants.length === 0 &&
+      filteredParticipants.find((p) => p.conversation.id !== match.params.id)
+    ) {
+      history.push('/')
+    } else if (
+      match?.params.id &&
+      filteredParticipants.length > 0 &&
+      !filteredParticipants.find((p) => p.conversation.id === match.params.id)
+    ) {
+      history.push(`/conversations/${filteredParticipants[0].conversation.id}`)
+    }
+  }, [
+    filteredParticipants,
+    isMobile,
+    lastConversation,
+    match?.params.id,
+    history
+  ])
+
   return (
     <>
       {match?.params.id &&

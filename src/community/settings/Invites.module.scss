@@ -43,7 +43,7 @@
   }
 
   table {
-    @media (max-width: 940px) {
+    @media (max-width: 740px) {
       display: block;
       overflow-x: scroll;
       white-space: nowrap;
@@ -118,7 +118,7 @@
     background: var(--neko-settings-card);
     flex-direction: column;
 
-    @media (max-width: 940px), (max-height: 420px) {
+    @media (max-width: 740px), (max-height: 420px) {
       width: auto;
       margin-top: 4rem;
       padding: 2rem;

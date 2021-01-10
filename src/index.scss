@@ -99,7 +99,7 @@ img {
   flex-direction: row;
 
   // , (max-height: 420px)
-  @media (max-width: 940px) {
+  @media (max-width: 740px) {
     flex-direction: column-reverse;
   }
 }

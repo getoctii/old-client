@@ -28,7 +28,7 @@ const Incoming = ({
     src: 'https://file.coffee/u/JXS7hx53Kh.mpeg',
     autoPlay: true
   })
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   useEffect(() => {
     controls.volume(0.1)
   }, [controls])

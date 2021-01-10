@@ -71,7 +71,7 @@ ReactDOM.render(
           suspense: true
         },
         queries: {
-          refetchOnWindowFocus: process.env.NODE_ENV === 'production'
+          refetchOnWindowFocus: false
         }
       }}
     >

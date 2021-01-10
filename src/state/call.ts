@@ -4,7 +4,7 @@ import Peer from 'peerjs'
 import { clientGateway } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { isPlatform } from '@ionic/react'
-import { useStorageItem } from '@capacitor-community/react-hooks/storage'
+import { useSuspenseStorageItem } from '../utils/storage'
 
 declare global {
   interface Window {
@@ -42,8 +42,11 @@ const useCall = () => {
   const [call, setCall] = useState<null | Peer.MediaConnection>(null)
   const [inputStream, setInputStream] = useState<null | MediaStream>(null)
   const [stream, setStream] = useState<null | MediaStream>(null)
-  const [muted, setMuted] = useStorageItem<boolean>('voice-muted', false)
-  const [deafened, setDeafened] = useStorageItem<boolean>(
+  const [muted, setMuted] = useSuspenseStorageItem<boolean>(
+    'voice-muted',
+    false
+  )
+  const [deafened, setDeafened] = useSuspenseStorageItem<boolean>(
     'voice-deafened',
     false
   )

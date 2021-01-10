@@ -73,7 +73,7 @@
       height: 100%;
     }
 
-    @media (max-width: 940px) {
+    @media (max-width: 740px) {
       margin-bottom: 0;
       margin-right: 0.7rem;
     }
@@ -95,7 +95,7 @@
     height: 0.5rem;
     width: 0.5rem;
     background: var(--neko-sidebar-seperator);
-    @media (max-width: 940px) {
+    @media (max-width: 740px) {
       margin-bottom: 0;
       margin-right: 0.9rem;
     }
@@ -112,7 +112,7 @@
     min-height: 3.5rem;
     min-width: 3.5rem;
     position: relative;
-    @media (max-width: 940px) {
+    @media (max-width: 740px) {
       margin-bottom: 0;
       margin-right: 0.7rem;
     }
@@ -212,7 +212,7 @@
     }
   }
 
-  @media (max-width: 940px) {
+  @media (max-width: 740px) {
     flex-direction: row;
     width: 100%;
     overflow-x: scroll;

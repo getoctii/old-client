@@ -28,8 +28,8 @@ import { isPlatform } from '@ionic/react'
 import { useScroll } from 'react-use'
 import { ScrollPosition } from '../state/scroll'
 import { getCommunity } from '../community/remote'
-import { useStorageItem } from '@capacitor-community/react-hooks/storage'
 import { ModalTypes } from '../utils/constants'
+import { useSuspenseStorageItem } from '../utils/storage'
 
 const reorder = (list: any[], startIndex: number, endIndex: number): any[] => {
   const result = Array.from(list)
@@ -134,13 +134,12 @@ const Placeholder = () => {
 }
 
 const Communities = () => {
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   const { id, token } = Auth.useContainer()
   const communities = useQuery(['communities', id, token], getCommunities)
-  const [communitiesOrder, setCommunitiesOrder] = useStorageItem<string[]>(
-    'communities',
-    communities.data?.map((member) => member.community.id) ?? []
-  )
+  const [communitiesOrder, setCommunitiesOrder] = useSuspenseStorageItem<
+    string[]
+  >('communities', communities.data?.map((member) => member.community.id) ?? [])
 
   const onDragEnd = useCallback(
     (result) => {
@@ -201,7 +200,7 @@ const Sidebar = () => {
   const ui = UI.useContainer()
   const auth = Auth.useContainer()
   const history = useHistory()
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   const matchTab = useRouteMatch<{ tab: string }>('/:tab')
   const user = useQuery(['users', auth.id, auth.token], getUser)
 

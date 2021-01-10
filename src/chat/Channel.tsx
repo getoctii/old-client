@@ -27,18 +27,20 @@ import { UI } from '../state/ui'
 const TypingIndicator = ({ channelID }: { channelID: string }) => {
   const { id } = Auth.useContainer()
   const { typing } = Typing.useContainer()
-  const users = typing[channelID]
-    ?.filter((userID) => userID[0] !== id)
-    .map((t) => t[1])
-  if (users?.length > 0)
+  const users = useMemo(
+    () =>
+      typing[channelID]?.filter((userID) => userID[0] !== id).map((t) => t[1]),
+    [typing, channelID, id]
+  )
+  if (users?.length > 0) {
     return (
       <p className={styles.typing}>
         {users?.length === 1
           ? `${users[0]} is typing...`
           : users?.length === 2
           ? `${users.join(' and ')} are typing...`
-          : users?.length > 2
-          ? `${users.slice(-1).join(', ')} and ${
+          : users?.length === 3
+          ? `${users.slice(0, 2).join(', ')} and ${
               users[users.length - 1]
             } are typing...`
           : users?.length > 3
@@ -46,7 +48,7 @@ const TypingIndicator = ({ channelID }: { channelID: string }) => {
           : ''}
       </p>
     )
-  else return <div className={styles.typingEmpty} />
+  } else return <div className={styles.typingEmpty} />
 }
 
 const PrivateName = ({ id }: { id?: string }) => {
@@ -92,7 +94,7 @@ const View = ({
     ?.filter((userID) => userID[0] !== id)
     .map((t) => t[1])
 
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   const history = useHistory()
 
   const channel = useQuery(['channel', channelID, token], getChannel)

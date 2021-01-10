@@ -14,7 +14,7 @@ const Themes = () => {
     setVariations,
     variations
   } = Theme.useContainer()
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   const history = useHistory()
   return (
     <div className={styles.themes}>

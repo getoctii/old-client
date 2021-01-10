@@ -9,7 +9,7 @@
   background: var(--neko-settings-card);
   flex-direction: column;
 
-  @media (max-width: 940px) {
+  @media (max-width: 740px) {
     width: auto;
     margin-top: 4rem;
     padding: 2rem;
@@ -161,7 +161,7 @@
     }
 
     i table {
-      @media (max-width: 940px) {
+      @media (max-width: 740px) {
         display: block;
         overflow-x: scroll;
         white-space: nowrap;
@@ -225,7 +225,7 @@
       }
     }
   }
-  @media (max-width: 940px) {
+  @media (max-width: 740px) {
     .members {
       margin-top: env(safe-area-inset-top);
       padding-bottom: calc(env(safe-area-inset-bottom) + 5rem);

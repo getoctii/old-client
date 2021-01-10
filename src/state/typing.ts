@@ -1,8 +1,10 @@
 import { createContainer } from 'unstated-next'
 import { useState, useCallback } from 'react'
-// some _small brain shit_ lmao BIG BRAIN TIME
+
 const useTyping = () => {
-  const [typing, setTyping] = useState<{ [key: string]: any[] }>({})
+  const [typing, setTyping] = useState<{ [key: string]: [string, string][] }>(
+    {}
+  )
 
   const stopTyping = useCallback((channel: string, id: string) => {
     setTyping((state) => {

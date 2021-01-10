@@ -12,7 +12,7 @@ import {
   Plugins,
   StatusBarStyle
 } from '@capacitor/core'
-import { useStorageItem } from '@capacitor-community/react-hooks/storage'
+import { useSuspenseStorageItem } from '../utils/storage'
 const { Keyboard, StatusBar } = Plugins
 const isThemeBundle = (theme: Theme | ThemeBundle): theme is ThemeBundle => {
   return (theme as ThemeBundle).dark !== undefined
@@ -124,8 +124,11 @@ document.head.appendChild(globalStyle)
 export const themes = [octii, octiiHub, ayu, eyestrain]
 
 const useTheme = () => {
-  const [themeID, setThemeID] = useStorageItem<string>('theme-id', octii.id)
-  const [variations, setVariations] = useStorageItem<
+  const [themeID, setThemeID] = useSuspenseStorageItem<string>(
+    'theme-id',
+    octii.id
+  )
+  const [variations, setVariations] = useSuspenseStorageItem<
     'light' | 'dark' | 'system'
   >('theme-variations', 'system')
   const theme = useMemo<Theme | ThemeBundle>(

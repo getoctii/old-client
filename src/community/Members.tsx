@@ -27,7 +27,7 @@ dayjs.extend(dayjsCalendar)
 
 const Member = memo(
   ({ member, owner }: { member: MemberType; owner?: string }) => {
-    const isMobile = useMedia('(max-width: 940px)')
+    const isMobile = useMedia('(max-width: 740px)')
     const { id, token } = Auth.useContainer()
     const history = useHistory()
     return (
@@ -137,7 +137,7 @@ export const Members = () => {
   const members = useMemo(() => data?.flat() || [], [data])
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   return (
     <Suspense fallback={<Loader />}>
       <div className={styles.wrapper}>

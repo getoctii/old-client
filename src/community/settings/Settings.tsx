@@ -13,7 +13,7 @@ import { useQuery } from 'react-query'
 
 export const Settings = () => {
   const [selected, setSelected] = useState('general')
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   const { token } = Auth.useContainer()
   const { id } = useParams<{ id: string }>()
   const community = useQuery(['community', id, token], getCommunity)

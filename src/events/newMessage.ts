@@ -10,7 +10,7 @@ import { getUser, State, UserResponse } from '../user/remote'
 import { log } from '../utils/logging'
 import { Chat } from '../chat/state'
 import { parseMarkdown } from '@innatical/markdown'
-import { useStorageItem } from '@capacitor-community/react-hooks/storage'
+import { useSuspenseStorageItem } from '../utils/storage'
 
 interface Message {
   id: string
@@ -39,8 +39,11 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
   const { autoRead, channelID } = Chat.useContainer()
   const { id, token } = Auth.useContainer()
   const { stopTyping } = Typing.useContainer()
-  const [mutedCommunities] = useStorageItem<string[]>('muted-communities', [])
-  const [mutedChannels] = useStorageItem<string[]>('muted-channels', [])
+  const [mutedCommunities] = useSuspenseStorageItem<string[]>(
+    'muted-communities',
+    []
+  )
+  const [mutedChannels] = useSuspenseStorageItem<string[]>('muted-channels', [])
   const user = useQuery(['users', id, token], getUser)
   useEffect(() => {
     if (!eventSource) return
@@ -87,7 +90,8 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
                   ...participant,
                   conversation: {
                     ...participant.conversation,
-                    last_message_id: message.id
+                    last_message_id: message.id,
+                    last_message_date: message.created_at
                   }
                 }
               : participant

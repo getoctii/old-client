@@ -16,7 +16,7 @@ import styles from './ChannelCard.module.scss'
 import { useQuery } from 'react-query'
 import { getChannel } from '../../chat/remote'
 import { getMentions, getUnreads } from '../../user/remote'
-import { useStorageItem } from '@capacitor-community/react-hooks/storage'
+import { useSuspenseStorageItem } from '../../utils/storage'
 
 export const ChannelCard = ({
   channelID,
@@ -33,12 +33,11 @@ export const ChannelCard = ({
     '/communities/:id/channels/:channelID'
   )
   const history = useHistory()
-  const [mutedChannels, setMutedChannels] = useStorageItem<string[]>(
+  const [mutedChannels, setMutedChannels] = useSuspenseStorageItem<string[]>(
     'muted-channels',
     []
   )
   const auth = Auth.useContainer()
-  console.log('owouwuowo', channelID)
   const { data: channel } = useQuery(
     ['channel', channelID, auth.token],
     getChannel

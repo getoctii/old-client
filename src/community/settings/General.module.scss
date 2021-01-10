@@ -85,7 +85,7 @@
       background: var(--neko-colors-danger);
     }
 
-    @media (max-width: 940px) {
+    @media (max-width: 740px) {
       flex-direction: column;
 
       button {
@@ -151,7 +151,7 @@
     margin-bottom: 0.8rem;
     display: flex;
 
-    @media (max-width: 940px) {
+    @media (max-width: 740px) {
       flex-direction: column;
     }
 
@@ -223,7 +223,7 @@
     }
   }
 
-  @media (max-width: 940px) {
+  @media (max-width: 740px) {
     .icon {
       width: 100%;
     }
@@ -291,7 +291,7 @@
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     column-gap: 0.8rem;
 
-    @media (max-width: 940px) {
+    @media (max-width: 740px) {
       display: block;
     }
   }

@@ -132,7 +132,7 @@
   }
 }
 
-@media (max-width: 940px) {
+@media (max-width: 740px) {
   .wrapper {
     display: block;
 
@@ -161,7 +161,7 @@
   }
 }
 
-@media (max-height: 667px) and (max-width: 940px) {
+@media (max-height: 667px) and (max-width: 740px) {
   .wrapper {
     .card {
       min-width: auto;
@@ -169,7 +169,7 @@
   }
 }
 
-@media (max-width: 940px) {
+@media (max-width: 740px) {
   .wrapper {
     .card {
       padding: calc(env(safe-area-inset-top) + 2rem) 2rem
