@@ -26,11 +26,12 @@ import { Plugins } from '@capacitor/core'
 import { clientGateway, ModalTypes } from './utils/constants'
 import AddParticipant from './chat/AddParticipant'
 import { Confirmation } from './components/Confirmation'
+import Downloads from './marketing/Downloads'
 
 const { PushNotifications } = Plugins
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   switch (name) {
     case ModalTypes.ADD_PARTICIPANT:
       return <AddParticipant {...props} />
@@ -74,7 +75,7 @@ const IncomingCall = () => {
   const auth = Auth.useContainer()
   const call = Call.useContainer()
   const uiStore = UI.useContainer()
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
 
   return auth.authenticated && isMobile ? (
     <>
@@ -92,7 +93,7 @@ const IncomingCall = () => {
 
 export const Router = memo(() => {
   const auth = Auth.useContainer()
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   const isPWA = useMedia('(display-mode: standalone)')
   const call = Call.useContainer()
   useEffect(() => {
@@ -133,52 +134,59 @@ export const Router = memo(() => {
       <IncomingCall />
       {auth.authenticated && <EventSource />}
       <Context.Global />
-      {isPlatform('mobile') || isPWA ? (
-        <Redirect path='/home' to='/authenticate/login' />
-      ) : (
-        <Route path='/home' component={Home} />
-      )}
-      <Route path='/authenticate' component={Authenticate} />
-      <div id='main'>
-        <Modals />
-        {auth.authenticated && !isMobile && <Sidebar />}
-        <Suspense fallback={<></>}>
-          <Switch>
-            <PrivateRoute
-              path='/settings'
-              component={() => (
-                <>
-                  {isMobile && <Sidebar />}
-                  <Suspense fallback={<Loader />}>
-                    <Settings />
-                  </Suspense>
-                </>
-              )}
-            />
-            <PrivateRoute
-              path='/communities/:id'
-              component={() => <Community />}
-            />
-            <PrivateRoute
-              path={'/(conversations)?/:id?'}
-              component={() => <Conversation />}
-              redirect={
-                isPlatform('mobile') || isPWA ? '/authenticate/login' : '/home'
-              }
-              exact
-            />
-          </Switch>
-        </Suspense>
-        {auth.authenticated && !isMobile && (
-          <>
-            <Suspense fallback={<></>}>
-              {call.callState !== 'idle' && <Current />}
-            </Suspense>
-          </>
+      <Switch>
+        {isPlatform('mobile') || isPWA ? (
+          <Redirect path='/home' to='/authenticate/login' />
+        ) : (
+          <Route path='/home' component={Home} />
         )}
-      </div>
+        {isPlatform('mobile') || isPWA ? (
+          <Redirect path='/downloads' to='/authenticate/login' />
+        ) : (
+          <PrivateRoute path='/downloads' component={Downloads} />
+        )}
+        <Route path='/authenticate' component={Authenticate} />
+        <div id='main'>
+          <Modals />
+          {auth.authenticated && !isMobile && <Sidebar />}
+          <Suspense fallback={<></>}>
+            <Switch>
+              <PrivateRoute
+                path='/settings'
+                component={() => (
+                  <>
+                    {isMobile && <Sidebar />}
+                    <Suspense fallback={<Loader />}>
+                      <Settings />
+                    </Suspense>
+                  </>
+                )}
+              />
+              <PrivateRoute
+                path='/communities/:id'
+                component={() => <Community />}
+              />
+              <PrivateRoute
+                path={'/(conversations)?/:id?'}
+                component={() => <Conversation />}
+                redirect={
+                  isPlatform('mobile') || isPWA
+                    ? '/authenticate/login'
+                    : '/home'
+                }
+                exact
+              />
+            </Switch>
+          </Suspense>
+          {auth.authenticated && !isMobile && (
+            <>
+              <Suspense fallback={<></>}>
+                {call.callState !== 'idle' && <Current />}
+              </Suspense>
+            </>
+          )}
+        </div>
+      </Switch>
     </BrowserRouter>
   )
 })
-
-// Router.whyDidYouRender = true

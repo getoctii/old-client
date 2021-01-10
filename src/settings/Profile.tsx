@@ -30,7 +30,7 @@ const Profile = () => {
   const input = useRef<any>(null)
   const [avatar, setAvatar] = useState(user.data?.avatar || '')
   const [isUploading, setIsUploading] = useState(false)
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   const history = useHistory()
   return (
     <div className={styles.profile}>

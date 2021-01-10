@@ -1,16 +1,15 @@
 import React, { Suspense, useMemo } from 'react'
 import styles from './Conversations.module.scss'
 import { Auth } from '../authentication/state'
-import { queryCache, useQuery } from 'react-query'
+import { useQuery } from 'react-query'
 import ConversationCard from './ConversationCard'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { useMedia, useUpdate } from 'react-use'
+import { useMedia } from 'react-use'
 import NewConversation from './NewConversation'
-import { MessageResponse } from '../message/remote'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import { getParticipants, Participant } from '../user/remote'
-import { useStorageItem } from '@capacitor-community/react-hooks/storage'
+import { useSuspenseStorageItem } from '../utils/storage'
 
 dayjs.extend(dayjsUTC)
 
@@ -25,9 +24,8 @@ const ConversationList = () => {
   const filteredParticipants = participants.data?.filter(
     (part) => part.conversation.participants.length > 1
   )
-  const [, setLastConversation] = useStorageItem('last-conversation')
+  const [, setLastConversation] = useSuspenseStorageItem('last-conversation')
 
-  const update = useUpdate()
   return (
     <>
       {filteredParticipants && filteredParticipants.length > 0 ? (
@@ -40,22 +38,10 @@ const ConversationList = () => {
           })
           .sort((a, b) => {
             const firstMessage = dayjs
-              .utc(
-                (queryCache.getQueryData([
-                  'message',
-                  a.conversation.last_message_id,
-                  auth.token
-                ]) as MessageResponse | undefined)?.created_at ?? 0
-              )
+              .utc(a.conversation.last_message_date ?? 0)
               .unix()
             const lastMessage = dayjs
-              .utc(
-                (queryCache.getQueryData([
-                  'message',
-                  b.conversation.last_message_id,
-                  auth.token
-                ]) as MessageResponse | undefined)?.created_at ?? 0
-              )
+              .utc(b.conversation.last_message_date ?? 0)
               .unix()
             if (lastMessage > firstMessage) return 1
             else if (lastMessage < firstMessage) return -1
@@ -89,7 +75,6 @@ const ConversationList = () => {
                       people={people}
                       conversationID={conversation.id}
                       lastMessageID={conversation.last_message_id}
-                      messageUpdated={update}
                       channelID={conversation.channel_id}
                     />
                   </Suspense>
@@ -122,7 +107,7 @@ const Placeholder = () => {
 }
 
 export const Conversations = () => {
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   return (
     <div className={styles.sidebar}>
       {isMobile && <div className={styles.statusBar} />}

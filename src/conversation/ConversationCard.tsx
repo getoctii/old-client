@@ -1,10 +1,4 @@
-import React, {
-  useMemo,
-  useState,
-  useEffect,
-  useCallback,
-  Suspense
-} from 'react'
+import React, { useMemo, useCallback, Suspense } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronRight,
@@ -40,8 +34,7 @@ const View = ({
   selected,
   conversationID,
   lastMessageID,
-  channelID,
-  messageUpdated
+  channelID
 }: {
   people: string[]
   selected?: boolean
@@ -49,12 +42,10 @@ const View = ({
   conversationID: string
   lastMessageID?: string
   channelID: string
-  messageUpdated: () => void
 }) => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
   const history = useHistory()
   const { token, id } = Auth.useContainer()
-  // const recipient = useQuery(['users', people[0], token], getUser)
   const channel = useQuery(['channel', channelID, token], getChannel)
   const [leaveConversation] = useMutation(
     async () =>
@@ -66,15 +57,6 @@ const View = ({
     ['message', lastMessageID, token],
     getMessage
   )
-
-  const [ready, setReady] = useState(false)
-
-  useEffect(() => {
-    if (!ready && message) {
-      messageUpdated()
-      setReady(true)
-    }
-  }, [message, messageUpdated, ready])
   const unreads = useQuery(['unreads', id, token], getUnreads)
   const mentions = useQuery(['mentions', id, token], getMentions)
 

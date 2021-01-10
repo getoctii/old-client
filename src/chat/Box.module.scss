@@ -170,4 +170,6 @@
   user-select: text;
   caret-color: var(--neko-input-text);
   -webkit-user-modify: read-write-plaintext-only;
+  word-wrap: break-word;
+  word-break: break-all;
 }

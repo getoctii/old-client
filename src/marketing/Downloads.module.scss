@@ -1,0 +1,62 @@
+html,
+body {
+  height: 100vh;
+  @media not all and (display-mode: standalone) {
+    height: -webkit-fill-available;
+  }
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  background: var(--neko-default-background);
+  z-index: 0;
+}
+
+.centered {
+  padding-left: 10rem;
+  padding-right: 10rem;
+  width: 100%;
+  height: 100%;
+
+  overflow-x: scroll;
+  max-width: 1200px;
+
+  ul {
+    padding: 0;
+    li {
+      list-style: none;
+      text-decoration: none;
+
+      button {
+        min-width: 220px;
+        white-space: nowrap;
+        background: var(--neko-default-primary);
+      }
+
+      a {
+        color: var(--neko-text-href);
+      }
+    }
+  }
+}
+
+@media (max-width: 740px) {
+  .centered {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (max-height: 480px) {
+  .centered {
+    display: block;
+    height: auto;
+  }
+  .wrapper {
+    display: block;
+    overflow-y: scroll;
+  }
+}

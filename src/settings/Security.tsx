@@ -25,7 +25,7 @@ const validatePassword = (values: validateFormData) => {
 
 const Security = () => {
   const { token, id } = Auth.useContainer()
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   const history = useHistory()
   return (
     <div className={styles.security}>

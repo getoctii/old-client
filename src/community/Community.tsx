@@ -102,7 +102,7 @@ const Channel = () => {
 }
 
 const Placeholder = () => {
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   return (
     <>
       <Channels.Placeholder />
@@ -117,7 +117,7 @@ const Community = () => {
   const { id } = useParams<{ id: string }>()
   const { path } = useRouteMatch()
   const match = useRouteMatch<{ id: string }>('/communities/:id/:page')
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   const community = useQuery(['community', id, auth.token], getCommunity)
 
   if (!community.data) return <></>
@@ -159,7 +159,7 @@ const Community = () => {
 }
 
 const Router = () => {
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   const match = useRouteMatch<{ id: string; tab: string }>(
     '/communities/:id/:tab'
   )

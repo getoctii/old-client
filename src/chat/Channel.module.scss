@@ -45,7 +45,10 @@
       flex-direction: column;
       justify-content: center;
       height: 2.65rem;
-
+      width: 100%;
+      white-space: nowrap;
+      overflow-y: hidden;
+      text-overflow: ellipsis;
       p {
         margin: 0;
       }
@@ -56,6 +59,10 @@
       margin-top: 0.3rem;
       font-weight: 400;
       font-size: 0.9rem;
+      width: 100%;
+      white-space: nowrap;
+      overflow-y: hidden;
+      text-overflow: ellipsis;
     }
 
     .icon {
@@ -64,6 +71,8 @@
       padding: 0.5rem;
       height: 2.65rem;
       width: 2.65rem;
+      min-height: 2.65rem;
+      min-width: 2.65rem;
       border-radius: 12px;
       color: var(--neko-text-inverse);
       cursor: pointer;
@@ -86,7 +95,7 @@
     margin-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
   }
 
-  @media (max-width: 940px) {
+  @media (max-width: 740px) {
     .header {
       height: calc(env(safe-area-inset-top) + 5.65rem);
       min-height: calc(env(safe-area-inset-top) + 5.65rem);
@@ -159,7 +168,7 @@
     }
   }
 
-  @media (max-width: 940px) {
+  @media (max-width: 740px) {
     padding-top: calc(env(safe-area-inset-top) + 2rem);
     .header {
       margin-top: 0;

@@ -9,7 +9,7 @@ import { PrivateRoute } from '../authentication/PrivateRoute'
 import styles from './Settings.module.scss'
 
 const Settings = () => {
-  const isMobile = useMedia('(max-width: 940px)')
+  const isMobile = useMedia('(max-width: 740px)')
   const { path } = useRouteMatch()
   const match = useRouteMatch('/settings/:page')
   return (

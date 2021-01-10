@@ -72,12 +72,12 @@
       background: var(--neko-colors-primary);
     }
   }
-  @media (max-height: 940px) {
+  @media (max-height: 740px) {
     padding-top: 2.5rem;
   }
 
   // , (max-height: 420px)
-  @media (max-width: 940px) {
+  @media (max-width: 740px) {
     margin-top: 0;
     .icon {
       background: var(--neko-colors-primary);

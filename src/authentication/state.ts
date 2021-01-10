@@ -3,10 +3,13 @@ import decode from 'jwt-decode'
 import { createContainer } from 'unstated-next'
 import { clientGateway } from '../utils/constants'
 import { queryCache } from 'react-query'
-import { useStorageItem } from '@capacitor-community/react-hooks/storage'
+import { useSuspenseStorageItem } from '../utils/storage'
 
 const useAuth = () => {
-  const [token, setToken] = useStorageItem<string | null>('neko-token', null)
+  const [token, setToken] = useSuspenseStorageItem<string | null>(
+    'neko-token',
+    null
+  )
 
   const authenticated = !!token
   const payload = useMemo<{ sub: string; exp: number } | undefined>(
