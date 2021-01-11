@@ -10,7 +10,7 @@ import { clientGateway } from '../utils/constants'
 import { BarLoader } from 'react-spinners'
 import styles from './NewChannel.module.scss'
 import { useHistory } from 'react-router-dom'
-import { CommunityResponse } from './remote'
+import { Community } from './remote'
 
 type formData = { name: string }
 
@@ -32,7 +32,7 @@ export const NewChannel = ({
   community,
   onDismiss
 }: {
-  community?: CommunityResponse
+  community?: Community
   onDismiss: Function
 }) => {
   const history = useHistory()

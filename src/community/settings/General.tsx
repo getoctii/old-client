@@ -12,7 +12,7 @@ import { clientGateway } from '../../utils/constants'
 import { isUsername } from '../../utils/validations'
 import styles from './General.module.scss'
 import axios from 'axios'
-import { CommunityResponse, getCommunity } from '../remote'
+import { Community, getCommunity } from '../remote'
 import { isTag } from '../../utils/validations'
 
 type generalFormData = {
@@ -26,7 +26,7 @@ const validateGeneral = (values: generalFormData) => {
   return errors
 }
 
-const Personalization = ({ community }: { community: CommunityResponse }) => {
+const Personalization = ({ community }: { community: Community }) => {
   const auth = Auth.useContainer()
 
   const [icon, setIcon] = useState(community.icon || '')
@@ -161,7 +161,7 @@ type FindResponse = {
   discriminator: number
 }
 
-const DangerZone = ({ community }: { community: CommunityResponse }) => {
+const DangerZone = ({ community }: { community: Community }) => {
   const auth = Auth.useContainer()
   const history = useHistory()
   return (
@@ -171,8 +171,8 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
       <p>
         Transfering ownership will give the specficed person full control of
         this community. You will lose the ability to manage the server and won’t
-        be able to regain control unless you ask the specfifed person to transfer
-        the community back.{' '}
+        be able to regain control unless you ask the specfifed person to
+        transfer the community back.{' '}
       </p>
       <Formik
         initialValues={{

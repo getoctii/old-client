@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
-import { CommunityResponse } from '../remote'
+import { Community } from '../remote'
 import styles from './Integrations.module.scss'
 
-const View = ({ community }: { community?: CommunityResponse }) => {
+const View = ({ community }: { community?: Community }) => {
   const auth = Auth.useContainer()
   const history = useHistory()
   const matchTab = useRouteMatch<{ id: string; tab: string }>(

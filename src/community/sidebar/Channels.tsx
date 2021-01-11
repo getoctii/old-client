@@ -2,7 +2,7 @@ import { faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
 import { Auth } from '../../authentication/state'
-import { CommunityResponse } from '../remote'
+import { Community } from '../remote'
 import styles from './Channels.module.scss'
 import { AnimatePresence } from 'framer-motion'
 import { NewChannel } from '../NewChannel'
@@ -11,7 +11,7 @@ import { useMutation } from 'react-query'
 import { clientGateway } from '../../utils/constants'
 import { ChannelCard } from './ChannelCard'
 
-const View = ({ community }: { community?: CommunityResponse }) => {
+const View = ({ community }: { community?: Community }) => {
   const auth = Auth.useContainer()
   const [showCreate, setShowCreate] = useState(false)
   const [showDelete, setShowDelete] = useState<string | undefined>(undefined)

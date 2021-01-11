@@ -10,7 +10,7 @@ import { faArrowRight } from '@fortawesome/pro-solid-svg-icons'
 import Button from '../components/Button'
 import { NewChannel } from './NewChannel'
 import { Settings } from './settings/Settings'
-import { CommunityResponse, getCommunity } from './remote'
+import { Community, getCommunity } from './remote'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
 import Sidebar from '../sidebar/Sidebar'
@@ -21,7 +21,7 @@ const EmptyCommunity = ({
   community,
   dismiss
 }: {
-  community: CommunityResponse
+  community: Community
   dismiss: () => void
 }) => {
   const auth = Auth.useContainer()
@@ -111,7 +111,7 @@ const Placeholder = () => {
   )
 }
 
-const Community = () => {
+const View = () => {
   const auth = Auth.useContainer()
   const [count, forceRender] = useState<number>(0)
   const { id } = useParams<{ id: string }>()
@@ -167,7 +167,7 @@ const Router = () => {
     <>
       {isMobile && !match && <Sidebar />}
       <Suspense fallback={<Placeholder />}>
-        <Community />
+        <View />
       </Suspense>
     </>
   )

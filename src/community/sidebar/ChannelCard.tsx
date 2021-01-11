@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useCallback, useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
-import { CommunityResponse } from '../remote'
+import { Community } from '../remote'
 import { Clipboard } from '@capacitor/core'
 import Context from '../../components/Context'
 import styles from './ChannelCard.module.scss'
@@ -26,7 +26,7 @@ export const ChannelCard = ({
 }: {
   channelID: string
   index: number
-  community: CommunityResponse
+  community: Community
   setShowDelete: (value: string) => void
 }) => {
   const match = useRouteMatch<{ id: string; channelID: string }>(

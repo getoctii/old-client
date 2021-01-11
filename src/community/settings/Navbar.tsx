@@ -22,6 +22,12 @@ export const Navbar = ({
       >
         Invites
       </li>
+      <li
+        onClick={() => setSelected('permissions')}
+        className={selected === 'permissions' ? styles.selected : ''}
+      >
+        Permissions
+      </li>
     </ul>
   )
 }

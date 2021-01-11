@@ -15,7 +15,7 @@ export interface Member {
   updated_at: string
 }
 
-export interface CommunityResponse {
+export interface Community {
   id: string
   name: string
   icon: string
@@ -33,17 +33,56 @@ export interface Invite {
   uses: number
 }
 
+export interface Group {
+  id: string
+  name: string
+  color: string
+  permissions: string[]
+}
+
+export type Groups = Group[]
+
 export const getCommunity = async (
   _: string,
   communityID: string,
   token: string
 ) =>
   (
-    await clientGateway.get<CommunityResponse>(`/communities/${communityID}`, {
+    await clientGateway.get<Community>(`/communities/${communityID}`, {
       headers: {
         Authorization: token
       }
     })
+  ).data
+
+export const getGroups = async (
+  _: string,
+  communityID: string,
+  token: string
+) =>
+  (
+    await clientGateway.get<Groups>(`/communities/${communityID}/groups`, {
+      headers: {
+        Authorization: token
+      }
+    })
+  ).data
+
+export const getGroup = async (
+  _: string,
+  communityID: string,
+  groupID: string,
+  token: string
+) =>
+  (
+    await clientGateway.get<Group>(
+      `/communities/${communityID}/groups/${groupID}`,
+      {
+        headers: {
+          Authorization: token
+        }
+      }
+    )
   ).data
 
 export const getInvites = async (

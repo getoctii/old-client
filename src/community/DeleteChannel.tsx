@@ -9,7 +9,7 @@ import Input from '../components/Input'
 import { clientGateway } from '../utils/constants'
 import { BarLoader } from 'react-spinners'
 import styles from './NewChannel.module.scss'
-import { CommunityResponse } from './remote'
+import { Community } from './remote'
 
 type formData = { name: string }
 
@@ -31,7 +31,7 @@ export const NewChannel = ({
   community,
   onDismiss
 }: {
-  community?: CommunityResponse
+  community?: Community
   onDismiss: Function
 }) => {
   const { token } = Auth.useContainer()

@@ -29,7 +29,7 @@ const Preview = ({ url }: { url: string }) => {
           />
         </div>
         <div className={styles.image}>
-          <img alt={url} src={url} />
+          <img alt={url} src={url} loading='lazy' />
         </div>
       </div>
     </Modal>
@@ -51,7 +51,7 @@ const Embed = ({ url }: { url: string }) => {
         })
       }}
     >
-      <img alt={url} src={matches[0]} />
+      <img alt={url} src={matches[0]} loading='lazy' />
     </div>
   ) : (
     <></>
