@@ -1,5 +1,5 @@
 import { State } from '../user/remote'
-import { clientGateway } from '../utils/constants'
+import { clientGateway, Permissions } from '../utils/constants'
 
 export interface Member {
   id: string
@@ -37,7 +37,7 @@ export interface Group {
   id: string
   name: string
   color: string
-  permissions: string[]
+  permissions: Permissions[]
 }
 
 export type Groups = Group[]
@@ -68,21 +68,13 @@ export const getGroups = async (
     })
   ).data
 
-export const getGroup = async (
-  _: string,
-  communityID: string,
-  groupID: string,
-  token: string
-) =>
+export const getGroup = async (_: string, groupID: string, token: string) =>
   (
-    await clientGateway.get<Group>(
-      `/communities/${communityID}/groups/${groupID}`,
-      {
-        headers: {
-          Authorization: token
-        }
+    await clientGateway.get<Group>(`/groups/${groupID}`, {
+      headers: {
+        Authorization: token
       }
-    )
+    })
   ).data
 
 export const getInvites = async (

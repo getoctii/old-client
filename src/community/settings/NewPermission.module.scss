@@ -52,22 +52,6 @@
           font-size: 1.8rem;
           margin-left: auto;
         }
-
-        &.basic {
-          svg {
-            color: var(--neko-text-href);
-          }
-        }
-        &.mod {
-          svg {
-            color: var(--neko-text-warning);
-          }
-        }
-        &.admin {
-          svg {
-            color: var(--neko-text-danger);
-          }
-        }
       }
     }
   }
@@ -167,5 +151,22 @@
 
   .avatar:hover {
     background: var(--neko-modal-background);
+  }
+}
+
+.basic {
+  svg {
+    transition: color 1s;
+    color: var(--neko-text-href);
+  }
+}
+.mod {
+  svg {
+    color: var(--neko-text-warning);
+  }
+}
+.admin {
+  svg {
+    color: var(--neko-text-danger);
   }
 }

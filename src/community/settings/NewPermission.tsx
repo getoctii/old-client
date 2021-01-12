@@ -1,18 +1,17 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik'
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { BarLoader } from 'react-spinners'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import Modal from '../../components/Modal'
-import { clientGateway } from '../../utils/constants'
+import { clientGateway, Groups } from '../../utils/constants'
 import styles from './NewPermission.module.scss'
 import { UI } from '../../state/ui'
 import { isUsername } from '../../utils/validations'
 import { Auth } from '../../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPencil, faTimesCircle } from '@fortawesome/pro-solid-svg-icons'
-import axios from 'axios'
-import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
+import { useRouteMatch } from 'react-router-dom'
 import { faToggleOff, faToggleOn } from '@fortawesome/pro-duotone-svg-icons'
 
 type createPermissionData = { name: string }
@@ -38,25 +37,22 @@ const createPermission = async (
     )
   ).data
 
-enum Groups {
-  BASIC,
-  MOD,
-  ADMIN
-}
-
-const Permission = ({
+export const Permission = ({
   name,
   type,
-  toggled
+  toggled,
+  onToggle
 }: {
   name: string
   type: Groups
   toggled?: boolean
+  onToggle?: (value: boolean) => void
 }) => {
-  const [toggledVal, setToggledVal] = useState<boolean>(toggled || false)
   return (
     <li
-      onClick={() => setToggledVal(!toggledVal)}
+      onClick={() => {
+        if (onToggle) onToggle(!toggled)
+      }}
       className={
         type === Groups.BASIC
           ? styles.basic
@@ -65,16 +61,15 @@ const Permission = ({
           : styles.admin
       }
     >
-      {name} <FontAwesomeIcon icon={toggledVal ? faToggleOn : faToggleOff} />
+      {name} <FontAwesomeIcon icon={toggled ? faToggleOn : faToggleOff} />
     </li>
   )
 }
 
-const CreatePermission = () => {
+export const CreatePermission = () => {
   const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
-  const history = useHistory()
   const [editing, setEditing] = useState<Groups>()
   return (
     <Modal onDismiss={() => ui.clearModal()}>
@@ -216,5 +211,3 @@ const CreatePermission = () => {
     </Modal>
   )
 }
-
-export default CreatePermission

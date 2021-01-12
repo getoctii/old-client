@@ -16,12 +16,18 @@ export enum ModalTypes {
   STATUS
 }
 
+export enum Groups {
+  BASIC,
+  MOD,
+  ADMIN
+}
+
 export enum Permissions {
   READ_MESSAGES = 1,
   SEND_MESSAGES = 2,
   EMBED_LINKS = 3,
   MENTION_MEMBERS = 4,
-  MENTION_ROLES = 5,
+  MENTION_GROUPS = 5,
   MENTION_EVERYONE = 6,
   MENTION_SOMEONE = 7,
   CREATE_INVITES = 8,
@@ -34,6 +40,58 @@ export enum Permissions {
   MANAGE_MESSAGES = 15,
   ADMINISTRATOR = 16,
   OWNER = 17
+}
+
+export const PermissionsGroups: { [key in Groups]: Permissions[] } = {
+  [Groups.BASIC]: [
+    Permissions.READ_MESSAGES,
+    Permissions.SEND_MESSAGES,
+    Permissions.MENTION_MEMBERS,
+    Permissions.MENTION_GROUPS,
+    Permissions.MENTION_SOMEONE,
+    Permissions.EMBED_LINKS,
+    Permissions.CREATE_INVITES
+  ],
+  [Groups.MOD]: [
+    Permissions.BAN_MEMBERS,
+    Permissions.KICK_MEMBERS,
+    Permissions.MENTION_EVERYONE,
+    Permissions.MANAGE_PERMISSIONS,
+    Permissions.MANAGE_CHANNELS,
+    Permissions.MANAGE_INVITES,
+    Permissions.MANAGE_MESSAGES
+  ],
+  [Groups.ADMIN]: [
+    Permissions.MANAGE_SERVER,
+    Permissions.ADMINISTRATOR,
+    Permissions.OWNER
+  ]
+}
+
+export const PermissionNames = {
+  [Permissions.READ_MESSAGES]: 'Read Messages',
+  [Permissions.SEND_MESSAGES]: 'Send Messages',
+  [Permissions.MENTION_MEMBERS]: 'Mention Members',
+  [Permissions.MENTION_GROUPS]: 'Mention Groups',
+  [Permissions.MENTION_SOMEONE]: 'Mention Someone',
+  [Permissions.EMBED_LINKS]: 'Embed Links',
+  [Permissions.CREATE_INVITES]: 'Create Invites',
+  [Permissions.BAN_MEMBERS]: 'Ban Members',
+  [Permissions.KICK_MEMBERS]: 'Kick Members',
+  [Permissions.MENTION_EVERYONE]: 'Mention Everyone',
+  [Permissions.MANAGE_PERMISSIONS]: 'Manage Permissions',
+  [Permissions.MANAGE_CHANNELS]: 'Manage Channels',
+  [Permissions.MANAGE_INVITES]: 'Manage Invites',
+  [Permissions.MANAGE_MESSAGES]: 'Manage Messages',
+  [Permissions.MANAGE_SERVER]: 'Manage Server',
+  [Permissions.ADMINISTRATOR]: 'Administator',
+  [Permissions.OWNER]: 'Owner'
+}
+
+export const GroupNames: { [key in Groups]: string } = {
+  [Groups.BASIC]: 'Basic Permissions',
+  [Groups.MOD]: 'Mod Permissions',
+  [Groups.ADMIN]: 'Admin Permissions'
 }
 
 export enum Events {
