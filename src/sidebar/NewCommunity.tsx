@@ -39,11 +39,9 @@ const validateInvite = (values: inviteData) => {
 
 const createCommunity = async (token: string, values: createCommunityData) =>
   (
-    await clientGateway.post<ConversationResponse>(
-      '/communities',
-      new URLSearchParams(values),
-      { headers: { Authorization: token } }
-    )
+    await clientGateway.post<ConversationResponse>('/communities', values, {
+      headers: { Authorization: token }
+    })
   ).data
 
 const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {

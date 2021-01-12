@@ -104,10 +104,10 @@ export const Router = memo(() => {
       PushNotifications.addListener('registration', async (token) => {
         await clientGateway.post(
           `/users/${auth.id}/notifications`,
-          new URLSearchParams({
+          {
             token: token.value,
             platform: 'ios'
-          }),
+          },
           {
             headers: {
               authorization: auth.token

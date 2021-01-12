@@ -50,7 +50,7 @@ export const NewChannel = ({
             if (!values.name) return setFieldError('name', 'Required')
             const channel = await clientGateway.post(
               `/communities/${community?.id}/channels`,
-              new URLSearchParams({ name: values.name.split(' ').join('-') }),
+              { name: values.name.split(' ').join('-') },
               {
                 headers: { Authorization: token }
               }

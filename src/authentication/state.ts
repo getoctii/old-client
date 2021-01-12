@@ -28,9 +28,9 @@ const useAuth = () => {
       if (!token || !payload?.sub) return 'failed'
       await clientGateway.patch(
         `/users/${payload.sub}`,
-        new URLSearchParams({
+        {
           status: title
-        }),
+        },
         {
           headers: {
             authorization: token

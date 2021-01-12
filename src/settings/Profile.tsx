@@ -63,13 +63,13 @@ const Profile = () => {
           try {
             await clientGateway.patch(
               `/users/${id}`,
-              new URLSearchParams({
+              {
                 ...(values.username !== user.data?.username && {
                   username: values.username
                 }),
                 avatar: values.avatar,
                 status: values.status
-              }),
+              },
               {
                 headers: {
                   authorization: token

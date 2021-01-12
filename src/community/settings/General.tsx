@@ -44,12 +44,12 @@ const Personalization = ({ community }: { community: Community }) => {
         try {
           await clientGateway.patch(
             `/communities/${community.id}`,
-            new URLSearchParams({
+            {
               ...(values.name !== community.name && {
                 name: values.name
               }),
               icon: values.icon
-            }),
+            },
             {
               headers: {
                 authorization: auth.token
@@ -197,7 +197,7 @@ const DangerZone = ({ community }: { community: Community }) => {
             ).data
             await clientGateway.patch(
               `/communities/${community.id}`,
-              new URLSearchParams({ owner_id: user.id }),
+              { owner_id: user.id },
               { headers: { Authorization: auth.token } }
             )
             queryCache.invalidateQueries(['community', community.id])

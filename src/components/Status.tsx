@@ -20,11 +20,15 @@ import Input from './Input'
 import { BarLoader } from 'react-spinners'
 
 const updateStatus = async (id: string, state: State, token: string) => {
-  await clientGateway.patch(`/users/${id}`, new URLSearchParams({ state }), {
-    headers: {
-      authorization: token
+  await clientGateway.patch(
+    `/users/${id}`,
+    { state },
+    {
+      headers: {
+        authorization: token
+      }
     }
-  })
+  )
   queryCache.invalidateQueries(['users', id])
 }
 
@@ -86,9 +90,9 @@ const Status = () => {
             try {
               await clientGateway.patch(
                 `/users/${id}`,
-                new URLSearchParams({
+                {
                   status
-                }),
+                },
                 {
                   headers: {
                     authorization: token

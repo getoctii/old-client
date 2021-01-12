@@ -183,7 +183,7 @@ const useCall = () => {
       const sentSessionID = (
         await clientGateway.post(
           '/voice',
-          new URLSearchParams({ recipient: userID, peer_id: peerID }),
+          { recipient: userID, peer_id: peerID },
           {
             headers: {
               authorization: token
@@ -203,7 +203,7 @@ const useCall = () => {
       if (!peerID) return
       await clientGateway.post(
         `/voice/${sessionID}/accept`,
-        new URLSearchParams({ peer_id: peerID }),
+        { peer_id: peerID },
         {
           headers: {
             authorization: token

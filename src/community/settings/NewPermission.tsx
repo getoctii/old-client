@@ -28,13 +28,9 @@ const createPermission = async (
   values: createPermissionData
 ) =>
   (
-    await clientGateway.post(
-      `/communities/${id}/groups`,
-      new URLSearchParams(values),
-      {
-        headers: { Authorization: token }
-      }
-    )
+    await clientGateway.post(`/communities/${id}/groups`, values, {
+      headers: { Authorization: token }
+    })
   ).data
 
 export const Permission = ({

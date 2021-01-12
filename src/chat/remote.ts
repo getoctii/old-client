@@ -50,7 +50,7 @@ export const postMessage = async (
   (
     await clientGateway.post(
       `/channels/${channelID}/messages`,
-      new URLSearchParams({ content }),
+      { content },
       { headers: { Authorization: token } }
     )
   ).data
