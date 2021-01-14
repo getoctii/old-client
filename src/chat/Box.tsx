@@ -45,20 +45,7 @@ import Mentions from './Mentions'
 import { getUser, UserResponse } from '../user/remote'
 import messageStyles from './Message.module.scss'
 import { useQuery } from 'react-query'
-
-const withMentions = (editor: Editor) => {
-  const { isInline, isVoid } = editor
-
-  editor.isInline = (element) => {
-    return element.type === 'mention' ? true : isInline(element)
-  }
-
-  editor.isVoid = (element) => {
-    return element.type === 'mention' ? true : isVoid(element)
-  }
-
-  return editor
-}
+import { emptyEditor, serialize, withMentions } from '../utils/slate'
 
 const Mention = ({
   userID,
@@ -97,15 +84,6 @@ const adjectives = [
   ' delightful',
   ' steamy',
   ' about Innatical'
-]
-
-const serialize = (value: Node[]) =>
-  value.map((node) => Node.string(node)).join('\n')
-
-const emptyEditor = [
-  {
-    children: [{ text: '' }]
-  }
 ]
 
 const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
@@ -526,6 +504,6 @@ const Placeholder = () => {
   )
 }
 
-const Box = { View, Placeholder }
+const Box = { View, Placeholder, Leaf, Mention }
 
 export default Box

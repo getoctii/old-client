@@ -27,7 +27,7 @@ import { clientGateway, ModalTypes } from './utils/constants'
 import AddParticipant from './chat/AddParticipant'
 import { Confirmation } from './components/Confirmation'
 import Downloads from './marketing/Downloads'
-import { CreatePermission } from './community/settings/NewPermission'
+import { NewPermission } from './community/settings/permissions/NewPermission'
 
 const { PushNotifications } = Plugins
 
@@ -45,7 +45,7 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
     case ModalTypes.NEW_CONVERSATION:
       return <NewConversation />
     case ModalTypes.NEW_PERMISSION:
-      return <CreatePermission />
+      return <NewPermission />
     case ModalTypes.PREVIEW_IMAGE:
       return <Image.Preview {...props} />
     case ModalTypes.STATUS:

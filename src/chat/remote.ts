@@ -55,6 +55,19 @@ export const postMessage = async (
     )
   ).data
 
+export const patchMessage = async (
+  messageID: string,
+  content: string,
+  token: string
+) =>
+  (
+    await clientGateway.patch(
+      `/messages/${messageID}`,
+      { content },
+      { headers: { Authorization: token } }
+    )
+  ).data
+
 export const uploadFile = async (file: File) => {
   const formData = new FormData()
   formData.append('file', file)

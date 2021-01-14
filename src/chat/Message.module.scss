@@ -32,6 +32,26 @@
     }
   }
 
+  .innerInput {
+    position: relative;
+
+    svg {
+      position: absolute;
+      right: 0.8rem;
+      bottom: 1.15rem;
+      cursor: pointer;
+    }
+  }
+
+  .input {
+    margin-top: 0.4rem;
+    margin-bottom: 0.4rem;
+    padding: 0.8rem;
+    border-radius: 11px;
+    background: var(--neko-input-background);
+    font-size: 1rem;
+    font-weight: 300;
+  }
   p {
     line-height: 1.5rem;
     word-break: break-word;
