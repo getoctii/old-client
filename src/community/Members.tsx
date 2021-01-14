@@ -18,7 +18,7 @@ import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import Loader from '../components/Loader'
 import { createConversation } from '../conversation/remote'
-import { ParticipantsResponse, State } from '../user/remote'
+import { getUser, ParticipantsResponse, State } from '../user/remote'
 import styles from './Members.module.scss'
 import { getCommunity, getMembers, Member as MemberType } from './remote'
 
@@ -30,6 +30,7 @@ const Member = memo(
     const isMobile = useMedia('(max-width: 740px)')
     const { id, token } = Auth.useContainer()
     const history = useHistory()
+    const user = useQuery(['users', member.user.id, token], getUser)
     return (
       <motion.div
         className={styles.member}
@@ -46,19 +47,19 @@ const Member = memo(
       >
         <div
           className={styles.icon}
-          style={{ backgroundImage: `url('${member.user.avatar}')` }}
+          style={{ backgroundImage: `url('${user.data?.avatar}')` }}
         >
           {' '}
-          {member.user && (
+          {user.data && (
             <div
               className={`${styles.badge} ${
-                member.user.state === State.online
+                user.data.state === State.online
                   ? styles.online
-                  : member.user.state === State.dnd
+                  : user.data.state === State.dnd
                   ? styles.dnd
-                  : member.user.state === State.idle
+                  : user.data.state === State.idle
                   ? styles.idle
-                  : member.user.state === State.offline
+                  : user.data.state === State.offline
                   ? styles.offline
                   : ''
               }`}
@@ -67,17 +68,17 @@ const Member = memo(
         </div>
         <div className={styles.info}>
           <h4>
-            {member.user?.username}#
-            {member.user?.discriminator === 0
+            {user.data?.username}#
+            {user.data?.discriminator === 0
               ? 'inn'
-              : member.user?.discriminator.toString().padStart(4, '0')}
-            {member.user.id === owner && <FontAwesomeIcon icon={faCrown} />}
+              : user.data?.discriminator.toString().padStart(4, '0')}
+            {user.data?.id === owner && <FontAwesomeIcon icon={faCrown} />}
           </h4>
           <time>{dayjs.utc(member.created_at).local().calendar()}</time>
         </div>
         {!isMobile && (
           <div className={styles.actions}>
-            {member.user.id !== id && (
+            {user.data?.id !== id && (
               <Button
                 type='button'
                 onClick={async () => {

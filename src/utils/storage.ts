@@ -1,5 +1,6 @@
 import { Plugins } from '@capacitor/core'
-import { queryCache, useMutation, useQuery } from 'react-query'
+import { useCallback } from 'react'
+import { queryCache, useQuery } from 'react-query'
 
 export const useSuspenseStorageItem = <T>(
   key: string,
@@ -9,8 +10,8 @@ export const useSuspenseStorageItem = <T>(
     ['storage', key, initialValue],
     async (_: string, key: string, initialValue: T) => {
       const { value } = await Plugins.Storage.get({ key })
-
-      if (!value && initialValue) {
+      if (!value && !initialValue) return initialValue
+      else if (!value && initialValue) {
         await Plugins.Storage.set({
           key,
           value:
@@ -18,6 +19,7 @@ export const useSuspenseStorageItem = <T>(
         })
         return initialValue
       } else if (value) {
+        if (value === 'undefined' || value === 'null') return undefined
         try {
           return JSON.parse(value)
         } catch {
@@ -29,14 +31,23 @@ export const useSuspenseStorageItem = <T>(
     }
   )
 
-  const [setValue] = useMutation(async (value: T) => {
-    await Plugins.Storage.set({
-      key,
-      value: typeof value === 'string' ? value : JSON.stringify(initialValue)
-    })
+  const setValue = useCallback(
+    async (value: T) => {
+      console.log(key)
+      try {
+        console.log(typeof value === 'string' ? value : JSON.stringify(value))
+        await Plugins.Storage.set({
+          key,
+          value: typeof value === 'string' ? value : JSON.stringify(value)
+        })
 
-    queryCache.setQueryData(['storage', key, initialValue], value)
-  })
+        queryCache.setQueryData(['storage', key, initialValue], value)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    [key, initialValue]
+  )
 
   return [data, setValue]
 }
