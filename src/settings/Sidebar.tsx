@@ -8,6 +8,8 @@ import {
 } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
+import { Plugins } from '@capacitor/core'
+import { queryCache } from 'react-query'
 
 const Sidebar = () => {
   const auth = Auth.useContainer()
@@ -56,9 +58,10 @@ const Sidebar = () => {
       </div>
       <div
         className={styles.logout}
-        onClick={() => {
-          localStorage.removeItem('neko-token')
-          auth.setToken('')
+        onClick={async () => {
+          auth.setToken(null)
+          queryCache.invalidateQueries()
+          await Plugins.Storage.clear()
           history.push('/authenticate/login')
         }}
       >
