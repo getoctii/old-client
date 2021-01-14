@@ -50,16 +50,16 @@ const Member = memo(
           style={{ backgroundImage: `url('${user.data?.avatar}')` }}
         >
           {' '}
-          {user && (
+          {user.data && (
             <div
               className={`${styles.badge} ${
-                user.data?.state === State.online
+                user.data.state === State.online
                   ? styles.online
-                  : user.data?.state === State.dnd
+                  : user.data.state === State.dnd
                   ? styles.dnd
-                  : user.data?.state === State.idle
+                  : user.data.state === State.idle
                   ? styles.idle
-                  : user.data?.state === State.offline
+                  : user.data.state === State.offline
                   ? styles.offline
                   : ''
               }`}
@@ -78,7 +78,7 @@ const Member = memo(
         </div>
         {!isMobile && (
           <div className={styles.actions}>
-            {member.user.id !== id && (
+            {user.data?.id !== id && (
               <Button
                 type='button'
                 onClick={async () => {
