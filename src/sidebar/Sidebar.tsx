@@ -1,4 +1,5 @@
 import React, {
+  memo,
   Suspense,
   useCallback,
   useEffect,
@@ -22,6 +23,7 @@ import {
   getParticipants,
   getUnreads,
   getUser,
+  MembersResponse,
   State
 } from '../user/remote'
 import { isPlatform } from '@ionic/react'
@@ -31,7 +33,11 @@ import { getCommunity } from '../community/remote'
 import { ModalTypes } from '../utils/constants'
 import { useSuspenseStorageItem } from '../utils/storage'
 
-const reorder = (list: any[], startIndex: number, endIndex: number): any[] => {
+const reorder = (
+  list: MembersResponse,
+  startIndex: number,
+  endIndex: number
+): MembersResponse => {
   const result = Array.from(list)
   const [removed] = result.splice(startIndex, 1)
   result.splice(endIndex, 0, removed)
@@ -39,88 +45,90 @@ const reorder = (list: any[], startIndex: number, endIndex: number): any[] => {
   return result
 }
 
-const Community = ({
-  community,
-  index
-}: {
-  community: {
-    id: string
-    name: string
-    icon?: string
-    large: boolean
+const Community = memo(
+  ({
+    community,
+    index
+  }: {
+    community: {
+      id: string
+      name: string
+      icon?: string
+      large: boolean
+    }
+    index: number
+  }) => {
+    const { token, id } = Auth.useContainer()
+    const match = useRouteMatch<{
+      tab?: string
+      id?: string
+    }>('/:tab/:id')
+    const history = useHistory()
+    const communityFull = useQuery(
+      ['community', community.id, token],
+      getCommunity
+    )
+    const unreads = useQuery(['unreads', id, token], getUnreads)
+    const mentions = useQuery(['mentions', id, token], getMentions)
+
+    const mentionsCount = useMemo(
+      () =>
+        communityFull.data?.channels
+          .map(
+            (channel) =>
+              mentions.data?.[channel]?.filter((mention) => !mention.read)
+                .length ?? 0
+          )
+          .reduce((acc, curr) => acc + curr, 0),
+      [communityFull, mentions]
+    )
+
+    const draggableChild = useCallback(
+      (provided) => (
+        <div
+          key={community.id}
+          style={provided.draggableProps.style}
+          className={
+            match?.params.tab === 'communities' &&
+            match.params.id === community.id
+              ? `${styles.icon} ${styles.selected}`
+              : styles.icon
+          }
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          onClick={() => {
+            return history.push(`/communities/${community.id}`)
+          }}
+        >
+          <img src={community.icon} alt={community.name} />
+          {match?.params.id !== community.id &&
+            (mentionsCount && mentionsCount > 0 ? (
+              <div
+                className={`${styles.mention} ${
+                  mentionsCount > 9 ? styles.pill : ''
+                }`}
+              >
+                <span>{mentionsCount > 99 ? '99+' : mentionsCount}</span>
+              </div>
+            ) : (
+              communityFull.data?.channels.some((channelID) => {
+                const channel = unreads.data?.[channelID]
+                return channel?.last_message_id !== channel?.read
+              }) && <div className={`${styles.badge}`} />
+            ))}
+        </div>
+      ),
+      [community, match, unreads, mentionsCount, communityFull, history]
+    )
+
+    return (
+      <Draggable draggableId={community.id} index={index}>
+        {draggableChild}
+      </Draggable>
+    )
   }
-  index: number
-}) => {
-  const { token, id } = Auth.useContainer()
-  const match = useRouteMatch<{
-    tab?: string
-    id?: string
-  }>('/:tab/:id')
-  const history = useHistory()
-  const communityFull = useQuery(
-    ['community', community.id, token],
-    getCommunity
-  )
-  const unreads = useQuery(['unreads', id, token], getUnreads)
-  const mentions = useQuery(['mentions', id, token], getMentions)
-
-  const mentionsCount = useMemo(
-    () =>
-      communityFull.data?.channels
-        .map(
-          (channel) =>
-            mentions.data?.[channel]?.filter((mention) => !mention.read)
-              .length ?? 0
-        )
-        .reduce((acc, curr) => acc + curr, 0),
-    [communityFull, mentions]
-  )
-
-  const draggableChild = useCallback(
-    (provided) => (
-      <div
-        key={community.id}
-        style={provided.draggableProps.style}
-        className={
-          match?.params.tab === 'communities' &&
-          match.params.id === community.id
-            ? `${styles.icon} ${styles.selected}`
-            : styles.icon
-        }
-        ref={provided.innerRef}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
-        onClick={() => {
-          return history.push(`/communities/${community.id}`)
-        }}
-      >
-        <img src={community.icon} alt={community.name} />
-        {match?.params.id !== community.id &&
-          (mentionsCount && mentionsCount > 0 ? (
-            <div
-              className={`${styles.mention} ${
-                mentionsCount > 9 ? styles.pill : ''
-              }`}
-            >
-              <span>{mentionsCount > 99 ? '99+' : mentionsCount}</span>
-            </div>
-          ) : (
-            communityFull.data?.channels.some((channelID) => {
-              const channel = unreads.data?.[channelID]
-              return channel?.last_message_id !== channel?.read
-            }) && <div className={`${styles.badge}`} />
-          ))}
-      </div>
-    ),
-    [community, match, unreads, mentionsCount, communityFull, history]
-  )
-
-  return (
-    <Draggable draggableId={community.id} index={index}>
-      {draggableChild}
-    </Draggable>
-  )
-}
+)
 
 const Placeholder = () => {
   const length = useMemo(() => Math.floor(Math.random() * 10) + 1, [])
@@ -139,7 +147,7 @@ const Communities = () => {
   const communities = useQuery(['communities', id, token], getCommunities)
   const [communitiesOrder, setCommunitiesOrder] = useSuspenseStorageItem<
     string[]
-  >('communities', communities.data?.map((member) => member.community.id) ?? [])
+  >('communities')
 
   const onDragEnd = useCallback(
     (result) => {
