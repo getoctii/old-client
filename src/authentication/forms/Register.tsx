@@ -49,10 +49,7 @@ export const Register = () => {
     }
     try {
       const response = await register(values)
-      if (response) {
-        localStorage.setItem('neko-token', response.authorization)
-        auth.setToken(response.authorization)
-      }
+      if (response) auth.setToken(response.authorization)
     } catch (e) {
       const errors = e.response.data.errors
       const userErrors: { betaCode?: string } = {}
