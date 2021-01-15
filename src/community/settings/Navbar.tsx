@@ -1,5 +1,5 @@
 import React from 'react'
-import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import styles from './Navbar.module.scss'
 
 export const Navbar = () => {

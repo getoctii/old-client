@@ -4,7 +4,6 @@ import { Events } from '../utils/constants'
 import { queryCache } from 'react-query'
 import { log } from '../utils/logging'
 import { Auth } from '../authentication/state'
-import { ParticipantsResponse } from '../user/remote'
 import { Message } from '../chat/remote'
 
 const useUpdatedMessage = (eventSource: EventSourcePolyfill | null) => {
@@ -19,34 +18,36 @@ const useUpdatedMessage = (eventSource: EventSourcePolyfill | null) => {
         content: string
         updated_at: string
       }
+      console.log(event)
       log('Events', 'purple', 'UPDATED_MESSAGE')
 
-      const initial: Message[] | undefined = queryCache.getQueryData([
+      const initial = queryCache.getQueryData([
         'messages',
         event.channel_id,
         token
       ])
-
-      if (initial) {
+      if (initial instanceof Array) {
         queryCache.setQueryData(
           ['messages', event.channel_id, token],
-          initial.map((p) =>
-            p.id === event.id
-              ? {
-                  ...p,
-                  content: event.content,
-                  updated_at: event.updated_at
-                }
-              : p
+          initial.map((sub) =>
+            sub.map((msg: Message) =>
+              msg.id === event.id
+                ? {
+                    ...msg,
+                    content: event.content,
+                    updated_at: event.updated_at
+                  }
+                : msg
+            )
           )
         )
       }
     }
 
-    eventSource.addEventListener(Events.UPDATED_CONVERSATION, handler)
+    eventSource.addEventListener(Events.UPDATED_MESSAGE, handler)
 
     return () => {
-      eventSource.removeEventListener(Events.UPDATED_CONVERSATION, handler)
+      eventSource.removeEventListener(Events.UPDATED_MESSAGE, handler)
     }
   }, [eventSource, id, token])
 }

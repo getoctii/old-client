@@ -3,27 +3,12 @@
   height: 0;
 }
 
-.box {
-  .buttons {
-    display: flex;
-  }
-  a {
-    color: var(--neko-text-href);
-  }
-  min-height: 3.125rem;
+.typingIndicator {
+  margin-bottom: 0.5rem;
+}
+
+.buttons {
   display: flex;
-  flex-direction: row;
-  margin-bottom: 0;
-  padding-left: 2rem;
-  margin-bottom: 2rem;
-  z-index: 2;
-  padding-right: 2rem;
-  justify-content: space-between;
-  bottom: 0;
-  width: 100%;
-  &.typingIndicator {
-    margin-bottom: 0.5rem;
-  }
 
   button {
     height: 3.125rem;
@@ -46,14 +31,31 @@
       background: var(--neko-colors-primary);
     }
   }
-
-  .uploadInput {
-    display: none;
+}
+.input {
+  overflow-y: auto;
+  width: 100%;
+  min-height: 3.125rem;
+  max-height: 16.125rem;
+  font-size: 1.05rem;
+  margin: 0;
+  padding-left: 0.9375rem;
+  padding-right: 0.9375rem;
+  padding-top: 0.9375rem;
+  padding-bottom: 0.9375rem;
+  color: var(--neko-input-text);
+  background: var(--neko-input-background);
+  border-radius: 14px;
+  font-weight: 300;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    width: 5px;
+    display: block;
   }
 
-  .ph {
+  &::placeholder {
     font-family: Inter, sans-serif;
-    opacity: 0.8;
+    opacity: 0.65;
     font-weight: 300;
     color: var(--neko-input-text);
     user-select: none;
@@ -61,8 +63,13 @@
     -webkit-user-select: none;
     user-select: none;
     white-space: nowrap;
-    overflow: hidden;
   }
+}
+
+.emojiPicker,
+.uploadPicker {
+  @extend .mentionsWrapper;
+
   aside {
     border-radius: 10px !important;
     position: absolute !important;
@@ -90,40 +97,39 @@
       margin-left: 0;
     }
   }
+}
+.ph {
+  font-family: Inter, sans-serif;
+  opacity: 0.8;
+  font-weight: 300;
+  color: var(--neko-input-text);
+  user-select: none;
+  font-size: 1.05rem;
+  -webkit-user-select: none;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+}
 
-  .input {
-    overflow-y: auto;
-    width: 100%;
-    min-height: 3.125rem;
-    max-height: 16.125rem;
-    font-size: 1.05rem;
-    margin: 0;
-    padding-left: 0.9375rem;
-    padding-right: 0.9375rem;
-    padding-top: 0.9375rem;
-    padding-bottom: 0.9375rem;
-    color: var(--neko-input-text);
-    background: var(--neko-input-background);
-    border-radius: 14px;
-    font-weight: 300;
-    overflow-x: hidden;
-    &::-webkit-scrollbar {
-      width: 5px;
-      display: block;
-    }
+.uploadInput {
+  display: none;
+}
 
-    &::placeholder {
-      font-family: Inter, sans-serif;
-      opacity: 0.65;
-      font-weight: 300;
-      color: var(--neko-input-text);
-      user-select: none;
-      font-size: 1.05rem;
-      -webkit-user-select: none;
-      user-select: none;
-      white-space: nowrap;
-    }
+.box {
+  a {
+    color: var(--neko-text-href);
   }
+  min-height: 3.125rem;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 0;
+  padding-left: 2rem;
+  margin-bottom: 2rem;
+  z-index: 2;
+  padding-right: 2rem;
+  justify-content: space-between;
+  bottom: 0;
+  width: 100%;
 }
 
 .placeholder {

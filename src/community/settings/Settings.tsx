@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { General } from './General'
 import Invites from './Invites'
 import { Navbar } from './Navbar'

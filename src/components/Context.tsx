@@ -108,7 +108,6 @@ export const Wrapper = ({
       <div
         style={{ zIndex: 2 }}
         onTouchStart={(event) => {
-          console.log('start')
           if (isPlatform('mobile')) {
             event.preventDefault()
             setTouchTimeout(
@@ -138,14 +137,12 @@ export const Wrapper = ({
           }
         }}
         onTouchEnd={() => {
-          console.log('end')
           if (touchTimeout && isPlatform('mobile')) {
             clearTimeout(touchTimeout)
             setTouchTimeout(undefined)
           }
         }}
         onMouseDown={(event) => {
-          console.log(event.buttons)
           if (event.buttons === 2 && !isPlatform('mobile')) {
             const itemsSize = items.length * 34 + 15
             if (window.innerHeight - (event.pageY + itemsSize) < 20) {

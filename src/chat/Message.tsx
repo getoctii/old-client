@@ -1,11 +1,4 @@
-import React, {
-  memo,
-  useMemo,
-  Suspense,
-  useCallback,
-  useState,
-  useEffect
-} from 'react'
+import React, { memo, useMemo, Suspense, useCallback, useState } from 'react'
 import styles from './Message.module.scss'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
@@ -19,7 +12,7 @@ import { Plugins, PermissionType } from '@capacitor/core'
 import { Auth } from '../authentication/state'
 import { useMutation, useQuery } from 'react-query'
 import { clientGateway, ModalTypes } from '../utils/constants'
-import { getUser, UserResponse } from '../user/remote'
+import { getUser } from '../user/remote'
 import { Measure } from './embeds/Measure'
 import Context from '../components/Context'
 import Audio from './embeds/Audio'
@@ -35,22 +28,9 @@ import {
 import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons'
-import { Editable, RenderLeafProps, Slate, withReact } from 'slate-react'
-import { withHistory } from 'slate-history'
-import { emptyEditor, serialize, withMentions } from '../utils/slate'
-import { createEditor, Range, Node, Editor, Text, Transforms } from 'slate'
-import { Message as MessageType, patchMessage } from './remote'
-import Box from './Box'
-import unified from 'unified'
-import markdown from 'remark-parse'
-import visit from 'unist-util-visit'
-import gfm from 'remark-gfm'
-// @ts-ignore
-import underlineSyntax from '@innatical/micromark-extension-underline'
-// @ts-ignore
-import underlineFromMarkdown from '@innatical/mdast-util-underline/from-markdown'
-// @ts-ignore
-import underlineToMarkdown from '@innatical/mdast-util-underline/to-markdown'
+import { patchMessage } from './remote'
+import Editor from './Editor'
+
 const { Clipboard, Permissions } = Plugins
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
@@ -86,237 +66,36 @@ const Mention = ({
 
 const EditBox = ({
   id,
-  authorID,
   content,
   onDismiss
 }: {
   id: string
-  authorID: string
   content: string
   onDismiss: () => void
 }) => {
   const { token } = Auth.useContainer()
-  const editor = useMemo(
-    () => withHistory(withReact(withMentions(createEditor()))),
-    []
-  )
-  const [value, setValue] = useState<Node[]>([
-    {
-      children: [{ text: content }]
-    }
-  ])
-  const [target, setTarget] = useState<Range | undefined>()
-  const [search, setSearch] = useState('')
 
-  const renderElement = useCallback((props) => {
-    switch (props.element.type) {
-      case 'mention':
-        return (
-          <Box.Mention
-            attributes={props.attributes}
-            children={props.children}
-            userID={props.element.mentionID}
-          />
-        )
-      default:
-        return <span {...props.attributes}>{props.children}</span>
-    }
-  }, [])
-  const [selected, setSelected] = useState(0)
-
-  const mentionable = useMemo(() => [], [])
-
-  const onMention = useCallback(
-    (id: string) => {
-      if (!target) return
-      Transforms.select(editor, target)
-      Transforms.insertNodes(editor, {
-        type: 'mention',
-        mentionID: id,
-        children: [
-          {
-            text: `<@${id}>`
-          }
-        ]
-      })
-      editor.insertText(' ')
-      Transforms.move(editor)
-      setTarget(undefined)
-    },
-    [editor, target]
-  )
-
-  const [filtered, setFiltered] = useState<UserResponse[]>([])
-
-  const onFiltered = useCallback((users: UserResponse[]) => {
-    setFiltered(users)
-  }, [])
-
-  useEffect(() => {
-    setSelected(0)
-  }, [target, filtered])
-
-  const decorate = useCallback(([node, path]) => {
-    const ranges: {
-      anchor: {
-        path: any
-        offset: number
-      }
-      focus: {
-        path: any
-        offset: number
-      }
-      [key: string]: any
-    }[] = []
-    if (!Text.isText(node)) return ranges
-    const tree = unified()
-      .use(markdown)
-      .use(gfm, { singleTilde: false })
-      .use(function underline() {
-        const data: any = this.data()
-        const add = (field: string, value: any) => {
-          if (data[field]) data[field].push(value)
-          else data[field] = [value]
-        }
-
-        add('micromarkExtensions', underlineSyntax())
-        add('fromMarkdownExtensions', underlineFromMarkdown)
-        add('toMarkdownExtensions', underlineToMarkdown)
-      })
-      .parse(node.text)
-
-    visit(
-      tree,
-      ['strong', 'emphasis', 'code', 'delete', 'underline', 'link'],
-      (node) => {
-        if (
-          node.type === 'strong' ||
-          node.type === 'emphasis' ||
-          node.type === 'delete' ||
-          node.type === 'underline'
-        ) {
-          ranges.push({
-            [node.type]: true,
-            anchor: {
-              path,
-              offset: (node.children as any)[0].position?.start.offset ?? 0
-            },
-            focus: {
-              path,
-              offset: (node.children as any)[0].position?.end.offset ?? 0
-            }
-          })
-        } else {
-          ranges.push({
-            [node.type]: true,
-            anchor: {
-              path,
-              offset: node.position?.start.offset ?? 0
-            },
-            focus: {
-              path,
-              offset: node.position?.end.offset ?? 0
-            }
-          })
-        }
-      }
-    )
-    return ranges
-  }, [])
-
-  const renderLeaf = useCallback(
-    (props: RenderLeafProps) => <Box.Leaf {...props} />,
-    []
-  )
   return (
     <div className={styles.innerInput}>
-      <Slate
-        editor={editor}
-        value={value}
-        onChange={(value) => {
-          setValue(value)
-          const { selection } = editor
-
-          if (selection && Range.isCollapsed(selection)) {
-            const [start] = Range.edges(selection)
-            const characterBefore = Editor.before(editor, start, {
-              unit: 'character'
-            })
-            const wordBefore = Editor.before(editor, start, {
-              unit: 'word'
-            })
-            const before =
-              characterBefore &&
-              Editor.string(
-                editor,
-                Editor.range(editor, characterBefore, start)
-              ) === '@'
-                ? characterBefore
-                : wordBefore && Editor.before(editor, wordBefore)
-            const beforeRange = before && Editor.range(editor, before, start)
-            const beforeText = beforeRange && Editor.string(editor, beforeRange)
-            const beforeMatch = beforeText && beforeText.match(/^@(\w*)$/)
-            const after = Editor.after(editor, start)
-            const afterRange = Editor.range(editor, start, after)
-            const afterText = Editor.string(editor, afterRange)
-            const afterMatch = afterText.match(/^(\s|$)/)
-
-            if (beforeMatch && afterMatch) {
-              setTarget(beforeRange)
-              setSearch(beforeMatch[1])
-              return
-            }
-
-            setTarget(undefined)
+      <Editor
+        className={styles.editor}
+        inputClassName={styles.input}
+        mentionsClassName={styles.mentions}
+        newLines={false}
+        onDismiss={onDismiss}
+        emptyEditor={[
+          {
+            children: [{ text: content }]
           }
+        ]}
+        onEnter={async (content) => {
+          console.log(content)
+          if (!token || !content) return
+          onDismiss()
+          await patchMessage(id, content, token)
         }}
-      >
-        <Editable
-          className={styles.input}
-          spellCheck
-          renderLeaf={renderLeaf}
-          renderElement={renderElement}
-          decorate={decorate}
-          onKeyDown={async (event) => {
-            switch (event.key) {
-              case 'Escape': {
-                event.preventDefault()
-                onDismiss()
-                break
-              }
-              case 'Enter': {
-                if (event.shiftKey) {
-                  event.preventDefault()
-                  editor.insertBreak()
-                } else if (target) {
-                  event.preventDefault()
-                  if (filtered[selected].id) onMention(filtered[selected].id)
-                } else {
-                  event.preventDefault()
-                  const content = serialize(value)
-                  if (content !== '' && token) {
-                    patchMessage(id, content, token)
-                    onDismiss()
-                  }
-                }
-                break
-              }
-              case 'Tab': {
-                event.preventDefault()
-                if (event.shiftKey) {
-                  setSelected(
-                    selected - 1 < 0 ? filtered.length - 1 : selected - 1
-                  )
-                } else {
-                  setSelected(
-                    selected + 1 > filtered.length - 1 ? 0 : selected + 1
-                  )
-                }
-              }
-            }
-          }}
-        />
-      </Slate>
+      />
+
       <FontAwesomeIcon icon={faTimesCircle} onClick={() => onDismiss()} />
     </div>
   )
@@ -512,7 +291,6 @@ const View = memo(
             {editMessage ? (
               <EditBox
                 id={id}
-                authorID={authorID}
                 content={content}
                 onDismiss={() => setEditMessage(false)}
               />

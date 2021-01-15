@@ -33,7 +33,7 @@ import {
   clientGateway
 } from '../../../utils/constants'
 import { getGroup, getGroups, Group } from '../../remote'
-import { NewPermissionStandalone, Permission } from './NewPermission'
+import { Permission } from './NewPermission'
 import styles from './Permissions.module.scss'
 
 const serialize = (value: Node[]) =>
