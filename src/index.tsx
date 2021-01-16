@@ -21,6 +21,7 @@ import { ScrollPosition } from './state/scroll'
 import { Call } from './state/call'
 import { Chat } from './chat/state'
 import { Integrations } from '@sentry/tracing'
+import { AxiosError } from 'axios'
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
@@ -77,7 +78,15 @@ ReactDOM.render(
     >
       <Sentry.ErrorBoundary
         onReset={() => queryCache.resetErrorBoundaries()}
-        fallback={({ resetError }) => <Error resetErrorBoundary={resetError} />}
+        fallback={({
+          resetError,
+          error
+        }: {
+          resetError: () => void
+          error: AxiosError
+        }) => {
+          return <Error error={error} resetErrorBoundary={resetError} />
+        }}
       >
         <React.Suspense fallback={<Loader />}>
           <Auth.Provider>

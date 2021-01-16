@@ -14,6 +14,9 @@ import useLog from './log'
 import useNewMention from './newMention'
 import useUpdatedConversation from './updatedConversation'
 import useUpdatedMessage from './updatedMessage'
+import useUpdatedGroup from './updatedGroup'
+import useDeletedGroup from './deletedGroup'
+import useNewGroup from './newGroup'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
@@ -25,6 +28,8 @@ const EventSource = () => {
   useNewParticipant(eventSource)
   useDeletedParticipant(eventSource)
   useNewMember(eventSource)
+  useDeletedGroup(eventSource)
+  useNewGroup(eventSource)
   useDeletedMember(eventSource)
   useNewChannel(eventSource)
   useDeletedChannel(eventSource)
@@ -33,6 +38,7 @@ const EventSource = () => {
   useAcceptedVoiceSession(eventSource)
   useNewMention(eventSource)
   useUpdatedConversation(eventSource)
+  useUpdatedGroup(eventSource)
 
   return <></>
 }

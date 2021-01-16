@@ -7,15 +7,8 @@ import {
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AnimatePresence, motion } from 'framer-motion'
-import React, {
-  memo,
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
-import { queryCache, useQuery } from 'react-query'
+import React, { memo, Suspense, useEffect, useMemo, useState } from 'react'
+import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
 import { useMedia, useSet } from 'react-use'
 import { createEditor, Node } from 'slate'
@@ -32,7 +25,7 @@ import {
   GroupNames,
   clientGateway
 } from '../../../utils/constants'
-import { getGroup, getGroups, Group } from '../../remote'
+import { getGroup, getGroups } from '../../remote'
 import { Permission } from './NewPermission'
 import styles from './Permissions.module.scss'
 
@@ -61,6 +54,8 @@ const PermissionGroup = memo(({ id }: { id: string }) => {
   const [set, { add, remove, has, reset }] = useSet<Permissions>(
     new Set(group.data?.permissions || [])
   )
+
+  console.log(Array.from(set))
   const showSave = useMemo(
     () =>
       !(
@@ -82,63 +77,6 @@ const PermissionGroup = memo(({ id }: { id: string }) => {
     ])
   }, [group.data?.name])
 
-  const savePermissions = useCallback(async () => {
-    await clientGateway.patch(
-      `/groups/${id}`,
-      { permissions: Array.from(set) },
-      {
-        headers: { Authorization: token }
-      }
-    )
-    queryCache.setQueryData(
-      ['group', id, token],
-      (initial: Group | undefined) => {
-        if (initial) {
-          return {
-            id: initial.id,
-            color: initial.color,
-            name: initial.name,
-            permissions: Array.from(set) || initial.permissions
-          }
-        } else
-          return {
-            id,
-            color: '',
-            name: 'unknown',
-            permissions: Array.from(set) || []
-          }
-      }
-    )
-  }, [id, set, token])
-
-  const saveName = useCallback(async () => {
-    await clientGateway.patch(
-      `/groups/${id}`,
-      { name: serialize(name) },
-      {
-        headers: { Authorization: token }
-      }
-    )
-    queryCache.setQueryData(
-      ['group', id, token],
-      (initial: Group | undefined) => {
-        if (initial) {
-          return {
-            id: initial.id,
-            color: initial.color,
-            name: serialize(name) || initial.name,
-            permissions: initial.permissions
-          }
-        } else
-          return {
-            id,
-            color: '',
-            name: 'unknown',
-            permissions: []
-          }
-      }
-    )
-  }, [id, token, name])
   return (
     <>
       <motion.div
@@ -163,17 +101,34 @@ const PermissionGroup = memo(({ id }: { id: string }) => {
           >
             <Editable
               className={styles.changeName}
-              onKeyDown={(event) => {
+              onKeyDown={async (event) => {
                 if (event.key === 'Enter') {
                   event.preventDefault()
-                  saveName()
+                  await clientGateway.patch(
+                    `/groups/${id}`,
+                    { name: serialize(name) },
+                    {
+                      headers: { Authorization: token }
+                    }
+                  )
                 }
               }}
               placeholder='Group Name'
             />
           </Slate>
           {serialize(name) !== (group.data?.name || 'unknown') ? (
-            <FontAwesomeIcon icon={faCheckCircle} onClick={() => saveName()} />
+            <FontAwesomeIcon
+              icon={faCheckCircle}
+              onClick={async () => {
+                await clientGateway.patch(
+                  `/groups/${id}`,
+                  { name: serialize(name) },
+                  {
+                    headers: { Authorization: token }
+                  }
+                )
+              }}
+            />
           ) : (
             ''
           )}
@@ -184,7 +139,14 @@ const PermissionGroup = memo(({ id }: { id: string }) => {
             style={{ gridTemplateColumns: `repeat(${edit ? '2' : '1'}, 46px)` }}
           >
             {edit && (
-              <Button type='button'>
+              <Button
+                type='button'
+                onClick={async () => {
+                  await clientGateway.delete(`/groups/${id}`, {
+                    headers: { Authorization: token }
+                  })
+                }}
+              >
                 <FontAwesomeIcon icon={faTrash} />
               </Button>
             )}
@@ -226,7 +188,15 @@ const PermissionGroup = memo(({ id }: { id: string }) => {
               </Button>
               <Button
                 type='submit'
-                onClick={() => savePermissions()}
+                onClick={async () => {
+                  await clientGateway.patch(
+                    `/groups/${id}`,
+                    { permissions: Array.from(set) },
+                    {
+                      headers: { Authorization: token }
+                    }
+                  )
+                }}
                 className={styles.save}
               >
                 Save Changes

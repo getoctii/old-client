@@ -4,7 +4,14 @@ import { BarLoader } from 'react-spinners'
 import Button from '../../../components/Button'
 import Input from '../../../components/Input'
 import Modal from '../../../components/Modal'
-import { clientGateway, Groups } from '../../../utils/constants'
+import {
+  clientGateway,
+  Groups,
+  PermissionNames,
+  PermissionsGroups,
+  Permissions,
+  GroupNames
+} from '../../../utils/constants'
 import styles from './NewPermission.module.scss'
 import { UI } from '../../../state/ui'
 import { isUsername } from '../../../utils/validations'
@@ -13,8 +20,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPencil, faTimesCircle } from '@fortawesome/pro-solid-svg-icons'
 import { useRouteMatch } from 'react-router-dom'
 import { faToggleOff, faToggleOn } from '@fortawesome/pro-duotone-svg-icons'
+import { useSet } from 'react-use'
 
-type createPermissionData = { name: string }
+type createPermissionData = { name: string; permissions?: Permissions[] }
 
 const validatePermission = (values: createPermissionData) => {
   const errors: { name?: string } = {}
@@ -67,6 +75,7 @@ export const NewPermissionStandalone = () => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
   const [editing, setEditing] = useState<Groups>()
+  const [set, { add, remove, has }] = useSet<Permissions>(new Set([]))
   return (
     <div className={styles.permission}>
       <h3>New Permission Group</h3>
@@ -80,7 +89,8 @@ export const NewPermissionStandalone = () => {
           if (!values?.name) return setFieldError('name', 'Required')
           try {
             await createPermission(token!, match?.params.id!, {
-              name: values.name
+              name: values.name,
+              permissions: Array.from(set) || []
             })
             ui.clearModal()
           } catch (e) {
@@ -100,94 +110,43 @@ export const NewPermissionStandalone = () => {
             <ErrorMessage component='p' name='name' />
 
             <label className={styles.permissionsGroup}>Permissions</label>
-            <div className={styles.basic}>
-              <div
-                className={styles.title}
-                onClick={() =>
-                  setEditing(
-                    editing === Groups.BASIC ? undefined : Groups.BASIC
-                  )
-                }
-              >
-                Basic Permissions{' '}
-                <FontAwesomeIcon
-                  icon={editing === Groups.BASIC ? faTimesCircle : faPencil}
-                />
+            {Object.entries(PermissionsGroups).map(([group, permissions]) => (
+              <div className={styles.group}>
+                <div
+                  className={`${styles.title} ${
+                    +group === Groups.BASIC
+                      ? styles.basic
+                      : +group === Groups.MOD
+                      ? styles.mod
+                      : styles.admin
+                  }`}
+                  onClick={() =>
+                    setEditing(editing === +group ? undefined : +group)
+                  }
+                >
+                  {/* @ts-ignore */}
+                  {GroupNames[+group]}{' '}
+                  <FontAwesomeIcon
+                    icon={editing === +group ? faTimesCircle : faPencil}
+                  />
+                </div>
+
+                {editing === +group && (
+                  <ul className={styles.list}>
+                    {permissions.map((permission) => (
+                      <Permission
+                        name={PermissionNames[permission]}
+                        toggled={has(permission)}
+                        type={+group}
+                        onToggle={(val) =>
+                          val ? add(permission) : remove(permission)
+                        }
+                      />
+                    ))}
+                  </ul>
+                )}
               </div>
-              {editing === Groups.BASIC && (
-                <ul className={styles.list}>
-                  <Permission
-                    name='Read Messages'
-                    toggled
-                    type={Groups.BASIC}
-                  />
-                  <Permission
-                    name='Send Messages'
-                    toggled
-                    type={Groups.BASIC}
-                  />
-                  <Permission
-                    name='Mention Members'
-                    toggled
-                    type={Groups.BASIC}
-                  />
-                  <Permission name='Mention Groups' type={Groups.BASIC} />
-                  <Permission name='Mention Someone' type={Groups.BASIC} />
-                  <Permission name='Embed Links' toggled type={Groups.BASIC} />
-                  <Permission
-                    name='Create Invites'
-                    toggled
-                    type={Groups.BASIC}
-                  />
-                </ul>
-              )}
-            </div>
-            <div className={styles.mod}>
-              <div
-                className={styles.title}
-                onClick={() =>
-                  setEditing(editing === Groups.MOD ? undefined : Groups.MOD)
-                }
-              >
-                Mod Permissions{' '}
-                <FontAwesomeIcon
-                  icon={editing === Groups.MOD ? faTimesCircle : faPencil}
-                />
-              </div>
-              {editing === Groups.MOD && (
-                <ul className={styles.list}>
-                  <Permission name='Ban Members' type={Groups.MOD} />
-                  <Permission name='Kick Members' type={Groups.MOD} />
-                  <Permission name='Mention Everyone' type={Groups.MOD} />
-                  <Permission name='Manage Permissions' type={Groups.MOD} />
-                  <Permission name='Manage Channels' type={Groups.MOD} />
-                  <Permission name='Manage Invites' type={Groups.MOD} />
-                  <Permission name='Manage Messages' type={Groups.MOD} />
-                </ul>
-              )}
-            </div>
-            <div className={styles.admin}>
-              <div
-                className={styles.title}
-                onClick={() =>
-                  setEditing(
-                    editing === Groups.ADMIN ? undefined : Groups.ADMIN
-                  )
-                }
-              >
-                Admin Permissions{' '}
-                <FontAwesomeIcon
-                  icon={editing === Groups.ADMIN ? faTimesCircle : faPencil}
-                />
-              </div>
-              {editing === Groups.ADMIN && (
-                <ul className={styles.list}>
-                  <Permission name='Manage Server' type={Groups.ADMIN} />
-                  <Permission name='Administrator' type={Groups.ADMIN} />
-                  <Permission name='Owner' type={Groups.ADMIN} />
-                </ul>
-              )}
-            </div>
+            ))}
             <Button disabled={isSubmitting} type='submit'>
               {isSubmitting ? (
                 <BarLoader color='#ffffff' />
