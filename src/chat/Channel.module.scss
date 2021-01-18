@@ -92,9 +92,19 @@
     margin: 0;
     margin-left: 2rem;
     margin-right: 2rem;
-    margin-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+    margin-bottom: calc(env(safe-area-inset-bottom));
+    height: 2rem;
+    max-height: 2rem;
+    min-height: 2rem;
+    display: flex;
+    align-items: center;
   }
 
+  .typingEmpty {
+    height: 2rem;
+    max-height: 2rem;
+    min-height: 2rem;
+  }
   @media (max-width: 740px) {
     .header {
       height: calc(env(safe-area-inset-top) + 5.65rem);

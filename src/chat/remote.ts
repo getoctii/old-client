@@ -65,6 +65,19 @@ export const uploadFile = async (file: File) => {
   return response.data.url
 }
 
+export const patchMessage = async (
+  messageID: string,
+  content: string,
+  token: string
+) =>
+  (
+    await clientGateway.patch(
+      `/messages/${messageID}`,
+      new URLSearchParams({ content }),
+      { headers: { Authorization: token } }
+    )
+  ).data
+
 export const getMessages = async (
   _: string,
   channelID: string,
