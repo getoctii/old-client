@@ -21,11 +21,17 @@ import useMarkdown from '@innatical/markdown'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCatSpace,
+  faTimesCircle,
   faUserNinja,
   faUserShield
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
+import { faPencilAlt } from '@fortawesome/free-solid-svg-icons'
+import { patchMessage } from './remote'
+import Editor from '../components/Editor'
+import { Chat } from './state'
+
 const { Clipboard, Permissions } = Plugins
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
@@ -59,6 +65,44 @@ const Mention = ({
   )
 }
 
+const EditBox = ({
+  id,
+  content,
+  onDismiss
+}: {
+  id: string
+  content: string
+  onDismiss: () => void
+}) => {
+  const { token } = Auth.useContainer()
+
+  return (
+    <div className={styles.innerInput}>
+      <Editor
+        mentions={false}
+        className={styles.editor}
+        inputClassName={styles.input}
+        mentionsClassName={styles.mentionsWrapper}
+        newLines={false}
+        onDismiss={onDismiss}
+        emptyEditor={[
+          {
+            children: [{ text: content }]
+          }
+        ]}
+        onEnter={async (content) => {
+          console.log(content)
+          if (!token || !content) return
+          onDismiss()
+          await patchMessage(id, content, token)
+        }}
+      />
+
+      <FontAwesomeIcon icon={faTimesCircle} onClick={() => onDismiss()} />
+    </div>
+  )
+}
+
 const View = memo(
   ({
     id,
@@ -77,6 +121,7 @@ const View = memo(
     onResize: () => void
   }) => {
     const uiStore = UI.useContainer()
+    const { editingMessageID, setEditingMessageID } = Chat.useContainer()
     const auth = Auth.useContainer()
     const [deleteMessage] = useMutation(
       async () =>
@@ -128,6 +173,12 @@ const View = memo(
 
       if (authorID === auth.id) {
         items.push({
+          text: 'Edit Message',
+          icon: faPencilAlt,
+          danger: false,
+          onClick: () => setEditingMessageID(id)
+        })
+        items.push({
           text: 'Delete Message',
           icon: faTrashAlt,
           danger: true,
@@ -146,7 +197,15 @@ const View = memo(
         })
       }
       return items
-    }, [authorID, content, deleteMessage, id, uiStore, auth.id])
+    }, [
+      authorID,
+      content,
+      deleteMessage,
+      id,
+      uiStore,
+      auth.id,
+      setEditingMessageID
+    ])
     const output = useMarkdown(content, {
       bold: (str, key) => <strong key={key}>{str}</strong>,
       italic: (str, key) => <i key={key}>{str}</i>,
@@ -196,70 +255,62 @@ const View = memo(
       [output]
     )
     return (
-      <>
-        {/* <AnimatePresence> */}
-        {/* {deleteMessageModal && (
-            <Confirmation
-              type='message'
-              onConfirm={() => {
-                deleteMessage()
-              }}
-              onDismiss={() => setDeleteMessageModal(false)}
-            />
-          )} */}
-        {/* </AnimatePresence> */}
-        <Context.Wrapper
-          title={`${user.data?.username || 'Unknown'}'s Message`}
-          message={content}
-          key={id}
-          items={getItems()}
-        >
-          <div className={`${styles.message} ${primary ? styles.primary : ''}`}>
-            {primary && (
-              <div
-                className={styles.avatar}
-                style={{ backgroundImage: `url(${user.data?.avatar})` }}
-              />
-            )}
+      <Context.Wrapper
+        title={`${user.data?.username || 'Unknown'}'s Message`}
+        message={content}
+        key={id}
+        items={getItems()}
+      >
+        <div className={`${styles.message} ${primary ? styles.primary : ''}`}>
+          {primary && (
             <div
-              className={`${styles.content} ${!primary ? styles.spacer : ''}`}
-            >
-              {primary && (
-                <h2 key='username'>
-                  <span>
-                    {user.data?.username}
-                    {user.data?.id ===
-                    '987d59ba-1979-4cc4-8818-7fe2f3d4b560' ? (
+              className={styles.avatar}
+              style={{ backgroundImage: `url(${user.data?.avatar})` }}
+            />
+          )}
+          <div className={`${styles.content} ${!primary ? styles.spacer : ''}`}>
+            {primary && (
+              <h2 key='username'>
+                <span>
+                  {user.data?.username}
+                  {user.data?.id === '987d59ba-1979-4cc4-8818-7fe2f3d4b560' ? (
+                    <FontAwesomeIcon
+                      className={styles.badge}
+                      icon={faUserNinja}
+                    />
+                  ) : user.data?.id ===
+                    '99343aac-2301-415d-aece-17b021d3a459' ? (
+                    <FontAwesomeIcon
+                      className={styles.badge}
+                      icon={faCatSpace}
+                    />
+                  ) : (
+                    user.data?.discriminator === 0 && (
                       <FontAwesomeIcon
                         className={styles.badge}
-                        icon={faUserNinja}
+                        icon={faUserShield}
                       />
-                    ) : user.data?.id ===
-                      '99343aac-2301-415d-aece-17b021d3a459' ? (
-                      <FontAwesomeIcon
-                        className={styles.badge}
-                        icon={faCatSpace}
-                      />
-                    ) : (
-                      user.data?.discriminator === 0 && (
-                        <FontAwesomeIcon
-                          className={styles.badge}
-                          icon={faUserShield}
-                        />
-                      )
-                    )}
-                  </span>
-                  <span className={styles.time}>
-                    {dayjs.utc(createdAt).local().calendar()}
-                  </span>
-                </h2>
-              )}
+                    )
+                  )}
+                </span>
+                <span className={styles.time}>
+                  {dayjs.utc(createdAt).local().calendar()}
+                </span>
+              </h2>
+            )}
+            {editingMessageID === id ? (
+              <EditBox
+                id={id}
+                content={content}
+                onDismiss={() => setEditingMessageID(undefined)}
+              />
+            ) : (
               <p>{main}</p>
-              <Measure onResize={onResize}>{embeds}</Measure>
-            </div>
+            )}
+            <Measure onResize={onResize}>{embeds}</Measure>
           </div>
-        </Context.Wrapper>
-      </>
+        </div>
+      </Context.Wrapper>
     )
   }
 )

@@ -15,7 +15,6 @@
   flex-direction: row;
   margin-bottom: 0;
   padding-left: 2rem;
-  margin-bottom: 2rem;
   z-index: 2;
   padding-right: 2rem;
   justify-content: space-between;
@@ -98,10 +97,7 @@
     max-height: 16.125rem;
     font-size: 1.05rem;
     margin: 0;
-    padding-left: 0.9375rem;
-    padding-right: 0.9375rem;
-    padding-top: 0.9375rem;
-    padding-bottom: 0.9375rem;
+    padding: 0.9375rem;
     color: var(--neko-input-text);
     background: var(--neko-input-background);
     border-radius: 14px;
@@ -166,7 +162,6 @@
 }
 
 [contenteditable] {
-  -webkit-user-select: text;
   user-select: text;
   caret-color: var(--neko-input-text);
   -webkit-user-modify: read-write-plaintext-only;

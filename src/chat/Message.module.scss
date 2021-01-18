@@ -1,18 +1,3 @@
-.mention {
-  font-weight: 600;
-  color: var(--neko-mention-other);
-
-  &.isMe {
-    color: var(--neko-mention-me);
-    border-radius: 4px;
-  }
-
-  &.selected {
-    color: var(--neko-text-inverse);
-    font-weight: 700;
-  }
-}
-
 .message {
   display: flex;
   padding-left: 2rem;
@@ -75,6 +60,30 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+    .innerInput {
+      position: relative;
+      .mentionsWrapper {
+        position: relative;
+        height: 0;
+      }
+      svg {
+        position: absolute;
+        right: 0.8rem;
+        bottom: 1.15rem;
+        cursor: pointer;
+      }
+      .input {
+        margin-top: 0.4rem;
+        margin-bottom: 0.4rem;
+        padding: 0.8rem;
+        border-radius: 11px;
+        background: var(--neko-input-background);
+        font-size: 1rem;
+        font-weight: 300;
+      }
+    }
+
+
 
     a {
       color: var(--neko-text-href);

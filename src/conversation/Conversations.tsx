@@ -21,8 +21,12 @@ const ConversationList = () => {
     getParticipants
   )
   const history = useHistory()
-  const filteredParticipants = participants.data?.filter(
-    (part) => part.conversation.participants.length > 1
+  const filteredParticipants = useMemo(
+    () =>
+      participants.data?.filter(
+        (part) => part.conversation.participants.length > 1
+      ),
+    [participants]
   )
   const [, setLastConversation] = useSuspenseStorageItem('last-conversation')
 

@@ -32,7 +32,7 @@ const View = ({
   channel: Channel
   autoRead: boolean
 }) => {
-  const { tracking, setTracking } = Chat.useContainer()
+  const { tracking, setTracking, editingMessageID } = Chat.useContainer()
   const { token, id } = Auth.useContainer()
   const { data, canFetchMore, fetchMore } = useInfiniteQuery<
     MessageType[],
@@ -75,13 +75,15 @@ const View = ({
   useEffect(() => {
     if (isPlatform('capacitor')) {
       Keyboard.addListener('keyboardDidShow', () => {
-        const scrollRef = ref?.current
-        setTracking(true)
-        if (scrollRef) {
-          scrollRef.scroll({
-            top: scrollRef.scrollHeight,
-            behavior: 'smooth'
-          })
+        if (!editingMessageID) {
+          const scrollRef = ref?.current
+          setTracking(true)
+          if (scrollRef) {
+            scrollRef.scroll({
+              top: scrollRef.scrollHeight,
+              behavior: 'smooth'
+            })
+          }
         }
       })
     }
@@ -89,7 +91,7 @@ const View = ({
     return () => {
       if (isPlatform('capacitor')) Keyboard.removeAllListeners()
     }
-  }, [setTracking, autoScroll])
+  }, [setTracking, autoScroll, editingMessageID])
 
   useEffect(() => {
     trackingRef.current = tracking
