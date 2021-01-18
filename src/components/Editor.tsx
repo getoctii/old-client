@@ -347,7 +347,7 @@ const View = ({
                   if (event.shiftKey && newLines) {
                     event.preventDefault()
                     editor.insertBreak()
-                  } else if (target) {
+                  } else if (target && mentions) {
                     event.preventDefault()
                     if (filtered[selected].id) onMention(filtered[selected].id)
                   } else {
