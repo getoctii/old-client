@@ -352,7 +352,6 @@ const View = ({
                     if (filtered[selected].id) onMention(filtered[selected].id)
                   } else {
                     event.preventDefault()
-                    if (!mentions) return
                     const content = serialize(value)
                     if (content !== '') {
                       setTyping(false)
