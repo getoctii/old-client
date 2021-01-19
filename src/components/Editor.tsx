@@ -2,13 +2,11 @@ import React, {
   Suspense,
   useCallback,
   useEffect,
-  useMemo,
   useState
 } from 'react'
 import { useQuery } from 'react-query'
 import { useMedia } from 'react-use'
 import {
-  createEditor,
   Element,
   Text,
   Transforms,
@@ -16,17 +14,16 @@ import {
   Range,
   Node
 } from 'slate'
-import { HistoryEditor, withHistory } from 'slate-history'
+import { HistoryEditor } from 'slate-history'
 import {
   RenderLeafProps,
-  withReact,
   Slate,
   Editable,
   ReactEditor
 } from 'slate-react'
 import { Auth } from '../authentication/state'
 import { getUser, UserResponse } from '../user/remote'
-import { serialize, withMentions } from '../utils/slate'
+import { serialize } from '../utils/slate'
 import styles from './Editor.module.scss'
 import unified from 'unified'
 import markdown from 'remark-parse'

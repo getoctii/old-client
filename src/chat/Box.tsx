@@ -6,7 +6,7 @@ import {
   faSmileWink,
   faTimes
 } from '@fortawesome/pro-solid-svg-icons'
-import React, { Suspense, useCallback, useMemo, useRef, useState } from 'react'
+import React, { Suspense, useMemo, useRef, useState } from 'react'
 import { useMedia } from 'react-use'
 import Picker from 'emoji-picker-react'
 import { Auth } from '../authentication/state'
@@ -19,8 +19,8 @@ import { useQuery } from 'react-query'
 import { emptyEditor, withMentions } from '../utils/slate'
 import Editor from '../components/Editor'
 import { createEditor, Editor as SlateEditor, Transforms } from 'slate'
-import { HistoryEditor, withHistory } from 'slate-history'
-import { ReactEditor, withReact } from 'slate-react'
+import { withHistory } from 'slate-history'
+import { withReact } from 'slate-react'
 
 const Mention = ({
   userID,
@@ -75,12 +75,6 @@ const View = ({ channelID }: { channelID: string }) => {
     () => withHistory(withReact(withMentions(createEditor()))),
     []
   )
-  // const buttons = useCallback(
-  //   (editor: SlateEditor & HistoryEditor & ReactEditor) => (
-  //
-  //   ),
-  //   [emojiPicker, isMobile, sendMessage, setUploadDetails, token, uploadDetails]
-  // )
   return (
     <div>
       <Suspense fallback={<Placeholder />}>
