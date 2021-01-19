@@ -21,8 +21,7 @@ const useChat = () => {
   const sendMessage = useCallback(
     async (content: string) => {
       if (!token || !channelID) return
-      postMessage(channelID, content, token)
-      console.log('hmmmm', tracking)
+      await postMessage(channelID, content, token)
       if (tracking) setAutoRead(true)
     },
     [token, setAutoRead, tracking, channelID]

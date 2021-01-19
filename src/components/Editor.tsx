@@ -2,13 +2,11 @@ import React, {
   Suspense,
   useCallback,
   useEffect,
-  useMemo,
   useState
 } from 'react'
 import { useQuery } from 'react-query'
 import { useMedia } from 'react-use'
 import {
-  createEditor,
   Element,
   Text,
   Transforms,
@@ -16,17 +14,16 @@ import {
   Range,
   Node
 } from 'slate'
-import { HistoryEditor, withHistory } from 'slate-history'
+import { HistoryEditor } from 'slate-history'
 import {
   RenderLeafProps,
-  withReact,
   Slate,
   Editable,
   ReactEditor
 } from 'slate-react'
 import { Auth } from '../authentication/state'
 import { getUser, UserResponse } from '../user/remote'
-import { serialize, withMentions } from '../utils/slate'
+import { serialize } from '../utils/slate'
 import styles from './Editor.module.scss'
 import unified from 'unified'
 import markdown from 'remark-parse'
@@ -83,6 +80,7 @@ const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
 }
 
 const View = ({
+  editor,
   className,
   mentionsClassName,
   typingClassName,
@@ -97,13 +95,14 @@ const View = ({
   typingIndicator,
   mentions
 }: {
+  editor: Editor & ReactEditor & HistoryEditor
   className: string
   mentionsClassName?: string
   typingClassName?: string
   inputClassName: string
   emptyEditor: Node[]
   placeholder?: any
-  children?: (editor: Editor & ReactEditor & HistoryEditor) => any
+  children?: any
   newLines: boolean
   onEnter: (content: string) => void
   onTyping?: () => void
@@ -121,10 +120,6 @@ const View = ({
       clearInterval(interval)
     }
   }, [typing, onTyping])
-  const editor = useMemo(
-    () => withHistory(withReact(withMentions(createEditor()))),
-    []
-  )
   useEffect(() => {
     editor.isInline = (element: Element) => {
       return element.type === 'mention'
@@ -379,7 +374,7 @@ const View = ({
             }}
           />
         </Slate>
-        {children ? children(editor) : <></>}
+        {children}
       </div>
     </>
   )

@@ -3,7 +3,7 @@
   position: absolute;
   z-index: 10;
   bottom: 0.5rem;
-  right: 0rem;
+  right: 2rem;
   border: none;
   color: var(--neko-text-normal);
   background: var(--neko-emojis-background);
@@ -41,6 +41,11 @@
       min-height: 51px;
       height: 51px;
       width: 51px;
+      color: var(--neko-text-default);
+      font-size: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 }

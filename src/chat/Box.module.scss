@@ -3,9 +3,65 @@
   height: 0;
 }
 
+.emojiPicker, .uploadPicker {
+  position: relative;
+  aside {
+    border-radius: 10px !important;
+    position: absolute !important;
+    z-index: 2 !important;
+    bottom: 0.5rem;
+    right: 2rem;
+    border: none !important;
+    color: var(--neko-text-normal) !important;
+    background: var(--neko-emojis-background) !important;
+    box-shadow: none !important;
+    font-size: 1rem;
+    input {
+      background: var(--neko-emojis-input);
+      border: none !important;
+      color: var(--neko-text-normal);
+    }
+
+    ul::before {
+      background: var(--neko-emojis-background) !important;
+      color: var(--neko-text-normal) !important;
+    }
+
+    button {
+      color: var(--neko-text-normal) !important;
+    }
+
+    button:first-child {
+      margin-left: 0;
+    }
+  }
+}
+
 .box {
   .buttons {
     display: flex;
+
+    button {
+      height: 3.125rem;
+      width: 3.125rem;
+      background: var(--neko-input-background);
+      color: var(--neko-input-text);
+      margin-left: 0.5rem;
+      font-size: 1.05rem;
+      position: relative;
+      .badge {
+        position: absolute;
+        height: 18px;
+        border-radius: 50%;
+        width: 18px;
+        bottom: -3.45px;
+        right: -3.45px;
+        border-color: var(--neko-sidebar-background);
+        border-width: 3.5px;
+        border-style: solid;
+        background: var(--neko-colors-primary);
+      }
+    }
   }
   a {
     color: var(--neko-text-href);
@@ -24,28 +80,6 @@
     margin-bottom: 0.5rem;
   }
 
-  button {
-    height: 3.125rem;
-    width: 3.125rem;
-    background: var(--neko-input-background);
-    color: var(--neko-input-text);
-    margin-left: 0.5rem;
-    font-size: 1.05rem;
-    position: relative;
-    .badge {
-      position: absolute;
-      height: 18px;
-      border-radius: 50%;
-      width: 18px;
-      bottom: -3.45px;
-      right: -3.45px;
-      border-color: var(--neko-sidebar-background);
-      border-width: 3.5px;
-      border-style: solid;
-      background: var(--neko-colors-primary);
-    }
-  }
-
   .uploadInput {
     display: none;
   }
@@ -61,33 +95,6 @@
     user-select: none;
     white-space: nowrap;
     overflow: hidden;
-  }
-  aside {
-    border-radius: 10px !important;
-    position: absolute !important;
-    z-index: 2 !important;
-    bottom: 0.5rem;
-    right: 0rem;
-    border: none !important;
-    color: var(--neko-text-normal) !important;
-    background: var(--neko-emojis-background) !important;
-    box-shadow: none !important;
-    input {
-      background: var(--neko-emojis-input);
-      border: none !important;
-      color: var(--neko-text-normal);
-    }
-    ul::before {
-      background: var(--neko-emojis-background) !important;
-      color: var(--neko-text-normal) !important;
-    }
-
-    button {
-      color: var(--neko-text-normal) !important;
-    }
-    button:first-child {
-      margin-left: 0;
-    }
   }
 
   .input {
