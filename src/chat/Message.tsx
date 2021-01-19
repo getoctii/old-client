@@ -31,6 +31,10 @@ import { faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 import { patchMessage } from './remote'
 import Editor from '../components/Editor'
 import { Chat } from './state'
+import { withHistory } from 'slate-history'
+import { withReact } from 'slate-react'
+import { withMentions } from '../utils/slate'
+import { createEditor } from 'slate'
 
 const { Clipboard, Permissions } = Plugins
 dayjs.extend(dayjsUTC)
@@ -75,10 +79,14 @@ const EditBox = ({
   onDismiss: () => void
 }) => {
   const { token } = Auth.useContainer()
-
+  const editor = useMemo(
+    () => withHistory(withReact(withMentions(createEditor()))),
+    []
+  )
   return (
     <div className={styles.innerInput}>
       <Editor
+        editor={editor}
         mentions={false}
         className={styles.editor}
         inputClassName={styles.input}
@@ -304,7 +312,7 @@ const View = memo(
                 onDismiss={() => setEditingMessageID(undefined)}
               />
             ) : (
-              <p>{main}</p>
+              <p key={id}>{main}</p>
             )}
             <Measure onResize={onResize}>{embeds}</Measure>
           </div>

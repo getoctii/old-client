@@ -135,12 +135,10 @@ const Community = () => {
       ) : (
         <></>
       )}
-
       <Suspense fallback={<Chat.Placeholder />}>
         <Switch>
           <PrivateRoute path={`${path}/settings`} component={Settings} exact />
           <PrivateRoute path={`${path}/members`} component={Members} exact />
-
           <PrivateRoute
             path={`${path}/channels/:channelID`}
             component={Channel}

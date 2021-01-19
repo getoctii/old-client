@@ -80,7 +80,6 @@ const Router = () => {
   )
 
   useEffect(() => {
-    console.log(!match?.params.id, filteredParticipants.length > 0, !isMobile)
     if (!match?.params.id && filteredParticipants.length > 0 && !isMobile) {
       history.push(
         `/conversations/${

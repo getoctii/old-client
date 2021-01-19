@@ -1,3 +1,18 @@
+.mention {
+  font-weight: 600;
+  color: var(--neko-mention-other);
+
+  &.isMe {
+    color: var(--neko-mention-me);
+    border-radius: 4px;
+  }
+
+  &.selected {
+    color: var(--neko-text-inverse);
+    font-weight: 700;
+  }
+}
+
 .message {
   display: flex;
   padding-left: 2rem;

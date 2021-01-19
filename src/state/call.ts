@@ -64,7 +64,6 @@ const useCall = () => {
   useEffect(() => {
     if (!call) return
     const handler = () => {
-      console.log('call ended')
       endCall()
     }
 
@@ -76,7 +75,6 @@ const useCall = () => {
   }, [call, endCall])
 
   useEffect(() => {
-    console.log('call', call)
     if (!call) return
     const handler = (stream: MediaStream) => {
       setCallState('connected')
@@ -102,11 +100,8 @@ const useCall = () => {
     }
   }, [peer])
 
-  useEffect(() => console.log('sessionID', sessionID), [sessionID])
-
   useEffect(() => {
     const handler = async (call: Peer.MediaConnection) => {
-      console.log('CALL EVENT', call)
       setCall(call)
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -173,7 +168,6 @@ const useCall = () => {
 
   const establishCall = useCallback(
     async (sentSessionID: string, receivedPeerID: string) => {
-      console.log(sentSessionID, sessionID)
       if (sentSessionID !== sessionID) return
       setOtherPeerID(receivedPeerID)
       setCallState('waiting')
@@ -185,7 +179,7 @@ const useCall = () => {
         setInputStream(stream)
         setCall(peer.call(receivedPeerID, stream))
       } catch (error) {
-        console.log(error)
+        console.error(error)
         const stream = new MediaStream()
         setInputStream(stream)
         setCall(peer.call(receivedPeerID, stream))

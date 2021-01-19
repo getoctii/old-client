@@ -32,7 +32,6 @@ const Upload = ({ status, file, onUpload }: UploadDetails) => {
           {status === 'uploading' ? (
             <FontAwesomeIcon icon={faSpinner} spin />
           ) : (
-            // uh thats not what i wanted lmao
             <FontAwesomeIcon icon={faFileUpload} />
           )}
         </button>

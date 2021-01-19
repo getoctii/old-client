@@ -18,7 +18,6 @@ const useUpdatedMessage = (eventSource: EventSourcePolyfill | null) => {
         content: string
         updated_at: string
       }
-      console.log(event)
       log('Events', 'purple', 'UPDATED_MESSAGE')
 
       const initial = queryCache.getQueryData([

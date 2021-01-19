@@ -83,6 +83,7 @@ const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
 }
 
 const View = ({
+  editor,
   className,
   mentionsClassName,
   typingClassName,
@@ -97,13 +98,14 @@ const View = ({
   typingIndicator,
   mentions
 }: {
+  editor: Editor & ReactEditor & HistoryEditor
   className: string
   mentionsClassName?: string
   typingClassName?: string
   inputClassName: string
   emptyEditor: Node[]
   placeholder?: any
-  children?: (editor: Editor & ReactEditor & HistoryEditor) => any
+  children?: any
   newLines: boolean
   onEnter: (content: string) => void
   onTyping?: () => void
@@ -121,10 +123,6 @@ const View = ({
       clearInterval(interval)
     }
   }, [typing, onTyping])
-  const editor = useMemo(
-    () => withHistory(withReact(withMentions(createEditor()))),
-    []
-  )
   useEffect(() => {
     editor.isInline = (element: Element) => {
       return element.type === 'mention'
@@ -379,7 +377,7 @@ const View = ({
             }}
           />
         </Slate>
-        {children ? children(editor) : <></>}
+        {children}
       </div>
     </>
   )

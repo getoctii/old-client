@@ -16,11 +16,11 @@ import Upload from './Upload'
 import { getUser } from '../user/remote'
 import messageStyles from './Message.module.scss'
 import { useQuery } from 'react-query'
-import { emptyEditor } from '../utils/slate'
+import { emptyEditor, withMentions } from '../utils/slate'
 import Editor from '../components/Editor'
-import { Editor as SlateEditor, Transforms } from 'slate'
-import { HistoryEditor } from 'slate-history'
-import { ReactEditor } from 'slate-react'
+import { createEditor, Editor as SlateEditor, Transforms } from 'slate'
+import { HistoryEditor, withHistory } from 'slate-history'
+import { ReactEditor, withReact } from 'slate-react'
 
 const Mention = ({
   userID,
@@ -71,63 +71,19 @@ const View = ({ channelID }: { channelID: string }) => {
   )
   const uploadInput = useRef<HTMLInputElement>(null)
   const [emojiPicker, setEmojiPicker] = useState(false)
-
-  const buttons = useCallback(
-    (editor: SlateEditor & HistoryEditor & ReactEditor) => (
-      <div className={styles.buttons}>
-        {!isMobile && (
-          <Button type='button' onClick={() => setEmojiPicker(!emojiPicker)}>
-            <FontAwesomeIcon icon={faSmileWink} />
-          </Button>
-        )}
-        <div className={styles.emojiPicker}>
-          {emojiPicker && (
-            <Picker
-              onEmojiClick={(_, data) => {
-                if (editor.selection) {
-                  editor.insertText(data.emoji)
-                } else {
-                  Transforms.insertText(editor, data.emoji, {
-                    at: SlateEditor.end(editor, [])
-                  })
-                }
-              }}
-              native
-            />
-          )}
-        </div>
-        <Button
-          type='button'
-          onClick={() => {
-            if (!!uploadDetails && emojiPicker) setEmojiPicker(false)
-            else if (!!uploadDetails) {
-              if (uploadInput.current) uploadInput.current.value = ''
-              setUploadDetails(null)
-            } else {
-              uploadInput.current?.click()
-            }
-          }}
-        >
-          <FontAwesomeIcon
-            icon={uploadDetails && !emojiPicker ? faTimes : faFileUpload}
-          />
-          <input
-            ref={uploadInput}
-            className={styles.uploadInput}
-            type='file'
-            accept='.jpg, .png, .jpeg, .gif'
-            onChange={async (event) => {
-              if (!token || !event.target.files?.item(0)) return
-              setUploadDetails({
-                status: 'pending',
-                file: event.target.files.item(0) as File
-              })
-            }}
-          />
-          {uploadDetails && emojiPicker && (
-            <div className={`${styles.badge}`} />
-          )}
-        </Button>
+  const editor = useMemo(
+    () => withHistory(withReact(withMentions(createEditor()))),
+    []
+  )
+  // const buttons = useCallback(
+  //   (editor: SlateEditor & HistoryEditor & ReactEditor) => (
+  //
+  //   ),
+  //   [emojiPicker, isMobile, sendMessage, setUploadDetails, token, uploadDetails]
+  // )
+  return (
+    <div>
+      <Suspense fallback={<Placeholder />}>
         {uploadDetails && !emojiPicker && (
           <div className={styles.uploadPicker}>
             <Upload
@@ -144,14 +100,26 @@ const View = ({ channelID }: { channelID: string }) => {
             />
           </div>
         )}
-      </div>
-    ),
-    [emojiPicker, isMobile, sendMessage, setUploadDetails, token, uploadDetails]
-  )
-  return (
-    <div>
-      <Suspense fallback={<Placeholder />}>
+
+        {emojiPicker && (
+          <div className={styles.emojiPicker}>
+            <Picker
+              onEmojiClick={(_, data) => {
+                if (editor.selection) {
+                  editor.insertText(data.emoji)
+                } else {
+                  Transforms.insertText(editor, data.emoji, {
+                    at: SlateEditor.end(editor, [])
+                  })
+                }
+              }}
+              native
+            />
+          </div>
+        )}
+
         <Editor
+          editor={editor}
           emptyEditor={emptyEditor}
           newLines
           className={styles.box}
@@ -162,9 +130,9 @@ const View = ({ channelID }: { channelID: string }) => {
             <span className={styles.ph}>Say something{adjective}...</span>
           }
           mentions
-          onTyping={() => {
+          onTyping={async () => {
             if (!token) return
-            postTyping(channelID, token)
+            await postTyping(channelID, token)
           }}
           onEnter={async (content) => {
             if (content !== '' || uploadDetails) {
@@ -175,18 +143,57 @@ const View = ({ channelID }: { channelID: string }) => {
                 })
                 const url = await uploadFile(uploadDetails.file)
                 if (content !== '') {
-                  sendMessage(`${content}\n${url}`)
+                  await sendMessage(`${content}\n${url}`)
                 } else {
-                  sendMessage(url)
+                  await sendMessage(url)
                 }
                 setUploadDetails(null)
               } else {
-                sendMessage(content)
+                await sendMessage(content)
               }
             }
           }}
         >
-          {buttons}
+          <div className={styles.buttons}>
+            {!isMobile && (
+              <Button type='button' onClick={() => setEmojiPicker(!emojiPicker)}>
+                <FontAwesomeIcon icon={faSmileWink} />
+              </Button>
+            )}
+
+            <Button
+              type='button'
+              onClick={() => {
+                if (!!uploadDetails && emojiPicker) setEmojiPicker(false)
+                else if (!!uploadDetails) {
+                  if (uploadInput.current) uploadInput.current.value = ''
+                  setUploadDetails(null)
+                } else {
+                  uploadInput.current?.click()
+                }
+              }}
+            >
+              <FontAwesomeIcon
+                icon={uploadDetails && !emojiPicker ? faTimes : faFileUpload}
+              />
+              <input
+                ref={uploadInput}
+                className={styles.uploadInput}
+                type='file'
+                accept='.jpg, .png, .jpeg, .gif'
+                onChange={async (event) => {
+                  if (!token || !event.target.files?.item(0)) return
+                  setUploadDetails({
+                    status: 'pending',
+                    file: event.target.files.item(0) as File
+                  })
+                }}
+              />
+              {uploadDetails && emojiPicker && (
+                <div className={`${styles.badge}`} />
+              )}
+            </Button>
+          </div>
         </Editor>
       </Suspense>
     </div>

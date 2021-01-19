@@ -18,9 +18,9 @@ export interface Member {
 export interface CommunityResponse {
   id: string
   name: string
-  icon: string
+  icon?: string
   large: boolean
-  owner_id: string
+  owner_id?: string
   channels: string[]
 }
 

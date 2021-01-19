@@ -33,9 +33,7 @@ export const useSuspenseStorageItem = <T>(
 
   const setValue = useCallback(
     async (value: T) => {
-      console.log(key)
       try {
-        console.log(typeof value === 'string' ? value : JSON.stringify(value))
         await Plugins.Storage.set({
           key,
           value: typeof value === 'string' ? value : JSON.stringify(value)
