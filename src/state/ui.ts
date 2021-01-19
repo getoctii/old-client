@@ -1,5 +1,5 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { createContainer } from 'unstated-next'
 import { ModalTypes } from '../utils/constants'
 

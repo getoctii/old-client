@@ -18,7 +18,6 @@ export const Authenticate = () => {
           <source srcSet='/logo.webp' type='image/webp' />
           <img alt='Octii' src='/logo.png' />
         </picture>
-        {/* <img alt='octii' src='/logo192.png' /> */}
         <h1>{match?.params.page === 'register' ? 'Register' : 'Login'}</h1>
         <Switch>
           <Route name='Login' path={'/authenticate/login'} component={Login} />
@@ -58,7 +57,6 @@ export const Authenticate = () => {
           <h3>Limited Beta Access</h3>
         </div>
         <div className={styles.timeline}>
-          {/* this is gonna be a pain to program  */}
           <div>
             Beta 1 <div className={styles.circle} />
           </div>

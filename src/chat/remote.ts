@@ -50,7 +50,7 @@ export const postMessage = async (
   (
     await clientGateway.post(
       `/channels/${channelID}/messages`,
-      new URLSearchParams({ content }),
+      { content },
       { headers: { Authorization: token } }
     )
   ).data
@@ -73,7 +73,7 @@ export const patchMessage = async (
   (
     await clientGateway.patch(
       `/messages/${messageID}`,
-      new URLSearchParams({ content }),
+      { content },
       { headers: { Authorization: token } }
     )
   ).data

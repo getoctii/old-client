@@ -91,7 +91,6 @@ const EditBox = ({
           }
         ]}
         onEnter={async (content) => {
-          console.log(content)
           if (!token || !content) return
           onDismiss()
           await patchMessage(id, content, token)

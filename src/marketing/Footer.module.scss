@@ -3,9 +3,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem;
-  padding-left: 10rem;
-  padding-right: 10rem;
+  padding: 1rem 10rem;
+
   .container {
     z-index: 2;
     max-width: 70rem;
@@ -71,10 +70,4 @@
     padding-left: 2rem;
     padding-right: 2rem;
   }
-}
-
-@media (max-height: 480px) {
-  // .footer {
-  //   margin-top: 4rem;
-  // }
 }

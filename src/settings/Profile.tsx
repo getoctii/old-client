@@ -63,20 +63,20 @@ const Profile = () => {
           try {
             await clientGateway.patch(
               `/users/${id}`,
-              new URLSearchParams({
+              {
                 ...(values.username !== user.data?.username && {
                   username: values.username
                 }),
                 avatar: values.avatar,
                 status: values.status
-              }),
+              },
               {
                 headers: {
                   authorization: token
                 }
               }
             )
-            queryCache.invalidateQueries(['users', id])
+            await queryCache.invalidateQueries(['users', id])
           } finally {
             setSubmitting(false)
           }
@@ -91,7 +91,7 @@ const Profile = () => {
               <div className={styles.avatar}>
                 <img src={avatar} alt={user.data?.username} />
                 <div className={styles.details}>
-                  <p>Recommanded icon size is 100x100</p>
+                  <p>Recommended icon size is 100x100</p>
                   <h6>
                     Powered by <a href='https://file.coffee'>file.coffee</a>
                   </h6>

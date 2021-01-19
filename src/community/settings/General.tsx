@@ -44,19 +44,19 @@ const Personalization = ({ community }: { community: CommunityResponse }) => {
         try {
           await clientGateway.patch(
             `/communities/${community.id}`,
-            new URLSearchParams({
+            {
               ...(values.name !== community.name && {
                 name: values.name
               }),
               icon: values.icon
-            }),
+            },
             {
               headers: {
                 authorization: auth.token
               }
             }
           )
-          queryCache.invalidateQueries(['community', community.id])
+          await queryCache.invalidateQueries(['community', community.id])
         } catch (error) {
           console.log(error)
         } finally {
@@ -104,7 +104,7 @@ const Personalization = ({ community }: { community: CommunityResponse }) => {
                 </div>
                 <div className={styles.iconInfo}>
                   <h4>Personalize your community with an icon. </h4>
-                  <p>Recommanded icon size is 100x100</p>
+                  <p>Recommended icon size is 100x100</p>
                   <div className={styles.covfefe}>Powered by file.coffee</div>
                 </div>
               </div>
@@ -169,9 +169,9 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
       <h5>Danger Zone</h5>
       <h4>Transfer Ownership</h4>
       <p>
-        Transfering ownership will give the specficed person full control of
+        Transferring ownership will give the specified person full control of
         this community. You will lose the ability to manage the server and won’t
-        be able to regain control unless you ask the specfifed person to transfer
+        be able to regain control unless you ask the specified person to transfer
         the community back.{' '}
       </p>
       <Formik
@@ -185,13 +185,13 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
         ) => {
           if (!values?.username) return setFieldError('username', 'Required')
           try {
-            const splitted = values.username.split('#')
+            const [username, discriminator] = values.username.split('#')
             const user = (
               await clientGateway.get<FindResponse>('/users/find', {
                 headers: { Authorization: auth.token },
                 params: {
-                  username: splitted[0],
-                  discriminator: splitted[1] === 'inn' ? 0 : Number(splitted[1])
+                  username,
+                  discriminator: discriminator[1] === 'inn' ? 0 : Number(discriminator[1])
                 }
               })
             ).data
@@ -200,7 +200,7 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
               new URLSearchParams({ owner_id: user.id }),
               { headers: { Authorization: auth.token } }
             )
-            queryCache.invalidateQueries(['community', community.id])
+            await queryCache.invalidateQueries(['community', community.id])
             history.push(`/communities/${community.id}`)
           } catch (e) {
             if (e.response.data.errors.includes('UserNotFound'))
@@ -230,8 +230,8 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
           </Form>
         )}
       </Formik>
-      <div className={styles.seperator} />
-      <h4>Delete Commmunity</h4>
+      <div className={styles.separator} />
+      <h4>Delete Community</h4>
       <p>
         Deleting a community will wipe it from the face of this planet. Do not
         do this as you will not be able to recover the community or any of it’s

@@ -21,8 +21,8 @@ export const Confirmation = ({
         </h3>
         <p>
           {type === 'channel'
-            ? "One you do this, you cannot retrive the channel and it's messages so beware."
-            : 'One you do this, you cannot retrive this message again so beware.'}
+            ? "One you do this, you cannot retrieve the channel and it's messages so beware."
+            : 'One you do this, you cannot retrieve this message again so beware.'}
         </p>
         <div>
           <Button
@@ -32,7 +32,7 @@ export const Confirmation = ({
           >
             Delete
           </Button>
-          <div className={styles.seperater} />
+          <div className={styles.separator} />
           <Button
             type='button'
             className={styles.cancel}

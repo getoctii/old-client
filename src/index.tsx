@@ -21,6 +21,7 @@ import { ScrollPosition } from './state/scroll'
 import { Call } from './state/call'
 import { Chat } from './chat/state'
 import { Integrations } from '@sentry/tracing'
+import { AxiosError } from 'axios'
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
@@ -77,7 +78,7 @@ ReactDOM.render(
     >
       <Sentry.ErrorBoundary
         onReset={() => queryCache.resetErrorBoundaries()}
-        fallback={({ resetError }) => <Error resetErrorBoundary={resetError} />}
+        fallback={({ resetError, error }: { resetError: () => void, error: AxiosError }) => <Error resetErrorBoundary={resetError} error={error} />}
       >
         <React.Suspense fallback={<Loader />}>
           <Auth.Provider>
@@ -104,12 +105,10 @@ ReactDOM.render(
 )
 
 serviceWorkerRegistration.register({
-  onUpdate: (regristration) => {
-    const waitingServiceWorker = regristration.waiting
-    // u spelled it wrong i fixed it already
+  onUpdate: (registration) => {
+    const waitingServiceWorker = registration.waiting
     if (waitingServiceWorker) {
       waitingServiceWorker.addEventListener('statechange', (event) => {
-        // state does not exist
         // @ts-ignore
         if (event?.target?.state === 'activated') {
           window.location.reload()

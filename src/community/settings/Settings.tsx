@@ -21,18 +21,6 @@ export const Settings = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.settings}>
-        {/* <h2>
-        {isMobile && (
-          <div
-            className={styles.icon}
-            onClick={() => isMobile && history.push(`/communities/${id}`)}
-          >
-            <FontAwesomeIcon icon={faChevronLeft} />
-          </div>
-        )}
-        Settings
-      </h2> */}
-
         <div className={styles.header}>
           {isMobile ? (
             <div

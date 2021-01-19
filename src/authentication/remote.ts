@@ -8,7 +8,7 @@ export const login = async (values: { email: string; password: string }) =>
   (
     await clientGateway.post<LoginResponse>(
       '/users/login',
-      new URLSearchParams(values)
+      values
     )
   ).data
 
@@ -25,6 +25,6 @@ export const register = async (values: {
   (
     await clientGateway.post<RegisterResponse>(
       '/users',
-      new URLSearchParams(values)
+      values
     )
   ).data

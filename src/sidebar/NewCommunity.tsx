@@ -41,7 +41,7 @@ const createCommunity = async (token: string, values: createCommunityData) =>
   (
     await clientGateway.post<ConversationResponse>(
       '/communities',
-      new URLSearchParams(values),
+      values,
       { headers: { Authorization: token } }
     )
   ).data
@@ -78,9 +78,9 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
             if (community?.id) history.push(`/communities/${community.id}`)
           } catch (e) {
             if (e.response.data.errors.includes('CommunityNameInvalid'))
-              setErrors({ name: 'Invaild Community Name' })
-            if (e.response.data.errors.includes('InvaildIcon'))
-              setErrors({ icon: 'Invaild Community Icon' })
+              setErrors({ name: 'Invalid Community Name' })
+            if (e.response.data.errors.includes('InvalidIcon'))
+              setErrors({ icon: 'Invalid Community Icon' })
           } finally {
             setSubmitting(false)
           }
