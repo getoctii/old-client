@@ -42,12 +42,11 @@
   .icon {
     background-color: var(--neko-channels-background);
     background-size: cover;
-    margin: 0;
     width: 3.5rem;
     height: 3.5rem;
     min-height: 3.5rem;
     min-width: 3.5rem;
-    margin-bottom: 0.7rem;
+    margin: 0 0 0.7rem;
     border-radius: 16px;
     transition: box-shadow 0.1s ease-in-out;
     animation: bounce 0.2s easing-in;
@@ -220,10 +219,7 @@
     height: calc(5.5rem + env(safe-area-inset-bottom));
     max-height: calc(5.5rem + env(safe-area-inset-bottom));
 
-    padding-left: 0;
-    padding-right: 0;
-    padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
-    padding-top: 1rem;
+    padding: 1rem 0 calc(env(safe-area-inset-bottom) + 1rem);
     .scrollable {
       padding-left: 1rem;
       overflow-x: scroll;
@@ -254,15 +250,14 @@
 }
 
 .communityPlaceholder {
-  margin: 0;
   width: 3.5rem;
   height: 3.5rem;
   min-height: 3.5rem;
   min-width: 3.5rem;
-  margin-bottom: 0.7rem;
+  margin: 0 0 0.7rem;
   border-radius: 16px;
   transition: box-shadow 0.1s ease-in-out;
-  animation: bounce 0.2s easin-in;
+  animation: bounce 0.2s ease-in;
   background: var(--neko-channels-background);
 }
 
@@ -287,9 +282,6 @@
     border-radius: 15px;
     width: auto;
     height: auto;
-    padding-left: 8px;
-    padding-right: 8px;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding: 3px 8px;
   }
 }

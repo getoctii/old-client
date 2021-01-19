@@ -26,11 +26,11 @@ const NewConversation = () => {
         ) => {
           if (!values?.tag) return setFieldError('tag', 'Required')
           try {
-            const splitted = values.tag.split('#')
+            const [username, discriminator] = values.tag.split('#')
             const user = await findUser(
               token,
-              splitted[0],
-              splitted[1] === 'inn' ? '0' : splitted[1]
+              username,
+              discriminator === 'inn' ? '0' : discriminator
             )
             const cache = queryCache.getQueryData([
               'participants',

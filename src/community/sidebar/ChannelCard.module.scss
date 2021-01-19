@@ -13,9 +13,8 @@
     border-radius: 10px;
   }
   h4 {
-    margin: 0;
     padding: 0;
-    margin-right: auto;
+    margin: 0 auto 0 0;
     font-weight: 500;
     width: 100%;
     display: flex;
@@ -46,10 +45,7 @@
         border-radius: 10px;
         width: auto;
         height: auto;
-        padding-left: 8px;
-        padding-right: 8px;
-        padding-top: 2px;
-        padding-bottom: 2px;
+        padding: 2px 8px;
       }
     }
     .muted {

@@ -63,15 +63,15 @@ const View = ({ community }: { community?: CommunityResponse }) => {
 }
 
 const Placeholder = () => {
-  const integerationOne = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
-  const integerationTwo = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
+  const integrationOne = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
+  const integrationTwo = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
   return (
     <div className={styles.placeholder}>
       <div className={styles.integration}>
         <div className={styles.icon} />
         <div
           className={styles.text}
-          style={{ width: `${integerationOne}rem` }}
+          style={{ width: `${integrationOne}rem` }}
         />
       </div>
       <hr />
@@ -79,7 +79,7 @@ const Placeholder = () => {
         <div className={styles.icon} />
         <div
           className={styles.text}
-          style={{ width: `${integerationTwo}rem` }}
+          style={{ width: `${integrationTwo}rem` }}
         />
       </div>
     </div>

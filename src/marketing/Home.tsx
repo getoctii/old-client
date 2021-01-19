@@ -33,7 +33,7 @@ const Home = () => {
       return
     }
     try {
-      await clientGateway.post('/users/newsletter', new URLSearchParams(values))
+      await clientGateway.post('/users/newsletter', values)
       setSubmitted(true)
     } finally {
       setSubmitting(false)

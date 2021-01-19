@@ -37,8 +37,8 @@ const Invite = (invite: InviteType) => {
         })
       ).data,
     {
-      onSuccess: () => {
-        queryCache.invalidateQueries(['invites', match?.params.id, auth.token])
+      onSuccess: async () => {
+        await queryCache.invalidateQueries(['invites', match?.params.id, auth.token])
       }
     }
   )
@@ -118,8 +118,8 @@ const Invites = () => {
         )
       ).data,
     {
-      onSuccess: () => {
-        queryCache.invalidateQueries(['invites', match?.params.id, auth.token])
+      onSuccess: async () => {
+        await queryCache.invalidateQueries(['invites', match?.params.id, auth.token])
       }
     }
   )

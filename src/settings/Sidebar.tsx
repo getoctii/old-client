@@ -60,7 +60,7 @@ const Sidebar = () => {
         className={styles.logout}
         onClick={async () => {
           auth.setToken(null)
-          queryCache.invalidateQueries()
+          await queryCache.invalidateQueries()
           await Plugins.Storage.clear()
           history.push('/authenticate/login')
         }}

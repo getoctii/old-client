@@ -50,10 +50,10 @@ const Security = () => {
           try {
             await clientGateway.patch(
               `/users/${id}`,
-              new URLSearchParams({
+              {
                 oldPassword: values.oldPassword,
                 newPassword: values.newPassword
-              }),
+              },
               {
                 headers: {
                   authorization: token

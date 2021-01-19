@@ -83,9 +83,9 @@ const Incoming = ({
           <div className={styles.buttons}>
             <Button
               type='button'
-              onClick={() => {
+              onClick={async () => {
                 if (call.callState !== 'idle') call.endCall()
-                call.acceptRequest(id, userID, peerID)
+                await call.acceptRequest(id, userID, peerID)
                 ui.clearModal()
               }}
             >

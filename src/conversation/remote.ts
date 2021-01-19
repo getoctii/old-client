@@ -17,7 +17,6 @@ export type formData = { tag: string }
 
 export const validate = (values: formData) => {
   const errors: { tag?: string } = {}
-  console.log(values)
   if (!values.tag || !isTag(values.tag))
     errors.tag = 'A valid username is required'
   return errors
@@ -30,7 +29,7 @@ export const createConversation = async (
   (
     await clientGateway.post<ConversationResponse>(
       '/conversations',
-      new URLSearchParams(values),
+      values,
       { headers: { Authorization: token } }
     )
   ).data
