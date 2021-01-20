@@ -27,6 +27,7 @@ import { clientGateway, ModalTypes } from './utils/constants'
 import AddParticipant from './chat/AddParticipant'
 import { Confirmation } from './components/Confirmation'
 import Downloads from './marketing/Downloads'
+import Invite from './invite/Invite'
 
 const { PushNotifications } = Plugins
 
@@ -166,6 +167,7 @@ export const Router = memo(() => {
                 path='/communities/:id'
                 component={() => <Community />}
               />
+              <PrivateRoute path={'/invite/:code'} component={() => <Invite />} />
               <PrivateRoute
                 path={'/(conversations)?/:id?'}
                 component={() => <Conversation />}

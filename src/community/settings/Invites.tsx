@@ -16,7 +16,7 @@ import { useRouteMatch } from 'react-router-dom'
 import { useMutation, useQuery, queryCache } from 'react-query'
 import { clientGateway } from '../../utils/constants'
 import Button from '../../components/Button'
-import { Clipboard } from '@capacitor/core'
+import { Plugins } from '@capacitor/core'
 import { getInvites, Invite as InviteType } from '../remote'
 import { getUser } from '../../user/remote'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -75,9 +75,9 @@ const Invite = (invite: InviteType) => {
         }}
         initial={{ scale: 1 }}
         className={styles.copyAction}
-        onClick={() =>
-          Clipboard.write({
-            string: invite.code
+        onClick={async () =>
+          await Plugins.Clipboard.write({
+            string: `https://octii.chat/invite/${invite.code}`
           })
         }
       >

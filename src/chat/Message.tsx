@@ -35,6 +35,7 @@ import { withHistory } from 'slate-history'
 import { withReact } from 'slate-react'
 import { withMentions } from '../utils/slate'
 import { createEditor } from 'slate'
+import Invite from './embeds/Invite'
 
 const { Clipboard, Permissions } = Plugins
 dayjs.extend(dayjsUTC)
@@ -224,7 +225,12 @@ const View = memo(
             {str}
           </a>
         )
-        if (Image.isCovfefe(str)) {
+        if (Invite.isInvite(str)) {
+          return {
+            link: <></>,
+            embed: <Suspense fallback={<></>}><Invite.Embed key={key} url={str} /></Suspense>
+          }
+        } else if (Image.isCovfefe(str)) {
           return {
             link,
             embed: <Image.Embed key={key} url={str} />

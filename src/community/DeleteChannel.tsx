@@ -32,7 +32,7 @@ export const NewChannel = ({
   onDismiss
 }: {
   community?: CommunityResponse
-  onDismiss: Function
+  onDismiss: () => void
 }) => {
   const { token } = Auth.useContainer()
   return (
@@ -58,7 +58,7 @@ export const NewChannel = ({
             const errors = e.response.data.errors
             const userErrors: { name?: string } = {}
             if (errors.includes('ChannelNameInvalid'))
-              userErrors.name = 'Invaild Channel Name'
+              userErrors.name = 'Invalid Channel Name'
             setErrors(userErrors)
           } finally {
             setSubmitting(false)

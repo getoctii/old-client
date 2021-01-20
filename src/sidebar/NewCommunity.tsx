@@ -178,7 +178,7 @@ export const NewCommunity = () => {
               } catch (e) {
                 console.log('joinError', e.response.data.errors)
                 if (e.response.data.errors.includes('InvalidCode'))
-                  setErrors({ invite: 'Invaild Invite' })
+                  setErrors({ invite: 'Invalid Invite' })
                 if (e.response.data.errors.includes('InviteNotFound'))
                   setErrors({ invite: 'Invite not found' })
                 if (e.response.data.errors.includes('AlreadyInCommunity'))

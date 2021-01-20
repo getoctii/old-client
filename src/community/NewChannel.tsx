@@ -33,7 +33,7 @@ export const NewChannel = ({
   onDismiss
 }: {
   community?: CommunityResponse
-  onDismiss: Function
+  onDismiss: () => void
 }) => {
   const history = useHistory()
   const { token } = Auth.useContainer()
