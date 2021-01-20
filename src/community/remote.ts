@@ -31,6 +31,13 @@ export interface Invite {
   updated_at: string
   author_id: string
   uses: number
+  community?: {
+    id: string
+    name: string
+    icon: string
+    large: boolean
+    owner_id: string
+  }
 }
 
 export const getCommunity = async (
