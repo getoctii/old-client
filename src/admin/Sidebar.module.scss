@@ -52,27 +52,21 @@
         width: 2.5rem;
       }
 
-      &.profile {
+      &.lookup {
         .icon {
           background: var(--neko-colors-primary);
         }
       }
 
-      &.security {
+      &.codes {
         .icon {
           background: var(--neko-colors-secondary);
         }
       }
 
-      &.themes {
+      &.news {
         .icon {
           background: var(--neko-colors-warning);
-        }
-      }
-
-      &.admin {
-        .icon {
-          background: var(--neko-colors-danger);
         }
       }
     }
@@ -83,8 +77,7 @@
       padding-left: 0.6rem;
       margin-right: -0.6rem;
       padding-right: 0.6rem;
-
-      &.profile {
+      &.lookup {
         background: var(--neko-colors-primary);
 
         .icon {
@@ -92,17 +85,17 @@
           background: var(--neko-text-inverse);
         }
       }
-
-      &.security {
+      &.codes {
         background: var(--neko-colors-secondary);
+
         .icon {
           color: var(--neko-text-secondary);
           background: var(--neko-text-inverse);
         }
       }
-
-      &.themes {
+      &.news {
         background: var(--neko-colors-warning);
+
         .icon {
           color: var(--neko-text-warning);
           background: var(--neko-text-inverse);
@@ -117,18 +110,7 @@
     opacity: 0.5;
     border-style: solid;
   }
-  .buildInfo {
-    margin-top: auto;
-  }
-  .logout {
-    text-align: center;
-    background: var(--neko-colors-danger);
-    border-radius: 10px;
-    color: var(--neko-text-inverse);
-    padding: 0.75rem;
-    cursor: pointer;
-  }
-  // , (max-height: 420px)
+
   @media (max-width: 740px) {
     padding-top: 0;
     max-width: 100%;

@@ -95,6 +95,7 @@
     "@types/react-beautiful-dnd": "^13.0.0",
     "@types/react-router-dom": "^5.1.6",
     "@welldone-software/why-did-you-render": "^6.0.3",
+    "react-git-info": "^2.0.0",
     "react-scripts-plugin-sentry": "^1.0.3"
   }
 }

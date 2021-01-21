@@ -4,7 +4,6 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { useQuery } from 'react-query'
 import { useMedia } from 'react-use'
 import {
   Element,
@@ -21,10 +20,8 @@ import {
   Editable,
   ReactEditor
 } from 'slate-react'
-import { Auth } from '../authentication/state'
-import { getUser, UserResponse } from '../user/remote'
+import { UserResponse } from '../user/remote'
 import { serialize } from '../utils/slate'
-import styles from './Editor.module.scss'
 import unified from 'unified'
 import markdown from 'remark-parse'
 import visit from 'unist-util-visit'
@@ -37,29 +34,7 @@ import underlineFromMarkdown from '@innatical/mdast-util-underline/from-markdown
 import underlineToMarkdown from '@innatical/mdast-util-underline/to-markdown'
 import Mentions from '../chat/Mentions'
 import { useRouteMatch } from 'react-router-dom'
-
-const Mention = ({
-  userID,
-  attributes,
-  children
-}: {
-  userID: string
-  attributes: any
-  children: React.ReactChild
-}) => {
-  const { token, id } = Auth.useContainer()
-  const user = useQuery(['users', userID, token], getUser)
-  return (
-    <span
-      {...attributes}
-      contentEditable={false}
-      className={`${styles.mention} ${userID === id ? styles.isMe : ''}`}
-    >
-      @{user.data?.username}
-      {children}
-    </span>
-  )
-}
+import Mention from '../chat/Mention'
 
 const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   return leaf.underline ? (
@@ -93,7 +68,7 @@ const View = ({
   onTyping,
   onDismiss,
   typingIndicator,
-  mentions
+  userMentions
 }: {
   editor: Editor & ReactEditor & HistoryEditor
   className: string
@@ -108,7 +83,8 @@ const View = ({
   onTyping?: () => void
   onDismiss?: () => void
   typingIndicator?: boolean
-  mentions?: boolean
+  userMentions?: boolean
+  channelMentions?: boolean
 }) => {
   const match = useRouteMatch<{ id: string }>('/communities/:id/:tab?/:tab2?')
   const isMobile = useMedia('(max-width: 740px)')
@@ -122,12 +98,12 @@ const View = ({
   }, [typing, onTyping])
   useEffect(() => {
     editor.isInline = (element: Element) => {
-      return element.type === 'mention'
+      return element.type === 'user' || element.type === 'channel'
     }
   }, [editor])
 
   const [value, setValue] = useState<Node[]>(emptyEditor)
-  const [target, setTarget] = useState<Range | undefined>()
+  const [target, setTarget] = useState<{ range: Range, type: 'user' | 'channel' } | undefined>()
   const [search, setSearch] = useState('')
 
   const decorate = useCallback(([node, path]) => {
@@ -200,12 +176,20 @@ const View = ({
 
   const renderElement = useCallback((props) => {
     switch (props.element.type) {
-      case 'mention':
+      case 'user':
         return (
-          <Mention
+          <Mention.User
             attributes={props.attributes}
             children={props.children}
             userID={props.element.mentionID}
+          />
+        )
+      case 'channel':
+        return (
+          <Mention.Channel
+            attributes={props.attributes}
+            children={props.children}
+            channelID={props.element.mentionID}
           />
         )
       default:
@@ -220,15 +204,15 @@ const View = ({
   const [selected, setSelected] = useState(0)
 
   const onMention = useCallback(
-    (id: string) => {
+    (id: string, type: 'user' | 'channel') => {
       if (!target) return
-      Transforms.select(editor, target)
+      Transforms.select(editor, target.range)
       Transforms.insertNodes(editor, {
-        type: 'mention',
+        type: type,
         mentionID: id,
         children: [
           {
-            text: `<@${id}>`
+            text: `<${type === 'user' ? '@' : '#'}${id}>`
           }
         ]
       })
@@ -254,7 +238,7 @@ const View = ({
       {target && (
         <div className={mentionsClassName}>
           <Suspense fallback={<></>}>
-            {!match?.params ? (
+            {!match?.params && target.type === 'user' ? (
               <Mentions.Conversation
                 search={search}
                 selected={selected}
@@ -262,7 +246,15 @@ const View = ({
                 onFiltered={onFiltered}
               />
             ) : match?.params.id ? (
-              <Mentions.Community
+              target.type === 'user' ? (
+              <Mentions.Community.Users
+                search={search}
+                onMention={onMention}
+                selected={selected}
+                onFiltered={onFiltered}
+              />
+            ) : target.type === 'channel' ? (
+              <Mentions.Community.Channels
                 search={search}
                 onMention={onMention}
                 selected={selected}
@@ -270,7 +262,7 @@ const View = ({
               />
             ) : (
               <></>
-            )}
+            )) : <></>}
           </Suspense>
         </div>
       )}
@@ -290,25 +282,31 @@ const View = ({
               const wordBefore = Editor.before(editor, start, {
                 unit: 'word'
               })
+              const mentionType = characterBefore && Editor.string(
+                editor,
+                Editor.range(editor, characterBefore, start)
+              )
               const before =
-                characterBefore &&
-                Editor.string(
-                  editor,
-                  Editor.range(editor, characterBefore, start)
-                ) === '@'
+                mentionType === '@' || mentionType === '#'
                   ? characterBefore
                   : wordBefore && Editor.before(editor, wordBefore)
               const beforeRange = before && Editor.range(editor, before, start)
               const beforeText =
                 beforeRange && Editor.string(editor, beforeRange)
-              const beforeMatch = beforeText && beforeText.match(/^@(\w*)$/)
+              const beforeMatch = beforeText && (beforeText.match(/^@(\w*)$/) ?? beforeText.match(/^#(\w*)$/) )
               const after = Editor.after(editor, start)
               const afterRange = Editor.range(editor, start, after)
               const afterText = Editor.string(editor, afterRange)
               const afterMatch = afterText.match(/^(\s|$)/)
 
+              console.log(mentionType)
               if (beforeMatch && afterMatch) {
-                setTarget(beforeRange)
+
+                console.log(mentionType)
+                setTarget({
+                  range: beforeRange!,
+                  type: mentionType === '@' ? 'user' : 'channel'
+                })
                 setSearch(beforeMatch[1])
                 return
               }
@@ -342,9 +340,9 @@ const View = ({
                   if (event.shiftKey && newLines) {
                     event.preventDefault()
                     editor.insertBreak()
-                  } else if (target && mentions) {
+                  } else if (target && userMentions) {
                     event.preventDefault()
-                    if (filtered[selected].id) onMention(filtered[selected].id)
+                    if (filtered[selected].id) onMention(filtered[selected].id, target.type)
                   } else {
                     event.preventDefault()
                     const content = serialize(value)
@@ -359,7 +357,7 @@ const View = ({
                 }
                 case 'Tab': {
                   event.preventDefault()
-                  if (!mentions) return
+                  if (!userMentions) return
                   if (event.shiftKey) {
                     setSelected(
                       selected - 1 < 0 ? filtered.length - 1 : selected - 1

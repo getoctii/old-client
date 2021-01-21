@@ -5,12 +5,12 @@ import { fetchManyUsers, getParticipants, UserResponse } from '../user/remote'
 import { Auth } from '../authentication/state'
 import { clientGateway } from '../utils/constants'
 import { useDebounce, useMedia } from 'react-use'
-import { getMembers } from '../community/remote'
+import { ChannelResponse, getChannels, getMembers } from '../community/remote'
 import { useParams, useRouteMatch } from 'react-router-dom'
 
-type onMention = (id: string) => void
+type onMention = (id: string, type: 'user' | 'channel') => void
 
-const Mention = ({
+const User = ({
   user,
   onMention,
   selected
@@ -23,7 +23,7 @@ const Mention = ({
   return (
     <div
       className={`${styles.mention} ${selected ? styles.selected : ''}`}
-      onClick={() => onMention(user.id)}
+      onClick={() => onMention(user.id, 'user')}
     >
       <div
         className={styles.img}
@@ -33,6 +33,25 @@ const Mention = ({
       {user?.discriminator === 0
         ? 'inn'
         : user?.discriminator.toString().padStart(4, '0')}
+    </div>
+  )
+}
+
+const Channel = ({
+  channel,
+  onMention,
+  selected
+}: {
+  channel?: ChannelResponse
+  onMention: onMention
+  selected: boolean
+}) => {
+  return (
+    <div
+      className={`${styles.mention} ${selected ? styles.selected : ''}`}
+      onClick={() => channel && onMention(channel.id, 'channel')}
+    >
+      #{channel?.name}
     </div>
   )
 }
@@ -71,7 +90,7 @@ const MentionsPopup = ({
     >
       <div className={styles.mentions}>
         {users?.map((user, index) => (
-          <Mention
+          <User
             key={user.id}
             user={user}
             onMention={onMention}
@@ -105,7 +124,7 @@ const Conversation = ({
   if (!conversation) return <></>
   return (
     <MentionsPopup
-      usersIDs={conversation.conversation.participants}
+      usersIDs={conversation.conversation.participants?.filter((p) => p !== id)}
       selected={selected}
       search={search}
       onMention={onMention}
@@ -138,7 +157,50 @@ const searchCommunityMembers = async (
       ).data
     : []
 
-const Community = memo(
+const Channels = memo( ({
+  search,
+  onMention,
+  selected,
+  onFiltered
+}: {
+  search: string
+  onMention: onMention
+  selected: number
+  onFiltered: (users: UserResponse[]) => void
+}) => {
+  const params = useParams<{ id: string }>()
+  console.log(params)
+  const { token } = Auth.useContainer()
+  const { data: communityChannels } = useQuery(['channels', params.id, token], getChannels)
+  const channels = useMemo(
+    () =>
+      search !== ''
+        ? communityChannels?.filter((channel) => channel.name.includes(search))
+        : communityChannels,
+    [communityChannels, search]
+  )
+
+  return (
+    <div
+      className={styles.mentionPopup}
+      onMouseDown={(e) => {
+        e.preventDefault()
+      }}
+    >
+      <div className={styles.mentions}>
+        {channels && channels?.length > 0 && channels?.map((channel, index) => (
+          <Channel
+            key={channel.id}
+            channel={channel}
+            onMention={onMention}
+            selected={index === selected}
+          />
+        ))}
+      </div>
+    </div>
+  )
+})
+const Users = memo(
   ({
     search,
     onMention,
@@ -198,7 +260,7 @@ const Community = memo(
         <div className={styles.mentions}>
           {truncatedFilteredMembers && truncatedFilteredMembers.length > 0
             ? truncatedFilteredMembers.map((member, index) => (
-                <Mention
+                <User
                   key={member?.id}
                   user={member?.user}
                   onMention={onMention}
@@ -208,7 +270,7 @@ const Community = memo(
             : truncatedDefaultMembers
                 ?.filter((member) => member?.user?.id !== id)
                 .map((member, index) => (
-                  <Mention
+                  <User
                     key={member?.id}
                     user={member?.user}
                     onMention={onMention}
@@ -221,6 +283,6 @@ const Community = memo(
   }
 )
 
-const Mentions = { Conversation, Community }
+const Mentions = { Conversation, Community: { Users, Channels } }
 
 export default Mentions
