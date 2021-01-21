@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { Suspense, useState } from 'react'
 import { queryCache, useMutation, useQuery } from 'react-query'
 import { getUser, ParticipantsResponse } from '../user/remote'
 import { Auth } from '../authentication/state'
@@ -8,23 +8,34 @@ import { createConversation, findUser, validate } from '../conversation/remote'
 import Input from '../components/Input'
 import Button from '../components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExclamationCircle, faSearch } from '@fortawesome/pro-solid-svg-icons'
+import {
+  faChevronLeft,
+  faExclamationCircle,
+  faSearch
+} from '@fortawesome/pro-solid-svg-icons'
 import Icon from '../user/Icon'
 import { useHistory } from 'react-router-dom'
 import { clientGateway } from '../utils/constants'
+import { Plugins } from '@capacitor/core'
+import { useMedia } from 'react-use'
 
 const UserLookup = ({ userID }: { userID: string }) => {
   const history = useHistory()
   const auth = Auth.useContainer()
   const user = useQuery(['users', userID, auth.token], getUser)
   const [toggleUser] = useMutation(
-    async () => (
-      await clientGateway.patch(`/admin/users/${userID}`, {}, {
-        headers: {
-          Authorization: auth.token
-        }
-      })
-    ).data,
+    async () =>
+      (
+        await clientGateway.patch(
+          `/admin/users/${userID}`,
+          {},
+          {
+            headers: {
+              Authorization: auth.token
+            }
+          }
+        )
+      ).data,
     {
       onSuccess: async () => {
         await queryCache.invalidateQueries(['users', userID, auth.token])
@@ -36,46 +47,71 @@ const UserLookup = ({ userID }: { userID: string }) => {
       <div className={styles.profile}>
         <Icon avatar={user.data?.avatar} state={user.data?.state} />
         <div className={styles.title}>
-          <h4>{user.data?.username}#{user.data?.discriminator === 0
-            ? 'inn'
-            : user.data?.discriminator.toString().padStart(4, '0')}</h4>
+          <h4>
+            {user.data?.username}#
+            {user.data?.discriminator === 0
+              ? 'inn'
+              : user.data?.discriminator.toString().padStart(4, '0')}
+          </h4>
           <p>{user.data?.status || 'No status set'}</p>
         </div>
       </div>
       <div className={styles.details}>
-        <p><strong>Email:</strong> {user.data?.email}</p>
-        <p><strong>ID:</strong> <kbd>{user.data?.id}</kbd></p>
+        <p>
+          <strong>Email:</strong>{' '}
+          <kbd
+            onClick={async () =>
+              await Plugins.Clipboard.write({ string: user.data?.email })
+            }
+          >
+            {user.data?.email}
+          </kbd>
+        </p>
+        <p>
+          <strong>ID:</strong>{' '}
+          <kbd
+            onClick={async () =>
+              await Plugins.Clipboard.write({ string: user.data?.id })
+            }
+          >
+            {user.data?.id}
+          </kbd>
+        </p>
       </div>
       <div className={styles.buttons}>
-        <Button type='button' onClick={async () => {
-          const cache = queryCache.getQueryData([
-            'participants',
-            auth.id,
-            auth.token
-          ]) as ParticipantsResponse
-          const participant = cache?.find((participant) =>
-            participant.conversation.participants.includes(
-              userID
+        <Button
+          type='button'
+          onClick={async () => {
+            const cache = queryCache.getQueryData([
+              'participants',
+              auth.id,
+              auth.token
+            ]) as ParticipantsResponse
+            const participant = cache?.find((participant) =>
+              participant.conversation.participants.includes(userID)
             )
-          )
-          if (!cache || !participant) {
-            const result = await createConversation(auth.token!, {
-              recipient: userID
-            })
-            if (result.id) history.push(`/conversations/${result.id}`)
-          } else {
-            history.push(
-              `/conversations/${participant.conversation.id}`
-            )
-          }
-        }}>
+            if (!cache || !participant) {
+              const result = await createConversation(auth.token!, {
+                recipient: userID
+              })
+              if (result.id) history.push(`/conversations/${result.id}`)
+            } else {
+              history.push(`/conversations/${participant.conversation.id}`)
+            }
+          }}
+        >
           Message
         </Button>
-        {user.data?.discriminator !== 0 && <Button type='button' onClick={async () => {
-          await toggleUser()
-        }}>
+        <Button
+          type='button'
+          disabled={user.data?.discriminator === 0}
+          className={`${user.data?.disabled ? styles.disabled : ''}`}
+          onClick={async () => {
+            await toggleUser()
+          }}
+        >
           {user.data?.disabled ? 'Enable' : 'Disable'}
-        </Button>}
+        </Button>
       </div>
     </div>
   )
@@ -84,6 +120,8 @@ const UserLookup = ({ userID }: { userID: string }) => {
 const Lookup = () => {
   const auth = Auth.useContainer()
   const [lookup, setLookup] = useState<string>()
+  const history = useHistory()
+  const isMobile = useMedia('(max-width: 740px)')
   return (
     <div className={styles.lookup}>
       <div>
@@ -123,9 +161,7 @@ const Lookup = () => {
             {({ isSubmitting, isValid, errors }) => (
               <Form>
                 <Field
-                  placeholder={
-                    !isSubmitting ? 'Find User' : 'Finding...'
-                  }
+                  placeholder={!isSubmitting ? 'Find User' : 'Finding...'}
                   component={Input}
                   name='tag'
                   autoComplete={'random'}
@@ -157,7 +193,18 @@ const Lookup = () => {
           </Formik>
         </div>
       </div>
-      {lookup && <UserLookup userID={lookup} />}
+      <Suspense fallback={<></>}>
+        {lookup && <UserLookup userID={lookup} />}
+      </Suspense>
+      {isMobile && (
+        <Button
+          className={styles.back}
+          type='button'
+          onClick={() => history.push('/admin')}
+        >
+          <FontAwesomeIcon className={styles.backButton} icon={faChevronLeft} />
+        </Button>
+      )}
     </div>
   )
 }

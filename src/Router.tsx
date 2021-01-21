@@ -147,6 +147,7 @@ export const Router = memo(() => {
         ) : (
           <PrivateRoute path='/downloads' component={Downloads} />
         )}
+        <Route path={'/invite/:invite/:code?'} component={Invite} />
         <Route path='/authenticate' component={Authenticate} />
         <div id='main'>
           <Modals />
@@ -164,25 +165,11 @@ export const Router = memo(() => {
                   </>
                 )}
               />
-              <PrivateRoute
-                path={'/admin'}
-                component={() => (
-                  <>
-                    {isMobile && <Sidebar />}
-                    <Suspense fallback={<Loader />}>
-                      <Admin />
-                    </Suspense>
-                  </>
-                )}
-              />
-              <PrivateRoute
-                path='/communities/:id'
-                component={() => <Community />}
-              />
-              <PrivateRoute path={'/invite/:code'} component={() => <Invite />} />
+              <PrivateRoute path={'/admin'} component={Admin} />
+              <PrivateRoute path='/communities/:id' component={Community} />
               <PrivateRoute
                 path={'/(conversations)?/:id?'}
-                component={() => <Conversation />}
+                component={Conversation}
                 redirect={
                   isPlatform('mobile') || isPWA
                     ? '/authenticate/login'

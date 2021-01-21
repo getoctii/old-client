@@ -19,13 +19,13 @@
 .wrapper {
   height: 100%;
   width: 100%;
+  background: var(--neko-settings-background);
   .codes {
     overflow-y: scroll;
     height: 100vh;
     width: 100%;
     padding: 2rem 2rem 0 2rem;
 
-    background: var(--neko-settings-background);
     .body {
       margin-top: 1rem;
       margin-bottom: 2rem;

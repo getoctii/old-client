@@ -165,34 +165,31 @@ export const Members = () => {
                         />
                       )
                   )}
-                  {loading && (
-                    <div key='loader' className={styles.loader}>
-                      <h5>Loading more...</h5>
-                    </div>
-                  )}
-                  {!loading && canFetchMore ? (
-                    <Waypoint
-                      bottomOffset={20}
-                      onEnter={async () => {
-                        try {
-                          const current = ref.current
-                          if (!current || !current.scrollHeight) return
-                          setLoading(true)
-                          const oldHeight = current.scrollHeight
-                          const oldTop = current.scrollTop
-                          await fetchMore()
-                          current.scrollTop = current.scrollHeight
-                            ? current.scrollHeight - oldHeight + oldTop
-                            : 0
-                        } finally {
-                          setLoading(false)
-                        }
-                      }}
-                    />
-                  ) : (
-                    <></>
-                  )}
                 </AnimatePresence>
+                {!loading && canFetchMore ? (
+                  <Waypoint
+                    bottomOffset={20}
+                    onEnter={async () => {
+                      try {
+                        const current = ref.current
+                        if (!current || !current.scrollHeight) return
+                        setLoading(true)
+                        const oldHeight = current.scrollHeight
+                        const oldTop = current.scrollTop
+                        await fetchMore()
+                        current.scrollTop = current.scrollHeight
+                          ? current.scrollHeight - oldHeight + oldTop
+                          : 0
+                      } finally {
+                        setLoading(false)
+                      }
+                    }}
+                  />
+                ) : !!loading && canFetchMore ? (
+                  <div key='loader' className={styles.loader}>
+                    <h5>Loading more...</h5>
+                  </div>
+                ) : <></>}
               </div>
             </>
           ) : (

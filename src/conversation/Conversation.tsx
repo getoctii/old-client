@@ -12,6 +12,7 @@ import Empty from './empty/Empty'
 import Sidebar from '../sidebar/Sidebar'
 import dayjs from 'dayjs'
 import { useSuspenseStorageItem } from '../utils/storage'
+import { Helmet } from 'react-helmet'
 
 const Conversation = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
@@ -34,6 +35,9 @@ const Conversation = () => {
   if (!participant) return <></>
   return (
     <Suspense fallback={<Chat.Placeholder />}>
+      <Helmet>
+        <title>Octii - Messages</title>
+      </Helmet>
       <div
         className={styles.conversation}
         key={participant.conversation.channel_id}

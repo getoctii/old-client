@@ -7,11 +7,14 @@
   align-items: center;
   text-align: center;
 
+  .back {
+    margin-top: 1rem;
+    background: var(--neko-colors-primary);
+  }
   .user {
     .profile {
       margin-bottom: 0.8rem;
       display: flex;
-
       .title {
 
         margin: 0;
@@ -35,24 +38,39 @@
         button {
           background: var(--neko-colors-danger);
 
+          &:disabled {
+            background: var(--neko-colors-secondary);
+            cursor: pointer;
+          }
           &:first-child {
             background: var(--neko-colors-primary);
           }
-
+          &.disabled {
+            background: var(--neko-colors-warning);
+          }
       }
     }
 
     .details {
       text-align: left;
+      kbd {
+        cursor: pointer;
+      }
     }
 
 
     background: var(--neko-channels-background);
+    max-width: 450px;
     width: 100%;
     padding: 2rem;
     border-radius: 16px;
     h4, p {
       margin: 0;
+    }
+
+    @media (max-width: 740px) {
+      width: 90%;
+      background: var(--neko-sidebar-background);
     }
   }
   .search {
@@ -67,10 +85,15 @@
         font-size: 0.8rem;
         font-weight: 400;
         width: 100%;
+        background: var(--neko-channels-background);
 
         &::-webkit-input-placeholder {
           color: var(--neko-text-normal);
           opacity: 0.5;
+        }
+
+        @media (max-width: 740px) {
+          background: var(--neko-sidebar-background);
         }
       }
 
@@ -111,23 +134,17 @@
       }
     }
   }
-  div {
-    max-width: 450px;
-    h1 {
-      margin-bottom: 0.8rem;
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
 
-    input {
-      background: var(--neko-channels-background);
-    }
+  h1 {
+    margin-bottom: 0.8rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
 
-    p {
-      margin: 0;
-      font-size: 1rem;
-      font-weight: 300;
-      margin-bottom: 0.8rem;
-    }
+
+  p {
+    font-size: 1rem;
+    font-weight: 300;
+    margin: 0 0 0.8rem;
   }
 }

@@ -20,7 +20,8 @@
   button {
     background: var(--neko-colors-primary);
     margin-left: auto;
-
+    width: 5rem;
+    max-width: 5rem;
     &:disabled {
       cursor: not-allowed;
       background: var(--neko-colors-secondary);
@@ -112,7 +113,8 @@
     background: var(--neko-colors-primary);
     margin-left: auto;
     height: 3rem;
-    width: 8rem;
+    width: 5rem;
+    max-width: 5rem;
     border-radius: 11px;
   }
 }

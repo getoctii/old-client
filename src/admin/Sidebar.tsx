@@ -17,9 +17,9 @@ const Sidebar = () => {
       <div className={styles.list}>
         <div
           className={`${styles.tab} ${styles.lookup} ${
-            !match?.params.page ? styles.selected : ''
+            match?.params.page === 'lookup' ? styles.selected : ''
           }`}
-          onClick={() => history.push('/admin')}
+          onClick={() => history.push('/admin/lookup')}
         >
           <div className={styles.icon}>
             <FontAwesomeIcon icon={faStreetView} fixedWidth />
@@ -48,7 +48,7 @@ const Sidebar = () => {
           <div className={styles.icon}>
             <FontAwesomeIcon icon={faNewspaper} fixedWidth />
           </div>{' '}
-          Newsletter Subs
+          Newsletter
         </div>
       </div>
       <p className={styles.buildInfo}>
