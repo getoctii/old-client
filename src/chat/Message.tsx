@@ -8,7 +8,7 @@ import {
   faTrashAlt,
   IconDefinition
 } from '@fortawesome/pro-solid-svg-icons'
-import { Plugins, PermissionType } from '@capacitor/core'
+import { Plugins } from '@capacitor/core'
 import { Auth } from '../authentication/state'
 import { useMutation, useQuery } from 'react-query'
 import { clientGateway, ModalTypes } from '../utils/constants'
@@ -36,8 +36,9 @@ import { withReact } from 'slate-react'
 import { withMentions } from '../utils/slate'
 import { createEditor } from 'slate'
 import Invite from './embeds/Invite'
+import Mention from './Mention'
 
-const { Clipboard, Permissions } = Plugins
+const { Clipboard } = Plugins
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
 
@@ -48,26 +49,6 @@ type Embed = {
 
 const isEmbed = (element: any): element is Embed => {
   return typeof element === 'object' && element['embed'] && element['link']
-}
-
-const Mention = ({
-  userID,
-  selected
-}: {
-  userID: string
-  selected?: boolean
-}) => {
-  const { token, id } = Auth.useContainer()
-  const user = useQuery(['users', userID, token], getUser)
-  return (
-    <span
-      className={`${styles.mention} ${userID === id ? styles.isMe : ''} ${
-        selected ? styles.selected : ''
-      }`}
-    >
-      @{user.data?.username}
-    </span>
-  )
 }
 
 const EditBox = ({
@@ -88,11 +69,11 @@ const EditBox = ({
     <div className={styles.innerInput}>
       <Editor
         editor={editor}
-        mentions={false}
+        userMentions={false}
         className={styles.editor}
         inputClassName={styles.input}
         mentionsClassName={styles.mentionsWrapper}
-        newLines={false}
+        newLines
         onDismiss={onDismiss}
         emptyEditor={[
           {
@@ -152,14 +133,9 @@ const View = memo(
           icon: faCopy,
           danger: false,
           onClick: async () => {
-            const permission = await Permissions.query({
-              name: PermissionType.ClipboardWrite
+            await Clipboard.write({
+              string: content
             })
-            if (permission.state === 'granted') {
-              await Clipboard.write({
-                string: content
-              })
-            }
           }
         },
         {
@@ -167,14 +143,9 @@ const View = memo(
           icon: faCopy,
           danger: false,
           onClick: async () => {
-            const permission = await Permissions.query({
-              name: PermissionType.ClipboardWrite
+            await Clipboard.write({
+              string: id
             })
-            if (permission.state === 'granted') {
-              await Clipboard.write({
-                string: id
-              })
-            }
           }
         }
       ]
@@ -249,9 +220,19 @@ const View = memo(
         [
           /<@([A-Za-z0-9-]+?)>/g,
           (str, key) => (
-            <Suspense fallback={<>&lt;@{str}&gt;</>}>
+            <Suspense fallback={<>@unknown</>}>
               <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
-                <Mention key={key} userID={str} />
+                <Mention.User key={key} userID={str} />
+              </ErrorBoundary>
+            </Suspense>
+          )
+        ],
+        [
+          /<#([A-Za-z0-9-]+?)>/g,
+          (str, key) => (
+            <Suspense fallback={<>#unknown</>}>
+              <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
+                <Mention.Channel key={key} channelID={str} />
               </ErrorBoundary>
             </Suspense>
           )

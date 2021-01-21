@@ -4,17 +4,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faUser,
   faShield,
-  faPaintBrush
-} from '@fortawesome/pro-solid-svg-icons'
+  faPaintBrush, faUserShield
+} from '@fortawesome/pro-duotone-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { Plugins } from '@capacitor/core'
-import { queryCache } from 'react-query'
+import { queryCache, useQuery } from 'react-query'
+import { getUser } from '../user/remote'
+import GitInfo from 'react-git-info/macro'
+
+const gitInfo = GitInfo()
 
 const Sidebar = () => {
   const auth = Auth.useContainer()
   const history = useHistory()
-
+  const user = useQuery(['users', auth.id, auth.token], getUser)
   const match = useRouteMatch<{ page: string }>('/settings/:page')
   return (
     <div className={styles.sidebar}>
@@ -55,7 +59,24 @@ const Sidebar = () => {
           </div>{' '}
           Themes
         </div>
+        {user?.data?.discriminator === 0 && (
+          <>
+            <hr />
+            <div
+              className={`${styles.tab} ${styles.admin}`}
+              onClick={() => history.push('/admin')}
+            >
+              <div className={styles.icon}>
+                <FontAwesomeIcon icon={faUserShield} fixedWidth />
+              </div>{' '}
+              Admin Panel
+            </div>
+          </>
+        )}
       </div>
+      <p className={styles.buildInfo}>
+        {gitInfo.branch} <kbd>{gitInfo.commit.shortHash}</kbd>
+      </p>
       <div
         className={styles.logout}
         onClick={async () => {

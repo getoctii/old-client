@@ -28,6 +28,7 @@ import AddParticipant from './chat/AddParticipant'
 import { Confirmation } from './components/Confirmation'
 import Downloads from './marketing/Downloads'
 import Invite from './invite/Invite'
+import Admin from './admin/Admin'
 
 const { PushNotifications } = Plugins
 
@@ -159,6 +160,17 @@ export const Router = memo(() => {
                     {isMobile && <Sidebar />}
                     <Suspense fallback={<Loader />}>
                       <Settings />
+                    </Suspense>
+                  </>
+                )}
+              />
+              <PrivateRoute
+                path={'/admin'}
+                component={() => (
+                  <>
+                    {isMobile && <Sidebar />}
+                    <Suspense fallback={<Loader />}>
+                      <Admin />
                     </Suspense>
                   </>
                 )}

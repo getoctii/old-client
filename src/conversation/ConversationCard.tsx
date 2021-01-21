@@ -26,7 +26,7 @@ import Context from '../components/Context'
 import { ContextMenuItems } from '../state/ui'
 import useMarkdown from '@innatical/markdown'
 import { ErrorBoundary } from 'react-error-boundary'
-import Message from '../chat/Message'
+import Mention from '../chat/Mention'
 
 const View = ({
   people,
@@ -170,11 +170,21 @@ const View = ({
         (str, key) => (
           <Suspense fallback={<>&lt;@{str}&gt;</>}>
             <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
-              <Message.Mention selected={selected} key={key} userID={str} />
+              <Mention.User selected={selected} key={key} userID={str} />
             </ErrorBoundary>
           </Suspense>
         )
-      ]
+      ],
+      [
+        /<#([A-Za-z0-9-]+?)>/g,
+        (str, key) => (
+          <Suspense fallback={<>&lt;@{str}&gt;</>}>
+            <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
+              <Mention.Channel selected={selected} key={key} channelID={str} />
+            </ErrorBoundary>
+          </Suspense>
+        )
+      ],
     ]
   })
 

@@ -13,39 +13,11 @@ import { Auth } from '../authentication/state'
 import { postTyping, uploadFile } from './remote'
 import { Chat } from './state'
 import Upload from './Upload'
-import { getUser } from '../user/remote'
-import messageStyles from './Message.module.scss'
-import { useQuery } from 'react-query'
 import { emptyEditor, withMentions } from '../utils/slate'
 import Editor from '../components/Editor'
 import { createEditor, Editor as SlateEditor, Transforms } from 'slate'
 import { withHistory } from 'slate-history'
 import { withReact } from 'slate-react'
-
-const Mention = ({
-  userID,
-  attributes,
-  children
-}: {
-  userID: string
-  attributes: any
-  children: React.ReactChild
-}) => {
-  const { token, id } = Auth.useContainer()
-  const user = useQuery(['users', userID, token], getUser)
-  return (
-    <span
-      {...attributes}
-      contentEditable={false}
-      className={`${messageStyles.mention} ${
-        userID === id ? messageStyles.isMe : ''
-      }`}
-    >
-      @{user.data?.username}
-      {children}
-    </span>
-  )
-}
 
 const adjectives = [
   ' amazing',
@@ -123,7 +95,7 @@ const View = ({ channelID }: { channelID: string }) => {
           placeholder={
             <span className={styles.ph}>Say something{adjective}...</span>
           }
-          mentions
+          userMentions
           onTyping={async () => {
             if (!token) return
             await postTyping(channelID, token)
@@ -204,6 +176,6 @@ const Placeholder = () => {
   )
 }
 
-const Box = { View, Placeholder, Mention }
+const Box = { View, Placeholder }
 
 export default Box
