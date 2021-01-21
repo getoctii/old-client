@@ -1,8 +1,6 @@
 import {
   faBoxOpen,
-  faChevronLeft,
-  faCrown,
-  faPaperPlane
+  faChevronLeft
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -10,31 +8,49 @@ import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import dayjsCalendar from 'dayjs/plugin/calendar'
 import React, { memo, Suspense, useMemo, useRef, useState } from 'react'
-import { queryCache, useInfiniteQuery, useQuery } from 'react-query'
-import { useHistory, useParams } from 'react-router-dom'
+import { queryCache, useInfiniteQuery, useMutation } from 'react-query'
+import { useHistory } from 'react-router-dom'
 import { useMedia } from 'react-use'
 import { Waypoint } from 'react-waypoint'
 import { Auth } from '../authentication/state'
-import Button from '../components/Button'
 import Loader from '../components/Loader'
-import { createConversation } from '../conversation/remote'
-import { getUser, ParticipantsResponse } from '../user/remote'
-import styles from './Members.module.scss'
-import { getCommunity, getMembers, Member as MemberType } from './remote'
-import Icon from '../user/Icon'
+import styles from './Codes.module.scss'
+import { clientGateway } from '../utils/constants'
+import { faUserCheck, faUserClock, faClipboardList, faCopy, faTrashAlt } from '@fortawesome/pro-duotone-svg-icons'
+import Button from '../components/Button'
+import { Plugins } from '@capacitor/core'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
 
-const Member = memo(
-  ({ member, owner }: { member: MemberType; owner?: string }) => {
+interface CodeResponse {
+  id: string
+  used: boolean
+  created_at: number
+  updated_at: number
+}
+
+const Code = memo(
+  ({ id, used, created_at }: CodeResponse) => {
+    const { token } = Auth.useContainer()
+    const [deleteCode] = useMutation(
+      async () => (
+        await clientGateway.delete(`/admin/codes/${id}`, {
+          headers: {
+            Authorization: token
+          }
+        })
+      ).data,
+      {
+        onSuccess: async () => {
+          await queryCache.invalidateQueries(['codes', token])
+        }
+      }
+    )
     const isMobile = useMedia('(max-width: 740px)')
-    const { id, token } = Auth.useContainer()
-    const history = useHistory()
-    const user = useQuery(['users', member.user.id, token], getUser)
     return (
       <motion.div
-        className={styles.member}
+        className={styles.code}
         initial={{
           opacity: 0
         }}
@@ -46,55 +62,39 @@ const Member = memo(
           opacity: 0
         }}
       >
-        <Icon avatar={user.data?.avatar} state={user.data?.state} />
+        <div
+          className={`${styles.icon} ${used ? styles.used : ''}`}
+        >
+          <FontAwesomeIcon icon={used ? faUserCheck : faUserClock} />
+        </div>
         <div className={styles.info}>
           <h4>
-            {user.data?.username}#
-            {user.data?.discriminator === 0
-              ? 'inn'
-              : user.data?.discriminator.toString().padStart(4, '0')}
-            {user.data?.id === owner && <FontAwesomeIcon icon={faCrown} />}
+            {id}
           </h4>
-          <time>{dayjs.utc(member.created_at).local().calendar()}</time>
+          <time>{dayjs.utc(created_at).local().calendar()}</time>
         </div>
         {!isMobile && (
           <div className={styles.actions}>
-            {user.data?.id !== id && (
-              <Button
-                type='button'
-                onClick={async () => {
-                  const cache = queryCache.getQueryData([
-                    'participants',
-                    id,
-                    token
-                  ]) as ParticipantsResponse
-                  const participant = cache?.find((participant) =>
-                    participant.conversation.participants.includes(
-                      member.user.id
-                    )
-                  )
-                  if (!cache || !participant) {
-                    const result = await createConversation(token!, {
-                      recipient: member.user.id
-                    })
-                    if (result.id) history.push(`/conversations/${result.id}`)
-                  } else {
-                    history.push(
-                      `/conversations/${participant.conversation.id}`
-                    )
-                  }
-                }}
-              >
-                <FontAwesomeIcon icon={faPaperPlane} />
-                Message
-              </Button>
-            )}
-            {/* NOTE: Kick Button. Disabled until impl in backend */}
-            {/* {id === owner && member.user.id !== id && (
-            <Button type='button' className={styles.kick}>
-              <FontAwesomeIcon icon={faHouseLeave} />
+            <Button
+              type='button'
+              onClick={async () => {
+                await Plugins.Clipboard.write({
+                  string: id
+                })
+              }}
+            >
+              <FontAwesomeIcon icon={faCopy} />
+              Copy
             </Button>
-          )} */}
+            <Button
+              type='button'
+              className={styles.delete}
+              onClick={async () => {
+                await deleteCode()
+              }}
+            >
+              <FontAwesomeIcon icon={faTrashAlt} />
+            </Button>
           </div>
         )}
       </motion.div>
@@ -102,29 +102,48 @@ const Member = memo(
   }
 )
 
-export const Members = () => {
+export const Codes = () => {
   const history = useHistory()
   const { token } = Auth.useContainer()
-  const { id } = useParams<{ id: string }>()
-  const community = useQuery(['community', id, token], getCommunity)
-  const { data, canFetchMore, fetchMore } = useInfiniteQuery<MemberType[], any>(
-    ['members', id, token],
-    getMembers,
+  const { data, canFetchMore, fetchMore } = useInfiniteQuery<CodeResponse[], any>(
+    ['codes', token],
+    async (_: string, token: string) => (
+      await clientGateway.get<CodeResponse[]>('/admin/codes', {
+        headers: {
+          Authorization: token
+        }
+      })
+    ).data,
     {
       getFetchMore: (last) => {
         return last.length < 25 ? undefined : last[last.length - 1]?.created_at
       }
     }
   )
-  const members = useMemo(() => data?.flat() || [], [data])
+  const [createCode] = useMutation(
+    async () => (
+      await clientGateway.post('/admin/codes', {}, {
+        headers: {
+          Authorization: token
+        }
+      })
+    ).data,
+    {
+      onSuccess: async () => {
+        await queryCache.invalidateQueries(['codes', token])
+      }
+    }
+  )
+  const codes = useMemo(() => data?.flat() || [], [data])
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
   const isMobile = useMedia('(max-width: 740px)')
+  console.log(codes)
   return (
     <Suspense fallback={<Loader />}>
       <div className={styles.wrapper}>
-        <div className={styles.members}>
-          {members.length > 0 ? (
+        <div className={styles.codes}>
+          {codes.length > 0 ? (
             <>
               <div className={styles.header}>
                 {isMobile ? (
@@ -132,7 +151,7 @@ export const Members = () => {
                     className={styles.icon}
                     onClick={() =>
                       isMobile &&
-                      history.push(`/communities/${community.data?.id}`)
+                      history.push(`/admin`)
                     }
                   >
                     <FontAwesomeIcon
@@ -143,27 +162,25 @@ export const Members = () => {
                 ) : (
                   <div
                     className={styles.icon}
-                    style={{
-                      backgroundImage: `url('${community.data?.icon}')`
-                    }}
-                  />
+                  >
+                    <FontAwesomeIcon
+                      icon={faClipboardList}
+                    />
+                  </div>
                 )}
                 <div className={styles.title}>
-                  <small>{community.data?.name}</small>
-                  <h2>Members</h2>
+                  <small>Admin</small>
+                  <h2>Beta Codes</h2>
                 </div>
+                <Button type={'button'} onClick={() => createCode()}>New Code</Button>
               </div>
               <div className={styles.body} ref={ref}>
                 <AnimatePresence>
-                  {members.map(
-                    (member) =>
-                      member && (
-                        <Member
-                          member={member}
-                          owner={community.data?.owner_id}
-                          key={member.id}
-                        />
-                      )
+                  {codes.map(
+                    (code) =>
+                      code ? (
+                        <Code {...code} />
+                      ) : <></>
                   )}
                   {loading && (
                     <div key='loader' className={styles.loader}>
@@ -197,10 +214,10 @@ export const Members = () => {
             </>
           ) : (
             <>
-              <div className={styles.membersEmpty}>
+              <div className={styles.codesEmpty}>
                 <FontAwesomeIcon size={'5x'} icon={faBoxOpen} />
                 <br />
-                <h2>No members in this community!</h2>
+                <h2>No beta codes found!</h2>
                 <br />
                 <br />
               </div>

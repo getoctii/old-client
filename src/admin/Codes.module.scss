@@ -1,4 +1,4 @@
-.membersEmpty {
+.codesEmpty {
   display: flex;
   justify-content: center;
   width: 100%;
@@ -19,18 +19,18 @@
 .wrapper {
   height: 100%;
   width: 100%;
-  .members {
+  .codes {
     overflow-y: scroll;
     height: 100vh;
     width: 100%;
     padding: 2rem 2rem 0 2rem;
 
-    background-color: var(--neko-settings-background);
+    background: var(--neko-settings-background);
     .body {
       margin-top: 1rem;
       margin-bottom: 2rem;
-      .member {
-        background-color: var(--neko-settings-card);
+      .code {
+        background: var(--neko-settings-card);
         padding: 1rem;
         margin-bottom: 0.25rem;
         display: flex;
@@ -45,12 +45,12 @@
             svg {
               margin-right: 0.5rem;
             }
-            background: var(--neko-colors-primary);
+            background: var(--neko-colors-secondary);
 
-            &.kick {
+            &.delete {
               margin-left: 0.6rem;
               width: 46px;
-              background: var(--neko-colors-warning);
+              background: var(--neko-colors-danger);
               svg {
                 margin-right: auto;
               }
@@ -64,12 +64,28 @@
           }
           overflow: hidden;
         }
-
+        .icon {
+          width: 45px;
+          height: 45px;
+          min-width: 45px;
+          min-height: 45px;
+          border-radius: 10px;
+          position: relative;
+          background-size: contain;
+          margin-right: 0.5rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: var(--neko-colors-warning);
+          &.used {
+            background: var(--neko-colors-primary);
+          }
+        }
         h4 {
-          margin: 0;
-          text-overflow: ellipsis;
           overflow: hidden;
+          margin: 0;
           white-space: nowrap;
+          text-overflow: ellipsis;
         }
 
         time {
@@ -92,6 +108,7 @@
     .header {
       display: flex;
       align-items: center;
+      height: 2.65rem;
       h2 {
         font-size: 1.3125rem;
       }
@@ -111,6 +128,17 @@
         background-color: var(--neko-settings-card);
         background-size: contain;
         border-radius: 12px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: var(--neko-colors-secondary);
+      }
+
+      button {
+        height: 2.65rem;
+        margin-left: auto;
+        background: var(--neko-colors-primary);
       }
     }
     h2 {
@@ -190,7 +218,7 @@
     }
   }
   @media (max-width: 740px) {
-    .members {
+    .codes {
       margin-top: env(safe-area-inset-top);
       padding-bottom: calc(env(safe-area-inset-bottom) + 5rem);
       .icon {
