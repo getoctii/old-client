@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faUser,
   faShield,
-  faPaintBrush, faUserShield
+  faPaintBrush,
+  faUserShield
 } from '@fortawesome/pro-duotone-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
@@ -12,6 +13,7 @@ import { Plugins } from '@capacitor/core'
 import { queryCache, useQuery } from 'react-query'
 import { getUser } from '../user/remote'
 import GitInfo from 'react-git-info/macro'
+import { isPlatform } from '@ionic/react'
 
 const gitInfo = GitInfo()
 
@@ -75,7 +77,8 @@ const Sidebar = () => {
         )}
       </div>
       <p className={styles.buildInfo}>
-        {gitInfo.branch} <kbd>{gitInfo.commit.shortHash}</kbd>
+        {isPlatform('ios') ? 'iOS' : gitInfo.branch || 'stable'}{' '}
+        <kbd>{gitInfo.commit.shortHash}</kbd>
       </p>
       <div
         className={styles.logout}

@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react'
+import { useMemo, useEffect, useState } from 'react'
 import decode from 'jwt-decode'
 import { createContainer } from 'unstated-next'
 import { clientGateway } from '../utils/constants'
@@ -10,6 +10,7 @@ const useAuth = () => {
     'neko-token',
     null
   )
+  const [betaCode, setBetaCode] = useState<string | undefined>(undefined)
 
   const authenticated = !!token
   const payload = useMemo<{ sub: string; exp: number } | undefined>(
@@ -38,7 +39,7 @@ const useAuth = () => {
         }
       )
 
-      queryCache.invalidateQueries(['users', payload.sub])
+      await queryCache.invalidateQueries(['users', payload.sub])
 
       return 'success'
     }
@@ -47,7 +48,9 @@ const useAuth = () => {
     id: payload?.sub ?? null,
     authenticated,
     token: token || null,
-    setToken
+    setToken,
+    betaCode,
+    setBetaCode
   }
 }
 

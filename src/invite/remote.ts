@@ -1,9 +1,9 @@
 import { clientGateway } from '../utils/constants'
-import { Invite } from '../community/remote'
+import { InviteResponse } from '../community/remote'
 
 export const getInvite = async (_: string, code: string, token: string) =>
   (
-    await clientGateway.get<Invite>(`/invites/${code}`, {
+    await clientGateway.get<InviteResponse>(`/invites/${code}`, {
       headers: {
         Authorization: token
       }

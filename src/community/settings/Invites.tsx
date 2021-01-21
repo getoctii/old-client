@@ -17,14 +17,14 @@ import { useMutation, useQuery, queryCache } from 'react-query'
 import { clientGateway } from '../../utils/constants'
 import Button from '../../components/Button'
 import { Plugins } from '@capacitor/core'
-import { getInvites, Invite as InviteType } from '../remote'
+import { getInvites, InviteResponse } from '../remote'
 import { getUser } from '../../user/remote'
 import { AnimatePresence, motion } from 'framer-motion'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
 
-const Invite = (invite: InviteType) => {
+const Invite = (invite: InviteResponse) => {
   const auth = Auth.useContainer()
   const user = useQuery(['users', invite.author_id, auth.token], getUser)
   const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
@@ -38,7 +38,11 @@ const Invite = (invite: InviteType) => {
       ).data,
     {
       onSuccess: async () => {
-        await queryCache.invalidateQueries(['invites', match?.params.id, auth.token])
+        await queryCache.invalidateQueries([
+          'invites',
+          match?.params.id,
+          auth.token
+        ])
       }
     }
   )
@@ -119,7 +123,11 @@ const Invites = () => {
       ).data,
     {
       onSuccess: async () => {
-        await queryCache.invalidateQueries(['invites', match?.params.id, auth.token])
+        await queryCache.invalidateQueries([
+          'invites',
+          match?.params.id,
+          auth.token
+        ])
       }
     }
   )

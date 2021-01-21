@@ -31,7 +31,7 @@ export interface ChannelResponse {
   color: string
 }
 
-export interface Invite {
+export interface InviteResponse {
   id: string
   code: string
   created_at: string
@@ -63,14 +63,18 @@ export const getCommunity = async (
 export const getChannels = async (
   _: string,
   communityID: string,
-  token: string,
-) => (
-  await clientGateway.get<ChannelResponse[]>(`/communities/${communityID}/channels`, {
-    headers: {
-      Authorization: token
-    }
-  })
-).data
+  token: string
+) =>
+  (
+    await clientGateway.get<ChannelResponse[]>(
+      `/communities/${communityID}/channels`,
+      {
+        headers: {
+          Authorization: token
+        }
+      }
+    )
+  ).data
 
 export const getInvites = async (
   _: string,
@@ -78,11 +82,14 @@ export const getInvites = async (
   token: string
 ) =>
   (
-    await clientGateway.get<Invite[]>(`/communities/${communityID}/invites`, {
-      headers: {
-        Authorization: token
+    await clientGateway.get<InviteResponse[]>(
+      `/communities/${communityID}/invites`,
+      {
+        headers: {
+          Authorization: token
+        }
       }
-    })
+    )
   ).data
 
 export const getMembers = async (

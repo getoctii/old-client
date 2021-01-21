@@ -30,7 +30,6 @@ const validate = (values: formData) => {
 
 export const Register = () => {
   const auth = Auth.useContainer()
-
   const submit = async (
     values: formData,
     { setSubmitting, setErrors, setFieldError }: FormikHelpers<formData>
@@ -49,6 +48,7 @@ export const Register = () => {
     }
     try {
       const response = await register(values)
+      if (auth.betaCode) auth.setBetaCode(undefined)
       if (response) auth.setToken(response.authorization)
     } catch (e) {
       const errors = e.response.data.errors
@@ -63,7 +63,12 @@ export const Register = () => {
 
   return (
     <Formik
-      initialValues={{ email: '', password: '', username: '', betaCode: '' }}
+      initialValues={{
+        email: '',
+        password: '',
+        username: '',
+        betaCode: auth.betaCode || ''
+      }}
       validate={validate}
       onSubmit={submit}
     >

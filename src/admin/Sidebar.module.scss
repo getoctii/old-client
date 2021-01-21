@@ -1,6 +1,8 @@
 .sidebar {
   display: flex;
   flex-direction: column;
+  max-width: 18rem;
+  width: 18rem;
   min-width: 18rem;
   min-height: 5rem;
   z-index: 0;
@@ -112,7 +114,7 @@
   }
 
   @media (max-width: 740px) {
-    padding-top: 0;
+    padding-top: calc(env(safe-area-inset-top) + 2rem);
     max-width: 100%;
     width: 100%;
     min-width: 100%;

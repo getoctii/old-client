@@ -105,17 +105,19 @@ const Code = memo(
 export const Codes = () => {
   const history = useHistory()
   const { token } = Auth.useContainer()
-  const { data, canFetchMore, fetchMore } = useInfiniteQuery<CodeResponse[], any>(
+  const { data, canFetchMore, fetchMore, isFetchingMore } = useInfiniteQuery<CodeResponse[], any>(
     ['codes', token],
-    async (_: string, token: string) => (
+    async (_: string, token: string, date: string) => (
       await clientGateway.get<CodeResponse[]>('/admin/codes', {
         headers: {
           Authorization: token
-        }
+        },
+        params: { created_at: date }
       })
     ).data,
     {
       getFetchMore: (last) => {
+        console.log(last.length)
         return last.length < 25 ? undefined : last[last.length - 1]?.created_at
       }
     }
@@ -137,6 +139,8 @@ export const Codes = () => {
   const codes = useMemo(() => data?.flat() || [], [data])
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
+
+  console.log(isFetchingMore, loading, canFetchMore)
   const isMobile = useMedia('(max-width: 740px)')
   console.log(codes)
   return (
@@ -179,37 +183,35 @@ export const Codes = () => {
                   {codes.map(
                     (code) =>
                       code ? (
-                        <Code {...code} />
+                        <Code key={code.id} {...code} />
                       ) : <></>
                   )}
-                  {loading && (
-                    <div key='loader' className={styles.loader}>
-                      <h5>Loading more...</h5>
-                    </div>
-                  )}
-                  {!loading && canFetchMore ? (
-                    <Waypoint
-                      bottomOffset={20}
-                      onEnter={async () => {
-                        try {
-                          const current = ref.current
-                          if (!current || !current.scrollHeight) return
-                          setLoading(true)
-                          const oldHeight = current.scrollHeight
-                          const oldTop = current.scrollTop
-                          await fetchMore()
-                          current.scrollTop = current.scrollHeight
-                            ? current.scrollHeight - oldHeight + oldTop
-                            : 0
-                        } finally {
-                          setLoading(false)
-                        }
-                      }}
-                    />
-                  ) : (
-                    <></>
-                  )}
+
                 </AnimatePresence>
+                {!loading && canFetchMore ? (
+                  <Waypoint
+                    bottomOffset={20}
+                    onEnter={async () => {
+                      try {
+                        const current = ref.current
+                        if (!current || !current.scrollHeight) return
+                        setLoading(true)
+                        const oldHeight = current.scrollHeight
+                        const oldTop = current.scrollTop
+                        await fetchMore()
+                        current.scrollTop = current.scrollHeight
+                          ? current.scrollHeight - oldHeight + oldTop
+                          : 0
+                      } finally {
+                        setLoading(false)
+                      }
+                    }}
+                  />
+                ) : !!loading && canFetchMore ? (
+                  <div key='loader' className={styles.loader}>
+                    <h5>Loading more...</h5>
+                  </div>
+                ) : <></>}
               </div>
             </>
           ) : (

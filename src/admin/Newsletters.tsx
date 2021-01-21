@@ -14,7 +14,7 @@ import { useMedia } from 'react-use'
 import { Waypoint } from 'react-waypoint'
 import { Auth } from '../authentication/state'
 import Loader from '../components/Loader'
-import styles from './Codes.module.scss'
+import styles from './Newsletters.module.scss'
 import { clientGateway } from '../utils/constants'
 import { faUserClock, faNewspaper } from '@fortawesome/pro-duotone-svg-icons'
 
@@ -28,10 +28,10 @@ interface SubResponse {
 }
 
 const Subscriber = memo(
-  ({ email, created_at }: SubResponse) => {
+  ({ email, created_at, ind }: any) => {
     return (
       <motion.div
-        className={styles.code}
+        className={styles.sub}
         initial={{
           opacity: 0
         }}
@@ -51,6 +51,7 @@ const Subscriber = memo(
         <div className={styles.info}>
           <h4>
             {email}
+            {ind}
           </h4>
           <time>{dayjs.utc(created_at).local().calendar()}</time>
         </div>
@@ -64,15 +65,20 @@ export const Newsletters = () => {
   const { token } = Auth.useContainer()
   const { data, canFetchMore, fetchMore } = useInfiniteQuery<SubResponse[], any>(
     ['newsletters', token],
-    async (_: string, token: string) => (
-      await clientGateway.get<SubResponse[]>('/admin/newsletters', {
-        headers: {
-          Authorization: token
-        }
-      })
-    ).data,
+    async (_: string, token: string, date: string) => {
+      console.log(dayjs.utc(date).format('YYYY/MM/DD HH:mm:ss'))
+      return (
+        await clientGateway.get<SubResponse[]>('/admin/newsletters', {
+          headers: {
+            Authorization: token
+          },
+          params: { created_at: dayjs.utc(date).format('YYYY/MM/DD HH:mm:ss') }
+        })
+      ).data
+    },
     {
       getFetchMore: (last) => {
+        console.log(last.length)
         return last.length < 25 ? undefined : last[last.length - 1]?.created_at
       }
     }
@@ -81,11 +87,10 @@ export const Newsletters = () => {
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
   const isMobile = useMedia('(max-width: 740px)')
-  console.log(subscribers)
   return (
     <Suspense fallback={<Loader />}>
       <div className={styles.wrapper}>
-        <div className={styles.codes}>
+        <div className={styles.newsletters}>
           {subscribers.length > 0 ? (
             <>
               <div className={styles.header}>
@@ -113,50 +118,47 @@ export const Newsletters = () => {
                 )}
                 <div className={styles.title}>
                   <small>Admin</small>
-                  <h2>Newsletters</h2>
+                  <h2>Newsletter</h2>
                 </div>
               </div>
               <div className={styles.body} ref={ref}>
                 <AnimatePresence>
                   {subscribers.map(
-                    (subscriber) =>
+                    (subscriber, index) =>
                       subscriber ? (
-                        <Subscriber {...subscriber} />
+                        <Subscriber key={subscriber.email} {...subscriber} ind={index} />
                       ) : <></>
                   )}
-                  {loading && (
-                    <div key='loader' className={styles.loader}>
-                      <h5>Loading more...</h5>
-                    </div>
-                  )}
-                  {!loading && canFetchMore ? (
-                    <Waypoint
-                      bottomOffset={20}
-                      onEnter={async () => {
-                        try {
-                          const current = ref.current
-                          if (!current || !current.scrollHeight) return
-                          setLoading(true)
-                          const oldHeight = current.scrollHeight
-                          const oldTop = current.scrollTop
-                          await fetchMore()
-                          current.scrollTop = current.scrollHeight
-                            ? current.scrollHeight - oldHeight + oldTop
-                            : 0
-                        } finally {
-                          setLoading(false)
-                        }
-                      }}
-                    />
-                  ) : (
-                    <></>
-                  )}
                 </AnimatePresence>
+                {!loading && canFetchMore ? (
+                  <Waypoint
+                    bottomOffset={20}
+                    onEnter={async () => {
+                      try {
+                        const current = ref.current
+                        if (!current || !current.scrollHeight) return
+                        setLoading(true)
+                        const oldHeight = current.scrollHeight
+                        const oldTop = current.scrollTop
+                        await fetchMore()
+                        current.scrollTop = current.scrollHeight
+                          ? current.scrollHeight - oldHeight + oldTop
+                          : 0
+                      } finally {
+                        setLoading(false)
+                      }
+                    }}
+                  />
+                ) : !!loading && canFetchMore ? (
+                  <div key='loader' className={styles.loader}>
+                    <h5>Loading more...</h5>
+                  </div>
+                ) : <></>}
               </div>
             </>
           ) : (
             <>
-              <div className={styles.codesEmpty}>
+              <div className={styles.newslettersEmpty}>
                 <FontAwesomeIcon size={'5x'} icon={faBoxOpen} />
                 <br />
                 <h2>No newsletter subscribers found!</h2>
