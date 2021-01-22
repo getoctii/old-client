@@ -1,25 +1,8 @@
-import React, {
-  Suspense,
-  useCallback,
-  useEffect,
-  useState
-} from 'react'
+import React, { Suspense, useCallback, useEffect, useState } from 'react'
 import { useMedia } from 'react-use'
-import {
-  Element,
-  Text,
-  Transforms,
-  Editor,
-  Range,
-  Node
-} from 'slate'
+import { Element, Text, Transforms, Editor, Range, Node } from 'slate'
 import { HistoryEditor } from 'slate-history'
-import {
-  RenderLeafProps,
-  Slate,
-  Editable,
-  ReactEditor
-} from 'slate-react'
+import { RenderLeafProps, Slate, Editable, ReactEditor } from 'slate-react'
 import { UserResponse } from '../user/remote'
 import { serialize } from '../utils/slate'
 import unified from 'unified'
@@ -35,6 +18,7 @@ import underlineToMarkdown from '@innatical/mdast-util-underline/to-markdown'
 import Mentions from '../chat/Mentions'
 import { useRouteMatch } from 'react-router-dom'
 import Mention from '../chat/Mention'
+import { ChannelResponse } from '../community/remote'
 
 const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   return leaf.underline ? (
@@ -68,7 +52,8 @@ const View = ({
   onTyping,
   onDismiss,
   typingIndicator,
-  userMentions
+  userMentions,
+  channelMentions
 }: {
   editor: Editor & ReactEditor & HistoryEditor
   className: string
@@ -103,7 +88,9 @@ const View = ({
   }, [editor])
 
   const [value, setValue] = useState<Node[]>(emptyEditor)
-  const [target, setTarget] = useState<{ range: Range, type: 'user' | 'channel' } | undefined>()
+  const [target, setTarget] = useState<
+    { range: Range; type: 'user' | 'channel' } | undefined
+  >()
   const [search, setSearch] = useState('')
 
   const decorate = useCallback(([node, path]) => {
@@ -223,15 +210,19 @@ const View = ({
     [editor, target]
   )
 
-  const [filtered, setFiltered] = useState<UserResponse[]>([])
-
-  const onFiltered = useCallback((users: UserResponse[]) => {
-    setFiltered(users)
+  const [usersFiltered, setUsersFiltered] = useState<UserResponse[]>([])
+  const [channelsFiltered, setChannelsFiltered] = useState<ChannelResponse[]>(
+    []
+  )
+  const onUsersFiltered = useCallback((users: UserResponse[]) => {
+    setUsersFiltered(users)
   }, [])
-
+  const onChannelsFiltered = useCallback((channels: ChannelResponse[]) => {
+    setChannelsFiltered(channels)
+  }, [])
   useEffect(() => {
     setSelected(0)
-  }, [target, filtered])
+  }, [target, usersFiltered, channelsFiltered])
 
   return (
     <>
@@ -243,26 +234,29 @@ const View = ({
                 search={search}
                 selected={selected}
                 onMention={onMention}
-                onFiltered={onFiltered}
+                onFiltered={onUsersFiltered}
               />
             ) : match?.params.id ? (
               target.type === 'user' ? (
-              <Mentions.Community.Users
-                search={search}
-                onMention={onMention}
-                selected={selected}
-                onFiltered={onFiltered}
-              />
-            ) : target.type === 'channel' ? (
-              <Mentions.Community.Channels
-                search={search}
-                onMention={onMention}
-                selected={selected}
-                onFiltered={onFiltered}
-              />
+                <Mentions.Community.Users
+                  search={search}
+                  onMention={onMention}
+                  selected={selected}
+                  onFiltered={onUsersFiltered}
+                />
+              ) : target.type === 'channel' ? (
+                <Mentions.Community.Channels
+                  search={search}
+                  onMention={onMention}
+                  selected={selected}
+                  onFiltered={onChannelsFiltered}
+                />
+              ) : (
+                <></>
+              )
             ) : (
               <></>
-            )) : <></>}
+            )}
           </Suspense>
         </div>
       )}
@@ -282,10 +276,12 @@ const View = ({
               const wordBefore = Editor.before(editor, start, {
                 unit: 'word'
               })
-              const mentionType = characterBefore && Editor.string(
-                editor,
-                Editor.range(editor, characterBefore, start)
-              )
+              const mentionType =
+                characterBefore &&
+                Editor.string(
+                  editor,
+                  Editor.range(editor, characterBefore, start)
+                )
               const before =
                 mentionType === '@' || mentionType === '#'
                   ? characterBefore
@@ -293,7 +289,9 @@ const View = ({
               const beforeRange = before && Editor.range(editor, before, start)
               const beforeText =
                 beforeRange && Editor.string(editor, beforeRange)
-              const beforeMatch = beforeText && (beforeText.match(/^@(\w*)$/) ?? beforeText.match(/^#(\w*)$/) )
+              const beforeMatch =
+                beforeText &&
+                (beforeText.match(/^@(\w*)$/) ?? beforeText.match(/^#(\w*)$/))
               const after = Editor.after(editor, start)
               const afterRange = Editor.range(editor, start, after)
               const afterText = Editor.string(editor, afterRange)
@@ -301,12 +299,15 @@ const View = ({
 
               console.log(mentionType)
               if (beforeMatch && afterMatch) {
-
                 console.log(mentionType)
-                setTarget({
-                  range: beforeRange!,
-                  type: mentionType === '@' ? 'user' : 'channel'
-                })
+                if (mentionType === '@' || mentionType === '#') {
+                  setTarget({
+                    range: beforeRange!,
+                    type: mentionType === '@' ? 'user' : 'channel'
+                  })
+                }
+
+                console.log(beforeMatch[1])
                 setSearch(beforeMatch[1])
                 return
               }
@@ -342,7 +343,10 @@ const View = ({
                     editor.insertBreak()
                   } else if (target && userMentions) {
                     event.preventDefault()
-                    if (filtered[selected].id) onMention(filtered[selected].id, target.type)
+                    if (usersFiltered[selected].id)
+                      onMention(usersFiltered[selected].id, target.type)
+                    if (channelsFiltered[selected].id)
+                      onMention(channelsFiltered[selected].id, target.type)
                   } else {
                     event.preventDefault()
                     const content = serialize(value)
@@ -357,15 +361,33 @@ const View = ({
                 }
                 case 'Tab': {
                   event.preventDefault()
-                  if (!userMentions) return
+                  if (!userMentions || !channelMentions || !target) return
                   if (event.shiftKey) {
-                    setSelected(
-                      selected - 1 < 0 ? filtered.length - 1 : selected - 1
-                    )
+                    if (target.type === 'user')
+                      setSelected(
+                        selected - 1 < 0
+                          ? usersFiltered.length - 1
+                          : selected - 1
+                      )
+                    else if (target.type === 'channel')
+                      setSelected(
+                        selected - 1 < 0
+                          ? channelsFiltered.length - 1
+                          : selected - 1
+                      )
                   } else {
-                    setSelected(
-                      selected + 1 > filtered.length - 1 ? 0 : selected + 1
-                    )
+                    if (target.type === 'user')
+                      setSelected(
+                        selected + 1 < 0
+                          ? usersFiltered.length - 1
+                          : selected + 1
+                      )
+                    else if (target.type === 'channel')
+                      setSelected(
+                        selected + 1 < 0
+                          ? channelsFiltered.length - 1
+                          : selected + 1
+                      )
                   }
                 }
               }

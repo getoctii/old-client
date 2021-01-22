@@ -122,7 +122,10 @@ const View = ({ channelID }: { channelID: string }) => {
         >
           <div className={styles.buttons}>
             {!isMobile && (
-              <Button type='button' onClick={() => setEmojiPicker(!emojiPicker)}>
+              <Button
+                type='button'
+                onClick={() => setEmojiPicker(!emojiPicker)}
+              >
                 <FontAwesomeIcon icon={faSmileWink} />
               </Button>
             )}
