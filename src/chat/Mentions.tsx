@@ -157,49 +157,58 @@ const searchCommunityMembers = async (
       ).data
     : []
 
-const Channels = memo( ({
-  search,
-  onMention,
-  selected,
-  onFiltered
-}: {
-  search: string
-  onMention: onMention
-  selected: number
-  onFiltered: (users: UserResponse[]) => void
-}) => {
-  const params = useParams<{ id: string }>()
-  console.log(params)
-  const { token } = Auth.useContainer()
-  const { data: communityChannels } = useQuery(['channels', params.id, token], getChannels)
-  const channels = useMemo(
-    () =>
-      search !== ''
-        ? communityChannels?.filter((channel) => channel.name.includes(search))
-        : communityChannels,
-    [communityChannels, search]
-  )
+const Channels = memo(
+  ({
+    search,
+    onMention,
+    selected,
+    onFiltered
+  }: {
+    search: string
+    onMention: onMention
+    selected: number
+    onFiltered: (users: ChannelResponse[]) => void
+  }) => {
+    const params = useParams<{ id: string }>()
+    console.log(params)
+    const { token } = Auth.useContainer()
+    const { data: communityChannels } = useQuery(
+      ['channels', params.id, token],
+      getChannels
+    )
+    const channels = useMemo(
+      () =>
+        search !== ''
+          ? communityChannels?.filter((channel) =>
+              channel.name.includes(search)
+            )
+          : communityChannels,
+      [communityChannels, search]
+    )
 
-  return (
-    <div
-      className={styles.mentionPopup}
-      onMouseDown={(e) => {
-        e.preventDefault()
-      }}
-    >
-      <div className={styles.mentions}>
-        {channels && channels?.length > 0 && channels?.map((channel, index) => (
-          <Channel
-            key={channel.id}
-            channel={channel}
-            onMention={onMention}
-            selected={index === selected}
-          />
-        ))}
+    return (
+      <div
+        className={styles.mentionPopup}
+        onMouseDown={(e) => {
+          e.preventDefault()
+        }}
+      >
+        <div className={styles.mentions}>
+          {channels &&
+            channels?.length > 0 &&
+            channels?.map((channel, index) => (
+              <Channel
+                key={channel.id}
+                channel={channel}
+                onMention={onMention}
+                selected={index === selected}
+              />
+            ))}
+        </div>
       </div>
-    </div>
-  )
-})
+    )
+  }
+)
 const Users = memo(
   ({
     search,
