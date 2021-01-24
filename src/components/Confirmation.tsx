@@ -9,11 +9,11 @@ export const Confirmation = ({
   onDismiss
 }: {
   type: 'channel' | 'message'
-  onConfirm: Function
-  onDismiss: Function
+  onConfirm: () => Promise<void> | void
+  onDismiss: () => Promise<void> | void
 }) => {
   return (
-    <Modal onDismiss={() => onDismiss()}>
+    <Modal onDismiss={async () => await onDismiss()}>
       <div className={styles.confirmation}>
         <h3>
           Are you sure you want to delete this{' '}
@@ -28,7 +28,7 @@ export const Confirmation = ({
           <Button
             type='button'
             className={styles.danger}
-            onClick={() => onConfirm()}
+            onClick={async () => await onConfirm()}
           >
             Delete
           </Button>
@@ -36,7 +36,7 @@ export const Confirmation = ({
           <Button
             type='button'
             className={styles.cancel}
-            onClick={() => onDismiss()}
+            onClick={async () => await onDismiss()}
           >
             Cancel
           </Button>

@@ -64,7 +64,7 @@ const MentionsPopup = ({
   onFiltered
 }: {
   usersIDs: string[]
-  search: string
+  search?: string
   onMention: onMention
   selected: number
   onFiltered: (users: UserResponse[]) => void
@@ -73,7 +73,7 @@ const MentionsPopup = ({
   const { data: users } = useQuery(['users', usersIDs, token], fetchManyUsers)
   const results = useMemo(
     () =>
-      search !== ''
+      search && search !== ''
         ? users?.filter((user) => user.username.includes(search))
         : users,
     [users, search]
@@ -170,7 +170,6 @@ const Channels = memo(
     onFiltered: (users: ChannelResponse[]) => void
   }) => {
     const params = useParams<{ id: string }>()
-    console.log(params)
     const { token } = Auth.useContainer()
     const { data: communityChannels } = useQuery(
       ['channels', params.id, token],
@@ -222,7 +221,6 @@ const Users = memo(
     onFiltered: (users: UserResponse[]) => void
   }) => {
     const params = useParams<{ id: string }>()
-    console.log(params)
     const { token, id } = Auth.useContainer()
     const isMobile = useMedia('(max-width: 740px)')
     const [debouncedSearch, setDebouncedSearch] = useState(search)
@@ -245,49 +243,28 @@ const Users = memo(
           : defaultMembers.data?.slice(0, 9),
       [defaultMembers, isMobile]
     )
-    console.log(truncatedDefaultMembers)
     const truncatedFilteredMembers = useMemo(
       () => filteredMembers?.slice(0, 9),
       [filteredMembers]
     )
 
-    useEffect(() => {
-      onFiltered(
-        truncatedFilteredMembers && truncatedFilteredMembers.length > 0
-          ? truncatedFilteredMembers?.map((member) => member.user)
-          : truncatedDefaultMembers?.map((m) => m.user) ?? []
-      )
-    }, [truncatedDefaultMembers, onFiltered, truncatedFilteredMembers])
-
     return (
-      <div
-        className={styles.mentionPopup}
-        onMouseDown={(e) => {
-          e.preventDefault()
-        }}
-      >
-        <div className={styles.mentions}>
-          {truncatedFilteredMembers && truncatedFilteredMembers.length > 0
-            ? truncatedFilteredMembers.map((member, index) => (
-                <User
-                  key={member?.id}
-                  user={member?.user}
-                  onMention={onMention}
-                  selected={index === selected}
-                />
-              ))
+      <MentionsPopup
+        usersIDs={
+          truncatedFilteredMembers && truncatedFilteredMembers.length > 0
+            ? truncatedFilteredMembers
+                .filter((member) => member.user.id !== id)
+                .map((member) => member.user.id)
             : truncatedDefaultMembers
-                ?.filter((member) => member?.user?.id !== id)
-                .map((member, index) => (
-                  <User
-                    key={member?.id}
-                    user={member?.user}
-                    onMention={onMention}
-                    selected={index === selected}
-                  />
-                ))}
-        </div>
-      </div>
+            ? truncatedDefaultMembers
+                .filter((member) => member.user_id !== id)
+                .map((m) => m.user_id)
+            : []
+        }
+        onMention={onMention}
+        selected={selected}
+        onFiltered={onFiltered}
+      />
     )
   }
 )

@@ -1,4 +1,4 @@
-import { clientGateway } from '../utils/constants'
+import { clientGateway, MessageTypes } from '../utils/constants'
 
 export interface MessageResponse {
   id: string
@@ -7,6 +7,7 @@ export interface MessageResponse {
   content: string
   channel_id: string
   author_id: string
+  type: MessageTypes
 }
 
 export const getMessage = async (_: string, messageID: string, token: string) =>

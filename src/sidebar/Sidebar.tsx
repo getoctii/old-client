@@ -349,7 +349,6 @@ const Sidebar = () => {
                 src={user.data?.avatar}
                 alt={user.data?.username}
                 onClick={() => {
-                  console.log('redirect')
                   history.push('/settings')
                 }}
               />

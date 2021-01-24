@@ -16,52 +16,16 @@
     p {
       margin: 0;
     }
-    .avatar {
-      margin-top: 0.5rem;
-      border-radius: 13px;
-      padding: 1.5rem;
-      display: flex;
-      background: var(--neko-settings-background);
 
-      .details {
-        margin-left: 1rem;
-        margin-right: 1rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        h5 {
-          font-size: 1rem;
-        }
-        p {
-          font-size: 0.8rem;
-        }
 
-        a {
-          color: var(--neko-text-href);
-          text-decoration: none;
-        }
-      }
-      img,
-      button {
-        border-radius: 12px;
-        width: 5rem;
-        height: 5rem;
-      }
-
-      button {
-        color: var(--neko-text-normal);
-        background: var(--neko-settings-card);
-      }
-      input {
-        display: none;
-      }
+    .inputName {
+      margin-bottom: 0.5rem;
+      display: block;
     }
-
     .username,
     .discriminator {
       margin-top: 0.8rem;
       input {
-        margin-top: 0.5rem;
         background: var(--neko-settings-background);
         width: 100%;
       }
@@ -76,25 +40,8 @@
     padding-top: 2.5rem;
   }
 
-  // , (max-height: 420px)
   @media (max-width: 740px) {
     margin-top: 0;
-    .icon {
-      background: var(--neko-colors-primary);
-      margin-right: 0.7rem;
-      padding: 0.5rem;
-      height: 2.65rem;
-      width: 2.65rem;
-      border-radius: 12px;
-      color: var(--neko-text-inverse);
-      cursor: pointer;
-      svg {
-        align-self: center;
-      }
-      display: flex;
-      vertical-align: middle;
-      justify-content: center;
-    }
 
     form {
       padding: 1.5rem;

@@ -16,7 +16,7 @@ import { useMedia } from 'react-use'
 import Sidebar from '../sidebar/Sidebar'
 import { Members } from './Members'
 import { ChannelTypes } from '../utils/constants'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 
 const EmptyCommunity = ({
   community,

@@ -1,4 +1,4 @@
-import React, { memo, useMemo, Suspense, useCallback } from 'react'
+import React, { memo, Suspense, useCallback, useMemo } from 'react'
 import styles from './Message.module.scss'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
@@ -11,7 +11,7 @@ import {
 import { Plugins } from '@capacitor/core'
 import { Auth } from '../authentication/state'
 import { useMutation, useQuery } from 'react-query'
-import { clientGateway, ModalTypes } from '../utils/constants'
+import { clientGateway, MessageTypes, ModalTypes } from '../utils/constants'
 import { getUser } from '../user/remote'
 import { Measure } from './embeds/Measure'
 import Context from '../components/Context'
@@ -99,6 +99,7 @@ const View = memo(
     createdAt,
     primary,
     content,
+    type,
     onResize
   }: {
     id: string
@@ -106,6 +107,7 @@ const View = memo(
     createdAt: string
     updatedAt: string
     content: string
+    type: MessageTypes
     primary: boolean
     onResize: () => void
   }) => {
@@ -166,8 +168,8 @@ const View = memo(
               name: ModalTypes.DELETE_MESSAGE,
               props: {
                 type: 'message',
-                onConfirm: () => {
-                  deleteMessage()
+                onConfirm: async () => {
+                  await deleteMessage()
                   uiStore.clearModal()
                 },
                 onDismiss: () => uiStore.clearModal()
@@ -199,7 +201,13 @@ const View = memo(
         if (Invite.isInvite(str)) {
           return {
             link: <></>,
-            embed: <Suspense fallback={<></>}><Invite.Embed key={key} url={str} /></Suspense>
+            embed: (
+              <ErrorBoundary fallback={<Invite.ErrorEmbed />}>
+                <Suspense fallback={<Invite.Placeholder />}>
+                  <Invite.Embed key={key} url={str} />
+                </Suspense>
+              </ErrorBoundary>
+            )
           }
         } else if (Image.isCovfefe(str)) {
           return {
@@ -222,7 +230,11 @@ const View = memo(
           (str, key) => (
             <Suspense fallback={<>@unknown</>}>
               <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
-                <Mention.User key={key} userID={str} />
+                <Mention.User
+                  key={key}
+                  userID={str}
+                  selected={type !== MessageTypes.NORMAL}
+                />
               </ErrorBoundary>
             </Suspense>
           )
@@ -232,7 +244,11 @@ const View = memo(
           (str, key) => (
             <Suspense fallback={<>#unknown</>}>
               <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
-                <Mention.Channel key={key} channelID={str} />
+                <Mention.Channel
+                  key={key}
+                  channelID={str}
+                  selected={type !== MessageTypes.NORMAL}
+                />
               </ErrorBoundary>
             </Suspense>
           )
@@ -255,15 +271,31 @@ const View = memo(
         key={id}
         items={getItems()}
       >
-        <div className={`${styles.message} ${primary ? styles.primary : ''}`}>
-          {primary && (
+        <div
+          className={`${styles.message} ${
+            primary || type !== MessageTypes.NORMAL ? styles.primary : ''
+          } ${
+            type === MessageTypes.MEMBER_ADDED ? (
+              styles.joined
+            ) : type === MessageTypes.MEMBER_REMOVED ? (
+              styles.left
+            ) : (
+              <></>
+            )
+          }`}
+        >
+          {primary && type === MessageTypes.NORMAL && (
             <div
               className={styles.avatar}
               style={{ backgroundImage: `url(${user.data?.avatar})` }}
             />
           )}
-          <div className={`${styles.content} ${!primary ? styles.spacer : ''}`}>
-            {primary && (
+          <div
+            className={`${styles.content} ${
+              !(primary || type !== MessageTypes.NORMAL) ? styles.spacer : ''
+            }`}
+          >
+            {primary && type === MessageTypes.NORMAL && (
               <h2 key='username'>
                 <span>
                   {user.data?.username}

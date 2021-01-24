@@ -12,7 +12,7 @@ import Empty from './empty/Empty'
 import Sidebar from '../sidebar/Sidebar'
 import dayjs from 'dayjs'
 import { useSuspenseStorageItem } from '../utils/storage'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 
 const Conversation = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')

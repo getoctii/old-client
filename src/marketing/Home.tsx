@@ -76,7 +76,6 @@ const Home = () => {
                         <FontAwesomeIcon icon={faBell} />
                       </Button>
                     </div>
-                    {console.log(errors.email)}
                     {errors.email && touched.email ? (
                       <ErrorMessage
                         component='p'

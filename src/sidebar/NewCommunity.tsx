@@ -39,11 +39,9 @@ const validateInvite = (values: inviteData) => {
 
 const createCommunity = async (token: string, values: createCommunityData) =>
   (
-    await clientGateway.post<ConversationResponse>(
-      '/communities',
-      values,
-      { headers: { Authorization: token } }
-    )
+    await clientGateway.post<ConversationResponse>('/communities', values, {
+      headers: { Authorization: token }
+    })
   ).data
 
 const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
@@ -176,7 +174,6 @@ export const NewCommunity = () => {
                 history.push(`/communities/${id}`)
                 ui.clearModal()
               } catch (e) {
-                console.log('joinError', e.response.data.errors)
                 if (e.response.data.errors.includes('InvalidCode'))
                   setErrors({ invite: 'Invalid Invite' })
                 if (e.response.data.errors.includes('InviteNotFound'))

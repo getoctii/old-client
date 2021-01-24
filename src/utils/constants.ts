@@ -32,6 +32,14 @@ export enum Events {
   UPDATED_MESSAGE = 'UPDATED_MESSAGE'
 }
 
+export enum MessageTypes {
+  NORMAL = 1,
+  PINNED = 2,
+  MEMBER_ADDED = 3,
+  MEMBER_REMOVED = 4,
+  ADMINISTRATOR = 5
+}
+
 export enum ChannelTypes {
   PrivateChannel,
   GroupChannel,

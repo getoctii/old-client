@@ -1,5 +1,5 @@
 import React, { Suspense, useCallback, useEffect, useState } from 'react'
-import { useMedia } from 'react-use'
+import { useMedia, usePageLeave } from 'react-use'
 import { Element, Text, Transforms, Editor, Range, Node } from 'slate'
 import { HistoryEditor } from 'slate-history'
 import { RenderLeafProps, Slate, Editable, ReactEditor } from 'slate-react'
@@ -86,7 +86,7 @@ const View = ({
       return element.type === 'user' || element.type === 'channel'
     }
   }, [editor])
-
+  usePageLeave(() => setTyping(false))
   const [value, setValue] = useState<Node[]>(emptyEditor)
   const [target, setTarget] = useState<
     { range: Range; type: 'user' | 'channel' } | undefined
@@ -297,17 +297,13 @@ const View = ({
               const afterText = Editor.string(editor, afterRange)
               const afterMatch = afterText.match(/^(\s|$)/)
 
-              console.log(mentionType)
               if (beforeMatch && afterMatch) {
-                console.log(mentionType)
                 if (mentionType === '@' || mentionType === '#') {
                   setTarget({
                     range: beforeRange!,
                     type: mentionType === '@' ? 'user' : 'channel'
                   })
                 }
-
-                console.log(beforeMatch[1])
                 setSearch(beforeMatch[1])
                 return
               }
@@ -343,15 +339,15 @@ const View = ({
                     editor.insertBreak()
                   } else if (target && userMentions) {
                     event.preventDefault()
-                    if (usersFiltered[selected].id)
+                    if (usersFiltered?.[selected]?.id)
                       onMention(usersFiltered[selected].id, target.type)
-                    if (channelsFiltered[selected].id)
+                    if (channelsFiltered?.[selected]?.id)
                       onMention(channelsFiltered[selected].id, target.type)
                   } else {
                     event.preventDefault()
                     const content = serialize(value)
+                    setTyping(false)
                     if (content !== '') {
-                      setTyping(false)
                       onEnter(content)
                       Transforms.select(editor, Editor.start(editor, []))
                       setValue(emptyEditor)

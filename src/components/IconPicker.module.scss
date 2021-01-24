@@ -1,0 +1,65 @@
+.icon {
+  border-radius: 13px;
+  padding: 1.5rem;
+  display: flex;
+  background: var(--neko-settings-background);
+
+  .details {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    h6 {
+      font-size: 0.9rem;
+      margin: 0;
+      font-weight: 700;
+    }
+    p {
+      font-weight: 400;
+      font-size: 0.8rem;
+      margin: 0;
+    }
+
+    a {
+      color: var(--neko-text-href);
+      text-decoration: none;
+    }
+  }
+
+  img {
+    object-fit: cover;
+  }
+  img,
+  button {
+    margin-top: 0;
+    border-radius: 12px;
+    width: 5rem;
+    height: 5rem;
+    min-width: 5rem;
+    max-height: 5rem;
+  }
+
+  button {
+    margin-left: auto;
+    color: var(--neko-text-normal);
+    background: var(--neko-settings-card);
+  }
+  input {
+    display: none;
+  }
+
+
+  @media (max-width: 500px) {
+    svg {
+      align-self: center;
+    }
+    img {
+      margin: 0;
+    }
+    .details {
+      display: none;
+    }
+
+  }
+}
