@@ -67,7 +67,7 @@ export const Newsletters = () => {
           headers: {
             Authorization: token
           },
-          params: { last_code_id: lastCodeEmail }
+          params: { last_email_id: lastCodeEmail }
         })
       ).data,
     {
