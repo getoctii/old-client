@@ -10,7 +10,7 @@ const Modal = ({
   blur
 }: {
   children: React.ReactNode
-  onDismiss?: () => void
+  onDismiss?: () => Promise<void> | void
   fullscreen?: boolean
   className?: string
   blur?: boolean
@@ -52,7 +52,7 @@ const Modal = ({
         })}
         className={styles.content}
       >
-        {fullscreen && <div className={styles.mrpully}/>}
+        {fullscreen && <div className={styles.mrpully} />}
         {children}
       </motion.div>
     </div>

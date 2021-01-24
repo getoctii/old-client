@@ -22,6 +22,7 @@ import { Call } from './state/call'
 import { Chat } from './chat/state'
 import { Integrations } from '@sentry/tracing'
 import { AxiosError } from 'axios'
+import { HelmetProvider } from 'react-helmet-async'
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
@@ -29,7 +30,7 @@ if (process.env.NODE_ENV === 'production') {
       'https://6f9ffeb08c814b15971d8241698bee28@o271654.ingest.sentry.io/5541960',
     integrations: [new SentryRRWeb(), new Integrations.BrowserTracing()],
     release: process.env.REACT_APP_VERSION,
-    tracesSampleRate: 1.0
+    tracesSampleRate: 0.75
   })
 }
 
@@ -78,24 +79,32 @@ ReactDOM.render(
     >
       <Sentry.ErrorBoundary
         onReset={() => queryCache.resetErrorBoundaries()}
-        fallback={({ resetError, error }: { resetError: () => void, error: AxiosError }) => <Error resetErrorBoundary={resetError} error={error} />}
+        fallback={({
+          resetError,
+          error
+        }: {
+          resetError: () => void
+          error: AxiosError
+        }) => <Error resetErrorBoundary={resetError} error={error} />}
       >
         <React.Suspense fallback={<Loader />}>
-          <Auth.Provider>
-            <UI.Provider>
-              <Typing.Provider>
-                <Call.Provider>
-                  <Chat.Provider>
-                    <Theme.Provider>
-                      <ScrollPosition.Provider>
-                        <Router />
-                      </ScrollPosition.Provider>
-                    </Theme.Provider>
-                  </Chat.Provider>
-                </Call.Provider>
-              </Typing.Provider>
-            </UI.Provider>
-          </Auth.Provider>
+          <HelmetProvider>
+            <Auth.Provider>
+              <UI.Provider>
+                <Typing.Provider>
+                  <Call.Provider>
+                    <Chat.Provider>
+                      <Theme.Provider>
+                        <ScrollPosition.Provider>
+                          <Router />
+                        </ScrollPosition.Provider>
+                      </Theme.Provider>
+                    </Chat.Provider>
+                  </Call.Provider>
+                </Typing.Provider>
+              </UI.Provider>
+            </Auth.Provider>
+          </HelmetProvider>
           <ReactQueryDevtools />
         </React.Suspense>
       </Sentry.ErrorBoundary>

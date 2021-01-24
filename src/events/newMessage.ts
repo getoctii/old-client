@@ -21,6 +21,7 @@ interface Message {
     avatar: string
     discriminator: number
   }
+  type: string
   created_at: string
   updated_at: string
   content: string
@@ -55,12 +56,30 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
         message.channel_id,
         token
       ])
+
       if (initial instanceof Array) {
         queryCache.setQueryData(
           ['messages', message.channel_id, token],
           initial[0].length < 25
-            ? [[message, ...initial[0]], ...initial.slice(1)]
-            : [[message], ...initial]
+            ? [
+                [
+                  {
+                    ...message,
+                    author_id: message.author.id
+                  },
+                  ...initial[0]
+                ],
+                ...initial.slice(1)
+              ]
+            : [
+                [
+                  {
+                    ...message,
+                    author_id: message.author.id
+                  }
+                ],
+                ...initial
+              ]
         )
       }
       queryCache.setQueryData(['unreads', id, token], (initial: any) => ({

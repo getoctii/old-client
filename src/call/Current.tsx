@@ -19,9 +19,7 @@ const Current = () => {
   const [audio] = useState(new Audio())
 
   useEffect(() => {
-    console.log(audio, call.stream)
     if (audio && call.stream) {
-      console.log('playing audio...')
       audio.srcObject = call.stream
       audio.play()
     }

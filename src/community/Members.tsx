@@ -31,7 +31,7 @@ const Member = memo(
     const isMobile = useMedia('(max-width: 740px)')
     const { id, token } = Auth.useContainer()
     const history = useHistory()
-    const user = useQuery(['users', member.user.id, token], getUser)
+    const user = useQuery(['users', member.user_id, token], getUser)
     return (
       <motion.div
         className={styles.member}
@@ -70,12 +70,12 @@ const Member = memo(
                   ]) as ParticipantsResponse
                   const participant = cache?.find((participant) =>
                     participant.conversation.participants.includes(
-                      member.user.id
+                      member.user_id
                     )
                   )
                   if (!cache || !participant) {
                     const result = await createConversation(token!, {
-                      recipient: member.user.id
+                      recipient: member.user_id
                     })
                     if (result.id) history.push(`/conversations/${result.id}`)
                   } else {
@@ -112,7 +112,7 @@ export const Members = () => {
     getMembers,
     {
       getFetchMore: (last) => {
-        return last.length < 25 ? undefined : last[last.length - 1]?.created_at
+        return last.length < 25 ? undefined : last[last.length - 1]?.id
       }
     }
   )
@@ -189,7 +189,9 @@ export const Members = () => {
                   <div key='loader' className={styles.loader}>
                     <h5>Loading more...</h5>
                   </div>
-                ) : <></>}
+                ) : (
+                  <></>
+                )}
               </div>
             </>
           ) : (

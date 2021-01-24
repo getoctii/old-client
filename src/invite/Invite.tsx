@@ -8,7 +8,7 @@ import styles from './Invite.module.scss'
 import { getCommunities, getUser } from '../user/remote'
 import Button from '../components/Button'
 import { clientGateway } from '../utils/constants'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 
 const InvitePreview = (invite: InviteResponse) => {
   const { token, id } = Auth.useContainer()

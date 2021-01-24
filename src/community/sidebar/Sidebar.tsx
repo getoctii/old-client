@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Integrations from './Integrations'
 import React, { useState } from 'react'
 import { useMutation, useQuery } from 'react-query'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
 import { getCommunity } from '../remote'
 import styles from './Sidebar.module.scss'
@@ -19,7 +19,6 @@ import { useSuspenseStorageItem } from '../../utils/storage'
 const View = () => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
-  const history = useHistory()
   const [menu, setMenu] = useState(false)
   const [muted, setMuted] = useSuspenseStorageItem<string[]>(
     'muted-communities',
@@ -89,9 +88,8 @@ const View = () => {
                   <hr />
                   <div
                     className={`${styles.menuItem} ${styles.danger}`}
-                    onClick={() => {
-                      leaveCommunity()
-                      history.push('/')
+                    onClick={async () => {
+                      await leaveCommunity()
                     }}
                   >
                     <span>Leave Community</span>{' '}

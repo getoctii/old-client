@@ -3,11 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronRight,
   faCopy,
+  faHouseLeave,
   faTrashAlt,
   faUserFriends
 } from '@fortawesome/pro-solid-svg-icons'
 import { useQuery, useMutation, queryCache } from 'react-query'
-import { clientGateway } from '../utils/constants'
+import { clientGateway, MessageTypes } from '../utils/constants'
 import styles from './ConversationCard.module.scss'
 import { Auth } from '../authentication/state'
 import { useHistory, useRouteMatch } from 'react-router-dom'
@@ -129,8 +130,11 @@ const View = ({
     }
 
     items.push({
-      text: 'Delete Conversation',
-      icon: faTrashAlt,
+      text:
+        (people?.length ?? 1) === 1
+          ? 'Delete Conversation'
+          : 'Leave Conversation',
+      icon: (people?.length ?? 1) === 1 ? faTrashAlt : faHouseLeave,
       danger: true,
       onClick: (event) => {
         if (match?.params.id === conversationID) history.push('/')
@@ -148,7 +152,8 @@ const View = ({
     token,
     unreads.data,
     channelID,
-    id
+    id,
+    people?.length
   ])
 
   const output = useMarkdown(message?.content || '', {
@@ -184,7 +189,7 @@ const View = ({
             </ErrorBoundary>
           </Suspense>
         )
-      ],
+      ]
     ]
   })
 
@@ -234,10 +239,12 @@ const View = ({
                 ? 'You: '
                 : (people?.length ?? 1) === 1
                 ? ''
-                : `${
+                : message.type === MessageTypes.NORMAL
+                ? `${
                     users?.find((user) => user.id === message?.author_id)
                       ?.username ?? 'Unknown'
-                  }: `}
+                  }: `
+                : ''}
               {output}
             </p>
           )}

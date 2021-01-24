@@ -1,7 +1,4 @@
-import {
-  faBoxOpen,
-  faChevronLeft
-} from '@fortawesome/pro-solid-svg-icons'
+import { faBoxOpen, faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AnimatePresence, motion } from 'framer-motion'
 import dayjs from 'dayjs'
@@ -27,59 +24,55 @@ interface SubResponse {
   updated_at: number
 }
 
-const Subscriber = memo(
-  ({ email, created_at, ind }: any) => {
-    return (
-      <motion.div
-        className={styles.sub}
-        initial={{
-          opacity: 0
-        }}
-        animate={{
-          opacity: 1,
-          transition: { y: { stiffness: 1000, velocity: -100 } }
-        }}
-        exit={{
-          opacity: 0
-        }}
-      >
-        <div
-          className={styles.icon}
-        >
-          <FontAwesomeIcon icon={faUserClock} />
-        </div>
-        <div className={styles.info}>
-          <h4>
-            {email}
-            {ind}
-          </h4>
-          <time>{dayjs.utc(created_at).local().calendar()}</time>
-        </div>
-      </motion.div>
-    )
-  }
-)
+const Subscriber = memo(({ email, created_at, ind }: any) => {
+  return (
+    <motion.div
+      className={styles.sub}
+      initial={{
+        opacity: 0
+      }}
+      animate={{
+        opacity: 1,
+        transition: { y: { stiffness: 1000, velocity: -100 } }
+      }}
+      exit={{
+        opacity: 0
+      }}
+    >
+      <div className={styles.icon}>
+        <FontAwesomeIcon icon={faUserClock} />
+      </div>
+      <div className={styles.info}>
+        <h4>
+          {email}
+          {ind}
+        </h4>
+        <time>{dayjs.utc(created_at).local().calendar()}</time>
+      </div>
+    </motion.div>
+  )
+})
 
 export const Newsletters = () => {
   const history = useHistory()
   const { token } = Auth.useContainer()
-  const { data, canFetchMore, fetchMore } = useInfiniteQuery<SubResponse[], any>(
+  const { data, canFetchMore, fetchMore } = useInfiniteQuery<
+    SubResponse[],
+    any
+  >(
     ['newsletters', token],
-    async (_: string, token: string, date: string) => {
-      console.log(dayjs.utc(date).format('YYYY/MM/DD HH:mm:ss'))
-      return (
+    async (_: string, token: string, lastCodeEmail: string) =>
+      (
         await clientGateway.get<SubResponse[]>('/admin/newsletters', {
           headers: {
             Authorization: token
           },
-          params: { created_at: dayjs.utc(date).format('YYYY/MM/DD HH:mm:ss') }
+          params: { last_code_id: lastCodeEmail }
         })
-      ).data
-    },
+      ).data,
     {
       getFetchMore: (last) => {
-        console.log(last.length)
-        return last.length < 25 ? undefined : last[last.length - 1]?.created_at
+        return last.length < 25 ? undefined : last[last.length - 1]?.email
       }
     }
   )
@@ -97,10 +90,7 @@ export const Newsletters = () => {
                 {isMobile ? (
                   <div
                     className={styles.icon}
-                    onClick={() =>
-                      isMobile &&
-                      history.push(`/admin`)
-                    }
+                    onClick={() => isMobile && history.push(`/admin`)}
                   >
                     <FontAwesomeIcon
                       className={styles.backButton}
@@ -108,12 +98,8 @@ export const Newsletters = () => {
                     />
                   </div>
                 ) : (
-                  <div
-                    className={styles.icon}
-                  >
-                    <FontAwesomeIcon
-                      icon={faNewspaper}
-                    />
+                  <div className={styles.icon}>
+                    <FontAwesomeIcon icon={faNewspaper} />
                   </div>
                 )}
                 <div className={styles.title}>
@@ -123,11 +109,16 @@ export const Newsletters = () => {
               </div>
               <div className={styles.body} ref={ref}>
                 <AnimatePresence>
-                  {subscribers.map(
-                    (subscriber, index) =>
-                      subscriber ? (
-                        <Subscriber key={subscriber.email} {...subscriber} ind={index} />
-                      ) : <></>
+                  {subscribers.map((subscriber, index) =>
+                    subscriber ? (
+                      <Subscriber
+                        key={subscriber.email}
+                        {...subscriber}
+                        ind={index}
+                      />
+                    ) : (
+                      <></>
+                    )
                   )}
                 </AnimatePresence>
                 {!loading && canFetchMore ? (
@@ -153,7 +144,9 @@ export const Newsletters = () => {
                   <div key='loader' className={styles.loader}>
                     <h5>Loading more...</h5>
                   </div>
-                ) : <></>}
+                ) : (
+                  <></>
+                )}
               </div>
             </>
           ) : (

@@ -8,7 +8,7 @@
   border-radius: 16px;
 
   height: auto;
-  button {
+  .button {
     margin-top: 1rem;
     background: var(--neko-colors-primary);
     height: 3rem;
@@ -19,6 +19,8 @@
   h5,
   p {
     margin: 0;
+    font-weight: 400;
+    font-size: 1.05rem;
   }
 
   h5 {
@@ -62,11 +64,15 @@
     margin-bottom: 0.5rem;
   }
 
+  .transfer {
+    margin-bottom: 0.8rem;
+  }
+
   h5 {
     color: var(--neko-text-danger);
   }
   p {
-    font-size: 18px;
+    font-size: 1.05rem;
     font-weight: 400;
   }
 
@@ -107,92 +113,78 @@
   }
 }
 
-.personalization {
-  margin-top: 0.5rem;
-
+.personalization, .systemChannel {
   height: 100%;
-
   margin-top: 1rem;
+
   .icon {
-    object-fit: cover;
-    border-radius: 14px;
-    height: 124px;
-    width: 124px;
-    margin: 0;
+    margin-bottom: 1rem;
   }
 
-  .overlay {
-    transition: opacity 300ms ease-in-out;
-    border-radius: 14px;
-    display: flex;
-    opacity: 0;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 124px;
-    width: 124px;
-    background: var(--neko-overground);
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+  .channel {
+    .select {
+      position: relative;
+      margin-top: 0.5rem;
+      .items {
+        position: absolute;
+        width: 100%;
+        margin-top: 0.5rem;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 0.9rem 1.2rem;
+        background: var(--neko-settings-background);
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+        gap: 0.8rem;
+        box-shadow: var(--neko-sidebar-shadow);
+        overflow-x: hidden;
+        height: auto;
+        .item {
+          cursor: pointer;
+          background: var(--neko-settings-card);
+          padding: 0.8rem;
+          border-radius: 10px;
+          width: auto;
 
-    svg {
-      color: #fff;
+          &.primary {
+            background: var(--neko-colors-primary);
+          }
+
+          &.none {
+            background: var(--neko-colors-danger);
+          }
+        }
+      }
+      .selected {
+        width: 100%;
+        height: 50px;
+        margin: 0;
+        height: 3.2rem;
+        transition: ease-in-out box-shadow 0.15s;
+        cursor: pointer;
+        padding: 0.9rem 1.2rem;
+        font-weight: 500;
+        font-size: 1rem;
+
+        background: var(--neko-settings-background);
+        color: var(--neko-text);
+        border-radius: 10px;
+        align-items: center;
+        display: flex;
+        svg {
+          font-size: 1.7rem;
+          margin-left: auto;
+          color: var(--neko-text-href);
+        }
+      }
     }
   }
 
-  .iconWrapper {
-    padding: 1rem;
-    background: var(--neko-settings-background);
-    border-radius: 14px;
-    margin-top: 0.2rem;
-    margin-bottom: 0.8rem;
-    display: flex;
-
-    @media (max-width: 740px) {
-      flex-direction: column;
-    }
-
-    h4 {
-      font-weight: 600;
-      font-size: 1.15rem;
-      margin: 0 0 0.5rem;
-    }
-    p {
-      font-weight: 400;
-      font-size: 0.8rem;
-      margin-bottom: 0.5rem;
-    }
-    .iconInfo {
-      margin-left: 0.8rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .covfefe {
-      background: var(--neko-settings-card);
-      padding: 1rem;
-      font-size: 0.8rem;
-      font-weight: 400;
-
-      width: 100%;
-      text-align: center;
-      border-radius: 14px;
-    }
-  }
-  .iconContainer {
-    position: relative;
-    height: 124px;
-    input {
-      display: none;
-    }
-  }
-  .iconContainer:hover {
-    .overlay {
-      opacity: 1;
-    }
+  .inputName {
+    margin-bottom: 0.5rem;
+    display: block;
+    margin-top: 0;
   }
 
   ul {
@@ -205,39 +197,36 @@
     }
   }
 
-  .icon:hover {
-    background: var(--neko-overground);
-  }
 
   .name {
     display: flex;
     flex-direction: column;
     width: 100%;
-    input {
-      margin-top: 0.2rem;
-      margin-bottom: 0.5rem;
-    }
-    label {
-      margin: 0;
-    }
-  }
+    margin-bottom: 0.25rem;
 
-  @media (max-width: 740px) {
-    .icon {
+    .nameInput {
       width: 100%;
-    }
-    .iconWrapper {
-      .iconInfo {
-        margin-top: 0.5rem;
+      position: relative;
+      input {
+        width: 100%;
+      }
 
-        margin-left: 0;
+      button {
+        position: absolute;
+        background: var(--neko-colors-primary);
+        border-radius: 100%;
+        right: 0.5rem;
+        top: 0.5rem;
+        height: 2rem;
+        padding: 0.5rem;
+        width: 2rem;
+        min-height: 2rem;
+        min-width: 2rem;
+        max-height: 2rem;
+        max-width: 2rem;
       }
     }
   }
-}
-
-.separator {
-  height: 8px;
 }
 
 .error {
@@ -276,11 +265,6 @@
   form {
     display: flex;
     flex-direction: column;
-  }
-
-  label {
-    margin-top: 1rem;
-    margin-bottom: 0.3rem;
   }
 }
 

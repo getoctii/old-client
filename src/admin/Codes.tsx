@@ -1,7 +1,4 @@
-import {
-  faBoxOpen,
-  faChevronLeft
-} from '@fortawesome/pro-solid-svg-icons'
+import { faBoxOpen, faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AnimatePresence, motion } from 'framer-motion'
 import dayjs from 'dayjs'
@@ -16,7 +13,13 @@ import { Auth } from '../authentication/state'
 import Loader from '../components/Loader'
 import styles from './Codes.module.scss'
 import { clientGateway } from '../utils/constants'
-import { faUserCheck, faUserClock, faClipboardList, faCopy, faTrashAlt } from '@fortawesome/pro-duotone-svg-icons'
+import {
+  faUserCheck,
+  faUserClock,
+  faClipboardList,
+  faCopy,
+  faTrashAlt
+} from '@fortawesome/pro-duotone-svg-icons'
 import Button from '../components/Button'
 import { Plugins } from '@capacitor/core'
 
@@ -30,106 +33,109 @@ interface CodeResponse {
   updated_at: number
 }
 
-const Code = memo(
-  ({ id, used, created_at }: CodeResponse) => {
-    const { token } = Auth.useContainer()
-    const [deleteCode] = useMutation(
-      async () => (
+const Code = memo(({ id, used, created_at }: CodeResponse) => {
+  const { token } = Auth.useContainer()
+  const [deleteCode] = useMutation(
+    async () =>
+      (
         await clientGateway.delete(`/admin/codes/${id}`, {
           headers: {
             Authorization: token
           }
         })
       ).data,
-      {
-        onSuccess: async () => {
-          await queryCache.invalidateQueries(['codes', token])
-        }
+    {
+      onSuccess: async () => {
+        await queryCache.invalidateQueries(['codes', token])
       }
-    )
-    const isMobile = useMedia('(max-width: 740px)')
-    return (
-      <motion.div
-        className={styles.code}
-        initial={{
-          opacity: 0
-        }}
-        animate={{
-          opacity: 1,
-          transition: { y: { stiffness: 1000, velocity: -100 } }
-        }}
-        exit={{
-          opacity: 0
-        }}
-      >
-        <div
-          className={`${styles.icon} ${used ? styles.used : ''}`}
-        >
-          <FontAwesomeIcon icon={used ? faUserCheck : faUserClock} />
+    }
+  )
+  const isMobile = useMedia('(max-width: 740px)')
+  return (
+    <motion.div
+      className={styles.code}
+      initial={{
+        opacity: 0
+      }}
+      animate={{
+        opacity: 1,
+        transition: { y: { stiffness: 1000, velocity: -100 } }
+      }}
+      exit={{
+        opacity: 0
+      }}
+    >
+      <div className={`${styles.icon} ${used ? styles.used : ''}`}>
+        <FontAwesomeIcon icon={used ? faUserCheck : faUserClock} />
+      </div>
+      <div className={styles.info}>
+        <h4>{id}</h4>
+        <time>{dayjs.utc(created_at).local().calendar()}</time>
+      </div>
+      {!isMobile && (
+        <div className={styles.actions}>
+          <Button
+            type='button'
+            onClick={async () => {
+              await Plugins.Clipboard.write({
+                string: id
+              })
+            }}
+          >
+            <FontAwesomeIcon icon={faCopy} />
+            Copy
+          </Button>
+          <Button
+            type='button'
+            className={styles.delete}
+            onClick={async () => {
+              await deleteCode()
+            }}
+          >
+            <FontAwesomeIcon icon={faTrashAlt} />
+          </Button>
         </div>
-        <div className={styles.info}>
-          <h4>
-            {id}
-          </h4>
-          <time>{dayjs.utc(created_at).local().calendar()}</time>
-        </div>
-        {!isMobile && (
-          <div className={styles.actions}>
-            <Button
-              type='button'
-              onClick={async () => {
-                await Plugins.Clipboard.write({
-                  string: id
-                })
-              }}
-            >
-              <FontAwesomeIcon icon={faCopy} />
-              Copy
-            </Button>
-            <Button
-              type='button'
-              className={styles.delete}
-              onClick={async () => {
-                await deleteCode()
-              }}
-            >
-              <FontAwesomeIcon icon={faTrashAlt} />
-            </Button>
-          </div>
-        )}
-      </motion.div>
-    )
-  }
-)
+      )}
+    </motion.div>
+  )
+})
 
 export const Codes = () => {
   const history = useHistory()
   const { token } = Auth.useContainer()
-  const { data, canFetchMore, fetchMore, isFetchingMore } = useInfiniteQuery<CodeResponse[], any>(
+  const { data, canFetchMore, fetchMore } = useInfiniteQuery<
+    CodeResponse[],
+    any
+  >(
     ['codes', token],
-    async (_: string, token: string, date: string) => (
-      await clientGateway.get<CodeResponse[]>('/admin/codes', {
-        headers: {
-          Authorization: token
-        },
-        params: { created_at: date }
-      })
-    ).data,
+    async (_: string, token: string, lastCodeID: string) =>
+      (
+        await clientGateway.get<CodeResponse[]>('/admin/codes', {
+          headers: {
+            Authorization: token
+          },
+          params: { last_code_id: lastCodeID }
+        })
+      ).data,
     {
       getFetchMore: (last) => {
-        console.log(last.length)
-        return last.length < 25 ? undefined : last[last.length - 1]?.created_at
+        return last.length < 25 ? undefined : last[last.length - 1]?.id
       }
     }
   )
   const [createCode] = useMutation(
-    async () => (
-      await clientGateway.post('/admin/codes', {}, {
-        headers: {
-          Authorization: token
-        }
-      })
-    ).data,
+    async () =>
+      (
+        await clientGateway.post(
+          '/admin/codes',
+          {},
+          {
+            headers: {
+              Authorization: token
+            }
+          }
+        )
+      ).data,
     {
       onSuccess: async () => {
         await queryCache.invalidateQueries(['codes', token])
@@ -140,9 +146,7 @@ export const Codes = () => {
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
 
-  console.log(isFetchingMore, loading, canFetchMore)
   const isMobile = useMedia('(max-width: 740px)')
-  console.log(codes)
   return (
     <Suspense fallback={<Loader />}>
       <div className={styles.wrapper}>
@@ -153,10 +157,7 @@ export const Codes = () => {
                 {isMobile ? (
                   <div
                     className={styles.icon}
-                    onClick={() =>
-                      isMobile &&
-                      history.push(`/admin`)
-                    }
+                    onClick={() => isMobile && history.push(`/admin`)}
                   >
                     <FontAwesomeIcon
                       className={styles.backButton}
@@ -164,29 +165,23 @@ export const Codes = () => {
                     />
                   </div>
                 ) : (
-                  <div
-                    className={styles.icon}
-                  >
-                    <FontAwesomeIcon
-                      icon={faClipboardList}
-                    />
+                  <div className={styles.icon}>
+                    <FontAwesomeIcon icon={faClipboardList} />
                   </div>
                 )}
                 <div className={styles.title}>
                   <small>Admin</small>
                   <h2>Beta Codes</h2>
                 </div>
-                <Button type={'button'} onClick={() => createCode()}>New Code</Button>
+                <Button type={'button'} onClick={() => createCode()}>
+                  New Code
+                </Button>
               </div>
               <div className={styles.body} ref={ref}>
                 <AnimatePresence>
-                  {codes.map(
-                    (code) =>
-                      code ? (
-                        <Code key={code.id} {...code} />
-                      ) : <></>
+                  {codes.map((code) =>
+                    code ? <Code key={code.id} {...code} /> : <></>
                   )}
-
                 </AnimatePresence>
                 {!loading && canFetchMore ? (
                   <Waypoint
@@ -211,7 +206,9 @@ export const Codes = () => {
                   <div key='loader' className={styles.loader}>
                     <h5>Loading more...</h5>
                   </div>
-                ) : <></>}
+                ) : (
+                  <></>
+                )}
               </div>
             </>
           ) : (

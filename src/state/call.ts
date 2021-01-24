@@ -111,7 +111,6 @@ const useCall = () => {
         setInputStream(stream)
         call.answer(stream)
       } catch (error) {
-        console.log(error)
         const stream = new MediaStream()
         setInputStream(stream)
         call.answer(stream)
@@ -179,7 +178,6 @@ const useCall = () => {
         setInputStream(stream)
         setCall(peer.call(receivedPeerID, stream))
       } catch (error) {
-        console.error(error)
         const stream = new MediaStream()
         setInputStream(stream)
         setCall(peer.call(receivedPeerID, stream))

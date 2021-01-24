@@ -83,8 +83,6 @@
       }
     }
 
-
-
     a {
       color: var(--neko-text-href);
       text-decoration: none;
@@ -104,6 +102,34 @@
 
   .badge {
     margin-left: 0.5rem;
+  }
+
+  &.joined, &.left {
+    padding: 0.25rem 2rem;
+    .content {
+      border-radius: 15px;
+      padding: 1rem;
+      color: var(--neko-text-inverse);
+      width: 500px;
+      width: auto;
+      margin-left: 0;
+    }
+
+    @media (max-width: 740px) {
+     width: 100%;
+    }
+  }
+
+  &.joined {
+    .content {
+      background: var(--neko-colors-primary);
+    }
+  }
+
+  &.left {
+    .content {
+      background: var(--neko-colors-secondary);
+    }
   }
 }
 
