@@ -221,13 +221,6 @@ const View = () => {
         <div className={styles.permissions}>
           {groups.data && groups.data?.length > 0 ? (
             <>
-              <Button
-                className={styles.new}
-                type='button'
-                onClick={() => setModal({ name: ModalTypes.NEW_PERMISSION })}
-              >
-                New Permission Group
-              </Button>
               <div className={styles.body}>
                 <AnimatePresence>
                   {groups.data.map(

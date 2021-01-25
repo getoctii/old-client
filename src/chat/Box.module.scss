@@ -85,9 +85,9 @@
     display: none;
   }
 
-  &::placeholder {
+  .ph {
     font-family: Inter, sans-serif;
-    opacity: 0.65;
+    opacity: 0.8;
     font-weight: 300;
     color: var(--neko-input-text);
     user-select: none;
@@ -99,6 +99,7 @@
     -moz-user-select: none;
     -moz-user-modify: read-only;
     white-space: nowrap;
+    overflow: hidden;
   }
 
   .input {
@@ -118,23 +119,19 @@
       width: 5px;
       display: block;
     }
+
+    &::placeholder {
+      font-family: Inter, sans-serif;
+      opacity: 0.65;
+      font-weight: 300;
+      color: var(--neko-input-text);
+      user-select: none;
+      font-size: 1.05rem;
+      -webkit-user-select: none;
+      user-select: none;
+      white-space: nowrap;
+    }
   }
-}
-.box {
-  a {
-    color: var(--neko-text-href);
-  }
-  min-height: 3.125rem;
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 0;
-  padding-left: 2rem;
-  margin-bottom: 2rem;
-  z-index: 2;
-  padding-right: 2rem;
-  justify-content: space-between;
-  bottom: 0;
-  width: 100%;
 }
 
 .placeholder {

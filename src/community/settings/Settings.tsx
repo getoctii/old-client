@@ -17,9 +17,11 @@ import { getCommunity } from '../remote'
 import { Auth } from '../../authentication/state'
 import { queryCache, useMutation, useQuery } from 'react-query'
 import Button from '../../components/Button'
-import { clientGateway } from '../../utils/constants'
+import { clientGateway, ModalTypes } from '../../utils/constants'
 import { faPlusCircle } from '@fortawesome/pro-duotone-svg-icons'
 import { PrivateRoute } from '../../authentication/PrivateRoute'
+import Permissions from './permissions/Permissions'
+import { UI } from '../../state/ui'
 
 export const Settings = () => {
   const isMobile = useMedia('(max-width: 740px)')
@@ -30,7 +32,7 @@ export const Settings = () => {
   const match = useRouteMatch<{ tab?: string; id: string }>(
     '/communities/:id/settings/:tab?'
   )
-
+  const { setModal } = UI.useContainer()
   const history = useHistory()
   const [createInvite] = useMutation(
     async () =>
@@ -71,7 +73,7 @@ export const Settings = () => {
             <small>{community.data?.name}</small>
             <h2>Settings</h2>
           </div>
-          {match?.params.tab === 'invites' && (
+          {match?.params.tab === 'invites' ? (
             <Button
               className={styles.newButton}
               type='button'
@@ -83,12 +85,27 @@ export const Settings = () => {
                 'New Invite'
               )}
             </Button>
+          ) : match?.params.tab === 'permissions' ? (
+            <Button
+              className={styles.newButton}
+              type='button'
+              onClick={() => setModal({ name: ModalTypes.NEW_PERMISSION })}
+            >
+              {isMobile ? <FontAwesomeIcon icon={faPlusCircle} /> : 'New Group'}
+            </Button>
+          ) : (
+            <></>
           )}
         </div>
 
         <Navbar />
         <Switch>
           <PrivateRoute path={`${path}/invites`} component={Invites} exact />
+          <PrivateRoute
+            path={`${path}/permissions`}
+            component={Permissions}
+            exact
+          />
           <PrivateRoute path={`${path}/general`} component={General} exact />
           <Redirect path='*' to={`/communities/${id}/settings/general`} />
         </Switch>
