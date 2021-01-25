@@ -131,10 +131,9 @@ export const Router = memo(() => {
     }
   }, [auth])
 
+  console.log(isPlatform('mobile') || isPWA)
   return (
     <BrowserRouter>
-      <IncomingCall />
-      {auth.authenticated && <EventSource />}
       <Context.Global />
       <Switch>
         {isPlatform('mobile') || isPWA ? (
@@ -149,9 +148,13 @@ export const Router = memo(() => {
         )}
         <Route path={'/invite/:invite/:code?'} component={Invite} />
         <Route path='/authenticate' component={Authenticate} />
+      </Switch>
+      {auth.authenticated && (
         <div id='main'>
+          <IncomingCall />
+          <EventSource />
           <Modals />
-          {auth.authenticated && !isMobile && <Sidebar />}
+          {!isMobile && <Sidebar />}
           <Suspense fallback={<></>}>
             <Switch>
               <PrivateRoute
@@ -168,7 +171,7 @@ export const Router = memo(() => {
               <PrivateRoute path={'/admin'} component={Admin} />
               <PrivateRoute path='/communities/:id' component={Community} />
               <PrivateRoute
-                path={'/(conversations)?/:id?'}
+                path={'/conversations/:id?'}
                 component={Conversation}
                 redirect={
                   isPlatform('mobile') || isPWA
@@ -177,9 +180,10 @@ export const Router = memo(() => {
                 }
                 exact
               />
+              <Redirect path={'/'} to={'/conversations'} exact />
             </Switch>
           </Suspense>
-          {auth.authenticated && !isMobile && (
+          {!isMobile && (
             <>
               <Suspense fallback={<></>}>
                 {call.callState !== 'idle' && <Current />}
@@ -187,7 +191,7 @@ export const Router = memo(() => {
             </>
           )}
         </div>
-      </Switch>
+      )}
     </BrowserRouter>
   )
 })

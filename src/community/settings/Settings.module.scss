@@ -2,8 +2,6 @@
   height: 100%;
   width: 100%;
   .settings {
-    font-size: 1.3125rem;
-    font-weight: 700;
     overflow-y: scroll;
     width: 100%;
     height: 100%;
@@ -35,6 +33,12 @@
       .title {
         height: 2.65rem !important;
       }
+      .newButton {
+          height: 2.65rem;
+          margin-left: auto;
+          background: var(--neko-colors-primary);
+
+      }
     }
 
     h2 {
@@ -46,6 +50,9 @@
     .settings {
       margin-top: env(safe-area-inset-top);
       padding-top: 2rem;
+      .newButton {
+        width: 2.65rem;
+      }
       .icon {
         background: var(--neko-colors-primary);
         margin-right: 0.7rem;

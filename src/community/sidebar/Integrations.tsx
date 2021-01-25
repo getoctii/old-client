@@ -46,7 +46,7 @@ const View = ({ community }: { community?: CommunityResponse }) => {
             }
             onClick={() => {
               if (community)
-                history.push(`/communities/${community.id}/settings`)
+                history.push(`/communities/${community.id}/settings/general`)
             }}
           >
             <h4>

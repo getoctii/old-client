@@ -47,9 +47,18 @@
     background: var(--neko-settings-input);
   }
 
+  h4 {
+
+    font-size: 1.3125rem;
+    font-weight: 700;
+  }
+
   label {
     margin-top: 1rem;
     margin-bottom: 0.3rem;
+
+    font-size: 1.3125rem;
+    font-weight: 700;
   }
 }
 
@@ -115,7 +124,7 @@
 
 .personalization, .systemChannel {
   height: 100%;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 
   .icon {
     margin-bottom: 1rem;
@@ -277,5 +286,10 @@
     @media (max-width: 740px) {
       display: block;
     }
+
+  }
+
+  @media (max-width: 740px) {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 5rem);
   }
 }

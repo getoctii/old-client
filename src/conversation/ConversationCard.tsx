@@ -29,7 +29,7 @@ import useMarkdown from '@innatical/markdown'
 import { ErrorBoundary } from 'react-error-boundary'
 import Mention from '../chat/Mention'
 
-const View = ({
+const ConversationCardView = ({
   people,
   onClick,
   selected,
@@ -72,8 +72,8 @@ const View = ({
         text: 'Copy ID',
         icon: faCopy,
         danger: false,
-        onClick: () => {
-          Clipboard.write({
+        onClick: async () => {
+          await Clipboard.write({
             string: conversationID
           })
         }
@@ -173,8 +173,10 @@ const View = ({
       [
         /<@([A-Za-z0-9-]+?)>/g,
         (str, key) => (
-          <Suspense fallback={<>&lt;@{str}&gt;</>}>
-            <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
+          <Suspense fallback={<div key={key}>&lt;@{str}&gt;</div>}>
+            <ErrorBoundary
+              fallbackRender={() => <div key={key}>&lt;@{str}&gt;</div>}
+            >
               <Mention.User selected={selected} key={key} userID={str} />
             </ErrorBoundary>
           </Suspense>
@@ -183,8 +185,10 @@ const View = ({
       [
         /<#([A-Za-z0-9-]+?)>/g,
         (str, key) => (
-          <Suspense fallback={<>&lt;@{str}&gt;</>}>
-            <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
+          <Suspense fallback={<div key={key}>&lt;@{str}&gt;</div>}>
+            <ErrorBoundary
+              fallbackRender={() => <div key={key}>&lt;@{str}&gt;</div>}
+            >
               <Mention.Channel selected={selected} key={key} channelID={str} />
             </ErrorBoundary>
           </Suspense>
@@ -198,14 +202,13 @@ const View = ({
     <Context.Wrapper
       title={users?.map((user) => user.username).join(', ') || ''}
       message={(people?.length ?? 1) === 1 ? users?.[0]?.status : 'Group Chat'}
-      key={conversationID}
       items={getItems()}
     >
       <div
         className={`${styles.card} ${selected ? styles.selected : ''}`}
         onClick={onClick}
       >
-        <div className={styles.avatar}>
+        <div className={styles.avatar} key='avatar'>
           {(people?.length ?? 1) === 1 ? (
             <>
               <img src={users?.[0].avatar} alt={users?.[0].username} />
@@ -231,7 +234,7 @@ const View = ({
             </div>
           )}
         </div>
-        <div className={styles.user}>
+        <div className={styles.user} key='user'>
           <h4>{users?.map((user) => user.username).join(', ')}</h4>
           {message?.content && (
             <p>
@@ -249,7 +252,7 @@ const View = ({
             </p>
           )}
         </div>
-        <div className={styles.details}>
+        <div className={styles.details} key='details'>
           {!selected &&
             (mentionsCount && mentionsCount > 0 ? (
               <div
@@ -272,20 +275,31 @@ const View = ({
   )
 }
 
-const Placeholder = () => {
+const ConversationCardPlaceholder = () => {
   const username = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
   const status = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
   return (
     <div className={styles.placeholder}>
-      <div className={styles.avatar} />
-      <div className={styles.user}>
-        <div className={styles.username} style={{ width: `${username}rem` }} />
-        <div className={styles.status} style={{ width: `${status}rem` }} />
+      <div className={styles.avatar} key='avatar' />
+      <div className={styles.user} key='user'>
+        <div
+          className={styles.username}
+          key='username'
+          style={{ width: `${username}rem` }}
+        />
+        <div
+          className={styles.status}
+          key='status'
+          style={{ width: `${status}rem` }}
+        />
       </div>
     </div>
   )
 }
 
-const ConversationCard = { View, Placeholder }
+const ConversationCard = {
+  View: ConversationCardView,
+  Placeholder: ConversationCardPlaceholder
+}
 
 export default ConversationCard

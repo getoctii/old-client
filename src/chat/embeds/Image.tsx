@@ -1,6 +1,6 @@
 import { faTimesCircle } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
+import React, { useState } from 'react'
 import Modal from '../../components/Modal'
 import { UI } from '../../state/ui'
 import { ModalTypes } from '../../utils/constants'
@@ -11,7 +11,7 @@ const isCovfefe = (url: string) =>
     url
   )
 
-const Preview = ({ url }: { url: string }) => {
+const ImagePreview = ({ url }: { url: string }) => {
   const ui = UI.useContainer()
   return (
     <Modal onDismiss={() => ui.clearModal()}>
@@ -36,11 +36,12 @@ const Preview = ({ url }: { url: string }) => {
   )
 }
 
-const Embed = ({ url }: { url: string }) => {
+const ImageEmbed = ({ url }: { url: string }) => {
   const matches = url.match(
     /^https:\/\/file\.coffee\/u\/[a-zA-Z0-9_-]{7,14}\.(png|jpeg|jpg|gif)$/g
   )
   const ui = UI.useContainer()
+  const [showPlaceholder, setShowPlaceholder] = useState(true)
   return matches && matches[0] ? (
     <div
       className={styles.imageEmbed}
@@ -51,13 +52,24 @@ const Embed = ({ url }: { url: string }) => {
         })
       }}
     >
-      <img alt={url} src={matches[0]} />
+      {showPlaceholder && <div className={styles.imagePlaceholder} />}
+
+      <img
+        onLoad={() => setShowPlaceholder(false)}
+        onError={() => setShowPlaceholder(false)}
+        alt={url}
+        src={matches[0]}
+      />
     </div>
   ) : (
     <></>
   )
 }
 
-const Image = { Embed, Preview, isCovfefe }
+const Image = {
+  Embed: ImageEmbed,
+  Preview: ImagePreview,
+  isCovfefe
+}
 
 export default Image
