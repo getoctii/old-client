@@ -1,4 +1,4 @@
-import { clientGateway } from '../utils/constants'
+import { clientGateway, Permissions } from '../utils/constants'
 
 export interface Member {
   id: string

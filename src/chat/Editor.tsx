@@ -1,33 +1,10 @@
-import React, {
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
-import { useQuery } from 'react-query'
-import { useMedia } from 'react-use'
-import {
-  createEditor,
-  Element,
-  Text,
-  Transforms,
-  Editor,
-  Range,
-  Node
-} from 'slate'
-import { HistoryEditor, withHistory } from 'slate-history'
-import {
-  RenderLeafProps,
-  withReact,
-  Slate,
-  Editable,
-  ReactEditor
-} from 'slate-react'
-import { Auth } from '../authentication/state'
-import { getUser, UserResponse } from '../user/remote'
-import { serialize, withMentions } from '../utils/slate'
-import messageStyles from './Message.module.scss'
+import React, { Suspense, useCallback, useEffect, useState } from 'react'
+import { useMedia, usePageLeave } from 'react-use'
+import { Element, Text, Transforms, Editor, Range, Node } from 'slate'
+import { HistoryEditor } from 'slate-history'
+import { RenderLeafProps, Slate, Editable, ReactEditor } from 'slate-react'
+import { UserResponse } from '../user/remote'
+import { serialize } from '../utils/slate'
 import unified from 'unified'
 import markdown from 'remark-parse'
 import visit from 'unist-util-visit'
@@ -38,33 +15,10 @@ import underlineSyntax from '@innatical/micromark-extension-underline'
 import underlineFromMarkdown from '@innatical/mdast-util-underline/from-markdown'
 // @ts-ignore
 import underlineToMarkdown from '@innatical/mdast-util-underline/to-markdown'
-import Mentions from './Mentions'
+import Mentions from '../chat/Mentions'
 import { useRouteMatch } from 'react-router-dom'
-
-const Mention = ({
-  userID,
-  attributes,
-  children
-}: {
-  userID: string
-  attributes: any
-  children: React.ReactChild
-}) => {
-  const { token, id } = Auth.useContainer()
-  const user = useQuery(['users', userID, token], getUser)
-  return (
-    <span
-      {...attributes}
-      contentEditable={false}
-      className={`${messageStyles.mention} ${
-        userID === id ? messageStyles.isMe : ''
-      }`}
-    >
-      @{user.data?.username}
-      {children}
-    </span>
-  )
-}
+import Mention from '../chat/Mention'
+import { ChannelResponse } from '../community/remote'
 
 const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   return leaf.underline ? (
@@ -85,6 +39,7 @@ const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
 }
 
 const View = ({
+  editor,
   className,
   mentionsClassName,
   typingClassName,
@@ -97,21 +52,24 @@ const View = ({
   onTyping,
   onDismiss,
   typingIndicator,
-  participants
+  userMentions,
+  channelMentions
 }: {
+  editor: Editor & ReactEditor & HistoryEditor
   className: string
-  mentionsClassName: string
+  mentionsClassName?: string
   typingClassName?: string
   inputClassName: string
   emptyEditor: Node[]
   placeholder?: any
-  children?: (editor: Editor & ReactEditor & HistoryEditor) => any
+  children?: any
   newLines: boolean
   onEnter: (content: string) => void
   onTyping?: () => void
   onDismiss?: () => void
   typingIndicator?: boolean
-  participants?: string[]
+  userMentions?: boolean
+  channelMentions?: boolean
 }) => {
   const match = useRouteMatch<{ id: string }>('/communities/:id/:tab?/:tab2?')
   const isMobile = useMedia('(max-width: 740px)')
@@ -123,17 +81,16 @@ const View = ({
       clearInterval(interval)
     }
   }, [typing, onTyping])
-  const editor = useMemo(
-    () => withHistory(withReact(withMentions(createEditor()))),
-    []
-  )
   useEffect(() => {
     editor.isInline = (element: Element) => {
-      return element.type === 'mention'
+      return element.type === 'user' || element.type === 'channel'
     }
   }, [editor])
+  usePageLeave(() => setTyping(false))
   const [value, setValue] = useState<Node[]>(emptyEditor)
-  const [target, setTarget] = useState<Range | undefined>()
+  const [target, setTarget] = useState<
+    { range: Range; type: 'user' | 'channel' } | undefined
+  >()
   const [search, setSearch] = useState('')
 
   const decorate = useCallback(([node, path]) => {
@@ -206,12 +163,20 @@ const View = ({
 
   const renderElement = useCallback((props) => {
     switch (props.element.type) {
-      case 'mention':
+      case 'user':
         return (
-          <Mention
+          <Mention.User
             attributes={props.attributes}
             children={props.children}
             userID={props.element.mentionID}
+          />
+        )
+      case 'channel':
+        return (
+          <Mention.Channel
+            attributes={props.attributes}
+            children={props.children}
+            channelID={props.element.mentionID}
           />
         )
       default:
@@ -225,18 +190,16 @@ const View = ({
   )
   const [selected, setSelected] = useState(0)
 
-  const mentionable = useMemo(() => participants ?? [], [participants])
-
   const onMention = useCallback(
-    (id: string) => {
+    (id: string, type: 'user' | 'channel') => {
       if (!target) return
-      Transforms.select(editor, target)
+      Transforms.select(editor, target.range)
       Transforms.insertNodes(editor, {
-        type: 'mention',
+        type: type,
         mentionID: id,
         children: [
           {
-            text: `<@${id}>`
+            text: `<${type === 'user' ? '@' : '#'}${id}>`
           }
         ]
       })
@@ -247,37 +210,50 @@ const View = ({
     [editor, target]
   )
 
-  const [filtered, setFiltered] = useState<UserResponse[]>([])
-
-  const onFiltered = useCallback((users: UserResponse[]) => {
-    setFiltered(users)
+  const [usersFiltered, setUsersFiltered] = useState<UserResponse[]>([])
+  const [channelsFiltered, setChannelsFiltered] = useState<ChannelResponse[]>(
+    []
+  )
+  const onUsersFiltered = useCallback((users: UserResponse[]) => {
+    setUsersFiltered(users)
   }, [])
-
+  const onChannelsFiltered = useCallback((channels: ChannelResponse[]) => {
+    setChannelsFiltered(channels)
+  }, [])
   useEffect(() => {
     setSelected(0)
-  }, [target, filtered])
+  }, [target, usersFiltered, channelsFiltered])
 
   return (
     <>
       {target && (
         <div className={mentionsClassName}>
           <Suspense fallback={<></>}>
-            {participants ? (
+            {!match?.params && target.type === 'user' ? (
               <Mentions.Conversation
-                ids={mentionable}
                 search={search}
                 selected={selected}
                 onMention={onMention}
-                onFiltered={onFiltered}
+                onFiltered={onUsersFiltered}
               />
             ) : match?.params.id ? (
-              <Mentions.Community
-                communityID={match?.params.id}
-                search={search}
-                onMention={onMention}
-                selected={selected}
-                onFiltered={onFiltered}
-              />
+              target.type === 'user' ? (
+                <Mentions.Community.Users
+                  search={search}
+                  onMention={onMention}
+                  selected={selected}
+                  onFiltered={onUsersFiltered}
+                />
+              ) : target.type === 'channel' ? (
+                <Mentions.Community.Channels
+                  search={search}
+                  onMention={onMention}
+                  selected={selected}
+                  onFiltered={onChannelsFiltered}
+                />
+              ) : (
+                <></>
+              )
             ) : (
               <></>
             )}
@@ -300,25 +276,34 @@ const View = ({
               const wordBefore = Editor.before(editor, start, {
                 unit: 'word'
               })
-              const before =
+              const mentionType =
                 characterBefore &&
                 Editor.string(
                   editor,
                   Editor.range(editor, characterBefore, start)
-                ) === '@'
+                )
+              const before =
+                mentionType === '@' || mentionType === '#'
                   ? characterBefore
                   : wordBefore && Editor.before(editor, wordBefore)
               const beforeRange = before && Editor.range(editor, before, start)
               const beforeText =
                 beforeRange && Editor.string(editor, beforeRange)
-              const beforeMatch = beforeText && beforeText.match(/^@(\w*)$/)
+              const beforeMatch =
+                beforeText &&
+                (beforeText.match(/^@(\w*)$/) ?? beforeText.match(/^#(\w*)$/))
               const after = Editor.after(editor, start)
               const afterRange = Editor.range(editor, start, after)
               const afterText = Editor.string(editor, afterRange)
               const afterMatch = afterText.match(/^(\s|$)/)
 
               if (beforeMatch && afterMatch) {
-                setTarget(beforeRange)
+                if (mentionType === '@' || mentionType === '#') {
+                  setTarget({
+                    range: beforeRange!,
+                    type: mentionType === '@' ? 'user' : 'channel'
+                  })
+                }
                 setSearch(beforeMatch[1])
                 return
               }
@@ -352,14 +337,17 @@ const View = ({
                   if (event.shiftKey && newLines) {
                     event.preventDefault()
                     editor.insertBreak()
-                  } else if (target) {
+                  } else if (target && userMentions) {
                     event.preventDefault()
-                    if (filtered[selected].id) onMention(filtered[selected].id)
+                    if (usersFiltered?.[selected]?.id)
+                      onMention(usersFiltered[selected].id, target.type)
+                    if (channelsFiltered?.[selected]?.id)
+                      onMention(channelsFiltered[selected].id, target.type)
                   } else {
                     event.preventDefault()
                     const content = serialize(value)
+                    setTyping(false)
                     if (content !== '') {
-                      setTyping(false)
                       onEnter(content)
                       Transforms.select(editor, Editor.start(editor, []))
                       setValue(emptyEditor)
@@ -369,21 +357,40 @@ const View = ({
                 }
                 case 'Tab': {
                   event.preventDefault()
+                  if (!userMentions || !channelMentions || !target) return
                   if (event.shiftKey) {
-                    setSelected(
-                      selected - 1 < 0 ? filtered.length - 1 : selected - 1
-                    )
+                    if (target.type === 'user')
+                      setSelected(
+                        selected - 1 < 0
+                          ? usersFiltered.length - 1
+                          : selected - 1
+                      )
+                    else if (target.type === 'channel')
+                      setSelected(
+                        selected - 1 < 0
+                          ? channelsFiltered.length - 1
+                          : selected - 1
+                      )
                   } else {
-                    setSelected(
-                      selected + 1 > filtered.length - 1 ? 0 : selected + 1
-                    )
+                    if (target.type === 'user')
+                      setSelected(
+                        selected + 1 < 0
+                          ? usersFiltered.length - 1
+                          : selected + 1
+                      )
+                    else if (target.type === 'channel')
+                      setSelected(
+                        selected + 1 < 0
+                          ? channelsFiltered.length - 1
+                          : selected + 1
+                      )
                   }
                 }
               }
             }}
           />
         </Slate>
-        {children ? children(editor) : <></>}
+        {children}
       </div>
     </>
   )

@@ -1,7 +1,6 @@
 import React from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styles from './Navbar.module.scss'
-import { useHistory, useRouteMatch } from 'react-router-dom'
 
 export const Navbar = () => {
   const match = useRouteMatch<{ tab?: string; id: string }>(

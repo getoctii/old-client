@@ -10,7 +10,7 @@ import { faArrowRight } from '@fortawesome/pro-solid-svg-icons'
 import Button from '../components/Button'
 import { NewChannel } from './NewChannel'
 import { Settings } from './settings/Settings'
-import { Community, getCommunity } from './remote'
+import { CommunityResponse, getCommunity } from './remote'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
 import Sidebar from '../sidebar/Sidebar'
@@ -22,7 +22,7 @@ const EmptyCommunity = ({
   community,
   dismiss
 }: {
-  community: Community
+  community: CommunityResponse
   dismiss: () => void
 }) => {
   const auth = Auth.useContainer()
