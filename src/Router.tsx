@@ -134,15 +134,14 @@ export const Router = memo(() => {
     }
   }, [auth])
 
-  console.log(isPlatform('mobile') || isPWA)
   return (
     <BrowserRouter>
       <Context.Global />
       <Switch>
-        {isPlatform('mobile') || isPWA ? (
-          <Redirect path='/home' to='/authenticate/login' />
-        ) : (
+        {!isPlatform('mobile') && !isPWA ? (
           <Route path='/home' component={Home} />
+        ) : (
+          <Redirect path='/home' to='/authenticate/login' />
         )}
         {isPlatform('mobile') || isPWA ? (
           <Redirect path='/downloads' to='/authenticate/login' />
@@ -151,6 +150,12 @@ export const Router = memo(() => {
         )}
         <Route path={'/invite/:invite/:code?'} component={Invite} />
         <Route path='/authenticate' component={Authenticate} />
+        {!auth.authenticated && (
+          <Redirect
+            path='/'
+            to={isPlatform('mobile') ? '/authenticate/login' : '/home'}
+          />
+        )}
       </Switch>
       {auth.authenticated && (
         <div id='main'>
