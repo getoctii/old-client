@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { clientGateway } from '../utils/constants'
+import { clientGateway, MessageTypes } from '../utils/constants'
 
-export interface Channel {
+export interface ChannelResponse {
   id: string
   name: string
   color?: string
@@ -11,14 +11,10 @@ export interface Channel {
   community_id?: string
 }
 
-export interface Message {
+export interface MessageResponse {
   id: string
-  author: {
-    id: string
-    username: string
-    avatar: string
-    discriminator: number
-  }
+  author_id: string
+  type: MessageTypes
   created_at: string
   updated_at: string
   content: string
@@ -26,7 +22,7 @@ export interface Message {
 
 export const getChannel = async (_: string, channelID: string, token: string) =>
   (
-    await clientGateway.get<Channel>(`/channels/${channelID}`, {
+    await clientGateway.get<ChannelResponse>(`/channels/${channelID}`, {
       headers: {
         Authorization: token
       }
@@ -55,6 +51,16 @@ export const postMessage = async (
     )
   ).data
 
+export const uploadFile = async (file: File) => {
+  const formData = new FormData()
+  formData.append('file', file)
+  const response = await axios.post(
+    'https://covfefe.innatical.com/api/v1/upload',
+    formData
+  )
+  return response.data.url
+}
+
 export const patchMessage = async (
   messageID: string,
   content: string,
@@ -68,25 +74,18 @@ export const patchMessage = async (
     )
   ).data
 
-export const uploadFile = async (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  const response = await axios.post(
-    'https://covfefe.innatical.com/api/v1/upload',
-    formData
-  )
-  return response.data.url
-}
-
 export const getMessages = async (
   _: string,
   channelID: string,
   token: string,
-  date: string
+  lastMessageID: string
 ) =>
   (
-    await clientGateway.get<Message[]>(`/channels/${channelID}/messages`, {
-      headers: { Authorization: token },
-      params: { created_at: date }
-    })
+    await clientGateway.get<MessageResponse[]>(
+      `/channels/${channelID}/messages`,
+      {
+        headers: { Authorization: token },
+        params: { last_message_id: lastMessageID }
+      }
+    )
   ).data

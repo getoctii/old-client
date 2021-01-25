@@ -1,19 +1,19 @@
-import React, { useRef, useState } from 'react'
+import React from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFileUpload, faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
+import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import { isUsername } from '../utils/validations'
 import { useQuery, queryCache } from 'react-query'
 import { Auth } from '../authentication/state'
 import { clientGateway } from '../utils/constants'
 import Button from '../components/Button'
-import { BarLoader, MoonLoader } from 'react-spinners'
+import { BarLoader } from 'react-spinners'
 import styles from './Profile.module.scss'
 import Input from '../components/Input'
-import axios from 'axios'
 import { useMedia } from 'react-use'
 import { getUser } from '../user/remote'
 import { useHistory } from 'react-router-dom'
+import IconPicker from '../components/IconPicker'
 type profileFormData = { username: string; avatar: string; status: string }
 
 const validateProfile = (values: profileFormData) => {
@@ -27,9 +27,6 @@ const validateProfile = (values: profileFormData) => {
 const Profile = () => {
   const { token, id } = Auth.useContainer()
   const user = useQuery(['users', id, token], getUser)
-  const input = useRef<any>(null)
-  const [avatar, setAvatar] = useState(user.data?.avatar || '')
-  const [isUploading, setIsUploading] = useState(false)
   const isMobile = useMedia('(max-width: 740px)')
   const history = useHistory()
   return (
@@ -76,7 +73,7 @@ const Profile = () => {
                 }
               }
             )
-            queryCache.invalidateQueries(['users', id])
+            await queryCache.invalidateQueries(['users', id])
           } finally {
             setSubmitting(false)
           }
@@ -88,45 +85,13 @@ const Profile = () => {
               <label htmlFor='tag' className={styles.inputName}>
                 Avatar
               </label>
-              <div className={styles.avatar}>
-                <img src={avatar} alt={user.data?.username} />
-                <div className={styles.details}>
-                  <p>Recommanded icon size is 100x100</p>
-                  <h6>
-                    Powered by <a href='https://file.coffee'>file.coffee</a>
-                  </h6>
-                </div>
-                <Button
-                  type='button'
-                  onClick={() => input.current.click()}
-                  disabled={isUploading}
-                >
-                  {isUploading ? (
-                    <MoonLoader />
-                  ) : (
-                    <FontAwesomeIcon icon={faFileUpload} />
-                  )}
-                </Button>
-                <input
-                  ref={input}
-                  type='file'
-                  accept='.jpg, .png, .jpeg, .gif'
-                  onChange={async (event) => {
-                    setIsUploading(true)
-                    const image = event.target.files?.item(0) as any
-                    const formData = new FormData()
-                    formData.append('file', image)
-                    const response = await axios.post(
-                      'https://covfefe.innatical.com/api/v1/upload',
-                      formData
-                    )
-                    console.log(response)
-                    setIsUploading(false)
-                    setAvatar(response.data?.url)
-                    setFieldValue('avatar', response.data?.url)
-                  }}
-                />
-              </div>
+              <IconPicker
+                alt={user.data?.username || 'unknown'}
+                defaultIcon={user.data?.avatar}
+                onUpload={(url) => {
+                  setFieldValue('avatar', url)
+                }}
+              />
               <ErrorMessage component='p' name='avatar' />
             </div>
             <div className={styles.username}>

@@ -9,7 +9,7 @@ import Input from '../components/Input'
 import { clientGateway } from '../utils/constants'
 import { BarLoader } from 'react-spinners'
 import styles from './NewChannel.module.scss'
-import { Community } from './remote'
+import { CommunityResponse } from './remote'
 
 type formData = { name: string }
 
@@ -31,8 +31,8 @@ export const NewChannel = ({
   community,
   onDismiss
 }: {
-  community?: Community
-  onDismiss: Function
+  community?: CommunityResponse
+  onDismiss: () => void
 }) => {
   const { token } = Auth.useContainer()
   return (
@@ -58,7 +58,7 @@ export const NewChannel = ({
             const errors = e.response.data.errors
             const userErrors: { name?: string } = {}
             if (errors.includes('ChannelNameInvalid'))
-              userErrors.name = 'Invaild Channel Name'
+              userErrors.name = 'Invalid Channel Name'
             setErrors(userErrors)
           } finally {
             setSubmitting(false)

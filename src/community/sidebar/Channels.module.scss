@@ -7,11 +7,10 @@
 
 .channels {
   h4 {
-    margin: 0;
     font-size: 1rem;
     font-weight: 400;
-    margin-top: 0.7rem;
-    margin-bottom: 0.3rem;
+    margin: 0.7rem 0 0.3rem;
+
     span {
       float: right;
     }
@@ -19,8 +18,7 @@
 
   .list {
     hr {
-      margin: 0;
-      margin-left: 2.6rem;
+      margin: 0 0 0 2.6rem;
       border-color: var(--neko-channels-seperator);
       opacity: 0.5;
       border-style: solid;
@@ -34,8 +32,7 @@
 
 .placeholder {
   hr {
-    margin: 0;
-    margin-left: 2.6rem;
+    margin: 0 0 0 2.6rem;
     border-color: var(--neko-sidebar-seperator);
     opacity: 0.5;
     border-style: solid;

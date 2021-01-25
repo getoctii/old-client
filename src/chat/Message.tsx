@@ -1,4 +1,4 @@
-import React, { memo, useMemo, Suspense, useCallback, useState } from 'react'
+import React, { memo, Suspense, useCallback, useMemo } from 'react'
 import styles from './Message.module.scss'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
@@ -8,10 +8,10 @@ import {
   faTrashAlt,
   IconDefinition
 } from '@fortawesome/pro-solid-svg-icons'
-import { Plugins, PermissionType } from '@capacitor/core'
+import { Plugins } from '@capacitor/core'
 import { Auth } from '../authentication/state'
 import { useMutation, useQuery } from 'react-query'
-import { clientGateway, ModalTypes } from '../utils/constants'
+import { clientGateway, MessageTypes, ModalTypes } from '../utils/constants'
 import { getUser } from '../user/remote'
 import { Measure } from './embeds/Measure'
 import Context from '../components/Context'
@@ -29,9 +29,16 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 import { patchMessage } from './remote'
-import Editor from './Editor'
+import Editor from '../components/Editor'
+import { Chat } from './state'
+import { withHistory } from 'slate-history'
+import { withReact } from 'slate-react'
+import { withMentions } from '../utils/slate'
+import { createEditor } from 'slate'
+import Invite from './embeds/Invite'
+import Mention from './Mention'
 
-const { Clipboard, Permissions } = Plugins
+const { Clipboard } = Plugins
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
 
@@ -44,26 +51,6 @@ const isEmbed = (element: any): element is Embed => {
   return typeof element === 'object' && element['embed'] && element['link']
 }
 
-const Mention = ({
-  userID,
-  selected
-}: {
-  userID: string
-  selected?: boolean
-}) => {
-  const { token, id } = Auth.useContainer()
-  const user = useQuery(['users', userID, token], getUser)
-  return (
-    <span
-      className={`${styles.mention} ${userID === id ? styles.isMe : ''} ${
-        selected ? styles.selected : ''
-      }`}
-    >
-      @{user.data?.username}
-    </span>
-  )
-}
-
 const EditBox = ({
   id,
   content,
@@ -74,14 +61,19 @@ const EditBox = ({
   onDismiss: () => void
 }) => {
   const { token } = Auth.useContainer()
-
+  const editor = useMemo(
+    () => withHistory(withReact(withMentions(createEditor()))),
+    []
+  )
   return (
     <div className={styles.innerInput}>
       <Editor
+        editor={editor}
+        userMentions={false}
         className={styles.editor}
         inputClassName={styles.input}
-        mentionsClassName={styles.mentions}
-        newLines={false}
+        mentionsClassName={styles.mentionsWrapper}
+        newLines
         onDismiss={onDismiss}
         emptyEditor={[
           {
@@ -89,7 +81,6 @@ const EditBox = ({
           }
         ]}
         onEnter={async (content) => {
-          console.log(content)
           if (!token || !content) return
           onDismiss()
           await patchMessage(id, content, token)
@@ -108,6 +99,7 @@ const View = memo(
     createdAt,
     primary,
     content,
+    type,
     onResize
   }: {
     id: string
@@ -115,12 +107,13 @@ const View = memo(
     createdAt: string
     updatedAt: string
     content: string
+    type: MessageTypes
     primary: boolean
     onResize: () => void
   }) => {
     const uiStore = UI.useContainer()
+    const { editingMessageID, setEditingMessageID } = Chat.useContainer()
     const auth = Auth.useContainer()
-    const [editMessage, setEditMessage] = useState(false)
     const [deleteMessage] = useMutation(
       async () =>
         (
@@ -142,14 +135,9 @@ const View = memo(
           icon: faCopy,
           danger: false,
           onClick: async () => {
-            const permission = await Permissions.query({
-              name: PermissionType.ClipboardWrite
+            await Clipboard.write({
+              string: content
             })
-            if (permission.state === 'granted') {
-              await Clipboard.write({
-                string: content
-              })
-            }
           }
         },
         {
@@ -157,14 +145,9 @@ const View = memo(
           icon: faCopy,
           danger: false,
           onClick: async () => {
-            const permission = await Permissions.query({
-              name: PermissionType.ClipboardWrite
+            await Clipboard.write({
+              string: id
             })
-            if (permission.state === 'granted') {
-              await Clipboard.write({
-                string: id
-              })
-            }
           }
         }
       ]
@@ -174,7 +157,7 @@ const View = memo(
           text: 'Edit Message',
           icon: faPencilAlt,
           danger: false,
-          onClick: () => setEditMessage(true)
+          onClick: () => setEditingMessageID(id)
         })
         items.push({
           text: 'Delete Message',
@@ -185,8 +168,8 @@ const View = memo(
               name: ModalTypes.DELETE_MESSAGE,
               props: {
                 type: 'message',
-                onConfirm: () => {
-                  deleteMessage()
+                onConfirm: async () => {
+                  await deleteMessage()
                   uiStore.clearModal()
                 },
                 onDismiss: () => uiStore.clearModal()
@@ -195,7 +178,15 @@ const View = memo(
         })
       }
       return items
-    }, [authorID, content, deleteMessage, id, uiStore, auth.id])
+    }, [
+      authorID,
+      content,
+      deleteMessage,
+      id,
+      uiStore,
+      auth.id,
+      setEditingMessageID
+    ])
     const output = useMarkdown(content, {
       bold: (str, key) => <strong key={key}>{str}</strong>,
       italic: (str, key) => <i key={key}>{str}</i>,
@@ -203,11 +194,29 @@ const View = memo(
       strikethough: (str, key) => <del key={key}>{str}</del>,
       link: (str, key) => {
         const link = (
-          <a href={str} key={key} target='_blank' rel='noopener noreferrer'>
+          <a
+            href={str}
+            key={`${key}-href`}
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             {str}
           </a>
         )
-        if (Image.isCovfefe(str)) {
+        if (Invite.isInvite(str)) {
+          return {
+            link: <></>,
+            embed: (
+              <ErrorBoundary
+                fallbackRender={() => <Invite.ErrorEmbed key={key} />}
+              >
+                <Suspense fallback={<Invite.Placeholder key={key} />}>
+                  <Invite.Embed key={key} url={str} />
+                </Suspense>
+              </ErrorBoundary>
+            )
+          }
+        } else if (Image.isCovfefe(str)) {
           return {
             link,
             embed: <Image.Embed key={key} url={str} />
@@ -226,9 +235,31 @@ const View = memo(
         [
           /<@([A-Za-z0-9-]+?)>/g,
           (str, key) => (
-            <Suspense fallback={<>&lt;@{str}&gt;</>}>
-              <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
-                <Mention key={key} userID={str} />
+            <Suspense fallback={<span key={key}>@unknown</span>}>
+              <ErrorBoundary
+                fallbackRender={() => <span key={key}>&lt;@{str}&gt;</span>}
+              >
+                <Mention.User
+                  key={key}
+                  userID={str}
+                  selected={type !== MessageTypes.NORMAL}
+                />
+              </ErrorBoundary>
+            </Suspense>
+          )
+        ],
+        [
+          /<#([A-Za-z0-9-]+?)>/g,
+          (str, key) => (
+            <Suspense fallback={<span key={key}>#unknown</span>}>
+              <ErrorBoundary
+                fallbackRender={() => <span key={key}>&lt;@{str}&gt;</span>}
+              >
+                <Mention.Channel
+                  key={key}
+                  channelID={str}
+                  selected={type !== MessageTypes.NORMAL}
+                />
               </ErrorBoundary>
             </Suspense>
           )
@@ -251,15 +282,29 @@ const View = memo(
         key={id}
         items={getItems()}
       >
-        <div className={`${styles.message} ${primary ? styles.primary : ''}`}>
-          {primary && (
+        <div
+          className={`${styles.message} ${
+            primary || type !== MessageTypes.NORMAL ? styles.primary : ''
+          } ${
+            type === MessageTypes.MEMBER_ADDED
+              ? styles.joined
+              : type === MessageTypes.MEMBER_REMOVED
+              ? styles.left
+              : ''
+          }`}
+        >
+          {primary && type === MessageTypes.NORMAL && (
             <div
               className={styles.avatar}
               style={{ backgroundImage: `url(${user.data?.avatar})` }}
             />
           )}
-          <div className={`${styles.content} ${!primary ? styles.spacer : ''}`}>
-            {primary && (
+          <div
+            className={`${styles.content} ${
+              !(primary || type !== MessageTypes.NORMAL) ? styles.spacer : ''
+            }`}
+          >
+            {primary && type === MessageTypes.NORMAL && (
               <h2 key='username'>
                 <span>
                   {user.data?.username}
@@ -288,14 +333,14 @@ const View = memo(
                 </span>
               </h2>
             )}
-            {editMessage ? (
+            {editingMessageID === id ? (
               <EditBox
                 id={id}
                 content={content}
-                onDismiss={() => setEditMessage(false)}
+                onDismiss={() => setEditingMessageID(undefined)}
               />
             ) : (
-              <p>{main}</p>
+              <p key={id}>{main}</p>
             )}
             <Measure onResize={onResize}>{embeds}</Measure>
           </div>

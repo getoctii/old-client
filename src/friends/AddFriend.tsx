@@ -52,13 +52,13 @@ const AddFriend = () => {
           validate={validate}
           onSubmit={async (values, { setSubmitting, setErrors }) => {
             try {
-              const splitted = values.tag.split('#')
+              const [username, discriminator] = values.tag.split('#')
               const user = (
                 await clientGateway.get<FindResponse>('/users/find', {
                   headers: { Authorization: token },
                   params: {
-                    username: splitted[0],
-                    discriminator: splitted[1] === 'inn' ? '0' : splitted[1]
+                    username,
+                    discriminator: discriminator === 'inn' ? '0' : discriminator
                   }
                 })
               ).data

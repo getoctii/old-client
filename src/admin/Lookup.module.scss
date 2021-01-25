@@ -1,0 +1,150 @@
+.lookup {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  .back {
+    margin-top: 1rem;
+    background: var(--neko-colors-primary);
+  }
+  .user {
+    .profile {
+      margin-bottom: 0.8rem;
+      display: flex;
+      .title {
+
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+
+        p {
+          margin: 0;
+        }
+      }
+    }
+
+    .buttons {
+      margin-top: 0.5rem;
+      display: grid;
+      grid-template-columns: auto auto;
+      gap: 0.5rem;
+
+        button {
+          background: var(--neko-colors-danger);
+
+          &:disabled {
+            background: var(--neko-colors-secondary);
+            cursor: pointer;
+          }
+          &:first-child {
+            background: var(--neko-colors-primary);
+          }
+          &.disabled {
+            background: var(--neko-colors-warning);
+          }
+      }
+    }
+
+    .details {
+      text-align: left;
+      kbd {
+        cursor: pointer;
+      }
+    }
+
+
+    background: var(--neko-channels-background);
+    max-width: 450px;
+    width: 100%;
+    padding: 2rem;
+    border-radius: 16px;
+    h4, p {
+      margin: 0;
+    }
+
+    @media (max-width: 740px) {
+      width: 90%;
+      background: var(--neko-sidebar-background);
+    }
+  }
+  .search {
+    margin-bottom: 1rem;
+    margin-top: 0.5rem;
+    form {
+      display: block;
+      width: 100%;
+
+      position: relative;
+      input {
+        font-size: 0.8rem;
+        font-weight: 400;
+        width: 100%;
+        background: var(--neko-channels-background);
+
+        &::-webkit-input-placeholder {
+          color: var(--neko-text-normal);
+          opacity: 0.5;
+        }
+
+        @media (max-width: 740px) {
+          background: var(--neko-sidebar-background);
+        }
+      }
+
+      .search {
+        margin: 0;
+        position: absolute;
+        bottom: 0.5rem;
+        padding: 0;
+        background: none;
+        color: var(--neko-text-inverse);
+        background: var(--neko-colors-primary);
+        border-radius: 50%;
+        padding: 0.5rem;
+        right: 0.9rem;
+      }
+
+      .searchError {
+        margin: 0;
+        position: absolute;
+        bottom: 0.5rem;
+        padding: 0;
+        background: none;
+        color: var(--neko-text-inverse);
+        background: var(--neko-colors-danger);
+        border-radius: 50%;
+        padding: 0.5rem;
+        right: 0.9rem;
+      }
+
+      .searchPlaceholder {
+        position: absolute;
+        bottom: 0.9rem;
+        padding: 0;
+        background: none;
+        color: var(--neko-text-normal);
+        right: 1.2rem;
+        opacity: 0.5;
+      }
+    }
+  }
+
+  h1 {
+    margin-bottom: 0.8rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+
+  p {
+    font-size: 1rem;
+    font-weight: 300;
+    margin: 0 0 0.8rem;
+  }
+}

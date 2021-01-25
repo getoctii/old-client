@@ -18,9 +18,10 @@ import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import Loader from '../components/Loader'
 import { createConversation } from '../conversation/remote'
-import { getUser, ParticipantsResponse, State } from '../user/remote'
+import { getUser, ParticipantsResponse } from '../user/remote'
 import styles from './Members.module.scss'
 import { getCommunity, getMembers, Member as MemberType } from './remote'
+import Icon from '../user/Icon'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
@@ -30,7 +31,7 @@ const Member = memo(
     const isMobile = useMedia('(max-width: 740px)')
     const { id, token } = Auth.useContainer()
     const history = useHistory()
-    const user = useQuery(['users', member.user.id, token], getUser)
+    const user = useQuery(['users', member.user_id, token], getUser)
     return (
       <motion.div
         className={styles.member}
@@ -45,27 +46,7 @@ const Member = memo(
           opacity: 0
         }}
       >
-        <div
-          className={styles.icon}
-          style={{ backgroundImage: `url('${user.data?.avatar}')` }}
-        >
-          {' '}
-          {user.data && (
-            <div
-              className={`${styles.badge} ${
-                user.data.state === State.online
-                  ? styles.online
-                  : user.data.state === State.dnd
-                  ? styles.dnd
-                  : user.data.state === State.idle
-                  ? styles.idle
-                  : user.data.state === State.offline
-                  ? styles.offline
-                  : ''
-              }`}
-            />
-          )}
-        </div>
+        <Icon avatar={user.data?.avatar} state={user.data?.state} />
         <div className={styles.info}>
           <h4>
             {user.data?.username}#
@@ -89,12 +70,12 @@ const Member = memo(
                   ]) as ParticipantsResponse
                   const participant = cache?.find((participant) =>
                     participant.conversation.participants.includes(
-                      member.user.id
+                      member.user_id
                     )
                   )
                   if (!cache || !participant) {
                     const result = await createConversation(token!, {
-                      recipient: member.user.id
+                      recipient: member.user_id
                     })
                     if (result.id) history.push(`/conversations/${result.id}`)
                   } else {
@@ -131,7 +112,7 @@ export const Members = () => {
     getMembers,
     {
       getFetchMore: (last) => {
-        return last.length < 25 ? undefined : last[last.length - 1]?.created_at
+        return last.length < 25 ? undefined : last[last.length - 1]?.id
       }
     }
   )
@@ -184,34 +165,33 @@ export const Members = () => {
                         />
                       )
                   )}
-                  {loading && (
-                    <div key='loader' className={styles.loader}>
-                      <h5>Loading more...</h5>
-                    </div>
-                  )}
-                  {!loading && canFetchMore ? (
-                    <Waypoint
-                      bottomOffset={20}
-                      onEnter={async () => {
-                        try {
-                          const current = ref.current
-                          if (!current || !current.scrollHeight) return
-                          setLoading(true)
-                          const oldHeight = current.scrollHeight
-                          const oldTop = current.scrollTop
-                          await fetchMore()
-                          current.scrollTop = current.scrollHeight
-                            ? current.scrollHeight - oldHeight + oldTop
-                            : 0
-                        } finally {
-                          setLoading(false)
-                        }
-                      }}
-                    />
-                  ) : (
-                    <></>
-                  )}
                 </AnimatePresence>
+                {!loading && canFetchMore ? (
+                  <Waypoint
+                    bottomOffset={20}
+                    onEnter={async () => {
+                      try {
+                        const current = ref.current
+                        if (!current || !current.scrollHeight) return
+                        setLoading(true)
+                        const oldHeight = current.scrollHeight
+                        const oldTop = current.scrollTop
+                        await fetchMore()
+                        current.scrollTop = current.scrollHeight
+                          ? current.scrollHeight - oldHeight + oldTop
+                          : 0
+                      } finally {
+                        setLoading(false)
+                      }
+                    }}
+                  />
+                ) : !!loading && canFetchMore ? (
+                  <div key='loader' className={styles.loader}>
+                    <h5>Loading more...</h5>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
             </>
           ) : (

@@ -7,6 +7,7 @@ import { useMedia } from 'react-use'
 import { Redirect, Switch, useRouteMatch } from 'react-router-dom'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 import styles from './Settings.module.scss'
+import { Helmet } from 'react-helmet-async'
 
 const Settings = () => {
   const isMobile = useMedia('(max-width: 740px)')
@@ -14,6 +15,9 @@ const Settings = () => {
   const match = useRouteMatch('/settings/:page')
   return (
     <div className={styles.settings}>
+      <Helmet>
+        <title>Octii - Settings</title>
+      </Helmet>
       {!match && isMobile ? <Sidebar /> : !isMobile ? <Sidebar /> : <></>}
       <div className={styles.pages}>
         <Switch>

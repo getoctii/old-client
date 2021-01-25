@@ -13,7 +13,6 @@ const useNewMention = (eventSource: EventSourcePolyfill | null) => {
     const handler = (e: MessageEvent) => {
       const mention = JSON.parse(e.data)
       log('Events', 'purple', 'NEW_MENTION')
-      console.log(mention)
       const initial: Mentions | undefined = queryCache.getQueryData([
         'mentions',
         id,

@@ -3,11 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronRight,
   faCopy,
+  faHouseLeave,
   faTrashAlt,
   faUserFriends
 } from '@fortawesome/pro-solid-svg-icons'
 import { useQuery, useMutation, queryCache } from 'react-query'
-import { clientGateway } from '../utils/constants'
+import { clientGateway, MessageTypes } from '../utils/constants'
 import styles from './ConversationCard.module.scss'
 import { Auth } from '../authentication/state'
 import { useHistory, useRouteMatch } from 'react-router-dom'
@@ -26,9 +27,9 @@ import Context from '../components/Context'
 import { ContextMenuItems } from '../state/ui'
 import useMarkdown from '@innatical/markdown'
 import { ErrorBoundary } from 'react-error-boundary'
-import Message from '../chat/Message'
+import Mention from '../chat/Mention'
 
-const View = ({
+const ConversationCardView = ({
   people,
   onClick,
   selected,
@@ -71,8 +72,8 @@ const View = ({
         text: 'Copy ID',
         icon: faCopy,
         danger: false,
-        onClick: () => {
-          Clipboard.write({
+        onClick: async () => {
+          await Clipboard.write({
             string: conversationID
           })
         }
@@ -129,8 +130,11 @@ const View = ({
     }
 
     items.push({
-      text: 'Delete Conversation',
-      icon: faTrashAlt,
+      text:
+        (people?.length ?? 1) === 1
+          ? 'Delete Conversation'
+          : 'Leave Conversation',
+      icon: (people?.length ?? 1) === 1 ? faTrashAlt : faHouseLeave,
       danger: true,
       onClick: (event) => {
         if (match?.params.id === conversationID) history.push('/')
@@ -148,7 +152,8 @@ const View = ({
     token,
     unreads.data,
     channelID,
-    id
+    id,
+    people?.length
   ])
 
   const output = useMarkdown(message?.content || '', {
@@ -168,9 +173,23 @@ const View = ({
       [
         /<@([A-Za-z0-9-]+?)>/g,
         (str, key) => (
-          <Suspense fallback={<>&lt;@{str}&gt;</>}>
-            <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
-              <Message.Mention selected={selected} key={key} userID={str} />
+          <Suspense fallback={<div key={key}>&lt;@{str}&gt;</div>}>
+            <ErrorBoundary
+              fallbackRender={() => <div key={key}>&lt;@{str}&gt;</div>}
+            >
+              <Mention.User selected={selected} key={key} userID={str} />
+            </ErrorBoundary>
+          </Suspense>
+        )
+      ],
+      [
+        /<#([A-Za-z0-9-]+?)>/g,
+        (str, key) => (
+          <Suspense fallback={<div key={key}>&lt;@{str}&gt;</div>}>
+            <ErrorBoundary
+              fallbackRender={() => <div key={key}>&lt;@{str}&gt;</div>}
+            >
+              <Mention.Channel selected={selected} key={key} channelID={str} />
             </ErrorBoundary>
           </Suspense>
         )
@@ -183,14 +202,13 @@ const View = ({
     <Context.Wrapper
       title={users?.map((user) => user.username).join(', ') || ''}
       message={(people?.length ?? 1) === 1 ? users?.[0]?.status : 'Group Chat'}
-      key={conversationID}
       items={getItems()}
     >
       <div
         className={`${styles.card} ${selected ? styles.selected : ''}`}
         onClick={onClick}
       >
-        <div className={styles.avatar}>
+        <div className={styles.avatar} key='avatar'>
           {(people?.length ?? 1) === 1 ? (
             <>
               <img src={users?.[0].avatar} alt={users?.[0].username} />
@@ -216,7 +234,7 @@ const View = ({
             </div>
           )}
         </div>
-        <div className={styles.user}>
+        <div className={styles.user} key='user'>
           <h4>{users?.map((user) => user.username).join(', ')}</h4>
           {message?.content && (
             <p>
@@ -224,15 +242,17 @@ const View = ({
                 ? 'You: '
                 : (people?.length ?? 1) === 1
                 ? ''
-                : `${
+                : message.type === MessageTypes.NORMAL
+                ? `${
                     users?.find((user) => user.id === message?.author_id)
                       ?.username ?? 'Unknown'
-                  }: `}
+                  }: `
+                : ''}
               {output}
             </p>
           )}
         </div>
-        <div className={styles.details}>
+        <div className={styles.details} key='details'>
           {!selected &&
             (mentionsCount && mentionsCount > 0 ? (
               <div
@@ -255,20 +275,31 @@ const View = ({
   )
 }
 
-const Placeholder = () => {
+const ConversationCardPlaceholder = () => {
   const username = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
   const status = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
   return (
     <div className={styles.placeholder}>
-      <div className={styles.avatar} />
-      <div className={styles.user}>
-        <div className={styles.username} style={{ width: `${username}rem` }} />
-        <div className={styles.status} style={{ width: `${status}rem` }} />
+      <div className={styles.avatar} key='avatar' />
+      <div className={styles.user} key='user'>
+        <div
+          className={styles.username}
+          key='username'
+          style={{ width: `${username}rem` }}
+        />
+        <div
+          className={styles.status}
+          key='status'
+          style={{ width: `${status}rem` }}
+        />
       </div>
     </div>
   )
 }
 
-const ConversationCard = { View, Placeholder }
+const ConversationCard = {
+  View: ConversationCardView,
+  Placeholder: ConversationCardPlaceholder
+}
 
 export default ConversationCard

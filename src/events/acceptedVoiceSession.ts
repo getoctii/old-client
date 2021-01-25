@@ -17,9 +17,9 @@ const useAcceptedVoiceSession = (eventSource: EventSourcePolyfill | null) => {
       call.establishCall(event.id, event.peer_id)
     }
 
-    eventSource.addEventListener(Events.ACCPETED_VOICE_SESSION, handler)
+    eventSource.addEventListener(Events.ACCEPTED_VOICE_SESSION, handler)
     return () => {
-      eventSource.removeEventListener(Events.ACCPETED_VOICE_SESSION, handler)
+      eventSource.removeEventListener(Events.ACCEPTED_VOICE_SESSION, handler)
     }
   }, [eventSource, call])
 }

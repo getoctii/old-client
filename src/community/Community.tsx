@@ -16,6 +16,7 @@ import { useMedia } from 'react-use'
 import Sidebar from '../sidebar/Sidebar'
 import { Members } from './Members'
 import { ChannelTypes } from '../utils/constants'
+import { Helmet } from 'react-helmet-async'
 
 const EmptyCommunity = ({
   community,
@@ -29,6 +30,9 @@ const EmptyCommunity = ({
 
   return (
     <div className={styles.communityEmpty}>
+      <Helmet>
+        <title>Octii - {community?.name}</title>
+      </Helmet>
       <small>{community?.name}</small>
       {!createMode ? (
         <>
@@ -128,6 +132,9 @@ const View = () => {
     />
   ) : (
     <div className={styles.community} key={id}>
+      <Helmet>
+        <title>Octii - {community.data?.name}</title>
+      </Helmet>
       {isMobile && !match ? (
         <Channels.View />
       ) : !isMobile ? (
@@ -135,7 +142,6 @@ const View = () => {
       ) : (
         <></>
       )}
-
       <Suspense fallback={<Chat.Placeholder />}>
         <Switch>
           <PrivateRoute
@@ -144,7 +150,6 @@ const View = () => {
             exact
           />
           <PrivateRoute path={`${path}/members`} component={Members} exact />
-
           <PrivateRoute
             path={`${path}/channels/:channelID`}
             component={Channel}

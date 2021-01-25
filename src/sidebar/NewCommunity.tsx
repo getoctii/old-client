@@ -76,9 +76,9 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
             if (community?.id) history.push(`/communities/${community.id}`)
           } catch (e) {
             if (e.response.data.errors.includes('CommunityNameInvalid'))
-              setErrors({ name: 'Invaild Community Name' })
-            if (e.response.data.errors.includes('InvaildIcon'))
-              setErrors({ icon: 'Invaild Community Icon' })
+              setErrors({ name: 'Invalid Community Name' })
+            if (e.response.data.errors.includes('InvalidIcon'))
+              setErrors({ icon: 'Invalid Community Icon' })
           } finally {
             setSubmitting(false)
           }
@@ -174,9 +174,8 @@ export const NewCommunity = () => {
                 history.push(`/communities/${id}`)
                 ui.clearModal()
               } catch (e) {
-                console.log('joinError', e.response.data.errors)
                 if (e.response.data.errors.includes('InvalidCode'))
-                  setErrors({ invite: 'Invaild Invite' })
+                  setErrors({ invite: 'Invalid Invite' })
                 if (e.response.data.errors.includes('InviteNotFound'))
                   setErrors({ invite: 'Invite not found' })
                 if (e.response.data.errors.includes('AlreadyInCommunity'))

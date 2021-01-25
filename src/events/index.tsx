@@ -14,7 +14,6 @@ import useLog from './log'
 import useNewMention from './newMention'
 import useUpdatedConversation from './updatedConversation'
 import useUpdatedMessage from './updatedMessage'
-import useUpdatedGroup from './updatedGroup'
 import useDeletedGroup from './deletedGroup'
 import useNewGroup from './newGroup'
 
@@ -38,7 +37,7 @@ const EventSource = () => {
   useAcceptedVoiceSession(eventSource)
   useNewMention(eventSource)
   useUpdatedConversation(eventSource)
-  useUpdatedGroup(eventSource)
+  useUpdatedMessage(eventSource)
 
   return <></>
 }

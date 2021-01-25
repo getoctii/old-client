@@ -3,26 +3,7 @@ import { createContainer } from 'unstated-next'
 import Peer from 'peerjs'
 import { clientGateway } from '../utils/constants'
 import { Auth } from '../authentication/state'
-import { isPlatform } from '@ionic/react'
 import { useSuspenseStorageItem } from '../utils/storage'
-
-declare global {
-  interface Window {
-    cordova?: {
-      plugins?: {
-        iosrtc?: {
-          getUserMedia: (
-            constraints?: MediaStreamConstraints | undefined
-          ) => Promise<MediaStream>
-          registerGlobals: () => void
-          debug: {
-            enable: (s: string, b: boolean) => void
-          }
-        }
-      }
-    }
-  }
-}
 
 const useCall = () => {
   const { token } = Auth.useContainer()
@@ -83,7 +64,6 @@ const useCall = () => {
   useEffect(() => {
     if (!call) return
     const handler = () => {
-      console.log('call ended')
       endCall()
     }
 
@@ -95,10 +75,8 @@ const useCall = () => {
   }, [call, endCall])
 
   useEffect(() => {
-    console.log('call', call)
     if (!call) return
     const handler = (stream: MediaStream) => {
-      console.log('Got mediastream!')
       setCallState('connected')
       setStream(stream)
     }
@@ -112,7 +90,6 @@ const useCall = () => {
 
   useEffect(() => {
     const handler = (id: string) => {
-      console.log(id)
       setPeerID(id)
     }
 
@@ -123,43 +100,17 @@ const useCall = () => {
     }
   }, [peer])
 
-  useEffect(() => console.log('sessionID', sessionID), [sessionID])
-
   useEffect(() => {
     const handler = async (call: Peer.MediaConnection) => {
-      console.log('CALL EVENT', call)
       setCall(call)
       try {
-        if (isPlatform('ios') && window.cordova?.plugins?.iosrtc) {
-          window.cordova.plugins.iosrtc.registerGlobals()
-          window.cordova.plugins.iosrtc.debug.enable('*', true)
-        }
-
-        // if (isPlatform('capacitor')) {
-        //   console.log('requesting... 1')
-        //   const hasPermission = await Permissions.query({
-        //     name: PermissionType.Microphone
-        //   })
-        //   console.log(hasPermission.state)
-        //   if (hasPermission.state !== 'granted') {
-        //     console.error('Permission must be granted to start a call')
-        //     return
-        //   }
-        // }
-
-        const stream = isPlatform('ios')
-          ? await window.cordova?.plugins?.iosrtc?.getUserMedia({
-              audio: true,
-              video: false
-            })!
-          : await navigator.mediaDevices.getUserMedia({
-              audio: true,
-              video: false
-            })
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: false
+        })
         setInputStream(stream)
         call.answer(stream)
       } catch (error) {
-        console.log(error)
         const stream = new MediaStream()
         setInputStream(stream)
         call.answer(stream)
@@ -175,11 +126,7 @@ const useCall = () => {
 
   const ringUser = useCallback(
     async (userID: string) => {
-      console.log(peerID)
-      // uuuuuuh uh oh
-      // uh, well that explains that, peerID is null
       if (!peerID) return
-      console.log(userID)
       const sentSessionID = (
         await clientGateway.post(
           '/voice',
@@ -220,41 +167,17 @@ const useCall = () => {
 
   const establishCall = useCallback(
     async (sentSessionID: string, receivedPeerID: string) => {
-      console.log(sentSessionID, sessionID)
       if (sentSessionID !== sessionID) return
       setOtherPeerID(receivedPeerID)
-      console.log('establishing...', receivedPeerID)
       setCallState('waiting')
       try {
-        if (isPlatform('ios') && window.cordova?.plugins?.iosrtc) {
-          window.cordova.plugins.iosrtc.registerGlobals()
-          window.cordova.plugins.iosrtc.debug.enable('*', true)
-        }
-
-        // if (isPlatform('capacitor')) {
-        //   console.log('requesting... 2')
-        //   const hasPermission = await Permissions.query({
-        //     name: PermissionType.Microphone
-        //   })
-        //   console.log(hasPermission)
-        //   if (hasPermission.state !== 'granted') {
-        //     console.error('Permission must be granted to start a call')
-        //     return
-        //   }
-        // }
-        const stream = isPlatform('ios')
-          ? await window.cordova?.plugins?.iosrtc?.getUserMedia({
-              audio: true,
-              video: false
-            })!
-          : await navigator.mediaDevices.getUserMedia({
-              audio: true,
-              video: false
-            })
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: false
+        })
         setInputStream(stream)
         setCall(peer.call(receivedPeerID, stream))
       } catch (error) {
-        console.log(error)
         const stream = new MediaStream()
         setInputStream(stream)
         setCall(peer.call(receivedPeerID, stream))

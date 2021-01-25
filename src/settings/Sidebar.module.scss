@@ -1,6 +1,8 @@
 .sidebar {
   display: flex;
   flex-direction: column;
+  max-width: 18rem;
+  width: 18rem;
   min-width: 18rem;
   min-height: 5rem;
   z-index: 0;
@@ -69,6 +71,12 @@
           background: var(--neko-colors-warning);
         }
       }
+
+      &.admin {
+        .icon {
+          background: var(--neko-colors-danger);
+        }
+      }
     }
 
     .selected {
@@ -106,14 +114,15 @@
   }
 
   hr {
-    margin: 0;
-    margin-left: 3.5rem;
+    margin: 0 0 0 3.5rem;
     border-color: var(--neko-channels-seperator);
     opacity: 0.5;
     border-style: solid;
   }
-  .logout {
+  .buildInfo {
     margin-top: auto;
+  }
+  .logout {
     text-align: center;
     background: var(--neko-colors-danger);
     border-radius: 10px;

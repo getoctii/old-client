@@ -14,11 +14,14 @@ const useChat = () => {
   const [autoRead, setAutoRead] = useState(false)
   const [channelID, setChannelID] = useState<string | undefined>()
   const [uploadDetails, setUploadDetails] = useState<UploadDetails | null>(null)
+  const [editingMessageID, setEditingMessageID] = useState<string | undefined>(
+    undefined
+  )
+  const [participants, setParticipants] = useState<string[]>([])
   const sendMessage = useCallback(
     async (content: string) => {
       if (!token || !channelID) return
-      postMessage(channelID, content, token)
-      console.log('hmmmm', tracking)
+      await postMessage(channelID, content, token)
       if (tracking) setAutoRead(true)
     },
     [token, setAutoRead, tracking, channelID]
@@ -37,7 +40,11 @@ const useChat = () => {
     channelID,
     setChannelID,
     uploadDetails,
-    setUploadDetails
+    setUploadDetails,
+    editingMessageID,
+    setEditingMessageID,
+    participants,
+    setParticipants
   }
 }
 

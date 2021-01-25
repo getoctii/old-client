@@ -18,7 +18,7 @@ import Box from './Box'
 import Typing from '../state/typing'
 import { Call } from '../state/call'
 import Button from '../components/Button'
-import { getChannel } from './remote'
+import { ChannelResponse, getChannel } from './remote'
 import Messages from './Messages'
 import { fetchManyUsers, getUser } from '../user/remote'
 import { Chat } from './state'
@@ -65,6 +65,35 @@ const PrivateName = ({ id }: { id?: string }) => {
   )
 }
 
+const Header = ({
+  participants,
+  type,
+  channel
+}: {
+  participants?: string[]
+  type: ChannelTypes
+  channel?: ChannelResponse
+}) => {
+  const { token } = Auth.useContainer()
+  const { data: users } = useQuery(
+    ['users', participants ?? [], token],
+    fetchManyUsers
+  )
+
+  return (
+    <div className={styles.title}>
+      {type === ChannelTypes.PrivateChannel ? (
+        <PrivateName id={participants?.[0]} />
+      ) : type === ChannelTypes.GroupChannel ? (
+        users?.map((i) => i.username).join(', ')
+      ) : (
+        channel?.name
+      )}
+      <p className={styles.status}>{channel?.description}</p>
+    </div>
+  )
+}
+
 const supportedFiles = new Set(['image/png', 'image/gif', 'image/jpeg'])
 const View = ({
   type,
@@ -98,10 +127,8 @@ const View = ({
   const history = useHistory()
 
   const channel = useQuery(['channel', channelID, token], getChannel)
-  const { data: users } = useQuery(
-    ['users', participants ?? [], token],
-    fetchManyUsers
-  )
+
+  // i see why
   const [bond] = useDropArea({
     onFiles: (files) => {
       if (supportedFiles.has(files[0].type))
@@ -145,16 +172,13 @@ const View = ({
               <FontAwesomeIcon icon={faHashtag} />
             </div>
           )}
-          {type === ChannelTypes.PrivateChannel ? (
-            <PrivateName id={participants?.[0]} />
-          ) : (
-            <div className={styles.title}>
-              {type === ChannelTypes.GroupChannel
-                ? users?.map((i) => i.username).join(', ')
-                : channel.data?.name}
-              <p className={styles.status}>{channel.data?.description}</p>
-            </div>
-          )}
+          <Suspense fallback={<></>}>
+            <Header
+              type={type}
+              participants={participants}
+              channel={channel.data}
+            />
+          </Suspense>
           <div className={styles.buttonGroup}>
             {type === ChannelTypes.PrivateChannel ||
             type === ChannelTypes.GroupChannel ? (
@@ -187,7 +211,6 @@ const View = ({
                 <Button
                   type='button'
                   onClick={() => {
-                    console.log('calling uwu')
                     if (call.callState !== 'idle') call.endCall()
                     call.ringUser(participants[0])
                   }}

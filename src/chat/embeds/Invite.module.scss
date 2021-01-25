@@ -1,0 +1,171 @@
+.inviteEmbed {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.8rem;
+  max-width: 25rem;
+  border-radius: 16px;
+  background: var(--neko-input-background);
+  .details {
+    display: flex;
+
+    img {
+      border-radius: 11px;
+      width: 3rem;
+      height: 3rem;
+      min-width: 3rem;
+      min-height: 3rem;
+      object-fit: cover;
+      margin-right: 0.5rem;
+    }
+
+    .icon {
+      border-radius: 11px;
+      width: 3rem;
+      height: 3rem;
+      min-width: 3rem;
+      min-height: 3rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 0.5rem;
+      background: var(--neko-chat-background);
+    }
+    .title {
+      display: flex;
+      flex-direction: column;
+      height: 3rem;
+      max-height: 3rem;
+      justify-content: center;
+      h4,
+      h2 {
+        margin: 0;
+        white-space: nowrap;
+        overflow-y: hidden;
+        text-overflow: ellipsis;
+      }
+
+      h4 {
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 0.2rem;
+      }
+
+      h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+    }
+  }
+
+  button {
+    background: var(--neko-colors-primary);
+    margin-left: auto;
+    width: 5rem;
+    max-width: 5rem;
+    &:disabled {
+      cursor: not-allowed;
+      background: var(--neko-colors-secondary);
+    }
+  }
+
+  @media (max-width: 890px) {
+    display: block;
+
+    .details {
+      .title {
+        h4 {
+          white-space: normal;
+          font-size: 0.6rem;
+        }
+
+        h2 {
+          font-size: 1rem;
+        }
+      }
+    }
+    button {
+      margin-top: 1rem;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+}
+
+.invitePlaceholder {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.8rem;
+  max-width: 25rem;
+  border-radius: 16px;
+  background: var(--neko-input-background);
+
+  .details {
+    display: flex;
+    .icon {
+      border-radius: 11px;
+      width: 3rem;
+      margin-right: 0.5rem;
+      height: 3rem;
+      min-width: 3rem;
+      min-height: 3rem;
+      background: var(--neko-chat-background);
+    }
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      height: 3rem;
+      max-height: 3rem;
+      justify-content: center;
+
+      .one {
+        background: var(--neko-chat-background);
+        height: 0.8rem;
+        width: 4rem;
+        border-radius: 5px;
+      }
+
+      .two {
+        border-radius: 5px;
+        margin-top: 0.3rem;
+        background: var(--neko-chat-background);
+        height: 1.25rem;
+        width: 6rem;
+      }
+    }
+  }
+
+  .button {
+    background: var(--neko-colors-primary);
+    margin-left: auto;
+    height: 3rem;
+    width: 5rem;
+    max-width: 5rem;
+    border-radius: 11px;
+  }
+
+  @media (max-width: 890px) {
+    display: block;
+
+    .details {
+      .title {
+        .one {
+          height: 0.6rem;
+        }
+
+        .two {
+          height: 1rem;
+        }
+      }
+    }
+    .button {
+      margin-top: 1rem;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+}

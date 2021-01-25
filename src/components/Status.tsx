@@ -29,7 +29,7 @@ const updateStatus = async (id: string, state: State, token: string) => {
       }
     }
   )
-  queryCache.invalidateQueries(['users', id])
+  await queryCache.invalidateQueries(['users', id])
 }
 
 const Status = () => {
@@ -99,7 +99,7 @@ const Status = () => {
                   }
                 }
               )
-              queryCache.invalidateQueries(['users', id])
+              await queryCache.invalidateQueries(['users', id])
             } finally {
               setSubmitting(false)
             }

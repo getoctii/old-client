@@ -156,7 +156,6 @@ const useTheme = () => {
       Keyboard.setResizeMode({ mode: KeyboardResize.Native })
       const isDark =
         (variations === 'system' && prefersDarkMode) || variations === 'dark'
-      console.log(isDark)
       Keyboard.setStyle({
         style: isDark ? KeyboardStyle.Dark : KeyboardStyle.Light
       })

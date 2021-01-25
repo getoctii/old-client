@@ -4,7 +4,7 @@ import { Events } from '../utils/constants'
 import { queryCache } from 'react-query'
 import { log } from '../utils/logging'
 import { Auth } from '../authentication/state'
-import { Message } from '../chat/remote'
+import { MessageResponse } from '../chat/remote'
 
 const useUpdatedMessage = (eventSource: EventSourcePolyfill | null) => {
   const { id, token } = Auth.useContainer()
@@ -18,7 +18,6 @@ const useUpdatedMessage = (eventSource: EventSourcePolyfill | null) => {
         content: string
         updated_at: string
       }
-      console.log(event)
       log('Events', 'purple', 'UPDATED_MESSAGE')
 
       const initial = queryCache.getQueryData([
@@ -30,7 +29,7 @@ const useUpdatedMessage = (eventSource: EventSourcePolyfill | null) => {
         queryCache.setQueryData(
           ['messages', event.channel_id, token],
           initial.map((sub) =>
-            sub.map((msg: Message) =>
+            sub.map((msg: MessageResponse) =>
               msg.id === event.id
                 ? {
                     ...msg,

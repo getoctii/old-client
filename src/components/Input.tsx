@@ -7,9 +7,12 @@ const Input = ({
   form,
   ...props
 }: {
-  field: FieldInputProps<string>
-  form: FormikFormProps
-}) => {
+  field?: FieldInputProps<string>
+  form?: FormikFormProps
+} & React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+>) => {
   return (
     <input
       className={styles.input}

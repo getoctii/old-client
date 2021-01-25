@@ -35,6 +35,7 @@ export type UserResponse = {
   state: State
   status: string
   email?: string
+  disabled?: boolean
 }
 
 export type Member = {

@@ -14,7 +14,7 @@ import Message from './Message'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import { Waypoint } from 'react-waypoint'
-import { Channel, getMessages, Message as MessageType } from './remote'
+import { ChannelResponse, getMessages, MessageResponse } from './remote'
 import { useDebounce } from 'react-use'
 import { getUnreads, Mentions } from '../user/remote'
 import { Chat } from './state'
@@ -29,27 +29,27 @@ const View = ({
   channel,
   autoRead
 }: {
-  channel: Channel
+  channel: ChannelResponse
   autoRead: boolean
 }) => {
-  const { tracking, setTracking } = Chat.useContainer()
+  const { tracking, setTracking, editingMessageID } = Chat.useContainer()
   const { token, id } = Auth.useContainer()
   const { data, canFetchMore, fetchMore } = useInfiniteQuery<
-    MessageType[],
+    MessageResponse[],
     any
   >(['messages', channel.id, token], getMessages, {
     getFetchMore: (last) => {
-      return last.length < 25 ? undefined : last[last.length - 1]?.created_at
+      return last.length < 25 ? undefined : last[last.length - 1].id
     }
   })
 
   const messages = useMemo(() => data?.flat().reverse(), [data])
 
   const isPrimary = useCallback(
-    (message: MessageType, index: number) => {
+    (message: MessageResponse, index: number) => {
       return !(
         messages?.[index - 1] &&
-        message.author.id === messages?.[index - 1]?.author?.id &&
+        message.author_id === messages?.[index - 1]?.author_id &&
         dayjs.utc(message?.created_at)?.valueOf() -
           dayjs.utc(messages?.[index - 1]?.created_at)?.valueOf() <
           300000
@@ -75,13 +75,15 @@ const View = ({
   useEffect(() => {
     if (isPlatform('capacitor')) {
       Keyboard.addListener('keyboardDidShow', () => {
-        const scrollRef = ref?.current
-        setTracking(true)
-        if (scrollRef) {
-          scrollRef.scroll({
-            top: scrollRef.scrollHeight,
-            behavior: 'smooth'
-          })
+        if (!editingMessageID) {
+          const scrollRef = ref?.current
+          setTracking(true)
+          if (scrollRef) {
+            scrollRef.scroll({
+              top: scrollRef.scrollHeight,
+              behavior: 'smooth'
+            })
+          }
         }
       })
     }
@@ -89,7 +91,7 @@ const View = ({
     return () => {
       if (isPlatform('capacitor')) Keyboard.removeAllListeners()
     }
-  }, [setTracking, autoScroll])
+  }, [setTracking, autoScroll, editingMessageID])
 
   useEffect(() => {
     trackingRef.current = tracking
@@ -162,8 +164,8 @@ const View = ({
     []
   )
   useDebounce(
-    () => {
-      if (autoRead) setAsRead()
+    async () => {
+      if (autoRead) await setAsRead()
     },
     500,
     [setAsRead, autoRead]
@@ -223,7 +225,8 @@ const View = ({
               primary={isPrimary(message, index)}
               onResize={autoScroll}
               id={message.id}
-              authorID={message.author.id}
+              type={message.type}
+              authorID={message.author_id}
               createdAt={message.created_at}
               content={message.content}
               updatedAt={message.updated_at}

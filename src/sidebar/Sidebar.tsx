@@ -15,7 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInbox, faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Button from '../components/Button'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { DragDropContext, Droppable, Draggable } from '@react-forked/dnd'
 import { useMedia } from 'react-use'
 import {
   getCommunities,
@@ -349,7 +349,6 @@ const Sidebar = () => {
                 src={user.data?.avatar}
                 alt={user.data?.username}
                 onClick={() => {
-                  console.log('redirect')
                   history.push('/settings')
                 }}
               />

@@ -1,35 +1,3 @@
-// .security {
-//   form {
-//     h2,
-//     h5,
-//     h4,
-//     h6,
-//     p {
-//       margin: 0;
-//     }
-
-//     h4 {
-//       font-weight: 400;
-//     }
-//     .password {
-//       margin-top: 0.8rem;
-//       label {
-//         font-weight: 700;
-//       }
-//       input {
-//         margin-top: 0.5rem;
-//         background: var(--neko-settings-background);
-//         width: 100%;
-//       }
-//     }
-
-//     .save {
-//       margin-top: 1rem;
-//       background: var(--neko-colors-primary);
-//     }
-//   }
-// }
-
 .themes {
   padding-top: 5rem;
   overflow-y: scroll;
@@ -109,8 +77,8 @@
     padding-top: 2.5rem;
   }
 
-  // , (max-height: 420px)
   @media (max-width: 740px) {
+    padding-top: 0;
     margin-top: 0;
     width: 100%;
     .icon {

@@ -1,0 +1,399 @@
+import React, { Suspense, useCallback, useEffect, useState } from 'react'
+import { useMedia, usePageLeave } from 'react-use'
+import { Element, Text, Transforms, Editor, Range, Node } from 'slate'
+import { HistoryEditor } from 'slate-history'
+import { RenderLeafProps, Slate, Editable, ReactEditor } from 'slate-react'
+import { UserResponse } from '../user/remote'
+import { serialize } from '../utils/slate'
+import unified from 'unified'
+import markdown from 'remark-parse'
+import visit from 'unist-util-visit'
+import gfm from 'remark-gfm'
+// @ts-ignore
+import underlineSyntax from '@innatical/micromark-extension-underline'
+// @ts-ignore
+import underlineFromMarkdown from '@innatical/mdast-util-underline/from-markdown'
+// @ts-ignore
+import underlineToMarkdown from '@innatical/mdast-util-underline/to-markdown'
+import Mentions from '../chat/Mentions'
+import { useRouteMatch } from 'react-router-dom'
+import Mention from '../chat/Mention'
+import { ChannelResponse } from '../community/remote'
+
+const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
+  return leaf.underline ? (
+    <u {...attributes}>{children}</u>
+  ) : leaf.strong ? (
+    <strong {...attributes}>{children}</strong>
+  ) : leaf.emphasis ? (
+    <em {...attributes}>{children}</em>
+  ) : leaf.code ? (
+    <code {...attributes}>{children}</code>
+  ) : leaf.delete ? (
+    <del {...attributes}>{children}</del>
+  ) : leaf.link ? (
+    <a {...attributes}>{children}</a>
+  ) : (
+    <span {...attributes}>{children}</span>
+  )
+}
+
+const View = ({
+  editor,
+  className,
+  mentionsClassName,
+  typingClassName,
+  inputClassName,
+  children,
+  emptyEditor,
+  placeholder,
+  newLines,
+  onEnter,
+  onTyping,
+  onDismiss,
+  typingIndicator,
+  userMentions,
+  channelMentions
+}: {
+  editor: Editor & ReactEditor & HistoryEditor
+  className: string
+  mentionsClassName?: string
+  typingClassName?: string
+  inputClassName: string
+  emptyEditor: Node[]
+  placeholder?: any
+  children?: any
+  newLines: boolean
+  onEnter: (content: string) => void
+  onTyping?: () => void
+  onDismiss?: () => void
+  typingIndicator?: boolean
+  userMentions?: boolean
+  channelMentions?: boolean
+}) => {
+  const match = useRouteMatch<{ id: string }>('/communities/:id/:tab?/:tab2?')
+  const isMobile = useMedia('(max-width: 740px)')
+  const [typing, setTyping] = useState<boolean>(false)
+  useEffect(() => {
+    if (!onTyping) return
+    const interval = setInterval(() => typing && onTyping(), 7000)
+    return () => {
+      clearInterval(interval)
+    }
+  }, [typing, onTyping])
+  useEffect(() => {
+    editor.isInline = (element: Element) => {
+      return element.type === 'user' || element.type === 'channel'
+    }
+  }, [editor])
+  usePageLeave(() => setTyping(false))
+  const [value, setValue] = useState<Node[]>(emptyEditor)
+  const [target, setTarget] = useState<
+    { range: Range; type: 'user' | 'channel' } | undefined
+  >()
+  const [search, setSearch] = useState('')
+
+  const decorate = useCallback(([node, path]) => {
+    const ranges: {
+      anchor: {
+        path: any
+        offset: number
+      }
+      focus: {
+        path: any
+        offset: number
+      }
+      [key: string]: any
+    }[] = []
+    if (!Text.isText(node)) return ranges
+    const tree = unified()
+      .use(markdown)
+      .use(gfm, { singleTilde: false })
+      .use(function underline() {
+        const data: any = this.data()
+        const add = (field: string, value: any) => {
+          if (data[field]) data[field].push(value)
+          else data[field] = [value]
+        }
+
+        add('micromarkExtensions', underlineSyntax())
+        add('fromMarkdownExtensions', underlineFromMarkdown)
+        add('toMarkdownExtensions', underlineToMarkdown)
+      })
+      .parse(node.text)
+
+    visit(
+      tree,
+      ['strong', 'emphasis', 'code', 'delete', 'underline', 'link'],
+      (node) => {
+        if (
+          node.type === 'strong' ||
+          node.type === 'emphasis' ||
+          node.type === 'delete' ||
+          node.type === 'underline'
+        ) {
+          ranges.push({
+            [node.type]: true,
+            anchor: {
+              path,
+              offset: (node.children as any)[0].position?.start.offset ?? 0
+            },
+            focus: {
+              path,
+              offset: (node.children as any)[0].position?.end.offset ?? 0
+            }
+          })
+        } else {
+          ranges.push({
+            [node.type]: true,
+            anchor: {
+              path,
+              offset: node.position?.start.offset ?? 0
+            },
+            focus: {
+              path,
+              offset: node.position?.end.offset ?? 0
+            }
+          })
+        }
+      }
+    )
+    return ranges
+  }, [])
+
+  const renderElement = useCallback((props) => {
+    switch (props.element.type) {
+      case 'user':
+        return (
+          <Mention.User
+            attributes={props.attributes}
+            children={props.children}
+            userID={props.element.mentionID}
+          />
+        )
+      case 'channel':
+        return (
+          <Mention.Channel
+            attributes={props.attributes}
+            children={props.children}
+            channelID={props.element.mentionID}
+          />
+        )
+      default:
+        return <span {...props.attributes}>{props.children}</span>
+    }
+  }, [])
+
+  const renderLeaf = useCallback(
+    (props: RenderLeafProps) => <Leaf {...props} />,
+    []
+  )
+  const [selected, setSelected] = useState(0)
+
+  const onMention = useCallback(
+    (id: string, type: 'user' | 'channel') => {
+      if (!target) return
+      Transforms.select(editor, target.range)
+      Transforms.insertNodes(editor, {
+        type: type,
+        mentionID: id,
+        children: [
+          {
+            text: `<${type === 'user' ? '@' : '#'}${id}>`
+          }
+        ]
+      })
+      editor.insertText(' ')
+      Transforms.move(editor)
+      setTarget(undefined)
+    },
+    [editor, target]
+  )
+
+  const [usersFiltered, setUsersFiltered] = useState<UserResponse[]>([])
+  const [channelsFiltered, setChannelsFiltered] = useState<ChannelResponse[]>(
+    []
+  )
+  const onUsersFiltered = useCallback((users: UserResponse[]) => {
+    setUsersFiltered(users)
+  }, [])
+  const onChannelsFiltered = useCallback((channels: ChannelResponse[]) => {
+    setChannelsFiltered(channels)
+  }, [])
+  useEffect(() => {
+    setSelected(0)
+  }, [target, usersFiltered, channelsFiltered])
+
+  return (
+    <>
+      {target && (
+        <div className={mentionsClassName}>
+          <Suspense fallback={<></>}>
+            {!match?.params && target.type === 'user' ? (
+              <Mentions.Conversation
+                search={search}
+                selected={selected}
+                onMention={onMention}
+                onFiltered={onUsersFiltered}
+              />
+            ) : match?.params.id ? (
+              target.type === 'user' ? (
+                <Mentions.Community.Users
+                  search={search}
+                  onMention={onMention}
+                  selected={selected}
+                  onFiltered={onUsersFiltered}
+                />
+              ) : target.type === 'channel' ? (
+                <Mentions.Community.Channels
+                  search={search}
+                  onMention={onMention}
+                  selected={selected}
+                  onFiltered={onChannelsFiltered}
+                />
+              ) : (
+                <></>
+              )
+            ) : (
+              <></>
+            )}
+          </Suspense>
+        </div>
+      )}
+      <div className={`${className} ${typingIndicator ? typingClassName : ''}`}>
+        <Slate
+          editor={editor}
+          value={value}
+          onChange={(value) => {
+            setValue(value)
+            const { selection } = editor
+
+            if (selection && Range.isCollapsed(selection)) {
+              const [start] = Range.edges(selection)
+              const characterBefore = Editor.before(editor, start, {
+                unit: 'character'
+              })
+              const wordBefore = Editor.before(editor, start, {
+                unit: 'word'
+              })
+              const mentionType =
+                characterBefore &&
+                Editor.string(
+                  editor,
+                  Editor.range(editor, characterBefore, start)
+                )
+              const before =
+                mentionType === '@' || mentionType === '#'
+                  ? characterBefore
+                  : wordBefore && Editor.before(editor, wordBefore)
+              const beforeRange = before && Editor.range(editor, before, start)
+              const beforeText =
+                beforeRange && Editor.string(editor, beforeRange)
+              const beforeMatch =
+                beforeText &&
+                (beforeText.match(/^@(\w*)$/) ?? beforeText.match(/^#(\w*)$/))
+              const after = Editor.after(editor, start)
+              const afterRange = Editor.range(editor, start, after)
+              const afterText = Editor.string(editor, afterRange)
+              const afterMatch = afterText.match(/^(\s|$)/)
+
+              if (beforeMatch && afterMatch) {
+                if (mentionType === '@' || mentionType === '#') {
+                  setTarget({
+                    range: beforeRange!,
+                    type: mentionType === '@' ? 'user' : 'channel'
+                  })
+                }
+                setSearch(beforeMatch[1])
+                return
+              }
+
+              setTarget(undefined)
+            }
+          }}
+        >
+          <Editable
+            autoFocus={!isMobile}
+            className={inputClassName}
+            autoCapitalize={isMobile ? 'true' : 'false'}
+            spellCheck
+            // @ts-ignore
+            placeholder={placeholder}
+            renderLeaf={renderLeaf}
+            renderElement={renderElement}
+            decorate={decorate}
+            onKeyDown={async (event) => {
+              if (!typing && onTyping) onTyping()
+              setTyping(true)
+              switch (event.key) {
+                case 'Escape': {
+                  if (onDismiss) {
+                    event.preventDefault()
+                    onDismiss()
+                  }
+                  break
+                }
+                case 'Enter': {
+                  if (event.shiftKey && newLines) {
+                    event.preventDefault()
+                    editor.insertBreak()
+                  } else if (target && userMentions) {
+                    event.preventDefault()
+                    if (usersFiltered?.[selected]?.id)
+                      onMention(usersFiltered[selected].id, target.type)
+                    if (channelsFiltered?.[selected]?.id)
+                      onMention(channelsFiltered[selected].id, target.type)
+                  } else {
+                    event.preventDefault()
+                    const content = serialize(value)
+                    setTyping(false)
+                    if (content !== '') {
+                      onEnter(content)
+                      Transforms.select(editor, Editor.start(editor, []))
+                      setValue(emptyEditor)
+                    }
+                  }
+                  break
+                }
+                case 'Tab': {
+                  event.preventDefault()
+                  if (!userMentions || !channelMentions || !target) return
+                  if (event.shiftKey) {
+                    if (target.type === 'user')
+                      setSelected(
+                        selected - 1 < 0
+                          ? usersFiltered.length - 1
+                          : selected - 1
+                      )
+                    else if (target.type === 'channel')
+                      setSelected(
+                        selected - 1 < 0
+                          ? channelsFiltered.length - 1
+                          : selected - 1
+                      )
+                  } else {
+                    if (target.type === 'user')
+                      setSelected(
+                        selected + 1 < 0
+                          ? usersFiltered.length - 1
+                          : selected + 1
+                      )
+                    else if (target.type === 'channel')
+                      setSelected(
+                        selected + 1 < 0
+                          ? channelsFiltered.length - 1
+                          : selected + 1
+                      )
+                  }
+                }
+              }
+            }}
+          />
+        </Slate>
+        {children}
+      </div>
+    </>
+  )
+}
+
+export default View
