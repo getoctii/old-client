@@ -1,23 +1,52 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { General } from './General'
-import Invites from './Invites'
+import { Invites } from './Invites'
 import { Navbar } from './Navbar'
 import { useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
-import { useHistory, useParams } from 'react-router-dom'
+import {
+  Redirect,
+  Switch,
+  useHistory,
+  useParams,
+  useRouteMatch
+} from 'react-router-dom'
 import styles from './Settings.module.scss'
 import { getCommunity } from '../remote'
 import { Auth } from '../../authentication/state'
-import { useQuery } from 'react-query'
+import { queryCache, useMutation, useQuery } from 'react-query'
+import Button from '../../components/Button'
+import { clientGateway } from '../../utils/constants'
+import { faPlusCircle } from '@fortawesome/pro-duotone-svg-icons'
+import { PrivateRoute } from '../../authentication/PrivateRoute'
 
 export const Settings = () => {
-  const [selected, setSelected] = useState('general')
   const isMobile = useMedia('(max-width: 740px)')
   const { token } = Auth.useContainer()
   const { id } = useParams<{ id: string }>()
   const community = useQuery(['community', id, token], getCommunity)
+  const { path } = useRouteMatch()
+  const match = useRouteMatch<{ tab?: string; id: string }>(
+    '/communities/:id/settings/:tab?'
+  )
+
   const history = useHistory()
+  const [createInvite] = useMutation(
+    async () =>
+      (
+        await clientGateway.post(
+          `/communities/${id}/invites`,
+          {},
+          { headers: { Authorization: token } }
+        )
+      ).data,
+    {
+      onSuccess: async () => {
+        await queryCache.invalidateQueries(['invites', id, token])
+      }
+    }
+  )
   return (
     <div className={styles.wrapper}>
       <div className={styles.settings}>
@@ -42,11 +71,27 @@ export const Settings = () => {
             <small>{community.data?.name}</small>
             <h2>Settings</h2>
           </div>
+          {match?.params.tab === 'invites' && (
+            <Button
+              className={styles.newButton}
+              type='button'
+              onClick={async () => await createInvite()}
+            >
+              {isMobile ? (
+                <FontAwesomeIcon icon={faPlusCircle} />
+              ) : (
+                'New Invite'
+              )}
+            </Button>
+          )}
         </div>
 
-        <Navbar selected={selected} setSelected={setSelected} />
-        {selected === 'general' && <General />}
-        {selected === 'invites' && <Invites />}
+        <Navbar />
+        <Switch>
+          <PrivateRoute path={`${path}/invites`} component={Invites} exact />
+          <PrivateRoute path={`${path}/general`} component={General} exact />
+          <Redirect path='*' to={`/communities/${id}/settings/general`} />
+        </Switch>
       </div>
     </div>
   )

@@ -164,8 +164,8 @@ const View = ({
     []
   )
   useDebounce(
-    () => {
-      if (autoRead) setAsRead()
+    async () => {
+      if (autoRead) await setAsRead()
     },
     500,
     [setAsRead, autoRead]

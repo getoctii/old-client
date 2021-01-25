@@ -194,7 +194,12 @@ const View = memo(
       strikethough: (str, key) => <del key={key}>{str}</del>,
       link: (str, key) => {
         const link = (
-          <a href={str} key={key} target='_blank' rel='noopener noreferrer'>
+          <a
+            href={str}
+            key={`${key}-href`}
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             {str}
           </a>
         )
@@ -202,8 +207,10 @@ const View = memo(
           return {
             link: <></>,
             embed: (
-              <ErrorBoundary fallback={<Invite.ErrorEmbed />}>
-                <Suspense fallback={<Invite.Placeholder />}>
+              <ErrorBoundary
+                fallbackRender={() => <Invite.ErrorEmbed key={key} />}
+              >
+                <Suspense fallback={<Invite.Placeholder key={key} />}>
                   <Invite.Embed key={key} url={str} />
                 </Suspense>
               </ErrorBoundary>
@@ -228,8 +235,10 @@ const View = memo(
         [
           /<@([A-Za-z0-9-]+?)>/g,
           (str, key) => (
-            <Suspense fallback={<>@unknown</>}>
-              <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
+            <Suspense fallback={<span key={key}>@unknown</span>}>
+              <ErrorBoundary
+                fallbackRender={() => <span key={key}>&lt;@{str}&gt;</span>}
+              >
                 <Mention.User
                   key={key}
                   userID={str}
@@ -242,8 +251,10 @@ const View = memo(
         [
           /<#([A-Za-z0-9-]+?)>/g,
           (str, key) => (
-            <Suspense fallback={<>#unknown</>}>
-              <ErrorBoundary fallbackRender={() => <>&lt;@{str}&gt;</>}>
+            <Suspense fallback={<span key={key}>#unknown</span>}>
+              <ErrorBoundary
+                fallbackRender={() => <span key={key}>&lt;@{str}&gt;</span>}
+              >
                 <Mention.Channel
                   key={key}
                   channelID={str}
@@ -275,13 +286,11 @@ const View = memo(
           className={`${styles.message} ${
             primary || type !== MessageTypes.NORMAL ? styles.primary : ''
           } ${
-            type === MessageTypes.MEMBER_ADDED ? (
-              styles.joined
-            ) : type === MessageTypes.MEMBER_REMOVED ? (
-              styles.left
-            ) : (
-              <></>
-            )
+            type === MessageTypes.MEMBER_ADDED
+              ? styles.joined
+              : type === MessageTypes.MEMBER_REMOVED
+              ? styles.left
+              : ''
           }`}
         >
           {primary && type === MessageTypes.NORMAL && (
