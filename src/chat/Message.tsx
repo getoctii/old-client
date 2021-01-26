@@ -23,7 +23,8 @@ import {
   faCatSpace,
   faTimesCircle,
   faUserNinja,
-  faUserShield
+  faUserShield,
+  faPaintBrush
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
@@ -318,6 +319,12 @@ const View = memo(
                     <FontAwesomeIcon
                       className={styles.badge}
                       icon={faCatSpace}
+                    />
+                  ) : user.data?.id ===
+                    '4e317329-8b17-4473-b1e1-4ceb9056cb5b' ? (
+                    <FontAwesomeIcon
+                      className={styles.badge}
+                      icon={faPaintBrush}
                     />
                   ) : (
                     user.data?.discriminator === 0 && (
