@@ -1,0 +1,68 @@
+.manageGroups {
+  max-width: 300px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+
+  h3,
+  h5 {
+    margin-top: 0;
+  }
+  h4 {
+    font-size: 1.5rem;
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+  }
+  ul {
+    padding-left: 1.1rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .label {
+    margin-bottom: 0.3rem;
+  }
+
+  p {
+    margin-top: 0.3rem;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 1rem;
+    background: var(--neko-colors-primary);
+  }
+
+  .error {
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+    color: var(--neko-text-danger);
+  }
+
+  .group {
+    padding: 1rem;
+    border-radius: 11px;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    background: var(--neko-channels-background);
+    svg {
+      margin-left: auto;
+      font-size: 1.4rem;
+      color: var(--neko-text-danger);
+    }
+    &.add {
+      svg {
+        color: var(--neko-text-href);
+      }
+    }
+  }
+}
