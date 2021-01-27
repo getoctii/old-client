@@ -9,11 +9,11 @@ const useDeletedGroup = (eventSource: EventSourcePolyfill | null) => {
   const { id, token } = Auth.useContainer()
   useEffect(() => {
     if (!eventSource) return
-    const handler = (e: MessageEvent) => {
-      const event: {
+    const handler = async (e: MessageEvent) => {
+      const event = JSON.parse(e.data) as {
         id: string
         community_id: string
-      } = JSON.parse(e.data)
+      }
       log('Events', 'purple', 'DELETED_GROUP')
       const initial = queryCache.getQueryData([
         'groups',
@@ -27,6 +27,10 @@ const useDeletedGroup = (eventSource: EventSourcePolyfill | null) => {
           initial.filter((group) => group.id !== event.id)
         )
       }
+
+      await queryCache.invalidateQueries(
+        (query) => query.queryKey[0] === 'member'
+      )
     }
 
     eventSource.addEventListener(Events.DELETED_GROUP, handler)

@@ -16,6 +16,8 @@ import useUpdatedConversation from './updatedConversation'
 import useUpdatedMessage from './updatedMessage'
 import useDeletedGroup from './deletedGroup'
 import useNewGroup from './newGroup'
+import useDeletedMemberGroup from './deletedMemberGroup'
+import useNewMemberGroup from './newMemberGroup'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
@@ -24,6 +26,8 @@ const EventSource = () => {
   useNewMessage(eventSource)
   useDeletedMessage(eventSource)
   useUpdatedMessage(eventSource)
+  useDeletedMemberGroup(eventSource)
+  useNewMemberGroup(eventSource)
   useNewParticipant(eventSource)
   useDeletedParticipant(eventSource)
   useNewMember(eventSource)

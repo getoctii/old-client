@@ -6,9 +6,9 @@ import { queryCache } from 'react-query'
 const useLog = (eventSource: EventSourcePolyfill | null) => {
   useEffect(() => {
     if (!eventSource) return
-    const handler = () => {
+    const handler = async () => {
       log('Events', 'purple', 'Connection error')
-      queryCache.invalidateQueries()
+      await queryCache.invalidateQueries()
     }
 
     eventSource.addEventListener('error', handler)

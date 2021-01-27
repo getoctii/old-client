@@ -42,7 +42,8 @@ const Error = ({
       <FontAwesomeIcon icon={faPoo} size='4x' />
       <h1>
         {error?.isAxiosError
-          ? error.response?.status || 'Beep Boop!'
+          ? error.response?.status ||
+            (error.message === 'Network Error' ? 'Gateway Down!' : 'Beep Boop!')
           : 'Beep Boop!'}
       </h1>
       <p>Beep Boooop Beeep Beeep Booooop Beep Boop Bep</p>

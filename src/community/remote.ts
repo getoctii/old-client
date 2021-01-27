@@ -1,10 +1,11 @@
 import { clientGateway, Permissions } from '../utils/constants'
 
-export interface Member {
+export interface MemberResponse {
   id: string
   user_id: string
   created_at: string
   updated_at: string
+  groups: string[]
 }
 
 export interface CommunityResponse {
@@ -116,6 +117,13 @@ export const getInvites = async (
     )
   ).data
 
+export const getMember = async (_: string, memberID: string, token: string) =>
+  (
+    await clientGateway.get<MemberResponse>(`/members/${memberID}`, {
+      headers: { Authorization: token }
+    })
+  ).data
+
 export const getMembers = async (
   _: string,
   communityID: string,
@@ -123,8 +131,11 @@ export const getMembers = async (
   lastMemberID: string
 ) =>
   (
-    await clientGateway.get<Member[]>(`/communities/${communityID}/members`, {
-      headers: { Authorization: token },
-      params: { last_member_id: lastMemberID }
-    })
+    await clientGateway.get<MemberResponse[]>(
+      `/communities/${communityID}/members`,
+      {
+        headers: { Authorization: token },
+        params: { last_member_id: lastMemberID }
+      }
+    )
   ).data

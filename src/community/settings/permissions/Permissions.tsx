@@ -6,9 +6,17 @@ import {
   faTrash
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { AnimatePresence, motion } from 'framer-motion'
-import React, { memo, Suspense, useEffect, useMemo, useState } from 'react'
-import { useQuery } from 'react-query'
+import { DragDropContext, Draggable, Droppable } from '@react-forked/dnd'
+import { motion } from 'framer-motion'
+import React, {
+  memo,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
+import { queryCache, useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
 import { useMedia, useSet } from 'react-use'
 import { createEditor, Node } from 'slate'
@@ -25,14 +33,26 @@ import {
   GroupNames,
   clientGateway
 } from '../../../utils/constants'
-import { getGroup, getGroups } from '../../remote'
+import { getGroup, getGroups, Group } from '../../remote'
 import { Permission } from './NewPermission'
 import styles from './Permissions.module.scss'
 
 const serialize = (value: Node[]) =>
   value.map((node) => Node.string(node)).join('\n')
 
-const PermissionGroup = memo(({ id }: { id: string }) => {
+const reorder = (
+  list: Group[],
+  startIndex: number,
+  endIndex: number
+): Group[] => {
+  const result = Array.from(list)
+  const [removed] = result.splice(startIndex, 1)
+  result.splice(endIndex, 0, removed)
+
+  return result
+}
+
+const PermissionGroup = memo(({ id, index }: { id: string; index: number }) => {
   const { token } = Auth.useContainer()
   const group = useQuery(['group', id, token], getGroup)
 
@@ -77,33 +97,56 @@ const PermissionGroup = memo(({ id }: { id: string }) => {
     ])
   }, [group.data?.name])
 
-  return (
-    <>
-      <motion.div
+  const draggableChild = useCallback(
+    (provided) => (
+      <div
         className={`${styles.permission} ${edit ? styles.edit : ''}`}
-        initial={{
-          opacity: 0
-        }}
-        animate={{
-          opacity: 1,
-          transition: { y: { stiffness: 1000, velocity: -100 } }
-        }}
-        exit={{
-          opacity: 0
-        }}
+        ref={provided.innerRef}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+        style={provided.draggableProps.style}
       >
-        <div className={styles.icon} />
-        <div className={styles.info}>
-          <Slate
-            editor={editor}
-            value={name}
-            onChange={(value) => setName(value)}
-          >
-            <Editable
-              className={styles.changeName}
-              onKeyDown={async (event) => {
-                if (event.key === 'Enter') {
-                  event.preventDefault()
+        <motion.div
+          className={styles.simp}
+          initial={{
+            opacity: 0
+          }}
+          animate={{
+            opacity: 1,
+            transition: { y: { stiffness: 1000, velocity: -100 } }
+          }}
+          exit={{
+            opacity: 0
+          }}
+        >
+          <div className={styles.icon} />
+          <div className={styles.info}>
+            <Slate
+              editor={editor}
+              value={name}
+              onChange={(value) => setName(value)}
+            >
+              <Editable
+                className={styles.changeName}
+                onKeyDown={async (event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault()
+                    await clientGateway.patch(
+                      `/groups/${id}`,
+                      { name: serialize(name) },
+                      {
+                        headers: { Authorization: token }
+                      }
+                    )
+                  }
+                }}
+                placeholder='Group Name'
+              />
+            </Slate>
+            {serialize(name) !== (group.data?.name || 'unknown') ? (
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                onClick={async () => {
                   await clientGateway.patch(
                     `/groups/${id}`,
                     { name: serialize(name) },
@@ -111,101 +154,109 @@ const PermissionGroup = memo(({ id }: { id: string }) => {
                       headers: { Authorization: token }
                     }
                   )
-                }
-              }}
-              placeholder='Group Name'
-            />
-          </Slate>
-          {serialize(name) !== (group.data?.name || 'unknown') ? (
-            <FontAwesomeIcon
-              icon={faCheckCircle}
-              onClick={async () => {
-                await clientGateway.patch(
-                  `/groups/${id}`,
-                  { name: serialize(name) },
-                  {
-                    headers: { Authorization: token }
-                  }
-                )
-              }}
-            />
-          ) : (
-            ''
-          )}
-        </div>
-        {!isMobile && (
-          <div
-            className={styles.actions}
-            style={{ gridTemplateColumns: `repeat(${edit ? '2' : '1'}, 46px)` }}
-          >
-            {edit && (
-              <Button
-                type='button'
-                onClick={async () => {
-                  await clientGateway.delete(`/groups/${id}`, {
-                    headers: { Authorization: token }
-                  })
                 }}
-              >
-                <FontAwesomeIcon icon={faTrash} />
-              </Button>
+              />
+            ) : (
+              ''
             )}
-            <Button type='button' onClick={() => setEdit(!edit)}>
-              <FontAwesomeIcon icon={edit ? faTimesCircle : faPencil} />
-            </Button>
+          </div>
+          {!isMobile && (
+            <div
+              className={styles.actions}
+              style={{
+                gridTemplateColumns: `repeat(${edit ? '2' : '1'}, 46px)`
+              }}
+            >
+              {edit && (
+                <Button
+                  type='button'
+                  onClick={async () => {
+                    await clientGateway.delete(`/groups/${id}`, {
+                      headers: { Authorization: token }
+                    })
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </Button>
+              )}
+              <Button type='button' onClick={() => setEdit(!edit)}>
+                <FontAwesomeIcon icon={edit ? faTimesCircle : faPencil} />
+              </Button>
+            </div>
+          )}
+        </motion.div>
+        {edit && (
+          <div className={styles.editing}>
+            {Object.entries(PermissionsGroups).map(([group, permissions]) => (
+              <div>
+                {/* @ts-ignore */}
+                <h5>{GroupNames[+group]}</h5>
+                <ul className={styles.list}>
+                  {permissions.map((permission) => (
+                    <Permission
+                      name={PermissionNames[permission]}
+                      toggled={has(permission)}
+                      type={+group}
+                      onToggle={(val) =>
+                        val ? add(permission) : remove(permission)
+                      }
+                    />
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+            {showSave && (
+              <div className={styles.action}>
+                <Button
+                  type='button'
+                  className={styles.discard}
+                  onClick={() => reset()}
+                >
+                  Discard Changes
+                </Button>
+                <Button
+                  type='submit'
+                  onClick={async () => {
+                    await clientGateway.patch(
+                      `/groups/${id}`,
+                      { permissions: Array.from(set) },
+                      {
+                        headers: { Authorization: token }
+                      }
+                    )
+                  }}
+                  className={styles.save}
+                >
+                  Save Changes
+                </Button>
+              </div>
+            )}
           </div>
         )}
-      </motion.div>
-      {edit && (
-        <div className={styles.editing}>
-          {Object.entries(PermissionsGroups).map(([group, permissions]) => (
-            <div>
-              {/* @ts-ignore */}
-              <h5>{GroupNames[+group]}</h5>
-              <ul className={styles.list}>
-                {permissions.map((permission) => (
-                  <Permission
-                    name={PermissionNames[permission]}
-                    toggled={has(permission)}
-                    type={+group}
-                    onToggle={(val) =>
-                      val ? add(permission) : remove(permission)
-                    }
-                  />
-                ))}
-              </ul>
-            </div>
-          ))}
+      </div>
+    ),
+    [
+      add,
+      edit,
+      editor,
+      has,
+      id,
+      isMobile,
+      name,
+      remove,
+      reset,
+      set,
+      showSave,
+      token,
+      group.data
+    ]
+  )
 
-          {showSave && (
-            <div className={styles.action}>
-              <Button
-                type='button'
-                className={styles.discard}
-                onClick={() => reset()}
-              >
-                Discard Changes
-              </Button>
-              <Button
-                type='submit'
-                onClick={async () => {
-                  await clientGateway.patch(
-                    `/groups/${id}`,
-                    { permissions: Array.from(set) },
-                    {
-                      headers: { Authorization: token }
-                    }
-                  )
-                }}
-                className={styles.save}
-              >
-                Save Changes
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
-    </>
+  return (
+    <Draggable draggableId={id} index={index}>
+      {draggableChild}
+    </Draggable>
   )
 })
 
@@ -215,20 +266,66 @@ const View = () => {
   const { id } = useParams<{ id: string }>()
   const groups = useQuery(['groups', id, token], getGroups)
 
+  const onDragEnd = useCallback(
+    async (result) => {
+      if (
+        !result.destination ||
+        result.destination.index === result.source.index
+      )
+        return
+      const items = reorder(
+        groups.data || [],
+        result.source.index,
+        result.destination.index
+      )
+      console.log(items)
+      queryCache.setQueryData(['groups', id, token], () => {
+        return items
+      })
+      await clientGateway.patch(
+        `/communities/${id}/groups`,
+        {
+          order: items.map((item) => item.id)
+        },
+        {
+          headers: {
+            Authorization: token
+          }
+        }
+      )
+    },
+    [groups.data, id, token]
+  )
+
+  const DroppableComponent = useCallback(
+    (provided) => (
+      <div
+        className={styles.body}
+        {...provided.droppableProps}
+        ref={provided.innerRef}
+      >
+        {groups.data?.map(
+          (group, index) =>
+            group && (
+              <PermissionGroup index={index} key={group.id} id={group.id} />
+            )
+        )}
+      </div>
+    ),
+    [groups.data]
+  )
+
   return (
     <Suspense fallback={<Loader />}>
       <div className={styles.wrapper}>
         <div className={styles.permissions}>
           {groups.data && groups.data?.length > 0 ? (
             <>
-              <div className={styles.body}>
-                <AnimatePresence>
-                  {groups.data.map(
-                    (group) =>
-                      group && <PermissionGroup key={group.id} id={group.id} />
-                  )}
-                </AnimatePresence>
-              </div>
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId='list' direction='vertical'>
+                  {DroppableComponent}
+                </Droppable>
+              </DragDropContext>
             </>
           ) : (
             <>

@@ -48,24 +48,24 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
   const user = useQuery(['users', id, token], getUser)
   useEffect(() => {
     if (!eventSource) return
-    const handler = (e: MessageEvent) => {
-      const message = JSON.parse(e.data) as Message
+    const handler = async (e: MessageEvent) => {
+      const event = JSON.parse(e.data) as Message
       log('Events', 'purple', 'NEW_MESSAGE')
       const initial = queryCache.getQueryData([
         'messages',
-        message.channel_id,
+        event.channel_id,
         token
       ])
 
       if (initial instanceof Array) {
         queryCache.setQueryData(
-          ['messages', message.channel_id, token],
+          ['messages', event.channel_id, token],
           initial[0].length < 25
             ? [
                 [
                   {
-                    ...message,
-                    author_id: message.author.id
+                    ...event,
+                    author_id: event.author.id
                   },
                   ...initial[0]
                 ],
@@ -74,8 +74,8 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
             : [
                 [
                   {
-                    ...message,
-                    author_id: message.author.id
+                    ...event,
+                    author_id: event.author.id
                   }
                 ],
                 ...initial
@@ -84,19 +84,19 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
       }
       queryCache.setQueryData(['unreads', id, token], (initial: any) => ({
         ...initial,
-        [message.channel_id]: {
-          ...(initial[message.channel_id] ?? {}),
-          last_message_id: message.id,
+        [event.channel_id]: {
+          ...(initial[event.channel_id] ?? {}),
+          last_message_id: event.id,
           read:
-            id === message.author.id ||
-            (autoRead && message.channel_id === channelID)
-              ? message.id
-              : initial[message.channel_id]?.read
+            id === event.author.id ||
+            (autoRead && event.channel_id === channelID)
+              ? event.id
+              : initial[event.channel_id]?.read
         }
       }))
-      queryCache.setQueryData(['message', message.id, token], {
-        ...message,
-        author_id: message.author.id
+      queryCache.setQueryData(['message', event.id, token], {
+        ...event,
+        author_id: event.author.id
       })
 
       const participants = queryCache.getQueryData(['participants', id, token])
@@ -104,13 +104,13 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
         queryCache.setQueryData(
           ['participants', id, token],
           participants.map((participant) =>
-            participant?.conversation?.channel_id === message.channel_id
+            participant?.conversation?.channel_id === event.channel_id
               ? {
                   ...participant,
                   conversation: {
                     ...participant.conversation,
-                    last_message_id: message.id,
-                    last_message_date: message.created_at
+                    last_message_id: event.id,
+                    last_message_date: event.created_at
                   }
                 }
               : participant
@@ -119,9 +119,9 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
       }
 
       if (
-        message.author.id !== id &&
-        !mutedCommunities?.includes(message.community_id ?? '') &&
-        !mutedChannels?.includes(message.channel_id) &&
+        event.author.id !== id &&
+        !mutedCommunities?.includes(event.community_id ?? '') &&
+        !mutedChannels?.includes(event.channel_id) &&
         user.data?.state !== State.dnd
       ) {
         if (isPlatform('capacitor')) {
@@ -130,7 +130,7 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
           })
         }
 
-        const output = parseMarkdown(message.content, {
+        const output = parseMarkdown(event.content, {
           bold: (str) => str,
           italic: (str) => str,
           underlined: (str) => str,
@@ -152,14 +152,14 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
           ]
         }).join('')
         if (window.inntronNotify) {
-          window.inntronNotify(
+          await window.inntronNotify(
             `${
-              message.community_name
-                ? message.community_name
-                : message.author.username
-            }${message.channel_name ? ` #${message.channel_name}` : ''}`,
+              event.community_name
+                ? event.community_name
+                : event.author.username
+            }${event.channel_name ? ` #${event.channel_name}` : ''}`,
             `${
-              message.community_name ? `${message.author.username}: ` : ''
+              event.community_name ? `${event.author.username}: ` : ''
             }${output}`
           )
         } else if (!isPlatform('capacitor')) {
@@ -170,16 +170,12 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
                   notifications: [
                     {
                       title: `${
-                        message.community_name
-                          ? message.community_name
-                          : message.author.username
-                      }${
-                        message.channel_name ? ` #${message.channel_name}` : ''
-                      }`,
+                        event.community_name
+                          ? event.community_name
+                          : event.author.username
+                      }${event.channel_name ? ` #${event.channel_name}` : ''}`,
                       body: `${
-                        message.community_name
-                          ? `${message.author.username}: `
-                          : ''
+                        event.community_name ? `${event.author.username}: ` : ''
                       }${output}`,
                       id: 1
                     }
@@ -192,7 +188,7 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
             })
         }
       }
-      stopTyping(message.channel_id, message.author.id)
+      stopTyping(event.channel_id, event.author.id)
     }
 
     eventSource.addEventListener(Events.NEW_MESSAGE, handler)

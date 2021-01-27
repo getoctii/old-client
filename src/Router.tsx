@@ -30,6 +30,7 @@ import Downloads from './marketing/Downloads'
 import { NewPermission } from './community/settings/permissions/NewPermission'
 import Invite from './invite/Invite'
 import Admin from './admin/Admin'
+import ManageGroups from './community/ManageGroups'
 
 const { PushNotifications } = Plugins
 
@@ -52,6 +53,8 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <Image.Preview {...props} />
     case ModalTypes.STATUS:
       return <Status />
+    case ModalTypes.MANAGE_MEMBER_GROUPS:
+      return <ManageGroups {...props} />
     default:
       return <></>
   }
