@@ -1,6 +1,6 @@
 html,
 body {
-  height: 100vh;
+  height: 100%;
   @media not all and (display-mode: standalone) {
     height: -webkit-fill-available;
   }
@@ -11,6 +11,7 @@ body {
 }
 
 .wrapper {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -162,12 +163,8 @@ body {
 }
 
 @media (max-height: 480px) {
-  .centered {
-    display: block;
-    height: auto;
-  }
   .wrapper {
-    display: block;
-    overflow-y: scroll;
+    overflow: scroll;
+    min-height: 500px;
   }
 }
