@@ -133,8 +133,10 @@ const Router = () => {
           <Sidebar />
           <Conversations />
         </>
-      ) : (
+      ) : filteredParticipants && filteredParticipants.length < 1 ? (
         <Empty />
+      ) : (
+        <></>
       )}
     </>
   )
