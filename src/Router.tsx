@@ -138,71 +138,91 @@ export const Router = memo(() => {
   }, [auth])
 
   return (
-    <BrowserRouter>
-      <Context.Global />
-      <Switch>
-        {!isPlatform('mobile') && !isPWA ? (
-          <Route path='/home' component={Home} />
-        ) : (
-          <Redirect path='/home' to='/authenticate/login' />
-        )}
-        {isPlatform('mobile') || isPWA ? (
-          <Redirect path='/downloads' to='/authenticate/login' />
-        ) : (
-          <PrivateRoute path='/downloads' component={Downloads} />
-        )}
-        <Route path={'/invite/:invite/:code?'} component={Invite} />
-        <Route path='/authenticate' component={Authenticate} />
-        {!auth.authenticated && (
-          <Redirect
-            path='/'
-            to={isPlatform('mobile') ? '/authenticate/login' : '/home'}
-          />
-        )}
-      </Switch>
-      {auth.authenticated && (
-        <div id='main'>
-          <IncomingCall />
-          <EventSource />
-          <Modals />
-          {!isMobile && <Sidebar />}
-          <Suspense fallback={<></>}>
-            <Switch>
-              <PrivateRoute
-                path='/settings'
-                component={() => (
-                  <>
-                    {isMobile && <Sidebar />}
-                    <Suspense fallback={<Loader />}>
-                      <Settings />
-                    </Suspense>
-                  </>
-                )}
-              />
-              <PrivateRoute path={'/admin'} component={Admin} />
-              <PrivateRoute path='/communities/:id' component={Community} />
-              <PrivateRoute
-                path={'/conversations/:id?'}
-                component={Conversation}
-                redirect={
-                  isPlatform('mobile') || isPWA
-                    ? '/authenticate/login'
-                    : '/home'
-                }
-                exact
-              />
-              <Redirect path={'/'} to={'/conversations'} exact />
-            </Switch>
-          </Suspense>
-          {!isMobile && (
-            <>
-              <Suspense fallback={<></>}>
-                {call.callState !== 'idle' && <Current />}
-              </Suspense>
-            </>
+    <div id='main'>
+      <BrowserRouter>
+        <Context.Global />
+        <Switch>
+          {!isPlatform('capacitor') && !isPWA ? (
+            <Route path='/home' component={Home} exact />
+          ) : (
+            <Redirect path='/home' to='/authenticate/login' exact />
           )}
-        </div>
-      )}
-    </BrowserRouter>
+          {isPlatform('capacitor') || isPWA ? (
+            <Redirect path='/downloads' to='/authenticate/login' exact />
+          ) : (
+            <PrivateRoute path='/downloads' component={Downloads} exact />
+          )}
+          <Route
+            path={'/invite/:invite/:code?'}
+            component={() => (
+              <>
+                {auth.authenticated && <Sidebar />}
+                <Invite />
+              </>
+            )}
+            exact
+          />
+          <Route path='/authenticate' component={Authenticate} />
+          {!auth.authenticated && (
+            <Redirect
+              path='/'
+              to={isPlatform('capacitor') ? '/authenticate/login' : '/home'}
+            />
+          )}
+        </Switch>
+        {auth.authenticated && (
+          <>
+            <IncomingCall />
+            <EventSource />
+            <Modals />
+            <Suspense fallback={<></>}>
+              <Switch>
+                <PrivateRoute
+                  path='/settings'
+                  sidebar
+                  component={() => (
+                    <>
+                      {isMobile && <Sidebar />}
+                      <Suspense fallback={<Loader />}>
+                        <Settings />
+                      </Suspense>
+                    </>
+                  )}
+                />
+                <PrivateRoute path={'/admin'} sidebar component={Admin} />
+                <PrivateRoute
+                  path='/communities/:id'
+                  sidebar
+                  component={Community}
+                />
+                <PrivateRoute
+                  sidebar
+                  path={'/conversations/:id?'}
+                  component={() => (
+                    <Suspense fallback={<></>}>
+                      <Conversation />
+                    </Suspense>
+                  )}
+                  redirect={
+                    isPlatform('mobile') || isPWA
+                      ? '/authenticate/login'
+                      : '/home'
+                  }
+                  exact
+                />
+                <Redirect path={'/'} to={'/conversations'} exact />
+              </Switch>
+            </Suspense>
+            {!isMobile && (
+              <>
+                <Suspense fallback={<></>}>
+                  {call.callState !== 'idle' && <Current />}
+                </Suspense>
+              </>
+            )}
+          </>
+        )}
+      </BrowserRouter>
+    </div>
   )
 })

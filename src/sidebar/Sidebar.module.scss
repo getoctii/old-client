@@ -5,7 +5,9 @@
 }
 
 .sidebar {
-  height: 100vh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: calc(env(safe-area-inset-bottom));
+  height: 100%;
   position: relative;
   display: flex;
   flex-shrink: 0;
