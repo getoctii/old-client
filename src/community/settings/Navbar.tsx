@@ -27,11 +27,11 @@ export const Navbar = () => {
       </li>
       <li
         onClick={() =>
-          history.push(`/communities/${match?.params.id}/settings/permissions`)
+          history.push(`/communities/${match?.params.id}/settings/groups`)
         }
-        className={match?.params.tab === 'permissions' ? styles.selected : ''}
+        className={match?.params.tab === 'groups' ? styles.selected : ''}
       >
-        Permissions
+        Groups
       </li>
     </ul>
   )

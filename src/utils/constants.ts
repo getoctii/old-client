@@ -37,7 +37,7 @@ export enum Permissions {
   MANAGE_PERMISSIONS = 11,
   MANAGE_CHANNELS = 12,
   MANAGE_INVITES = 13,
-  MANAGE_SERVER = 14,
+  MANAGE_COMMUNITY = 14,
   MANAGE_MESSAGES = 15,
   ADMINISTRATOR = 16,
   OWNER = 17
@@ -63,7 +63,7 @@ export const PermissionsGroups: { [key in Groups]: Permissions[] } = {
     Permissions.MANAGE_MESSAGES
   ],
   [Groups.ADMIN]: [
-    Permissions.MANAGE_SERVER,
+    Permissions.MANAGE_COMMUNITY,
     Permissions.ADMINISTRATOR,
     Permissions.OWNER
   ]
@@ -84,8 +84,8 @@ export const PermissionNames = {
   [Permissions.MANAGE_CHANNELS]: 'Manage Channels',
   [Permissions.MANAGE_INVITES]: 'Manage Invites',
   [Permissions.MANAGE_MESSAGES]: 'Manage Messages',
-  [Permissions.MANAGE_SERVER]: 'Manage Server',
-  [Permissions.ADMINISTRATOR]: 'Administator',
+  [Permissions.MANAGE_COMMUNITY]: 'Manage Community',
+  [Permissions.ADMINISTRATOR]: 'Administrator',
   [Permissions.OWNER]: 'Owner'
 }
 
@@ -100,13 +100,13 @@ export enum Events {
   DELETED_CHANNEL = 'DELETED_CHANNEL',
   DELETED_GROUP = 'DELETED_GROUP',
   DELETED_MEMBER = 'DELETED_MEMBER',
-  DELETED_MEMBER_GROUP = 'DELETED_MEMBER_GROUP',
+  DELETED_GROUP_MEMBER = 'DELETED_GROUP_MEMBER',
   DELETED_MESSAGE = 'DELETED_MESSAGE',
   DELETED_PARTICIPANT = 'DELETED_PARTICIPANT',
   NEW_CHANNEL = 'NEW_CHANNEL',
   NEW_GROUP = 'NEW_GROUP',
+  NEW_GROUP_MEMBER = 'NEW_GROUP_MEMBER',
   NEW_MEMBER = 'NEW_MEMBER',
-  NEW_MEMBER_GROUP = 'NEW_MEMBER_GROUP',
   NEW_MESSAGE = 'NEW_MESSAGE',
   NEW_MENTION = 'NEW_MENTION',
   NEW_PARTICIPANT = 'NEW_PARTICIPANT',

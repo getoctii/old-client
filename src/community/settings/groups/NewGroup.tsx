@@ -12,7 +12,7 @@ import {
   Permissions,
   GroupNames
 } from '../../../utils/constants'
-import styles from './NewPermission.module.scss'
+import styles from './NewGroup.module.scss'
 import { UI } from '../../../state/ui'
 import { isUsername } from '../../../utils/validations'
 import { Auth } from '../../../authentication/state'
@@ -161,7 +161,7 @@ export const NewPermissionStandalone = () => {
   )
 }
 
-export const NewPermission = () => {
+export const NewGroup = () => {
   const ui = UI.useContainer()
   return (
     <Modal onDismiss={() => ui.clearModal()}>

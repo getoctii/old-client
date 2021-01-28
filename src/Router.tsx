@@ -27,7 +27,7 @@ import { clientGateway, ModalTypes } from './utils/constants'
 import AddParticipant from './chat/AddParticipant'
 import { Confirmation } from './components/Confirmation'
 import Downloads from './marketing/Downloads'
-import { NewPermission } from './community/settings/permissions/NewPermission'
+import { NewGroup } from './community/settings/groups/NewGroup'
 import Invite from './invite/Invite'
 import Admin from './admin/Admin'
 import ManageGroups from './community/ManageGroups'
@@ -48,7 +48,7 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
     case ModalTypes.NEW_CONVERSATION:
       return <NewConversation />
     case ModalTypes.NEW_PERMISSION:
-      return <NewPermission />
+      return <NewGroup />
     case ModalTypes.PREVIEW_IMAGE:
       return <Image.Preview {...props} />
     case ModalTypes.STATUS:

@@ -1,4 +1,11 @@
 import { clientGateway, Permissions } from '../utils/constants'
+import { queryCache } from 'react-query'
+
+export const fetchManyGroups = (_: string, ids: string[], token: string) => {
+  return Promise.all(
+    ids.map((id) => queryCache.fetchQuery(['group', id, token], getGroup))
+  )
+}
 
 export interface MemberResponse {
   id: string
@@ -16,6 +23,7 @@ export interface CommunityResponse {
   owner_id?: string
   channels: string[]
   system_channel_id?: string
+  base_permissions?: Permissions[]
 }
 
 export interface ChannelResponse {
@@ -41,14 +49,12 @@ export interface InviteResponse {
   }
 }
 
-export interface Group {
+export interface GroupResponse {
   id: string
   name: string
   color: string
   permissions: Permissions[]
 }
-
-export type Groups = Group[]
 
 export const getCommunity = async (
   _: string,
@@ -69,16 +75,19 @@ export const getGroups = async (
   token: string
 ) =>
   (
-    await clientGateway.get<Groups>(`/communities/${communityID}/groups`, {
-      headers: {
-        Authorization: token
+    await clientGateway.get<GroupResponse[]>(
+      `/communities/${communityID}/groups`,
+      {
+        headers: {
+          Authorization: token
+        }
       }
-    })
+    )
   ).data
 
 export const getGroup = async (_: string, groupID: string, token: string) =>
   (
-    await clientGateway.get<Group>(`/groups/${groupID}`, {
+    await clientGateway.get<GroupResponse>(`/groups/${groupID}`, {
       headers: {
         Authorization: token
       }
@@ -122,6 +131,21 @@ export const getMember = async (_: string, memberID: string, token: string) =>
     await clientGateway.get<MemberResponse>(`/members/${memberID}`, {
       headers: { Authorization: token }
     })
+  ).data
+
+export const getMemberByUserID = async (
+  _: string,
+  communityID: string,
+  userID: string,
+  token: string
+) =>
+  (
+    await clientGateway.get<MemberResponse>(
+      `/communities/${communityID}/members/${userID}`,
+      {
+        headers: { Authorization: token }
+      }
+    )
   ).data
 
 export const getMembers = async (

@@ -20,7 +20,7 @@ import Button from '../../components/Button'
 import { clientGateway, ModalTypes } from '../../utils/constants'
 import { faPlusCircle } from '@fortawesome/pro-duotone-svg-icons'
 import { PrivateRoute } from '../../authentication/PrivateRoute'
-import Permissions from './permissions/Permissions'
+import Permissions from './groups/Groups'
 import { UI } from '../../state/ui'
 
 export const Settings = () => {
@@ -85,7 +85,7 @@ export const Settings = () => {
                 'New Invite'
               )}
             </Button>
-          ) : match?.params.tab === 'permissions' ? (
+          ) : match?.params.tab === 'groups' ? (
             <Button
               className={styles.newButton}
               type='button'
@@ -101,11 +101,7 @@ export const Settings = () => {
         <Navbar />
         <Switch>
           <PrivateRoute path={`${path}/invites`} component={Invites} exact />
-          <PrivateRoute
-            path={`${path}/permissions`}
-            component={Permissions}
-            exact
-          />
+          <PrivateRoute path={`${path}/groups`} component={Permissions} exact />
           <PrivateRoute path={`${path}/general`} component={General} exact />
           <Redirect path='*' to={`/communities/${id}/settings/general`} />
         </Switch>

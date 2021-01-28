@@ -4,7 +4,7 @@ import { Events, Permissions } from '../utils/constants'
 import { queryCache } from 'react-query'
 import { log } from '../utils/logging'
 import { Auth } from '../authentication/state'
-import { Group } from '../community/remote'
+import { GroupResponse, MemberResponse } from '../community/remote'
 
 const useUpdatedGroup = (eventSource: EventSourcePolyfill | null) => {
   const { id, token } = Auth.useContainer()
@@ -13,6 +13,7 @@ const useUpdatedGroup = (eventSource: EventSourcePolyfill | null) => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
       const event = JSON.parse(e.data) as {
+        community_id: string
         id: string
         name: string
         color: string
@@ -20,7 +21,7 @@ const useUpdatedGroup = (eventSource: EventSourcePolyfill | null) => {
       }
       log('Events', 'purple', 'UPDATED_GROUP')
 
-      const initial: Group | undefined = queryCache.getQueryData([
+      const initial: GroupResponse | undefined = queryCache.getQueryData([
         'group',
         event.id,
         token

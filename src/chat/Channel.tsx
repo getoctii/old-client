@@ -1,9 +1,9 @@
 import React, { Suspense, useEffect, useMemo } from 'react'
 import styles from './Channel.module.scss'
 import { useQuery } from 'react-query'
-import { ChannelTypes, ModalTypes } from '../utils/constants'
+import { ChannelTypes, ModalTypes, Permissions } from '../utils/constants'
 import { Auth } from '../authentication/state'
-import { useDropArea } from 'react-use'
+import { useDropArea, useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronLeft,
@@ -12,8 +12,7 @@ import {
   faPhoneSlash,
   faUserPlus
 } from '@fortawesome/pro-solid-svg-icons'
-import { useMedia } from 'react-use'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import Box from './Box'
 import Typing from '../state/typing'
 import { Call } from '../state/call'
@@ -23,6 +22,11 @@ import Messages from './Messages'
 import { fetchManyUsers, getUser } from '../user/remote'
 import { Chat } from './state'
 import { UI } from '../state/ui'
+import {
+  fetchManyGroups,
+  getCommunity,
+  getMemberByUserID
+} from '../community/remote'
 
 const TypingIndicator = ({ channelID }: { channelID: string }) => {
   const { id } = Auth.useContainer()
@@ -94,19 +98,51 @@ const Header = ({
   )
 }
 
+const CommunityChannelView = () => {
+  const { id, channelID } = useParams<{ id: string; channelID: string }>()
+  const auth = Auth.useContainer()
+  const { data: community } = useQuery(
+    ['community', id, auth.token],
+    getCommunity
+  )
+  const { data: member } = useQuery(
+    ['memberByUserID', id, auth.id, auth.token],
+    getMemberByUserID
+  )
+  const { data: groups } = useQuery(
+    ['group', member?.groups ?? [], auth.token],
+    fetchManyGroups
+  )
+
+  return (
+    <ChannelView
+      type={ChannelTypes.CommunityChannel}
+      channelID={channelID}
+      communityID={id}
+      hasPermission={
+        !!groups?.some((group) =>
+          group.permissions.includes(Permissions.SEND_MESSAGES)
+        ) || community?.owner_id === auth.id
+      }
+    />
+  )
+}
+
 const supportedFiles = new Set(['image/png', 'image/gif', 'image/jpeg'])
-const View = ({
+const ChannelView = ({
   type,
   channelID,
   participants,
   communityID,
-  conversationID
+  conversationID,
+  hasPermission
 }: {
   type: ChannelTypes
   channelID: string
   participants?: string[]
   communityID?: string
   conversationID?: string
+  hasPermission?: boolean
 }) => {
   const {
     autoRead,
@@ -146,7 +182,7 @@ const View = ({
   }, [setAutoRead, setTracking, setChannelID, channelID])
 
   return (
-    <Suspense fallback={<Placeholder />}>
+    <Suspense fallback={<ChannelPlaceholder />}>
       <div className={styles.chat} {...bond}>
         <div className={styles.header}>
           {isMobile ? (
@@ -238,6 +274,7 @@ const View = ({
         </Suspense>
         <Box.View
           {...{
+            hasPermission,
             participants,
             channelID,
             typingIndicator: typingUsers?.length > 0,
@@ -250,7 +287,7 @@ const View = ({
   )
 }
 
-const Placeholder = () => {
+const ChannelPlaceholder = () => {
   const username = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
   const status = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
   return (
@@ -269,8 +306,10 @@ const Placeholder = () => {
   )
 }
 
-View.wdyr = true
-
-const Channel = { View, Placeholder }
+const Channel = {
+  View: ChannelView,
+  Community: CommunityChannelView,
+  Placeholder: ChannelPlaceholder
+}
 
 export default Channel
