@@ -7,10 +7,13 @@ export const clientGateway = axios.create({
 
 export enum ModalTypes {
   ADD_PARTICIPANT,
+  DELETE_CHANNEL,
   DELETE_MESSAGE,
   INCOMING_CALL,
+  NEW_CHANNEL,
   NEW_COMMUNITY,
   NEW_CONVERSATION,
+  NEW_INVITE,
   NEW_PERMISSION,
   PREVIEW_IMAGE,
   STATUS,

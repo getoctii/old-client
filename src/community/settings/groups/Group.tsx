@@ -25,6 +25,7 @@ import { useMedia, useSet } from 'react-use'
 import { motion } from 'framer-motion'
 import { Draggable } from '@react-forked/dnd'
 import { useQuery } from 'react-query'
+import { faUsers } from '@fortawesome/pro-duotone-svg-icons'
 
 const GroupNameEditor = (group: { id: string; name: string }) => {
   const { token } = Auth.useContainer()
@@ -229,7 +230,9 @@ const GroupCard = ({
           opacity: 0
         }}
       >
-        <div className={styles.icon} />
+        <div className={styles.icon}>
+          {base && <FontAwesomeIcon icon={faUsers} fixedWidth />}
+        </div>
         <div className={styles.info}>
           {edit && !base && !forceHidePermissions ? (
             <GroupNameEditor id={id} name={name ?? 'unknown'} />

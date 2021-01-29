@@ -2,18 +2,18 @@ import React from 'react'
 import Modal from './Modal'
 import styles from './Confirmation.module.scss'
 import Button from './Button'
+import { UI } from '../state/ui'
 
 export const Confirmation = ({
   type,
-  onConfirm,
-  onDismiss
+  onConfirm
 }: {
   type: 'channel' | 'message'
   onConfirm: () => Promise<void> | void
-  onDismiss: () => Promise<void> | void
 }) => {
+  const ui = UI.useContainer()
   return (
-    <Modal onDismiss={async () => await onDismiss()}>
+    <Modal onDismiss={() => ui.clearModal()}>
       <div className={styles.confirmation}>
         <h3>
           Are you sure you want to delete this{' '}
@@ -36,7 +36,7 @@ export const Confirmation = ({
           <Button
             type='button'
             className={styles.cancel}
-            onClick={async () => await onDismiss()}
+            onClick={() => ui.clearModal()}
           >
             Cancel
           </Button>

@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react'
+import React, { Suspense } from 'react'
 import styles from './Community.module.scss'
 import Chat from '../chat/Channel'
 import { Redirect, Switch, useParams, useRouteMatch } from 'react-router-dom'
@@ -8,35 +8,28 @@ import Channels from './sidebar/Sidebar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/pro-solid-svg-icons'
 import Button from '../components/Button'
-import { NewChannel } from './NewChannel'
 import { Settings } from './settings/Settings'
-import {
-  CommunityResponse,
-  fetchManyGroups,
-  getCommunity,
-  getMemberByUserID
-} from './remote'
+import { CommunityResponse, getCommunity } from './remote'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
 import Sidebar from '../sidebar/Sidebar'
 import { Members } from './Members'
-import { Permissions } from '../utils/constants'
+import { ModalTypes, Permissions } from '../utils/constants'
 import { Helmet } from 'react-helmet-async'
 import { ErrorBoundary } from 'react-error-boundary'
 import { faLock } from '@fortawesome/pro-duotone-svg-icons'
+import { UI } from '../state/ui'
+import { useHasPermission } from '../utils/permissions'
 
 const EmptyCommunity = ({
   community,
-  dismiss,
   missingPermissions
 }: {
   community: CommunityResponse
-  dismiss: () => void
   missingPermissions?: boolean
 }) => {
   const auth = Auth.useContainer()
-  const [createMode, setCreateMode] = useState(false)
-
+  const ui = UI.useContainer()
   return (
     <div className={styles.communityEmpty}>
       <Helmet>
@@ -53,7 +46,7 @@ const EmptyCommunity = ({
         </>
       ) : (
         <>
-          {!createMode ? (
+          {ui.modal?.name !== ModalTypes.NEW_CHANNEL && (
             <>
               <small>{community?.name}</small>
               <h1 style={{ marginTop: 0 }}>
@@ -68,7 +61,7 @@ const EmptyCommunity = ({
                   className={styles.createButton}
                   style={{ maxWidth: '300px', marginTop: 0 }}
                   onClick={() => {
-                    setCreateMode(true)
+                    ui.setModal({ name: ModalTypes.NEW_CHANNEL })
                   }}
                 >
                   Create a Channel <FontAwesomeIcon icon={faArrowRight} />
@@ -78,29 +71,17 @@ const EmptyCommunity = ({
               )}
               <br />
               <h3>Here's a meme for now.</h3>
+              <iframe
+                className={styles.video}
+                title='sgn'
+                width='966'
+                height='543'
+                src='https://www.youtube.com/embed/dQw4w9WgXcQ'
+                frameBorder={0}
+                allow='autoplay; encrypted-media'
+                allowFullScreen={false}
+              />
             </>
-          ) : (
-            <></>
-          )}
-          {!createMode ? (
-            <iframe
-              className={styles.video}
-              title='sgn'
-              width='966'
-              height='543'
-              src='https://www.youtube.com/embed/dQw4w9WgXcQ'
-              frameBorder={0}
-              allow='autoplay; encrypted-media'
-              allowFullScreen={false}
-            />
-          ) : (
-            <NewChannel
-              community={community}
-              onDismiss={() => {
-                setCreateMode(false)
-                dismiss()
-              }}
-            />
           )}
         </>
       )}
@@ -130,52 +111,26 @@ const Placeholder = () => {
   )
 }
 
-const View = () => {
-  const auth = Auth.useContainer()
-  const [count, forceRender] = useState<number>(0)
-  const { id } = useParams<{ id: string }>()
+const CommunityView = () => {
   const { path } = useRouteMatch()
-  const match = useRouteMatch<{ id: string }>('/communities/:id/:page')
+  const match = useRouteMatch<{ id: string }>('/communities/:id')
   const isMobile = useMedia('(max-width: 740px)')
-  const { data: community } = useQuery(
-    ['community', id, auth.token],
-    getCommunity
-  )
-  const { data: member } = useQuery(
-    ['memberByUserID', id, auth.id, auth.token],
-    getMemberByUserID
-  )
-  const { data: groups } = useQuery(
-    ['group', member?.groups ?? [], auth.token],
-    fetchManyGroups
-  )
+
+  const [community, hasPermissions] = useHasPermission(match?.params.id)
+
   if (!community) return <></>
 
-  if (
-    !groups?.some((group) =>
-      group.permissions.includes(Permissions.READ_MESSAGES)
-    ) &&
-    community.owner_id !== auth.id
-  ) {
-    return (
-      <EmptyCommunity
-        community={community}
-        dismiss={() => forceRender(count + 1)}
-        missingPermissions
-      />
-    )
+  if (!hasPermissions([Permissions.READ_MESSAGES])) {
+    return <EmptyCommunity community={community} missingPermissions />
   }
 
   return (
     <>
       {isMobile && !match && <Sidebar />}
       {community.channels.length <= 0 ? (
-        <EmptyCommunity
-          community={community}
-          dismiss={() => forceRender(count + 1)}
-        />
+        <EmptyCommunity community={community} />
       ) : (
-        <div className={styles.community} key={id}>
+        <div className={styles.community} key={match?.params.id}>
           <Helmet>
             <title>Octii - {community.name}</title>
           </Helmet>
@@ -206,7 +161,7 @@ const View = () => {
               {!isMobile && (
                 <Redirect
                   path='*'
-                  to={`/communities/${id}/channels/${community.channels[0]}`}
+                  to={`/communities/${match?.params.id}/channels/${community.channels[0]}`}
                 />
               )}
             </Switch>
@@ -227,7 +182,7 @@ const Router = () => {
         }}
       >
         <Suspense fallback={<Placeholder />}>
-          <View />
+          <CommunityView />
         </Suspense>
       </ErrorBoundary>
     </>

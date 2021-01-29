@@ -24,12 +24,16 @@ const reorder = (
   return result
 }
 
-const View = () => {
+const GroupsView = () => {
   const { token } = Auth.useContainer()
-  const { setModal } = UI.useContainer()
+  const ui = UI.useContainer()
   const { id } = useParams<{ id: string }>()
-  const groups = useQuery(['groups', id, token], getGroups)
-  const community = useQuery(['community', id, token], getCommunity)
+  const groups = useQuery(['groups', id, token], getGroups, {
+    enabled: !!id
+  })
+  const community = useQuery(['community', id, token], getCommunity, {
+    enabled: !!id
+  })
 
   const onDragEnd = useCallback(
     async (result) => {
@@ -74,6 +78,7 @@ const View = () => {
               <Group.Draggable id={group.id} index={index} key={group.id} />
             )
         )}
+        {provided.placeholder}
       </div>
     ),
     [groups.data]
@@ -101,7 +106,9 @@ const View = () => {
                 <br />
                 <Button
                   type='button'
-                  onClick={() => setModal({ name: ModalTypes.NEW_PERMISSION })}
+                  onClick={() =>
+                    ui.setModal({ name: ModalTypes.NEW_PERMISSION })
+                  }
                 >
                   Create Permission Group
                 </Button>
@@ -119,4 +126,4 @@ const View = () => {
   )
 }
 
-export default View
+export default GroupsView

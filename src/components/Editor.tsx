@@ -38,7 +38,7 @@ const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   )
 }
 
-const View = ({
+const EditorView = ({
   editor,
   className,
   mentionsClassName,
@@ -396,4 +396,4 @@ const View = ({
   )
 }
 
-export default View
+export default EditorView

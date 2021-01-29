@@ -15,7 +15,7 @@ const isInvite = (url: string) =>
     url
   )
 
-const Embed = ({ url }: { url: string }) => {
+const InviteEmbed = ({ url }: { url: string }) => {
   const { token, id } = Auth.useContainer()
   const history = useHistory()
   const match = matchPath<{ code: string }>(new URL(url).pathname, {
@@ -103,7 +103,7 @@ const Placeholder = () => {
 }
 
 const Invite = {
-  Embed,
+  Embed: InviteEmbed,
   Placeholder,
   isInvite,
   ErrorEmbed

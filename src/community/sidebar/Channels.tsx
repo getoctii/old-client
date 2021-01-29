@@ -1,57 +1,31 @@
 import { faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useState } from 'react'
-import { Auth } from '../../authentication/state'
-import { CommunityResponse } from '../remote'
+import React from 'react'
 import styles from './Channels.module.scss'
-import { AnimatePresence } from 'framer-motion'
-import { NewChannel } from '../NewChannel'
-import { Confirmation } from '../../components/Confirmation'
-import { useMutation } from 'react-query'
-import { clientGateway } from '../../utils/constants'
+import { ModalTypes, Permissions } from '../../utils/constants'
 import { ChannelCard } from './ChannelCard'
+import { UI } from '../../state/ui'
+import { useRouteMatch } from 'react-router-dom'
+import { useHasPermission } from '../../utils/permissions'
 
-const View = ({ community }: { community?: CommunityResponse }) => {
-  const auth = Auth.useContainer()
-  const [showCreate, setShowCreate] = useState(false)
-  const [showDelete, setShowDelete] = useState<string | undefined>(undefined)
-  const [deleteChannel] = useMutation(
-    async (channelID: string) =>
-      (
-        await clientGateway.delete(`/channels/${channelID}`, {
-          headers: { Authorization: auth.token }
-        })
-      ).data
+const ChannelsView = () => {
+  const ui = UI.useContainer()
+  const matchTab = useRouteMatch<{ id: string; tab: string }>(
+    '/communities/:id/:tab?'
   )
+
+  const [community, hasPermissions] = useHasPermission(matchTab?.params.id)
 
   return (
     <div className={styles.channels}>
-      <AnimatePresence>
-        {showCreate && (
-          <NewChannel
-            community={community}
-            onDismiss={() => setShowCreate(false)}
-          />
-        )}
-        {showDelete && (
-          <Confirmation
-            type='channel'
-            onConfirm={() => {
-              deleteChannel(showDelete)
-              setShowDelete(undefined)
-            }}
-            onDismiss={() => setShowDelete(undefined)}
-          />
-        )}
-      </AnimatePresence>
       <h4>
         Rooms
-        {community?.owner_id === auth.id && (
+        {hasPermissions([Permissions.MANAGE_CHANNELS]) && (
           <span>
             <FontAwesomeIcon
               className={styles.add}
               icon={faPlus}
-              onClick={() => setShowCreate(true)}
+              onClick={() => ui.setModal({ name: ModalTypes.NEW_CHANNEL })}
             />
           </span>
         )}
@@ -59,13 +33,7 @@ const View = ({ community }: { community?: CommunityResponse }) => {
       <div className={styles.list}>
         {community && community.channels.length > 0 ? (
           community.channels.map((channel, index) => (
-            <ChannelCard
-              key={channel}
-              channelID={channel}
-              index={index}
-              community={community}
-              setShowDelete={setShowDelete}
-            />
+            <ChannelCard key={channel} channelID={channel} index={index} />
           ))
         ) : (
           <></>
@@ -75,7 +43,7 @@ const View = ({ community }: { community?: CommunityResponse }) => {
   )
 }
 
-const Placeholder = () => {
+const ChannelsPlaceholder = () => {
   return (
     <div className={styles.placeholder}>
       <div className={styles.rooms} />
@@ -92,6 +60,6 @@ const Placeholder = () => {
   )
 }
 
-const Channels = { View, Placeholder }
+const Channels = { View: ChannelsView, Placeholder: ChannelsPlaceholder }
 
 export default Channels

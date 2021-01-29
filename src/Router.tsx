@@ -31,6 +31,8 @@ import { NewGroup } from './community/settings/groups/NewGroup'
 import Invite from './invite/Invite'
 import Admin from './admin/Admin'
 import ManageGroups from './community/ManageGroups'
+import { NewChannel } from './community/NewChannel'
+import NewInvite from './community/NewInvite'
 
 const { PushNotifications } = Plugins
 
@@ -53,6 +55,12 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <Image.Preview {...props} />
     case ModalTypes.STATUS:
       return <Status />
+    case ModalTypes.NEW_CHANNEL:
+      return <NewChannel />
+    case ModalTypes.NEW_INVITE:
+      return <NewInvite />
+    case ModalTypes.DELETE_CHANNEL:
+      return <Confirmation {...props} />
     case ModalTypes.MANAGE_MEMBER_GROUPS:
       return <ManageGroups {...props} />
     default:

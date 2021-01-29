@@ -9,40 +9,49 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useCallback, useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
-import { CommunityResponse } from '../remote'
 import { Clipboard } from '@capacitor/core'
 import Context from '../../components/Context'
 import styles from './ChannelCard.module.scss'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { getChannel } from '../../chat/remote'
 import { getMentions, getUnreads } from '../../user/remote'
 import { useSuspenseStorageItem } from '../../utils/storage'
+import { UI } from '../../state/ui'
+import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
+import { useHasPermission } from '../../utils/permissions'
 
 export const ChannelCard = ({
   channelID,
-  index,
-  community,
-  setShowDelete
+  index
 }: {
   channelID: string
   index: number
-  community: CommunityResponse
-  setShowDelete: (value: string) => void
 }) => {
-  const match = useRouteMatch<{ id: string; channelID: string }>(
+  const match = useRouteMatch<{ id: string }>('/communities/:id')
+  const matchTab = useRouteMatch<{ id: string; channelID: string }>(
     '/communities/:id/channels/:channelID'
   )
+  const [community, hasPermissions] = useHasPermission(match?.params.id)
   const history = useHistory()
   const [mutedChannels, setMutedChannels] = useSuspenseStorageItem<string[]>(
     'muted-channels',
     []
   )
+
+  const ui = UI.useContainer()
   const auth = Auth.useContainer()
   const { data: channel } = useQuery(
     ['channel', channelID, auth.token],
     getChannel
   )
-
+  const [deleteChannel] = useMutation(
+    async () =>
+      (
+        await clientGateway.delete(`/channels/${channelID}`, {
+          headers: { Authorization: auth.token }
+        })
+      ).data
+  )
   const getItems = useCallback(
     (channelID: string) => {
       const items = [
@@ -65,25 +74,35 @@ export const ChannelCard = ({
           text: 'Copy ID',
           icon: faCopy,
           danger: false,
-          onClick: () => {
-            Clipboard.write({
+          onClick: async () => {
+            await Clipboard.write({
               string: channelID
             })
           }
         }
       ]
 
-      if (community?.owner_id === auth.id) {
+      if (hasPermissions([Permissions.MANAGE_CHANNELS])) {
         items.push({
           text: 'Delete Channel',
           icon: faTrashAlt,
           danger: true,
-          onClick: () => setShowDelete(channelID)
+          onClick: () =>
+            ui.setModal({
+              name: ModalTypes.DELETE_CHANNEL,
+              props: {
+                type: 'channel',
+                onConfirm: async () => {
+                  await deleteChannel()
+                  ui.clearModal()
+                }
+              }
+            })
         })
       }
       return items
     },
-    [mutedChannels, auth, community, setMutedChannels, setShowDelete]
+    [mutedChannels, setMutedChannels, deleteChannel, ui, hasPermissions]
   )
   const unreads = useQuery(['unreads', auth.id, auth.token], getUnreads)
   const mentions = useQuery(['mentions', auth.id, auth.token], getMentions)
@@ -99,7 +118,7 @@ export const ChannelCard = ({
 
   return (
     <Context.Wrapper
-      title={community.name}
+      title={community?.name ?? ''}
       message={`#${channel.name}`}
       key={channel.id}
       items={getItems(channel.id)}
@@ -108,13 +127,13 @@ export const ChannelCard = ({
         {index !== 0 && (
           <hr
             className={
-              match?.params.channelID === channel.id ? styles.hidden : ''
+              matchTab?.params.channelID === channel.id ? styles.hidden : ''
             }
           />
         )}
         <div
           style={
-            match?.params.channelID === channel.id
+            matchTab?.params.channelID === channel.id
               ? channel.color !== '#0081FF'
                 ? {
                     backgroundColor: channel.color
@@ -125,10 +144,10 @@ export const ChannelCard = ({
               : {}
           }
           className={`${styles.channel} ${
-            match?.params.channelID === channel.id ? styles.selected : ''
+            matchTab?.params.channelID === channel.id ? styles.selected : ''
           }`}
           onClick={() => {
-            history.push(`/communities/${community.id}/channels/${channel.id}`)
+            history.push(`/communities/${community?.id}/channels/${channel.id}`)
           }}
         >
           <h4>
@@ -148,7 +167,7 @@ export const ChannelCard = ({
                 icon={faHashtag}
                 fixedWidth={true}
                 style={
-                  match?.params.channelID === channel.id
+                  matchTab?.params.channelID === channel.id
                     ? channel.color
                       ? {
                           color: channel.color
@@ -162,7 +181,7 @@ export const ChannelCard = ({
             </div>
             {channel.name}
             <div className={styles.indicators}>
-              {!(match?.params.channelID === channel.id) &&
+              {!(matchTab?.params.channelID === channel.id) &&
                 (mentionsCount && mentionsCount > 0 ? (
                   <div
                     className={`${styles.mention} ${

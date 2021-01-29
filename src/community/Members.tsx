@@ -38,7 +38,6 @@ dayjs.extend(dayjsCalendar)
 const Group = ({ id }: { id: string }) => {
   const { token } = Auth.useContainer()
   const group = useQuery(['group', id, token], getGroup)
-  console.log(group.data)
   return (
     <div
       className={styles.group}

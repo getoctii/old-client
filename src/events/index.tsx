@@ -18,29 +18,30 @@ import useDeletedGroup from './deletedGroup'
 import useNewGroup from './newGroup'
 import useDeletedGroupMember from './deletedGroupMember'
 import useNewGroupMember from './newGroupMember'
+import useUpdatedGroup from './updatedGroup'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
 
   useLog(eventSource)
-  useNewMessage(eventSource)
-  useDeletedMessage(eventSource)
-  useUpdatedMessage(eventSource)
-  useDeletedGroupMember(eventSource)
-  useNewGroupMember(eventSource)
-  useNewParticipant(eventSource)
-  useDeletedParticipant(eventSource)
-  useNewMember(eventSource)
-  useDeletedGroup(eventSource)
-  useNewGroup(eventSource)
-  useDeletedMember(eventSource)
-  useNewChannel(eventSource)
-  useDeletedChannel(eventSource)
-  useTyping(eventSource)
-  useNewVoiceSession(eventSource)
   useAcceptedVoiceSession(eventSource)
+  useDeletedChannel(eventSource)
+  useDeletedGroup(eventSource)
+  useDeletedGroupMember(eventSource)
+  useDeletedMember(eventSource)
+  useDeletedMessage(eventSource)
+  useDeletedParticipant(eventSource)
+  useNewChannel(eventSource)
+  useNewGroup(eventSource)
+  useNewGroupMember(eventSource)
+  useNewMember(eventSource)
   useNewMention(eventSource)
+  useNewMessage(eventSource)
+  useNewParticipant(eventSource)
+  useNewVoiceSession(eventSource)
+  useTyping(eventSource)
   useUpdatedConversation(eventSource)
+  useUpdatedGroup(eventSource)
   useUpdatedMessage(eventSource)
 
   return <></>

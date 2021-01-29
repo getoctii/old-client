@@ -93,7 +93,7 @@ const EditBox = ({
   )
 }
 
-const View = memo(
+const MessageView = memo(
   ({
     id,
     authorID,
@@ -357,7 +357,7 @@ const View = memo(
   }
 )
 
-const Placeholder = () => {
+const MessagePlaceholder = () => {
   const username = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
   const message = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
   const isPrimary = useMemo(() => Math.floor(Math.random() * 1000000) + 1, [])
@@ -388,6 +388,6 @@ const Placeholder = () => {
   )
 }
 
-const Message = { View, Placeholder, Mention }
+const Message = { View: MessageView, Placeholder: MessagePlaceholder, Mention }
 
 export default Message

@@ -16,6 +16,9 @@
   }
 
   &.dragging {
+    .card {
+      border-radius: 14px;
+    }
     .permissions {
       display: none;
     }
@@ -176,6 +179,12 @@
 
   &.base {
     border-radius: 14px;
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--neko-colors-secondary);
+    }
   }
 }
 

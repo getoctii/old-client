@@ -38,7 +38,7 @@ const BoxView = ({
   hasPermission
 }: {
   channelID: string
-  hasPermission?: boolean
+  hasPermission: boolean
 }) => {
   const { sendMessage, uploadDetails, setUploadDetails } = Chat.useContainer()
   const { token } = Auth.useContainer()

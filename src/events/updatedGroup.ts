@@ -4,14 +4,14 @@ import { Events, Permissions } from '../utils/constants'
 import { queryCache } from 'react-query'
 import { log } from '../utils/logging'
 import { Auth } from '../authentication/state'
-import { GroupResponse, MemberResponse } from '../community/remote'
+import { GroupResponse } from '../community/remote'
 
 const useUpdatedGroup = (eventSource: EventSourcePolyfill | null) => {
   const { id, token } = Auth.useContainer()
 
   useEffect(() => {
     if (!eventSource) return
-    const handler = (e: MessageEvent) => {
+    const handler = async (e: MessageEvent) => {
       const event = JSON.parse(e.data) as {
         community_id: string
         id: string
@@ -35,6 +35,9 @@ const useUpdatedGroup = (eventSource: EventSourcePolyfill | null) => {
           permissions: event.permissions
         })
       }
+      await queryCache.invalidateQueries(
+        (query) => query.queryKey[0] === 'memberGroups'
+      )
     }
 
     eventSource.addEventListener(Events.UPDATED_GROUP, handler)

@@ -43,7 +43,6 @@ const Conversation = () => {
         key={participant.conversation.channel_id}
       >
         <Chat.View
-          hasPermission
           type={
             (people?.length ?? 0) > 1
               ? ChannelTypes.GroupChannel

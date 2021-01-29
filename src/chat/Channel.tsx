@@ -22,11 +22,7 @@ import Messages from './Messages'
 import { fetchManyUsers, getUser } from '../user/remote'
 import { Chat } from './state'
 import { UI } from '../state/ui'
-import {
-  fetchManyGroups,
-  getCommunity,
-  getMemberByUserID
-} from '../community/remote'
+import { useHasPermission } from '../utils/permissions'
 
 const TypingIndicator = ({ channelID }: { channelID: string }) => {
   const { id } = Auth.useContainer()
@@ -100,30 +96,11 @@ const Header = ({
 
 const CommunityChannelView = () => {
   const { id, channelID } = useParams<{ id: string; channelID: string }>()
-  const auth = Auth.useContainer()
-  const { data: community } = useQuery(
-    ['community', id, auth.token],
-    getCommunity
-  )
-  const { data: member } = useQuery(
-    ['memberByUserID', id, auth.id, auth.token],
-    getMemberByUserID
-  )
-  const { data: groups } = useQuery(
-    ['group', member?.groups ?? [], auth.token],
-    fetchManyGroups
-  )
-
   return (
     <ChannelView
       type={ChannelTypes.CommunityChannel}
       channelID={channelID}
       communityID={id}
-      hasPermission={
-        !!groups?.some((group) =>
-          group.permissions.includes(Permissions.SEND_MESSAGES)
-        ) || community?.owner_id === auth.id
-      }
     />
   )
 }
@@ -134,15 +111,13 @@ const ChannelView = ({
   channelID,
   participants,
   communityID,
-  conversationID,
-  hasPermission
+  conversationID
 }: {
   type: ChannelTypes
   channelID: string
   participants?: string[]
   communityID?: string
   conversationID?: string
-  hasPermission?: boolean
 }) => {
   const {
     autoRead,
@@ -163,8 +138,7 @@ const ChannelView = ({
   const history = useHistory()
 
   const channel = useQuery(['channel', channelID, token], getChannel)
-
-  // i see why
+  const [, hasPermissions] = useHasPermission(communityID)
   const [bond] = useDropArea({
     onFiles: (files) => {
       if (supportedFiles.has(files[0].type))
@@ -179,7 +153,7 @@ const ChannelView = ({
     setChannelID(channelID)
     setTracking(true)
     setAutoRead(false)
-  }, [setAutoRead, setTracking, setChannelID, channelID])
+  }, [setAutoRead, setTracking, setChannelID, channelID, type])
 
   return (
     <Suspense fallback={<ChannelPlaceholder />}>
@@ -246,9 +220,9 @@ const ChannelView = ({
               call.otherUserID !== participants[0] && [0] && (
                 <Button
                   type='button'
-                  onClick={() => {
+                  onClick={async () => {
                     if (call.callState !== 'idle') call.endCall()
-                    call.ringUser(participants[0])
+                    await call.ringUser(participants[0])
                   }}
                 >
                   {call.callState !== 'idle' ? (
@@ -274,7 +248,10 @@ const ChannelView = ({
         </Suspense>
         <Box.View
           {...{
-            hasPermission,
+            hasPermission:
+              type === ChannelTypes.CommunityChannel
+                ? hasPermissions([Permissions.SEND_MESSAGES])
+                : true,
             participants,
             channelID,
             typingIndicator: typingUsers?.length > 0,
