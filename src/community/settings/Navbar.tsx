@@ -1,14 +1,14 @@
 import React from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styles from './Navbar.module.scss'
-import { useHasPermission } from '../../utils/permissions'
+import { Permission } from '../../utils/permissions'
 import { Permissions } from '../../utils/constants'
 
 export const Navbar = () => {
   const match = useRouteMatch<{ tab?: string; id: string }>(
     '/communities/:id/settings/:tab?'
   )
-  const [, hasPermissions] = useHasPermission(match?.params.id)
+  const { hasPermissions } = Permission.useContainer()
   const history = useHistory()
   return (
     <ul className={styles.navbar}>

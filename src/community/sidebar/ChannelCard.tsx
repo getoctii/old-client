@@ -18,7 +18,7 @@ import { getMentions, getUnreads } from '../../user/remote'
 import { useSuspenseStorageItem } from '../../utils/storage'
 import { UI } from '../../state/ui'
 import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
-import { useHasPermission } from '../../utils/permissions'
+import { Permission } from '../../utils/permissions'
 
 export const ChannelCard = ({
   channelID,
@@ -27,11 +27,10 @@ export const ChannelCard = ({
   channelID: string
   index: number
 }) => {
-  const match = useRouteMatch<{ id: string }>('/communities/:id')
   const matchTab = useRouteMatch<{ id: string; channelID: string }>(
     '/communities/:id/channels/:channelID'
   )
-  const [community, hasPermissions] = useHasPermission(match?.params.id)
+  const { community, hasPermissions } = Permission.useContainer()
   const history = useHistory()
   const [mutedChannels, setMutedChannels] = useSuspenseStorageItem<string[]>(
     'muted-channels',

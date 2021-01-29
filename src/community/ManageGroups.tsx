@@ -73,7 +73,7 @@ const Content = ({
   const [selectGroups, setSelectGroups] = useState(false)
   const filteredGroups = useMemo(
     () =>
-      groups.data?.filter((group) => !member.data?.groups.includes(group.id)) ??
+      groups.data?.filter((group) => !member.data?.groups.includes(group)) ??
       [],
     [groups.data, member.data?.groups]
   )
@@ -95,7 +95,7 @@ const Content = ({
         </h4>
         <div>
           {filteredGroups.map((group) => (
-            <Group id={group.id} add memberID={memberID} key={group.id} />
+            <Group id={group} add memberID={memberID} key={group} />
           ))}
         </div>
 

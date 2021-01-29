@@ -19,7 +19,8 @@ import { Helmet } from 'react-helmet-async'
 import { ErrorBoundary } from 'react-error-boundary'
 import { faLock } from '@fortawesome/pro-duotone-svg-icons'
 import { UI } from '../state/ui'
-import { useHasPermission } from '../utils/permissions'
+import { Permission } from '../utils/permissions'
+import { useMemo } from 'react'
 
 const EmptyCommunity = ({
   community,
@@ -92,12 +93,15 @@ const EmptyCommunity = ({
 const Channel = () => {
   const { id, channelID } = useParams<{ id: string; channelID: string }>()
   const auth = Auth.useContainer()
-  const community = useQuery(['community', id, auth.token], getCommunity)
-  if (!community?.data) return <></>
-  const channel = community.data.channels.find(
-    (channel) => channel === channelID
+  const { data: community } = useQuery(
+    ['community', id, auth.token],
+    getCommunity
   )
-  if (!channel) return <>1</>
+  const channel = useMemo(
+    () => community?.channels.find((channel) => channel === channelID),
+    [community, channelID]
+  )
+  if (!channel) return <></>
   return <Chat.Community key={channel} />
 }
 
@@ -116,7 +120,7 @@ const CommunityView = () => {
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const isMobile = useMedia('(max-width: 740px)')
 
-  const [community, hasPermissions] = useHasPermission(match?.params.id)
+  const { community, hasPermissions } = Permission.useContainer()
 
   if (!community) return <></>
 

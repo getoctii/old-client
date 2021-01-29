@@ -5,16 +5,12 @@ import styles from './Channels.module.scss'
 import { ModalTypes, Permissions } from '../../utils/constants'
 import { ChannelCard } from './ChannelCard'
 import { UI } from '../../state/ui'
-import { useRouteMatch } from 'react-router-dom'
-import { useHasPermission } from '../../utils/permissions'
+import { Permission } from '../../utils/permissions'
 
 const ChannelsView = () => {
   const ui = UI.useContainer()
-  const matchTab = useRouteMatch<{ id: string; tab: string }>(
-    '/communities/:id/:tab?'
-  )
 
-  const [community, hasPermissions] = useHasPermission(matchTab?.params.id)
+  const { community, hasPermissions } = Permission.useContainer()
 
   return (
     <div className={styles.channels}>

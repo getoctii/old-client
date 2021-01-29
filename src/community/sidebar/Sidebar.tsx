@@ -9,7 +9,7 @@ import styles from './Sidebar.module.scss'
 import Channels from './Channels'
 import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
 import { useSuspenseStorageItem } from '../../utils/storage'
-import { useHasPermission } from '../../utils/permissions'
+import { Permission } from '../../utils/permissions'
 import {
   faBell,
   faBellSlash,
@@ -27,7 +27,7 @@ const View = () => {
     []
   )
   const ui = UI.useContainer()
-  const [community, hasPermissions] = useHasPermission(match?.params.id)
+  const { community, hasPermissions } = Permission.useContainer()
   const [leaveCommunity] = useMutation(
     async () =>
       (

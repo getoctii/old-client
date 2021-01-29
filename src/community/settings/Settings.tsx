@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo, Suspense } from 'react'
 import { General } from './General'
 import { Invites } from './Invites'
 import { Navbar } from './Navbar'
@@ -19,12 +19,12 @@ import { faPlusCircle } from '@fortawesome/pro-duotone-svg-icons'
 import { PrivateRoute } from '../../authentication/PrivateRoute'
 import Groups from './groups/Groups'
 import { UI } from '../../state/ui'
-import { useHasPermission } from '../../utils/permissions'
+import { Permission } from '../../utils/permissions'
 
-export const Settings = () => {
+export const Settings = memo(() => {
   const isMobile = useMedia('(max-width: 740px)')
   const { id } = useParams<{ id: string }>()
-  const [community, hasPermissions] = useHasPermission(id)
+  const { community, hasPermissions } = Permission.useContainer()
   const { path } = useRouteMatch()
   const match = useRouteMatch<{ tab?: string; id: string }>(
     '/communities/:id/settings/:tab?'
@@ -96,44 +96,46 @@ export const Settings = () => {
             </div>
 
             <Navbar />
-            <Switch>
-              {hasPermissions([Permissions.MANAGE_INVITES]) && (
-                <PrivateRoute
-                  path={`${path}/invites`}
-                  component={Invites}
-                  exact
+            <Suspense fallback={<></>}>
+              <Switch>
+                {hasPermissions([Permissions.MANAGE_INVITES]) && (
+                  <PrivateRoute
+                    path={`${path}/invites`}
+                    component={Invites}
+                    exact
+                  />
+                )}
+                {hasPermissions([Permissions.MANAGE_PERMISSIONS]) && (
+                  <PrivateRoute
+                    path={`${path}/groups`}
+                    component={Groups}
+                    exact
+                  />
+                )}
+                {hasPermissions([Permissions.MANAGE_COMMUNITY]) && (
+                  <PrivateRoute
+                    path={`${path}/general`}
+                    component={General}
+                    exact
+                  />
+                )}
+                <Redirect
+                  path='*'
+                  to={`${
+                    hasPermissions([Permissions.MANAGE_COMMUNITY])
+                      ? `/communities/${id}/settings/general`
+                      : hasPermissions([Permissions.MANAGE_PERMISSIONS])
+                      ? `/communities/${id}/settings/groups`
+                      : hasPermissions([Permissions.MANAGE_INVITES])
+                      ? `/communities/${id}/settings/invites`
+                      : `/communities/${id}`
+                  }`}
                 />
-              )}
-              {hasPermissions([Permissions.MANAGE_PERMISSIONS]) && (
-                <PrivateRoute
-                  path={`${path}/groups`}
-                  component={Groups}
-                  exact
-                />
-              )}
-              {hasPermissions([Permissions.MANAGE_COMMUNITY]) && (
-                <PrivateRoute
-                  path={`${path}/general`}
-                  component={General}
-                  exact
-                />
-              )}
-              <Redirect
-                path='*'
-                to={`${
-                  hasPermissions([Permissions.MANAGE_COMMUNITY])
-                    ? `/communities/${id}/settings/general`
-                    : hasPermissions([Permissions.MANAGE_PERMISSIONS])
-                    ? `/communities/${id}/settings/groups`
-                    : hasPermissions([Permissions.MANAGE_INVITES])
-                    ? `/communities/${id}/settings/invites`
-                    : `/communities/${id}`
-                }`}
-              />
-            </Switch>
+              </Switch>
+            </Suspense>
           </div>
         </div>
       )}
     </>
   )
-}
+})

@@ -22,7 +22,7 @@ import Messages from './Messages'
 import { fetchManyUsers, getUser } from '../user/remote'
 import { Chat } from './state'
 import { UI } from '../state/ui'
-import { useHasPermission } from '../utils/permissions'
+import { Permission } from '../utils/permissions'
 
 const TypingIndicator = ({ channelID }: { channelID: string }) => {
   const { id } = Auth.useContainer()
@@ -138,7 +138,7 @@ const ChannelView = ({
   const history = useHistory()
 
   const channel = useQuery(['channel', channelID, token], getChannel)
-  const [, hasPermissions] = useHasPermission(communityID)
+  const { hasPermissions } = Permission.useContainer()
   const [bond] = useDropArea({
     onFiles: (files) => {
       if (supportedFiles.has(files[0].type))

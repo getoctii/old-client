@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styles from './Integrations.module.scss'
-import { useHasPermission } from '../../utils/permissions'
+import { Permission } from '../../utils/permissions'
 import { Permissions } from '../../utils/constants'
 
 const IntegrationsView = () => {
@@ -12,7 +12,7 @@ const IntegrationsView = () => {
     '/communities/:id/:tab?'
   )
 
-  const [community, hasPermissions] = useHasPermission(matchTab?.params.id)
+  const { community, hasPermissions } = Permission.useContainer()
 
   return (
     <div className={styles.integrations}>

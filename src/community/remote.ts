@@ -53,6 +53,7 @@ export interface GroupResponse {
   id: string
   name: string
   color: string
+  order?: number
   permissions: Permissions[]
 }
 
@@ -75,14 +76,11 @@ export const getGroups = async (
   token: string
 ) =>
   (
-    await clientGateway.get<GroupResponse[]>(
-      `/communities/${communityID}/groups`,
-      {
-        headers: {
-          Authorization: token
-        }
+    await clientGateway.get<string[]>(`/communities/${communityID}/groups`, {
+      headers: {
+        Authorization: token
       }
-    )
+    })
   ).data
 
 export const getGroup = async (_: string, groupID: string, token: string) =>
