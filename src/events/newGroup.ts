@@ -15,17 +15,9 @@ const useNewGroup = (eventSource: EventSourcePolyfill | null) => {
         community_id: string
       }
       log('Events', 'purple', 'NEW_GROUP')
-      queryCache.setQueryData<{ id: string }[]>(
+      queryCache.setQueryData<string[]>(
         ['groups', event.community_id, token],
-        (initial) =>
-          initial
-            ? [
-                ...initial,
-                {
-                  id: event.id
-                }
-              ]
-            : [{ id: event.id }]
+        (initial) => (initial ? [...initial, event.id] : [event.id])
       )
     }
 

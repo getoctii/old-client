@@ -30,7 +30,8 @@ import {
 import Icon from '../user/Icon'
 import { faEllipsisHAlt } from '@fortawesome/pro-duotone-svg-icons'
 import { UI } from '../state/ui'
-import { ModalTypes } from '../utils/constants'
+import { ModalTypes, Permissions } from '../utils/constants'
+import { Permission } from '../utils/permissions'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
@@ -64,6 +65,7 @@ const Member = memo(
     const ui = UI.useContainer()
     const member = useQuery(['member', memberObj.id, token], getMember)
     const user = useQuery(['users', memberObj.user_id, token], getUser)
+    const { hasPermissions } = Permission.useContainer()
     return (
       <motion.div
         className={styles.member}
@@ -98,31 +100,33 @@ const Member = memo(
             </div>
           )}
 
-          <Button
-            type='button'
-            className={`${styles.addGroup} ${
-              member.data && member.data.groups.length < 1
-                ? styles.noGroups
-                : ''
-            }`}
-            onClick={() => {
-              if (!communityID) return
-              ui.setModal({
-                name: ModalTypes.MANAGE_MEMBER_GROUPS,
-                props: {
-                  memberID: memberObj.id,
-                  userID: memberObj.user_id,
-                  communityID: communityID
-                }
-              })
-            }}
-          >
-            {member.data && member.data.groups.length < 1 ? (
-              'Add Group'
-            ) : (
-              <FontAwesomeIcon icon={faEllipsisHAlt} />
-            )}
-          </Button>
+          {hasPermissions([Permissions.MANAGE_GROUPS]) && (
+            <Button
+              type='button'
+              className={`${styles.addGroup} ${
+                member.data && member.data.groups.length < 1
+                  ? styles.noGroups
+                  : ''
+              }`}
+              onClick={() => {
+                if (!communityID) return
+                ui.setModal({
+                  name: ModalTypes.MANAGE_MEMBER_GROUPS,
+                  props: {
+                    memberID: memberObj.id,
+                    userID: memberObj.user_id,
+                    communityID: communityID
+                  }
+                })
+              }}
+            >
+              {member.data && member.data.groups.length < 1 ? (
+                'Add Group'
+              ) : (
+                <FontAwesomeIcon icon={faEllipsisHAlt} />
+              )}
+            </Button>
+          )}
         </div>
         {!isMobile && (
           <div className={styles.actions}>

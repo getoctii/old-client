@@ -9,7 +9,7 @@ const useReorderedGroups = (eventSource: EventSourcePolyfill | null) => {
   const { token, id } = Auth.useContainer()
   useEffect(() => {
     if (!eventSource) return
-    const handler = (e: MessageEvent) => {
+    const handler = async (e: MessageEvent) => {
       const event = JSON.parse(e.data) as {
         community_id: string
         order: string[]
@@ -18,7 +18,13 @@ const useReorderedGroups = (eventSource: EventSourcePolyfill | null) => {
       log('Events', 'purple', 'REORDERED_GROUPS')
       queryCache.setQueryData(
         ['groups', event.community_id, token],
-        event.order
+        event.order.reverse()
+      )
+
+      await queryCache.invalidateQueries(
+        (query) =>
+          query.queryKey[0] === 'memberGroups' &&
+          event.order.some((s) => (query.queryKey[1] as string[]).includes(s))
       )
     }
 

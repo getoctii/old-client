@@ -22,11 +22,10 @@ import { Auth } from '../../../authentication/state'
 import * as NewGroup from './NewGroup'
 import Button from '../../../components/Button'
 import { useMedia, useSet } from 'react-use'
-import { motion } from 'framer-motion'
 import { Draggable } from '@react-forked/dnd'
 import { useQuery } from 'react-query'
 import { faUsers } from '@fortawesome/pro-duotone-svg-icons'
-import { getHighestOrder, Permission } from '../../../utils/permissions'
+import { Permission } from '../../../utils/permissions'
 
 const GroupNameEditor = (group: { id: string; name: string }) => {
   const { token } = Auth.useContainer()
@@ -167,20 +166,8 @@ const PermissionsEditor = ({
 }
 
 const DraggableGroup = memo(({ id, index }: { id: string; index: number }) => {
-  const { token } = Auth.useContainer()
-  const { data: group } = useQuery(['group', id, token], getGroup)
-  const { memberGroups, groups } = Permission.useContainer()
+  const { protectedGroups } = Permission.useContainer()
 
-  const protectedGroups = useMemo(
-    () =>
-      groups
-        ?.filter(
-          (group) =>
-            (group?.order ?? 0) <= (getHighestOrder(memberGroups ?? []) ?? 0)
-        )
-        .map((group) => group.id),
-    [groups, memberGroups]
-  )
   const draggableChild = useCallback(
     (provided, snapshot) => (
       <div
@@ -192,121 +179,87 @@ const DraggableGroup = memo(({ id, index }: { id: string; index: number }) => {
         {...provided.dragHandleProps}
         style={provided.draggableProps.style}
       >
-        <GroupCard
-          id={id}
-          name={group?.name ?? 'unknown'}
-          color={group?.color}
-          permissions={group?.permissions || []}
-          base={false}
-          forceHidePermissions={!!snapshot.isDragging}
-        />
+        <GroupCard id={id} base={false} />
         {provided.placeholder}
       </div>
     ),
-    [group?.name, group?.color, group?.permissions, id]
+    [id]
   )
   return (
     <Draggable
       draggableId={id}
       index={index}
-      isDragDisabled={protectedGroups?.includes(id)}
+      isDragDisabled={!!protectedGroups.includes(id)}
     >
       {draggableChild}
     </Draggable>
   )
 })
 
-const GroupCard = memo(
-  ({
-    id,
-    name,
-    permissions,
-    base,
-    forceHidePermissions
-  }: {
-    id: string
-    name?: string
-    color?: string
-    permissions: Permissions[]
-    base?: boolean
-    forceHidePermissions?: boolean
-  }) => {
-    const { token } = Auth.useContainer()
-    const isMobile = useMedia('(max-width: 740px)')
-    const [edit, setEdit] = useState<boolean>(false)
-    const { memberGroups, groups } = Permission.useContainer()
+const GroupCard = ({ id, base }: { id?: string; base?: boolean }) => {
+  const { token } = Auth.useContainer()
+  const { data: group } = useQuery(['group', id, token], getGroup, {
+    enabled: !base && !!id
+  })
 
-    const protectedGroups = useMemo(
-      () =>
-        groups
-          ?.filter(
-            (group) =>
-              (group?.order ?? 0) <= (getHighestOrder(memberGroups ?? []) ?? 0)
-          )
-          .map((group) => group.id),
-      [groups, memberGroups]
-    )
-    return (
-      <>
-        <motion.div
-          className={`${styles.card} ${!!base ? styles.base : ''} ${
-            !!edit && !forceHidePermissions ? styles.edit : ''
-          }`}
-          initial={{
-            opacity: 0
-          }}
-          animate={{
-            opacity: 1,
-            transition: { y: { stiffness: 1000, velocity: -100 } }
-          }}
-          exit={{
-            opacity: 0
-          }}
-        >
-          <div className={styles.icon}>
-            {base && <FontAwesomeIcon icon={faUsers} fixedWidth />}
-          </div>
-          <div className={styles.info}>
-            {edit && !base && !forceHidePermissions ? (
-              <GroupNameEditor id={id} name={name ?? 'unknown'} />
-            ) : (
-              <span>{base ? 'Base Group' : name ?? 'unknown'}</span>
-            )}
-          </div>
-          {!isMobile && !protectedGroups?.includes(id) && (
-            <div
-              className={styles.actions}
-              style={{
-                gridTemplateColumns: `repeat(${
-                  edit && !base && !forceHidePermissions ? '2' : '1'
-                }, 46px)`
-              }}
-            >
-              {edit && !base && !forceHidePermissions && (
-                <Button
-                  type='button'
-                  onClick={async () => {
-                    await clientGateway.delete(`/groups/${id}`, {
-                      headers: { Authorization: token }
-                    })
-                  }}
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </Button>
-              )}
-              <Button type='button' onClick={() => setEdit(!edit)}>
-                <FontAwesomeIcon icon={edit ? faTimesCircle : faPencil} />
-              </Button>
-            </div>
+  const isMobile = useMedia('(max-width: 740px)')
+  const [edit, setEdit] = useState<boolean>(false)
+  const { protectedGroups, community } = Permission.useContainer()
+  console.log(protectedGroups)
+  return (
+    <>
+      <div
+        className={`${styles.card} ${!!base ? styles.base : ''} ${
+          !!edit ? styles.edit : ''
+        }`}
+      >
+        <div className={styles.icon}>
+          {base && <FontAwesomeIcon icon={faUsers} fixedWidth />}
+        </div>
+        <div className={styles.info}>
+          {edit && !base && !!id ? (
+            <GroupNameEditor id={id} name={group?.name ?? 'unknown'} />
+          ) : (
+            <span>{base ? 'Base Group' : group?.name ?? 'unknown'}</span>
           )}
-        </motion.div>
-        {edit && !forceHidePermissions && (
-          <PermissionsEditor id={id} permissions={permissions} base={base} />
+        </div>
+        {!isMobile && (!!base || (!!id && !protectedGroups.includes(id))) && (
+          <div
+            className={styles.actions}
+            style={{
+              gridTemplateColumns: `repeat(${edit && !base ? '2' : '1'}, 46px)`
+            }}
+          >
+            {edit && !base && (
+              <Button
+                type='button'
+                onClick={async () => {
+                  await clientGateway.delete(`/groups/${id}`, {
+                    headers: { Authorization: token }
+                  })
+                }}
+              >
+                <FontAwesomeIcon icon={faTrash} />
+              </Button>
+            )}
+            <Button type='button' onClick={() => setEdit(!edit)}>
+              <FontAwesomeIcon icon={edit ? faTimesCircle : faPencil} />
+            </Button>
+          </div>
         )}
-      </>
-    )
-  }
-)
+      </div>
+      {edit && (!!base || (!!id && !protectedGroups?.includes(id))) && (
+        <PermissionsEditor
+          id={base ? community?.id! : id!}
+          permissions={
+            base ? community?.base_permissions ?? [] : group?.permissions ?? []
+          }
+          base={base}
+        />
+      )}
+    </>
+  )
+}
 
 const Group = { Draggable: DraggableGroup, Card: GroupCard }
 

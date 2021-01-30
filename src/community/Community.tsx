@@ -193,4 +193,6 @@ const Router = () => {
   )
 }
 
+// Router.whyDidYouRender = true
+
 export default Router

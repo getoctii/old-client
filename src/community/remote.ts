@@ -81,7 +81,7 @@ export const getGroups = async (
         Authorization: token
       }
     })
-  ).data
+  ).data?.reverse() ?? []
 
 export const getGroup = async (_: string, groupID: string, token: string) =>
   (

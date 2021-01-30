@@ -146,7 +146,10 @@ export const ChannelCard = ({
             matchTab?.params.channelID === channel.id ? styles.selected : ''
           }`}
           onClick={() => {
-            history.push(`/communities/${community?.id}/channels/${channel.id}`)
+            if (matchTab?.params.channelID === channel.id) return
+            return history.push(
+              `/communities/${community?.id}/channels/${channel.id}`
+            )
           }}
         >
           <h4>

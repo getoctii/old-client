@@ -10,6 +10,7 @@ import { getUser } from '../user/remote'
 import { useQuery } from 'react-query'
 import { faPlusCircle, faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
 import { clientGateway } from '../utils/constants'
+import { Permission } from '../utils/permissions'
 
 const Group = ({
   id,
@@ -21,11 +22,13 @@ const Group = ({
   add?: boolean
 }) => {
   const { token } = Auth.useContainer()
-  const group = useQuery(['group', id, token], getGroup)
+  const { data: group } = useQuery(['group', id, token], getGroup)
+  const { protectedGroups } = Permission.useContainer()
   return (
     <div
       className={`${styles.group} ${add ? styles.add : ''}`}
       onClick={async () => {
+        if (protectedGroups.includes(id)) return
         if (!memberID) return
         if (add) {
           await clientGateway.post(
@@ -46,11 +49,15 @@ const Group = ({
         }
       }}
     >
-      {group.data?.name}{' '}
-      {add ? (
-        <FontAwesomeIcon icon={faPlusCircle} />
+      {group?.name}{' '}
+      {!protectedGroups.includes(id) ? (
+        add ? (
+          <FontAwesomeIcon icon={faPlusCircle} />
+        ) : (
+          <FontAwesomeIcon icon={faTimesCircle} />
+        )
       ) : (
-        <FontAwesomeIcon icon={faTimesCircle} />
+        <></>
       )}
     </div>
   )
@@ -66,20 +73,19 @@ const Content = ({
   userID: string
 }) => {
   const { token } = Auth.useContainer()
-  const user = useQuery(['users', userID, token], getUser)
-  const member = useQuery(['member', memberID, token], getMember)
-  const groups = useQuery(['groups', communityID, token], getGroups)
+  const { data: user } = useQuery(['users', userID, token], getUser)
+  const { data: member } = useQuery(['member', memberID, token], getMember)
+  const { data: groups } = useQuery(['groups', communityID, token], getGroups)
   const ui = UI.useContainer()
+  const { protectedGroups } = Permission.useContainer()
   const [selectGroups, setSelectGroups] = useState(false)
   const filteredGroups = useMemo(
-    () =>
-      groups.data?.filter((group) => !member.data?.groups.includes(group)) ??
-      [],
-    [groups.data, member.data?.groups]
+    () => groups?.filter((group) => !member?.groups.includes(group)) ?? [],
+    [groups, member?.groups]
   )
 
   if (
-    (selectGroups || (member.data?.groups.length ?? 0) < 1) &&
+    (selectGroups || (member?.groups.length ?? 0) < 1) &&
     filteredGroups.length > 0
   ) {
     return (
@@ -94,13 +100,15 @@ const Content = ({
           </span>
         </h4>
         <div>
-          {filteredGroups.map((group) => (
-            <Group id={group} add memberID={memberID} key={group} />
-          ))}
+          {filteredGroups
+            .filter((g) => !protectedGroups.includes(g))
+            .map((group) => (
+              <Group id={group} add memberID={memberID} key={group} />
+            ))}
         </div>
 
-        {(member.data?.groups.length ?? 0) > 0 &&
-          (member.data?.groups.length ?? 0) < (groups.data?.length ?? 0) && (
+        {(member?.groups.length ?? 0) > 0 &&
+          (member?.groups.length ?? 0) < (groups?.length ?? 0) && (
             <Button
               type='button'
               onClick={() => setSelectGroups(!selectGroups)}
@@ -115,7 +123,7 @@ const Content = ({
   return (
     <div className={styles.manageGroups}>
       <h4>
-        {user.data?.username}'s Groups
+        {user?.username}'s Groups
         <span style={{ float: 'right' }}>
           <FontAwesomeIcon
             onClick={() => ui.clearModal()}
@@ -125,12 +133,12 @@ const Content = ({
       </h4>
 
       <div className={styles.groups}>
-        {member.data?.groups?.map((group) => (
+        {member?.groups?.map((group) => (
           <Group memberID={memberID} id={group} key={group} />
         ))}
       </div>
-      {(member.data?.groups.length ?? 0) > 0 &&
-        (member.data?.groups.length ?? 0) < (groups.data?.length ?? 0) && (
+      {(member?.groups.length ?? 0) > 0 &&
+        (member?.groups.length ?? 0) < (groups?.length ?? 0) && (
           <Button type='button' onClick={() => setSelectGroups(!selectGroups)}>
             {selectGroups ? 'Member Groups' : 'Add Group'}
           </Button>

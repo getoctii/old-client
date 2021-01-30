@@ -24,6 +24,7 @@ const IntegrationsView = () => {
             : styles.members
         }
         onClick={() => {
+          if (matchTab?.params.tab === 'members') return
           if (community) history.push(`/communities/${community.id}/members`)
         }}
       >
@@ -35,7 +36,7 @@ const IntegrationsView = () => {
         </h4>
       </div>
       {hasPermissions([
-        Permissions.MANAGE_PERMISSIONS,
+        Permissions.MANAGE_GROUPS,
         Permissions.MANAGE_COMMUNITY,
         Permissions.MANAGE_INVITES
       ]) && (
@@ -51,6 +52,7 @@ const IntegrationsView = () => {
                 : styles.settings
             }
             onClick={() => {
+              if (matchTab?.params.tab === 'settings') return
               if (community)
                 history.push(`/communities/${community.id}/settings/general`)
             }}

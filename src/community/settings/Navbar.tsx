@@ -32,7 +32,7 @@ export const Navbar = () => {
           Invites
         </li>
       )}
-      {hasPermissions([Permissions.MANAGE_PERMISSIONS]) && (
+      {hasPermissions([Permissions.MANAGE_GROUPS]) && (
         <li
           onClick={() =>
             history.push(`/communities/${match?.params.id}/settings/groups`)

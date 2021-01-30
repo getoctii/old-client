@@ -7,7 +7,7 @@ import {
   GroupResponse
 } from '../community/remote'
 import { Auth } from '../authentication/state'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Permissions } from './constants'
 import { createContainer } from 'unstated-next'
 import { useRouteMatch } from 'react-router-dom'
@@ -15,7 +15,7 @@ import { useRouteMatch } from 'react-router-dom'
 export const getHighestOrder = (groups: GroupResponse[]) => {
   const groupOrders = groups.map((group) => group?.order)
   if (groupOrders.length < 1) return 0
-  return groupOrders.reduce((a = 0, b = 0) => (b > a ? b : a))
+  return groupOrders.reduce((a = 0, b = 0) => (b > a ? b : a)) ?? 0
 }
 
 export const useHasPermission = () => {
@@ -33,14 +33,6 @@ export const useHasPermission = () => {
     getGroups,
     {
       enabled: !!match?.params.id
-    }
-  )
-
-  const { data: groups } = useQuery(
-    ['groups', groupIDs ?? [], auth.token],
-    fetchManyGroups,
-    {
-      enabled: !!groupIDs
     }
   )
 
@@ -73,10 +65,28 @@ export const useHasPermission = () => {
         ) || community?.owner_id === auth.id
       )
     },
-    [memberGroups, community, auth]
+    [memberGroups, community?.owner_id, auth.id]
   )
 
-  return { community, hasPermissions, memberGroups, groups, groupIDs }
+  const highestOrder = useMemo(() => getHighestOrder(memberGroups ?? []), [
+    memberGroups
+  ])
+  const protectedGroups = useMemo(() => {
+    console.log(highestOrder)
+    return community?.owner_id !== auth.id
+      ? (groupIDs ?? []).filter((group, index) => {
+          if (!groupIDs) return false
+          console.log(
+            group,
+            groupIDs.length - index,
+            groupIDs.length - index >= highestOrder
+          )
+          return groupIDs.length - index >= highestOrder
+        })
+      : []
+  }, [groupIDs, highestOrder, auth.id, community?.owner_id])
+  console.log(protectedGroups)
+  return { community, hasPermissions, memberGroups, groupIDs, protectedGroups }
 }
 
 export const Permission = createContainer(useHasPermission)
