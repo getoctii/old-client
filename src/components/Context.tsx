@@ -7,7 +7,7 @@ import { ActionSheetOptionStyle, Plugins } from '@capacitor/core'
 
 const { Modals } = Plugins
 
-export const Global = () => {
+export const ContextGlobal = () => {
   const { contextMenu, setContextMenu } = UI.useContainer()
   const handleClick = useCallback(() => {
     if (contextMenu) {
@@ -35,7 +35,7 @@ export const Global = () => {
   return <></>
 }
 
-export const Menu = ({
+export const ContextMenu = ({
   position,
   items
 }: {
@@ -81,7 +81,7 @@ export const Menu = ({
   )
 }
 
-export const Wrapper = ({
+export const ContextWrapper = ({
   title,
   message,
   children,
@@ -173,6 +173,10 @@ export const Wrapper = ({
   )
 }
 
-const Context = { Menu, Wrapper, Global }
+const Context = {
+  Menu: ContextMenu,
+  Wrapper: ContextWrapper,
+  Global: ContextGlobal
+}
 
 export default Context

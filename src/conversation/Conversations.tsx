@@ -3,13 +3,12 @@ import styles from './Conversations.module.scss'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import ConversationCard from './ConversationCard'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useRouteMatch } from 'react-router-dom'
 import { useMedia } from 'react-use'
 import NewConversation from './NewConversation'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import { getParticipants, Participant } from '../user/remote'
-import { useSuspenseStorageItem } from '../utils/storage'
 
 dayjs.extend(dayjsUTC)
 
@@ -20,7 +19,6 @@ const ConversationList = () => {
     ['participants', auth.id, auth.token],
     getParticipants
   )
-  const history = useHistory()
   const filteredParticipants = useMemo(
     () =>
       participants.data?.filter(
@@ -28,7 +26,6 @@ const ConversationList = () => {
       ),
     [participants]
   )
-  const [, setLastConversation] = useSuspenseStorageItem('last-conversation')
 
   return (
     <>
@@ -71,11 +68,6 @@ const ConversationList = () => {
                   )}
                   <Suspense fallback={<ConversationCard.Placeholder />}>
                     <ConversationCard.View
-                      selected={match?.params.id === conversation.id}
-                      onClick={() => {
-                        history.push(`/conversations/${conversation.id}`)
-                        setLastConversation(conversation.id)
-                      }}
                       people={people}
                       conversationID={conversation.id}
                       lastMessageID={conversation.last_message_id}
@@ -96,7 +88,7 @@ const ConversationList = () => {
   )
 }
 
-const Placeholder = () => {
+const ConversationsPlaceholder = () => {
   const length = useMemo(() => Math.floor(Math.random() * 10) + 1, [])
   return (
     <>
@@ -118,7 +110,7 @@ export const Conversations = () => {
       <h3>Messages</h3>
       <NewConversation />
       <div className={styles.list}>
-        <React.Suspense fallback={<Placeholder />}>
+        <React.Suspense fallback={<ConversationsPlaceholder />}>
           <ConversationList />
         </React.Suspense>
       </div>

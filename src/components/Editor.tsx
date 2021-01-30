@@ -19,6 +19,7 @@ import Mentions from '../chat/Mentions'
 import { useRouteMatch } from 'react-router-dom'
 import Mention from '../chat/Mention'
 import { ChannelResponse } from '../community/remote'
+import { isPlatform } from '@ionic/react'
 
 const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   return leaf.underline ? (
@@ -224,6 +225,24 @@ const EditorView = ({
     setSelected(0)
   }, [target, usersFiltered, channelsFiltered])
 
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (
+        !isMobile &&
+        !isPlatform('ipad') &&
+        (event.target as any)?.type !== 'text'
+      ) {
+        ReactEditor.focus(editor)
+      }
+    }
+
+    document.addEventListener('keydown', handler)
+
+    return () => {
+      document.removeEventListener('keydown', handler)
+    }
+  }, [editor, isMobile])
+
   return (
     <>
       {target && (
@@ -313,7 +332,7 @@ const EditorView = ({
           }}
         >
           <Editable
-            autoFocus={!isMobile}
+            autoFocus={!isMobile && !isPlatform('ipad')}
             className={inputClassName}
             autoCapitalize={isMobile ? 'true' : 'false'}
             spellCheck

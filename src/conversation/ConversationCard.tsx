@@ -28,18 +28,15 @@ import { ContextMenuItems } from '../state/ui'
 import useMarkdown from '@innatical/markdown'
 import { ErrorBoundary } from 'react-error-boundary'
 import Mention from '../chat/Mention'
+import { useSuspenseStorageItem } from '../utils/storage'
 
 const ConversationCardView = ({
   people,
-  onClick,
-  selected,
   conversationID,
   lastMessageID,
   channelID
 }: {
   people: string[]
-  selected?: boolean
-  onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
   conversationID: string
   lastMessageID?: string
   channelID: string
@@ -54,6 +51,8 @@ const ConversationCardView = ({
         headers: { Authorization: token }
       })
   )
+  const [, setLastConversation] = useSuspenseStorageItem('last-conversation')
+
   const { data: message } = useQuery(
     ['message', lastMessageID, token],
     getMessage
@@ -173,25 +172,31 @@ const ConversationCardView = ({
       [
         /<@([A-Za-z0-9-]+?)>/g,
         (str, key) => (
-          <Suspense fallback={<div key={key}>&lt;@{str}&gt;</div>}>
-            <ErrorBoundary
-              fallbackRender={() => <div key={key}>&lt;@{str}&gt;</div>}
-            >
-              <Mention.User selected={selected} key={key} userID={str} />
+          <span key={key}>
+            <ErrorBoundary fallbackRender={() => <span>&lt;@{str}&gt;</span>}>
+              <Suspense fallback={<span>&lt;@{str}&gt;</span>}>
+                <Mention.User
+                  selected={match?.params.id === conversationID}
+                  userID={str}
+                />
+              </Suspense>
             </ErrorBoundary>
-          </Suspense>
+          </span>
         )
       ],
       [
         /<#([A-Za-z0-9-]+?)>/g,
         (str, key) => (
-          <Suspense fallback={<div key={key}>&lt;@{str}&gt;</div>}>
-            <ErrorBoundary
-              fallbackRender={() => <div key={key}>&lt;@{str}&gt;</div>}
-            >
-              <Mention.Channel selected={selected} key={key} channelID={str} />
+          <span key={key}>
+            <ErrorBoundary fallbackRender={() => <span>&lt;@{str}&gt;</span>}>
+              <Suspense fallback={<span>&lt;@{str}&gt;</span>}>
+                <Mention.Channel
+                  selected={match?.params.id === conversationID}
+                  channelID={str}
+                />
+              </Suspense>
             </ErrorBoundary>
-          </Suspense>
+          </span>
         )
       ]
     ]
@@ -205,8 +210,13 @@ const ConversationCardView = ({
       items={getItems()}
     >
       <div
-        className={`${styles.card} ${selected ? styles.selected : ''}`}
-        onClick={onClick}
+        className={`${styles.card} ${
+          match?.params.id === conversationID ? styles.selected : ''
+        }`}
+        onClick={() => {
+          history.push(`/conversations/${conversationID}`)
+          setLastConversation(conversationID)
+        }}
       >
         <div className={styles.avatar} key='avatar'>
           {(people?.length ?? 1) === 1 ? (
@@ -224,7 +234,11 @@ const ConversationCardView = ({
                       : users?.[0].state === State.offline
                       ? styles.offline
                       : ''
-                  } ${selected ? styles.selectedBadge : ''}`}
+                  } ${
+                    match?.params.id === conversationID
+                      ? styles.selectedBadge
+                      : ''
+                  }`}
                 />
               )}
             </>
@@ -235,7 +249,7 @@ const ConversationCardView = ({
           )}
         </div>
         <div className={styles.user} key='user'>
-          <h4>{users?.map((user) => user.username).join(', ')}</h4>
+          <h4>{users?.map((user, index) => user.username).join(', ')}</h4>
           {message?.content && (
             <p>
               {message?.author_id === id
@@ -253,7 +267,7 @@ const ConversationCardView = ({
           )}
         </div>
         <div className={styles.details} key='details'>
-          {!selected &&
+          {match?.params.id !== conversationID &&
             (mentionsCount && mentionsCount > 0 ? (
               <div
                 className={`${styles.mention} ${

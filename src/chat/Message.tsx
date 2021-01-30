@@ -218,13 +218,13 @@ const MessageView = memo(
           return {
             link: <></>,
             embed: (
-              <ErrorBoundary
-                fallbackRender={() => <Invite.ErrorEmbed key={key} />}
-              >
-                <Suspense fallback={<Invite.Placeholder key={key} />}>
-                  <Invite.Embed key={key} url={str} />
-                </Suspense>
-              </ErrorBoundary>
+              <span key={key}>
+                <ErrorBoundary fallbackRender={() => <Invite.ErrorEmbed />}>
+                  <Suspense fallback={<Invite.Placeholder />}>
+                    <Invite.Embed url={str} />
+                  </Suspense>
+                </ErrorBoundary>
+              </span>
             )
           }
         } else if (Image.isCovfefe(str)) {
@@ -246,33 +246,31 @@ const MessageView = memo(
         [
           /<@([A-Za-z0-9-]+?)>/g,
           (str, key) => (
-            <Suspense fallback={<span key={key}>@unknown</span>}>
-              <ErrorBoundary
-                fallbackRender={() => <span key={key}>&lt;@{str}&gt;</span>}
-              >
-                <Mention.User
-                  key={key}
-                  userID={str}
-                  selected={type !== MessageTypes.NORMAL}
-                />
+            <span key={key}>
+              <ErrorBoundary fallbackRender={() => <span>&lt;@{str}&gt;</span>}>
+                <Suspense fallback={<span>@unknown</span>}>
+                  <Mention.User
+                    userID={str}
+                    selected={type !== MessageTypes.NORMAL}
+                  />
+                </Suspense>
               </ErrorBoundary>
-            </Suspense>
+            </span>
           )
         ],
         [
           /<#([A-Za-z0-9-]+?)>/g,
           (str, key) => (
-            <Suspense fallback={<span key={key}>#unknown</span>}>
-              <ErrorBoundary
-                fallbackRender={() => <span key={key}>&lt;@{str}&gt;</span>}
-              >
-                <Mention.Channel
-                  key={key}
-                  channelID={str}
-                  selected={type !== MessageTypes.NORMAL}
-                />
+            <span key={key}>
+              <ErrorBoundary fallbackRender={() => <span>&lt;@{str}&gt;</span>}>
+                <Suspense fallback={<span>#unknown</span>}>
+                  <Mention.Channel
+                    channelID={str}
+                    selected={type !== MessageTypes.NORMAL}
+                  />
+                </Suspense>
               </ErrorBoundary>
-            </Suspense>
+            </span>
           )
         ]
       ]

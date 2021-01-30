@@ -33,7 +33,6 @@ import Admin from './admin/Admin'
 import ManageGroups from './community/ManageGroups'
 import { NewChannel } from './community/NewChannel'
 import NewInvite from './community/NewInvite'
-import { Permission } from './utils/permissions'
 const { PushNotifications } = Plugins
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
@@ -179,7 +178,7 @@ export const Router = memo(() => {
           )}
         </Switch>
         {auth.authenticated && (
-          <Permission.Provider>
+          <>
             <IncomingCall />
             <EventSource />
             <Modals />
@@ -228,7 +227,7 @@ export const Router = memo(() => {
                 </Suspense>
               </>
             )}
-          </Permission.Provider>
+          </>
         )}
       </BrowserRouter>
     </div>
