@@ -72,20 +72,13 @@ export const useHasPermission = () => {
     memberGroups
   ])
   const protectedGroups = useMemo(() => {
-    console.log(highestOrder)
     return community?.owner_id !== auth.id
       ? (groupIDs ?? []).filter((group, index) => {
           if (!groupIDs) return false
-          console.log(
-            group,
-            groupIDs.length - index,
-            groupIDs.length - index >= highestOrder
-          )
           return groupIDs.length - index >= highestOrder
         })
       : []
   }, [groupIDs, highestOrder, auth.id, community?.owner_id])
-  console.log(protectedGroups)
   return { community, hasPermissions, memberGroups, groupIDs, protectedGroups }
 }
 

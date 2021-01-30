@@ -118,6 +118,7 @@ const Placeholder = () => {
 const CommunityView = () => {
   const { path } = useRouteMatch()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
+  const matchTab = useRouteMatch<{ id: string }>('/communities/:id/:tab')
   const isMobile = useMedia('(max-width: 740px)')
 
   const { community, hasPermissions } = Permission.useContainer()
@@ -130,7 +131,7 @@ const CommunityView = () => {
 
   return (
     <>
-      {isMobile && !match && <Sidebar />}
+      {isMobile && !matchTab && <Sidebar />}
       {community.channels.length <= 0 ? (
         <EmptyCommunity community={community} />
       ) : (
@@ -138,7 +139,7 @@ const CommunityView = () => {
           <Helmet>
             <title>Octii - {community.name}</title>
           </Helmet>
-          {isMobile && !match ? (
+          {isMobile && !matchTab ? (
             <Channels.View />
           ) : !isMobile ? (
             <Channels.View />

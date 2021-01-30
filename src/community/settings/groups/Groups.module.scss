@@ -72,8 +72,7 @@
   }
 
   @media (max-width: 740px) {
-    .permissions {
-      margin-top: env(safe-area-inset-top);
+    .groups {
       padding-bottom: calc(env(safe-area-inset-bottom) + 5rem);
       .icon {
         background: var(--neko-colors-primary);

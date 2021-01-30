@@ -118,7 +118,7 @@ const PermissionsEditor = ({
             {permissions.map(
               (permission) =>
                 hasPermissions([permission], true) && (
-                  <NewGroup.Permission
+                  <NewGroup.PermissionToggle
                     key={permission}
                     name={PermissionNames[permission]}
                     toggled={has(permission)}
@@ -205,7 +205,7 @@ const GroupCard = ({ id, base }: { id?: string; base?: boolean }) => {
   const isMobile = useMedia('(max-width: 740px)')
   const [edit, setEdit] = useState<boolean>(false)
   const { protectedGroups, community } = Permission.useContainer()
-  console.log(protectedGroups)
+
   return (
     <>
       <div

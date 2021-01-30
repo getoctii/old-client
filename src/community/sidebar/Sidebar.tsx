@@ -18,7 +18,7 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { UI } from '../../state/ui'
 
-const View = () => {
+const SidebarView = () => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const [menu, setMenu] = useState(false)
@@ -118,7 +118,7 @@ const View = () => {
   )
 }
 
-const Placeholder = () => {
+const SidebarPlaceholder = () => {
   return (
     <div className={styles.placeholder}>
       <div className={styles.sidebar}>
@@ -132,6 +132,6 @@ const Placeholder = () => {
   )
 }
 
-const Sidebar = { View, Placeholder }
+const Sidebar = { View: SidebarView, Placeholder: SidebarPlaceholder }
 
 export default Sidebar

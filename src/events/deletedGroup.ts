@@ -4,6 +4,7 @@ import { queryCache } from 'react-query'
 import { Events } from '../utils/constants'
 import { log } from '../utils/logging'
 import { Auth } from '../authentication/state'
+import { MemberResponse } from '../community/remote'
 
 const useDeletedGroup = (eventSource: EventSourcePolyfill | null) => {
   const { id, token } = Auth.useContainer()
@@ -15,22 +16,33 @@ const useDeletedGroup = (eventSource: EventSourcePolyfill | null) => {
         community_id: string
       }
       log('Events', 'purple', 'DELETED_GROUP')
-      const initial = queryCache.getQueryData([
-        'groups',
+      queryCache.setQueryData<string[]>(
+        ['groups', event.community_id, token],
+        (initial) =>
+          initial ? initial.filter((group) => group !== event.id) : []
+      )
+
+      const member = queryCache.getQueryData<MemberResponse>([
+        'memberByUserID',
         event.community_id,
+        id,
         token
       ])
-
-      if (initial instanceof Array) {
-        queryCache.setQueryData(
-          ['groups', event.community_id, token],
-          initial.filter((group) => group.id !== event.id)
+      if (member?.groups?.includes(event.id)) {
+        queryCache.setQueryData<MemberResponse>(
+          ['memberByUserID', event.community_id, id, token],
+          {
+            ...member,
+            groups: member.groups.filter((group) => group !== event.id)
+          }
         )
+        await queryCache.invalidateQueries('group')
+        await queryCache.invalidateQueries([
+          'memberGroups',
+          member.groups,
+          token
+        ])
       }
-
-      await queryCache.invalidateQueries(
-        (query) => query.queryKey[0] === 'member'
-      )
     }
 
     eventSource.addEventListener(Events.DELETED_GROUP, handler)

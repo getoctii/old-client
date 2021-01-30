@@ -9,7 +9,7 @@ const useNewGroup = (eventSource: EventSourcePolyfill | null) => {
   const { token, id } = Auth.useContainer()
   useEffect(() => {
     if (!eventSource) return
-    const handler = (e: MessageEvent) => {
+    const handler = async (e: MessageEvent) => {
       const event = JSON.parse(e.data) as {
         id: string
         community_id: string
@@ -18,6 +18,9 @@ const useNewGroup = (eventSource: EventSourcePolyfill | null) => {
       queryCache.setQueryData<string[]>(
         ['groups', event.community_id, token],
         (initial) => (initial ? [...initial, event.id] : [event.id])
+      )
+      await queryCache.invalidateQueries(
+        (query) => query.queryKey[0] === 'memberGroups'
       )
     }
 

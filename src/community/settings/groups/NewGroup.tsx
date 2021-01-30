@@ -21,6 +21,7 @@ import { faPencil, faTimesCircle } from '@fortawesome/pro-solid-svg-icons'
 import { useRouteMatch } from 'react-router-dom'
 import { faToggleOff, faToggleOn } from '@fortawesome/pro-duotone-svg-icons'
 import { useSet } from 'react-use'
+import { Permission } from '../../../utils/permissions'
 
 type createPermissionData = { name: string; permissions?: Permissions[] }
 
@@ -41,7 +42,7 @@ const createPermission = async (
     })
   ).data
 
-export const Permission = ({
+export const PermissionToggle = ({
   name,
   type,
   toggled,
@@ -73,6 +74,7 @@ export const Permission = ({
 export const NewPermissionStandalone = () => {
   const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
   const { token } = Auth.useContainer()
+  const { hasPermissions } = Permission.useContainer()
   const ui = UI.useContainer()
   const [editing, setEditing] = useState<Groups>()
   const [set, { add, remove, has }] = useSet<Permissions>(new Set([]))
@@ -101,7 +103,7 @@ export const NewPermissionStandalone = () => {
           }
         }}
       >
-        {({ isSubmitting, setFieldValue }) => (
+        {({ isSubmitting }) => (
           <Form>
             <label htmlFor='tag' className={styles.inputName}>
               Name
@@ -133,16 +135,19 @@ export const NewPermissionStandalone = () => {
 
                 {editing === +group && (
                   <ul className={styles.list}>
-                    {permissions.map((permission) => (
-                      <Permission
-                        name={PermissionNames[permission]}
-                        toggled={has(permission)}
-                        type={+group}
-                        onToggle={(val) =>
-                          val ? add(permission) : remove(permission)
-                        }
-                      />
-                    ))}
+                    {permissions.map(
+                      (permission) =>
+                        hasPermissions([permission], true) && (
+                          <PermissionToggle
+                            name={PermissionNames[permission]}
+                            toggled={has(permission)}
+                            type={+group}
+                            onToggle={(val) =>
+                              val ? add(permission) : remove(permission)
+                            }
+                          />
+                        )
+                    )}
                   </ul>
                 )}
               </div>
