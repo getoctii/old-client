@@ -13,8 +13,9 @@ import Sidebar from '../sidebar/Sidebar'
 import dayjs from 'dayjs'
 import { useSuspenseStorageItem } from '../utils/storage'
 import { Helmet } from 'react-helmet-async'
+import { Permission } from '../utils/permissions'
 
-const Conversation = () => {
+const ConversationView = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
   const { id, token } = Auth.useContainer()
   const { data } = useQuery(['participants', id, token], getParticipants)
@@ -58,16 +59,19 @@ const Conversation = () => {
   )
 }
 
-const Router = () => {
+const ConversationProvider = () => {
   const { id, token } = Auth.useContainer()
-  const isMobile = useMedia('(max-width: 740px)')
-  const match = useRouteMatch<{ id: string }>('/conversations/:id')
   const [lastConversation] = useSuspenseStorageItem<string>('last-conversation')
-  const participants = useQuery(['participants', id, token], getParticipants)
+  const match = useRouteMatch<{ id: string }>('/conversations/:id')
+  const { data: participants } = useQuery(
+    ['participants', id, token],
+    getParticipants
+  )
   const history = useHistory()
+  const isMobile = useMedia('(max-width: 740px)')
   const filteredParticipants = useMemo(
     () =>
-      participants.data
+      participants
         ?.filter((part) => part.conversation.participants.length > 1)
         .sort((a, b) => {
           const firstMessage = dayjs
@@ -118,22 +122,40 @@ const Router = () => {
 
   return (
     <>
-      {match?.params.id &&
-      filteredParticipants.find(
-        (p) => p.conversation.id === match.params.id
-      ) ? (
-        <>
-          {!isMobile && <Conversations />}
-          <Suspense fallback={<Chat.Placeholder />}>
-            <Conversation />
-          </Suspense>
-        </>
+      {match &&
+      participants?.find((p) => p.conversation.id === match.params.id) ? (
+        <Permission.Provider>
+          <ConversationView />
+        </Permission.Provider>
       ) : isMobile ? (
         <>
           <Sidebar />
           <Conversations />
         </>
-      ) : filteredParticipants && filteredParticipants.length < 1 ? (
+      ) : (
+        <></>
+      )}
+    </>
+  )
+}
+
+const ConversationRouter = () => {
+  const { id, token } = Auth.useContainer()
+  const { data: participants } = useQuery(
+    ['participants', id, token],
+    getParticipants
+  )
+  const isMobile = useMedia('(max-width: 740px)')
+  return (
+    <>
+      {(participants?.length ?? 0) > 0 ? (
+        <>
+          {!isMobile && <Conversations />}
+          <Suspense fallback={<Chat.Placeholder />}>
+            <ConversationProvider />
+          </Suspense>
+        </>
+      ) : (participants?.length ?? 0) < 1 ? (
         <Empty />
       ) : (
         <></>
@@ -142,4 +164,4 @@ const Router = () => {
   )
 }
 
-export default Router
+export default ConversationRouter

@@ -105,7 +105,7 @@ const Channel = () => {
   return <Chat.Community key={channel} />
 }
 
-const Placeholder = () => {
+const CommunityPlaceholder = () => {
   const isMobile = useMedia('(max-width: 740px)')
   return (
     <>
@@ -131,7 +131,6 @@ const CommunityView = () => {
 
   return (
     <>
-      {isMobile && !matchTab && <Sidebar />}
       {community.channels.length <= 0 ? (
         <EmptyCommunity community={community} />
       ) : (
@@ -177,17 +176,28 @@ const CommunityView = () => {
   )
 }
 
+const CommunityProviders = () => {
+  return (
+    <Permission.Provider>
+      <CommunityView />
+    </Permission.Provider>
+  )
+}
+
 const Router = () => {
+  const matchTab = useRouteMatch<{ id: string }>('/communities/:id/:tab')
+  const isMobile = useMedia('(max-width: 740px)')
   return (
     <>
+      {isMobile && !matchTab && <Sidebar />}
       <ErrorBoundary
         fallbackRender={({ error }) => {
           console.log(error)
           return <></>
         }}
       >
-        <Suspense fallback={<Placeholder />}>
-          <CommunityView />
+        <Suspense fallback={<CommunityPlaceholder />}>
+          <CommunityProviders />
         </Suspense>
       </ErrorBoundary>
     </>
