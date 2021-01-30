@@ -28,19 +28,19 @@ const useDeletedMessage = (eventSource: EventSourcePolyfill | null) => {
   useEffect(() => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
-      const message = JSON.parse(e.data) as Message
+      const event = JSON.parse(e.data) as Message
       log('Events', 'purple', 'DELETED_MESSAGE')
       const initial = queryCache.getQueryData([
         'messages',
-        message.channel_id,
+        event.channel_id,
         token
       ])
 
       if (initial instanceof Array) {
         queryCache.setQueryData(
-          ['messages', message.channel_id, token],
+          ['messages', event.channel_id, token],
           initial.map((sub) =>
-            sub.filter((msg: Message) => msg.id !== message.id)
+            sub.filter((msg: Message) => msg.id !== event.id)
           )
         )
       }
@@ -57,9 +57,8 @@ const useDeletedMessage = (eventSource: EventSourcePolyfill | null) => {
           Object.fromEntries(
             Object.entries(initialMentions).map(([channel, mentions]) => [
               channel,
-              mentions?.filter(
-                (mention) => mention.message_id !== message.id
-              ) || []
+              mentions?.filter((mention) => mention.message_id !== event.id) ||
+                []
             ])
           )
         )
@@ -76,7 +75,7 @@ const useDeletedMessage = (eventSource: EventSourcePolyfill | null) => {
           ['unreads', id, token],
           Object.fromEntries(
             Object.entries(initialUnreads).filter(
-              ([_, unreads]) => unreads.last_message_id !== message.id
+              ([_, unreads]) => unreads.last_message_id !== event.id
             )
           )
         )

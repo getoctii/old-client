@@ -1,22 +1,24 @@
-import {
-  faBell,
-  faBellSlash,
-  faEllipsisH,
-  faHouseLeave
-} from '@fortawesome/pro-solid-svg-icons'
+import { faEllipsisH } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Integrations from './Integrations'
 import React, { useState } from 'react'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation } from 'react-query'
 import { useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
-import { getCommunity } from '../remote'
 import styles from './Sidebar.module.scss'
 import Channels from './Channels'
-import { clientGateway } from '../../utils/constants'
+import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
 import { useSuspenseStorageItem } from '../../utils/storage'
+import { Permission } from '../../utils/permissions'
+import {
+  faBell,
+  faBellSlash,
+  faHouseLeave,
+  faUserPlus
+} from '@fortawesome/pro-duotone-svg-icons'
+import { UI } from '../../state/ui'
 
-const View = () => {
+const SidebarView = () => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const [menu, setMenu] = useState(false)
@@ -24,11 +26,8 @@ const View = () => {
     'muted-communities',
     []
   )
-  const community = useQuery(
-    ['community', match?.params.id, auth.token],
-    getCommunity
-  )
-
+  const ui = UI.useContainer()
+  const { community, hasPermissions } = Permission.useContainer()
   const [leaveCommunity] = useMutation(
     async () =>
       (
@@ -46,7 +45,7 @@ const View = () => {
       <div className={styles.sidebar}>
         <div className={styles.container}>
           <h3>
-            {community.data?.name ? community.data?.name : ''}{' '}
+            {community?.name ? community?.name : ''}{' '}
             <span
               className={styles.leave}
               onClick={() => {
@@ -58,32 +57,44 @@ const View = () => {
           </h3>
           {menu && (
             <div className={styles.menu}>
+              {hasPermissions([
+                Permissions.CREATE_INVITES,
+                Permissions.MANAGE_INVITES
+              ]) && (
+                <div
+                  className={styles.menuItem}
+                  onClick={() => ui.setModal({ name: ModalTypes.NEW_INVITE })}
+                >
+                  <span>Create Invite</span>{' '}
+                  <FontAwesomeIcon icon={faUserPlus} fixedWidth />
+                </div>
+              )}
               <div
                 className={styles.menuItem}
                 onClick={() => {
-                  if (!community.data?.id) return
-                  if (muted?.includes(community.data.id))
+                  if (!community?.id) return
+                  if (muted?.includes(community.id))
                     setMuted(
                       muted.filter(
-                        (communities) => communities !== community.data?.id
+                        (communities) => communities !== community?.id
                       )
                     )
-                  else setMuted([...(muted || []), community.data.id])
+                  else setMuted([...(muted || []), community.id])
                 }}
               >
-                {community.data && muted?.includes(community.data.id) ? (
+                {community && muted?.includes(community.id) ? (
                   <>
                     <span>Unmute Community</span>{' '}
-                    <FontAwesomeIcon icon={faBell} />
+                    <FontAwesomeIcon icon={faBell} fixedWidth />
                   </>
                 ) : (
                   <>
                     <span>Mute Community</span>{' '}
-                    <FontAwesomeIcon icon={faBellSlash} />
+                    <FontAwesomeIcon icon={faBellSlash} fixedWidth />
                   </>
                 )}
               </div>
-              {community.data?.owner_id !== auth.id && (
+              {community?.owner_id !== auth.id && (
                 <>
                   <hr />
                   <div
@@ -93,21 +104,21 @@ const View = () => {
                     }}
                   >
                     <span>Leave Community</span>{' '}
-                    <FontAwesomeIcon icon={faHouseLeave} />
+                    <FontAwesomeIcon icon={faHouseLeave} fixedWidth />
                   </div>
                 </>
               )}
             </div>
           )}
-          <Integrations.View community={community.data} />
-          <Channels.View community={community.data} />
+          <Integrations.View />
+          <Channels.View />
         </div>
       </div>
     </div>
   )
 }
 
-const Placeholder = () => {
+const SidebarPlaceholder = () => {
   return (
     <div className={styles.placeholder}>
       <div className={styles.sidebar}>
@@ -121,6 +132,6 @@ const Placeholder = () => {
   )
 }
 
-const Sidebar = { View, Placeholder }
+const Sidebar = { View: SidebarView, Placeholder: SidebarPlaceholder }
 
 export default Sidebar

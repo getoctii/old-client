@@ -2,16 +2,18 @@ import { faAddressBook, faUserCog } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { Auth } from '../../authentication/state'
-import { CommunityResponse } from '../remote'
 import styles from './Integrations.module.scss'
+import { Permission } from '../../utils/permissions'
+import { Permissions } from '../../utils/constants'
 
-const View = ({ community }: { community?: CommunityResponse }) => {
-  const auth = Auth.useContainer()
+const IntegrationsView = () => {
   const history = useHistory()
   const matchTab = useRouteMatch<{ id: string; tab: string }>(
-    '/communities/:id/:tab'
+    '/communities/:id/:tab?'
   )
+
+  const { community, hasPermissions } = Permission.useContainer()
+
   return (
     <div className={styles.integrations}>
       <div
@@ -22,6 +24,7 @@ const View = ({ community }: { community?: CommunityResponse }) => {
             : styles.members
         }
         onClick={() => {
+          if (matchTab?.params.tab === 'members') return
           if (community) history.push(`/communities/${community.id}/members`)
         }}
       >
@@ -32,7 +35,11 @@ const View = ({ community }: { community?: CommunityResponse }) => {
           Members
         </h4>
       </div>
-      {community?.owner_id === auth.id && (
+      {hasPermissions([
+        Permissions.MANAGE_GROUPS,
+        Permissions.MANAGE_COMMUNITY,
+        Permissions.MANAGE_INVITES
+      ]) && (
         <div>
           <hr
             className={matchTab?.params.tab === 'members' ? styles.hidden : ''}
@@ -45,6 +52,7 @@ const View = ({ community }: { community?: CommunityResponse }) => {
                 : styles.settings
             }
             onClick={() => {
+              if (matchTab?.params.tab === 'settings') return
               if (community)
                 history.push(`/communities/${community.id}/settings/general`)
             }}
@@ -86,6 +94,6 @@ const Placeholder = () => {
   )
 }
 
-const Ingerations = { View, Placeholder }
+const Integrations = { View: IntegrationsView, Placeholder }
 
-export default Ingerations
+export default Integrations

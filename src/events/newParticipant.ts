@@ -10,7 +10,15 @@ const useNewParticipant = (eventSource: EventSourcePolyfill | null) => {
   useEffect(() => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
-      const participant = JSON.parse(e.data)
+      const participant = JSON.parse(e.data) as {
+        id: string
+        conversation: {
+          id: string
+          channel_id: string
+          last_message_id: string
+          participants: string[]
+        }
+      }
       log('Events', 'purple', 'NEW_PARTICIPANT')
       queryCache.setQueryData(['participants', id, token], (initial) => {
         if (initial instanceof Array) {

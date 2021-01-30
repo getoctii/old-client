@@ -29,7 +29,7 @@ const ImagePreview = ({ url }: { url: string }) => {
           />
         </div>
         <div className={styles.image}>
-          <img alt={url} src={url} />
+          <img alt={url} src={url} loading='lazy' />
         </div>
       </div>
     </Modal>

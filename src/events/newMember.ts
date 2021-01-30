@@ -11,11 +11,20 @@ const useNewMember = (eventSource: EventSourcePolyfill | null) => {
   useEffect(() => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
-      const member = JSON.parse(e.data)
+      const event = JSON.parse(e.data) as {
+        id: string
+        community: {
+          id: string
+          name: string
+          icon?: string
+          large: boolean
+          owner_id: string
+        }
+      }
       log('Events', 'purple', 'NEW_MEMBER')
       queryCache.setQueryData(['communities', id, token], (initial) => {
         if (initial instanceof Array) {
-          initial.push(member)
+          initial.push(event)
           return initial
         } else return initial
       })

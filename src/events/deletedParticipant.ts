@@ -11,11 +11,11 @@ const useDeletedParticipant = (eventSource: EventSourcePolyfill | null) => {
   useEffect(() => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
-      const event: {
+      const event = JSON.parse(e.data) as {
         id: string
         user_id: string
         conversation_id: string
-      } = JSON.parse(e.data)
+      }
       log('Events', 'purple', 'DELETED_PARTICIPANT')
 
       const participants = queryCache.getQueryData<ParticipantsResponse>([

@@ -13,21 +13,21 @@ const useDeletedMember = (eventSource: EventSourcePolyfill | null) => {
   useEffect(() => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
-      const member = JSON.parse(e.data) as {
+      const event = JSON.parse(e.data) as {
         id: string
         community_id: string
       }
       log('Events', 'purple', 'DELETED_MEMBER')
       queryCache.setQueryData(['communities', id, token], (initial) => {
         if (initial instanceof Array) {
-          return initial.filter((m: any) => m.id !== member.id)
+          return initial.filter((m: any) => m.id !== event.id)
         } else return initial
       })
 
       history.push('/')
       const community = queryCache.getQueryData<CommunityResponse>([
         'community',
-        member.community_id,
+        event.community_id,
         token
       ])
       if (community?.channels) {
@@ -37,8 +37,8 @@ const useDeletedMember = (eventSource: EventSourcePolyfill | null) => {
         })
       }
 
-      queryCache.removeQueries(['channels', member.community_id, token])
-      queryCache.removeQueries(['community', member.community_id, token])
+      queryCache.removeQueries(['channels', event.community_id, token])
+      queryCache.removeQueries(['community', event.community_id, token])
     }
 
     eventSource.addEventListener(Events.DELETED_MEMBER, handler)

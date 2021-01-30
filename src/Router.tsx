@@ -27,9 +27,13 @@ import { clientGateway, ModalTypes } from './utils/constants'
 import AddParticipant from './chat/AddParticipant'
 import { Confirmation } from './components/Confirmation'
 import Downloads from './marketing/Downloads'
+import { NewGroup } from './community/settings/groups/NewGroup'
 import Invite from './invite/Invite'
 import Admin from './admin/Admin'
-
+import ManageGroups from './community/ManageGroups'
+import { NewChannel } from './community/NewChannel'
+import NewInvite from './community/NewInvite'
+import { Permission } from './utils/permissions'
 const { PushNotifications } = Plugins
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
@@ -45,10 +49,20 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <NewCommunity />
     case ModalTypes.NEW_CONVERSATION:
       return <NewConversation />
+    case ModalTypes.NEW_PERMISSION:
+      return <NewGroup />
     case ModalTypes.PREVIEW_IMAGE:
       return <Image.Preview {...props} />
     case ModalTypes.STATUS:
       return <Status />
+    case ModalTypes.NEW_CHANNEL:
+      return <NewChannel />
+    case ModalTypes.NEW_INVITE:
+      return <NewInvite />
+    case ModalTypes.DELETE_CHANNEL:
+      return <Confirmation {...props} />
+    case ModalTypes.MANAGE_MEMBER_GROUPS:
+      return <ManageGroups {...props} />
     default:
       return <></>
   }
@@ -103,10 +117,10 @@ export const Router = memo(() => {
       PushNotifications.addListener('registration', async (token) => {
         await clientGateway.post(
           `/users/${auth.id}/notifications`,
-          new URLSearchParams({
+          {
             token: token.value,
             platform: 'ios'
-          }),
+          },
           {
             headers: {
               authorization: auth.token
@@ -165,7 +179,7 @@ export const Router = memo(() => {
           )}
         </Switch>
         {auth.authenticated && (
-          <>
+          <Permission.Provider>
             <IncomingCall />
             <EventSource />
             <Modals />
@@ -214,7 +228,7 @@ export const Router = memo(() => {
                 </Suspense>
               </>
             )}
-          </>
+          </Permission.Provider>
         )}
       </BrowserRouter>
     </div>

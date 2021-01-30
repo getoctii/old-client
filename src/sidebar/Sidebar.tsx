@@ -98,6 +98,11 @@ const Community = memo(
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={() => {
+            if (
+              match?.params.tab === 'communities' &&
+              match.params.id === community.id
+            )
+              return
             return history.push(`/communities/${community.id}`)
           }}
         >

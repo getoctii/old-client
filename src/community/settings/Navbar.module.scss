@@ -1,5 +1,7 @@
 .navbar {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 10rem));
+  grid-gap: 0.8rem;
   list-style: none;
   padding-left: 0;
   margin: 1rem 0 0;
@@ -10,7 +12,6 @@
   }
 
   li {
-    margin-right: 0.8rem;
     text-align: center;
     padding-top: 0.9rem;
     padding-bottom: 0.9rem;
@@ -22,12 +23,10 @@
   }
 
   @media (max-width: 740px) {
-    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+
     li {
       width: 100%;
-      &:last-child {
-        margin-right: 0;
-      }
     }
   }
 }

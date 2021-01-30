@@ -8,13 +8,13 @@ const useAcceptedVoiceSession = (eventSource: EventSourcePolyfill | null) => {
   const call = Call.useContainer()
   useEffect(() => {
     if (!eventSource) return
-    const handler = (e: MessageEvent) => {
+    const handler = async (e: MessageEvent) => {
       const event = JSON.parse(e.data) as {
         id: string
         peer_id: string
       }
       log('Events', 'purple', 'ACCEPTED_VOICE_SESSION')
-      call.establishCall(event.id, event.peer_id)
+      await call.establishCall(event.id, event.peer_id)
     }
 
     eventSource.addEventListener(Events.ACCEPTED_VOICE_SESSION, handler)

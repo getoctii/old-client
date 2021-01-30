@@ -9,8 +9,10 @@ import Input from '../components/Input'
 import { clientGateway } from '../utils/constants'
 import { BarLoader } from 'react-spinners'
 import styles from './NewChannel.module.scss'
-import { useHistory } from 'react-router-dom'
-import { CommunityResponse } from './remote'
+import { useHistory, useRouteMatch } from 'react-router-dom'
+import { getCommunity } from './remote'
+import { UI } from '../state/ui'
+import { useQuery } from 'react-query'
 
 type formData = { name: string }
 
@@ -28,17 +30,22 @@ const validate = (values: formData) => {
   return errors
 }
 
-export const NewChannel = ({
-  community,
-  onDismiss
-}: {
-  community?: CommunityResponse
-  onDismiss: () => void
-}) => {
+export const NewChannel = () => {
   const history = useHistory()
   const { token } = Auth.useContainer()
+  const ui = UI.useContainer()
+  const match = useRouteMatch<{ id: string }>('/communities/:id')
+
+  const { data: community } = useQuery(
+    ['community', match?.params.id, token],
+    getCommunity,
+    {
+      enabled: !!match?.params.id && !!token
+    }
+  )
+
   return (
-    <Modal onDismiss={onDismiss}>
+    <Modal onDismiss={() => ui.clearModal()}>
       <Formik
         initialValues={{ name: '' }}
         validate={validate}
@@ -49,7 +56,7 @@ export const NewChannel = ({
           try {
             if (!values.name) return setFieldError('name', 'Required')
             const channel = await clientGateway.post(
-              `/communities/${community?.id}/channels`,
+              `/communities/${match?.params.id}/channels`,
               { name: values.name.split(' ').join('-') },
               {
                 headers: { Authorization: token }
@@ -57,15 +64,16 @@ export const NewChannel = ({
             )
             if (channel?.data?.id)
               history.push(
-                `/communities/${community?.id}/channels/${channel.data.id}`
+                `/communities/${match?.params.id}/channels/${channel.data.id}`
               )
-            onDismiss()
+            ui.clearModal()
           } catch (e) {
             const errors = e.response.data.errors
             const userErrors: { name?: string } = {}
             if (errors.includes('ChannelNameInvalid'))
               userErrors.name = 'Invalid Channel Name'
             setErrors(userErrors)
+            ui.clearModal()
           } finally {
             setSubmitting(false)
           }
@@ -79,7 +87,7 @@ export const NewChannel = ({
                 Create
                 <span style={{ float: 'right' }}>
                   <FontAwesomeIcon
-                    onClick={() => onDismiss()}
+                    onClick={() => ui.clearModal()}
                     icon={faTimesCircle}
                   />
                 </span>

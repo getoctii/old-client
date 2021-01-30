@@ -30,6 +30,8 @@
       margin-top: 1rem;
       margin-bottom: 2rem;
       .member {
+        overflow: hidden;
+        width: 100%;
         background-color: var(--neko-settings-card);
         padding: 1rem;
         margin-bottom: 0.25rem;
@@ -57,12 +59,67 @@
             }
           }
         }
+
+        .groups {
+          display: flex;
+          max-width: 100%;
+
+          .overflowGroup {
+            max-width: 100%;
+            overflow: hidden;
+            display: flex;
+            margin-left: 0.5rem;
+            .group {
+              margin-left: 0.5rem;
+              padding: 0.5rem;
+              background: var(--neko-colors-secondary);
+              border-radius: 9px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              max-width: 200px;
+              text-align: center;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              white-space: nowrap;
+            }
+
+            @media (max-width: 1600px) {
+              .group {
+                max-width: 160px;
+              }
+            }
+
+            @media (max-width: 1440px) {
+              .group {
+                max-width: 100px;
+              }
+            }
+          }
+
+          .addGroup {
+            background: var(--neko-colors-primary);
+            margin-left: 0.5rem;
+            border-radius: 9px;
+            height: 2.2125rem;
+            width: 2.2125rem;
+
+            &.noGroups {
+              width: auto;
+              margin-left: 1rem;
+            }
+          }
+
+          @media (max-width: 1280px) {
+            display: none;
+          }
+        }
         .info {
+          width: 180px;
           svg {
             margin-left: 0.25rem;
             color: var(--neko-text-href);
           }
-          overflow: hidden;
         }
 
         h4 {

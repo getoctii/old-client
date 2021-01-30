@@ -20,18 +20,52 @@ import Loader from '../components/Loader'
 import { createConversation } from '../conversation/remote'
 import { getUser, ParticipantsResponse } from '../user/remote'
 import styles from './Members.module.scss'
-import { getCommunity, getMembers, Member as MemberType } from './remote'
+import {
+  getCommunity,
+  getGroup,
+  getMembers,
+  getMember,
+  MemberResponse
+} from './remote'
 import Icon from '../user/Icon'
+import { faEllipsisHAlt } from '@fortawesome/pro-duotone-svg-icons'
+import { UI } from '../state/ui'
+import { ModalTypes, Permissions } from '../utils/constants'
+import { Permission } from '../utils/permissions'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
 
+const Group = ({ id }: { id: string }) => {
+  const { token } = Auth.useContainer()
+  const group = useQuery(['group', id, token], getGroup)
+  return (
+    <div
+      className={styles.group}
+      style={{ background: `${group.data?.color}` }}
+    >
+      {group.data?.name}
+    </div>
+  )
+}
+
 const Member = memo(
-  ({ member, owner }: { member: MemberType; owner?: string }) => {
+  ({
+    memberObj,
+    owner,
+    communityID
+  }: {
+    memberObj: MemberResponse
+    owner?: string
+    communityID?: string
+  }) => {
     const isMobile = useMedia('(max-width: 740px)')
     const { id, token } = Auth.useContainer()
     const history = useHistory()
-    const user = useQuery(['users', member.user_id, token], getUser)
+    const ui = UI.useContainer()
+    const member = useQuery(['member', memberObj.id, token], getMember)
+    const user = useQuery(['users', memberObj.user_id, token], getUser)
+    const { hasPermissions } = Permission.useContainer()
     return (
       <motion.div
         className={styles.member}
@@ -55,7 +89,44 @@ const Member = memo(
               : user.data?.discriminator.toString().padStart(4, '0')}
             {user.data?.id === owner && <FontAwesomeIcon icon={faCrown} />}
           </h4>
-          <time>{dayjs.utc(member.created_at).local().calendar()}</time>
+          <time>{dayjs.utc(member?.data?.created_at).local().calendar()}</time>
+        </div>
+        <div className={styles.groups}>
+          {member?.data && member.data.groups.length > 0 && (
+            <div className={styles.overflowGroup}>
+              {member.data.groups.map((group) => (
+                <Group id={group} key={group} />
+              ))}
+            </div>
+          )}
+
+          {hasPermissions([Permissions.MANAGE_GROUPS]) && (
+            <Button
+              type='button'
+              className={`${styles.addGroup} ${
+                member.data && member.data.groups.length < 1
+                  ? styles.noGroups
+                  : ''
+              }`}
+              onClick={() => {
+                if (!communityID) return
+                ui.setModal({
+                  name: ModalTypes.MANAGE_MEMBER_GROUPS,
+                  props: {
+                    memberID: memberObj.id,
+                    userID: memberObj.user_id,
+                    communityID: communityID
+                  }
+                })
+              }}
+            >
+              {member.data && member.data.groups.length < 1 ? (
+                'Add Group'
+              ) : (
+                <FontAwesomeIcon icon={faEllipsisHAlt} />
+              )}
+            </Button>
+          )}
         </div>
         {!isMobile && (
           <div className={styles.actions}>
@@ -70,12 +141,12 @@ const Member = memo(
                   ]) as ParticipantsResponse
                   const participant = cache?.find((participant) =>
                     participant.conversation.participants.includes(
-                      member.user_id
+                      memberObj.user_id
                     )
                   )
                   if (!cache || !participant) {
                     const result = await createConversation(token!, {
-                      recipient: member.user_id
+                      recipient: memberObj.user_id
                     })
                     if (result.id) history.push(`/conversations/${result.id}`)
                   } else {
@@ -107,15 +178,14 @@ export const Members = () => {
   const { token } = Auth.useContainer()
   const { id } = useParams<{ id: string }>()
   const community = useQuery(['community', id, token], getCommunity)
-  const { data, canFetchMore, fetchMore } = useInfiniteQuery<MemberType[], any>(
-    ['members', id, token],
-    getMembers,
-    {
-      getFetchMore: (last) => {
-        return last.length < 25 ? undefined : last[last.length - 1]?.id
-      }
+  const { data, canFetchMore, fetchMore } = useInfiniteQuery<
+    MemberResponse[],
+    any
+  >(['members', id, token], getMembers, {
+    getFetchMore: (last) => {
+      return last.length < 25 ? undefined : last[last.length - 1]?.id
     }
-  )
+  })
   const members = useMemo(() => data?.flat() || [], [data])
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
@@ -159,7 +229,8 @@ export const Members = () => {
                     (member) =>
                       member && (
                         <Member
-                          member={member}
+                          communityID={community.data?.id}
+                          memberObj={member}
                           owner={community.data?.owner_id}
                           key={member.id}
                         />

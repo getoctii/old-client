@@ -4,11 +4,15 @@ export const withMentions = (editor: Editor) => {
   const { isInline, isVoid } = editor
 
   editor.isInline = (element) => {
-    return element.type === 'user' || element.type === 'channel' ? true : isInline(element)
+    return element.type === 'user' || element.type === 'channel'
+      ? true
+      : isInline(element)
   }
 
   editor.isVoid = (element) => {
-    return element.type === 'user' || element.type === 'channel' ? true : isVoid(element)
+    return element.type === 'user' || element.type === 'channel'
+      ? true
+      : isVoid(element)
   }
 
   return editor

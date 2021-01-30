@@ -368,18 +368,18 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
 export const General = () => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
-  const community = useQuery(
+  const { data: community } = useQuery(
     ['community', match?.params.id, auth.token],
     getCommunity
   )
-  if (!community?.data) return <></>
+  if (!community) return <></>
   return (
     <div className={styles.general}>
       <div className={styles.basics}>
-        <Personalization community={community.data} />
-        <SystemChannel community={community.data} />
+        <Personalization community={community} />
+        <SystemChannel community={community} />
       </div>
-      <DangerZone community={community.data} />
+      {community?.owner_id === auth.id && <DangerZone community={community} />}
     </div>
   )
 }

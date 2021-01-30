@@ -25,7 +25,7 @@ const { Keyboard } = Plugins
 
 dayjs.extend(dayjsUTC)
 
-const View = ({
+const MessagesView = ({
   channel,
   autoRead
 }: {
@@ -254,7 +254,7 @@ const View = ({
   )
 }
 
-const Placeholder = () => {
+const MessagesPlaceholder = () => {
   const length = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
   return (
     <div className={styles.messages}>
@@ -265,6 +265,6 @@ const Placeholder = () => {
   )
 }
 
-const Messages = { View, Placeholder }
+const Messages = { View: MessagesView, Placeholder: MessagesPlaceholder }
 
 export default Messages
