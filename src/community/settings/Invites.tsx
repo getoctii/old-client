@@ -102,7 +102,7 @@ export const Invites = () => {
               <div className={styles.body}>
                 <AnimatePresence>
                   {invites.data.map(
-                    (invite) => invite && <Invite {...invite} />
+                    (invite) => invite && <Invite key={invite.id} {...invite} />
                   )}
                 </AnimatePresence>
               </div>

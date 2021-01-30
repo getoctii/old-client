@@ -1,0 +1,190 @@
+.draggable {
+  outline: none;
+
+  &:first-child {
+    .card {
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
+    }
+  }
+
+  &:last-child {
+    .card {
+      border-bottom-left-radius: 14px;
+      border-bottom-right-radius: 14px;
+    }
+  }
+
+  &.dragging {
+    .card {
+      border-radius: 14px;
+    }
+    .permissions {
+      display: none;
+    }
+  }
+}
+
+.permissions {
+  margin-bottom: 1rem;
+  background-color: var(--neko-settings-card);
+  padding: 1rem;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  column-gap: 15px;
+  position: relative;
+
+  .action {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 8px;
+
+    .save {
+      background: var(--neko-colors-primary);
+    }
+
+    .discard {
+      background: var(--neko-colors-secondary);
+    }
+  }
+
+  .list {
+    margin-top: 0.4rem;
+    padding: 0;
+
+    li {
+      margin-bottom: 0.5rem;
+      border-radius: 11px;
+      padding: 0.7rem;
+      background: var(--neko-settings-background);
+      list-style: none;
+      width: 100%;
+      display: flex;
+      font-size: 0.8rem;
+      font-weight: 500;
+      align-items: center;
+
+      svg {
+        font-size: 1.8rem;
+        margin-left: auto;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  @media (min-width: 740px) and (max-width: 1079px) {
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+
+    div {
+      &:last-child {
+        margin-top: 1rem;
+      }
+    }
+  }
+
+  h5 {
+    font-weight: 500;
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+.card {
+
+  &.edit {
+      border-bottom-left-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+
+  }
+
+  .actions {
+    display: grid;
+    gap: 5px;
+    margin-left: auto;
+
+    height: 46px;
+    button {
+      width: 46px;
+      background: var(--neko-colors-danger);
+      &:last-child {
+        background: var(--neko-colors-secondary);
+      }
+    }
+  }
+
+  background-color: var(--neko-settings-card);
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+
+  .info {
+    font-size: 1.5rem;
+
+    span {
+      font-size: 1.25rem;
+      font-weight: 700;
+
+      cursor: text;
+    }
+    display: flex;
+    align-items: center;
+    svg {
+      margin-left: 0.25rem;
+      color: var(--neko-text-href);
+      cursor: pointer;
+    }
+    overflow: hidden;
+    .changeName {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+  }
+  .icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    min-height: 45px;
+    border-radius: 10px;
+    position: relative;
+    margin-right: 0.5rem;
+    background: var(--neko-colors-primary);
+  }
+  h4 {
+    margin: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  time {
+    font-size: 0.8rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  &.base {
+    border-radius: 14px;
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--neko-colors-secondary);
+    }
+  }
+}
+

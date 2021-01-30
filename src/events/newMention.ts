@@ -11,7 +11,13 @@ const useNewMention = (eventSource: EventSourcePolyfill | null) => {
   useEffect(() => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
-      const mention = JSON.parse(e.data)
+      const event = JSON.parse(e.data) as {
+        id: string
+        user_id: string
+        message_id: string
+        read: boolean
+        channel_id: string
+      }
       log('Events', 'purple', 'NEW_MENTION')
       const initial: Mentions | undefined = queryCache.getQueryData([
         'mentions',
@@ -21,10 +27,7 @@ const useNewMention = (eventSource: EventSourcePolyfill | null) => {
       if (initial) {
         queryCache.setQueryData(['mentions', id, token], {
           ...initial,
-          [mention.channel_id]: [
-            ...(initial[mention.channel_id] ?? []),
-            mention
-          ]
+          [event.channel_id]: [...(initial[event.channel_id] ?? []), event]
         })
       }
     }

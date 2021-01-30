@@ -18,6 +18,12 @@
 
   h1 {
     text-align: center;
+    margin-top: 0;
+  }
+
+  h3 {
+    text-align: center;
+    max-width: 220px;
   }
   .video {
     width: 75%;
@@ -29,6 +35,10 @@
     background: var(--neko-colors-primary);
   }
 
+  svg {
+    margin-bottom: 1rem;
+    color: var(--neko-text-warning);
+  }
   iframe {
     border-radius: 15px;
   }

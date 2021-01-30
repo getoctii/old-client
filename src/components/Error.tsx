@@ -7,8 +7,17 @@ import { AxiosError } from 'axios'
 import { Plugins } from '@capacitor/core'
 import { queryCache } from 'react-query'
 
-const Error = ({ resetErrorBoundary, error }: { resetErrorBoundary: () => void, error: AxiosError }) => {
-  const isInvalidAuth = error?.isAxiosError && error.response?.status === 403 && error.response?.data.errors?.includes('InvalidAuthorization')
+const Error = ({
+  resetErrorBoundary,
+  error
+}: {
+  resetErrorBoundary: () => void
+  error: AxiosError
+}) => {
+  const isInvalidAuth =
+    error?.isAxiosError &&
+    error.response?.status === 403 &&
+    error.response?.data.errors?.includes('InvalidAuthorization')
   if (isInvalidAuth) {
     return (
       <div className={styles.error}>
@@ -26,13 +35,17 @@ const Error = ({ resetErrorBoundary, error }: { resetErrorBoundary: () => void, 
           Logout
         </Button>
       </div>
-
     )
   }
   return (
     <div className={styles.error}>
       <FontAwesomeIcon icon={faPoo} size='4x' />
-      <h1>{error?.isAxiosError ? error.response?.status || 'Beep Boop!' : 'Beep Boop!'}</h1>
+      <h1>
+        {error?.isAxiosError
+          ? error.response?.status ||
+            (error.message === 'Network Error' ? 'Gateway Down!' : 'Beep Boop!')
+          : 'Beep Boop!'}
+      </h1>
       <p>Beep Boooop Beeep Beeep Booooop Beep Boop Bep</p>
       <Button type='button' onClick={() => resetErrorBoundary()}>
         Try again

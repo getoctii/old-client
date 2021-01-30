@@ -1,10 +1,18 @@
-import { clientGateway } from '../utils/constants'
+import { clientGateway, Permissions } from '../utils/constants'
+import { queryCache } from 'react-query'
 
-export interface Member {
+export const fetchManyGroups = (_: string, ids: string[], token: string) => {
+  return Promise.all(
+    ids.map((id) => queryCache.fetchQuery(['group', id, token], getGroup))
+  )
+}
+
+export interface MemberResponse {
   id: string
   user_id: string
   created_at: string
   updated_at: string
+  groups: string[]
 }
 
 export interface CommunityResponse {
@@ -15,6 +23,7 @@ export interface CommunityResponse {
   owner_id?: string
   channels: string[]
   system_channel_id?: string
+  base_permissions?: Permissions[]
 }
 
 export interface ChannelResponse {
@@ -40,6 +49,14 @@ export interface InviteResponse {
   }
 }
 
+export interface GroupResponse {
+  id: string
+  name: string
+  color: string
+  order?: number
+  permissions: Permissions[]
+}
+
 export const getCommunity = async (
   _: string,
   communityID: string,
@@ -47,6 +64,28 @@ export const getCommunity = async (
 ) =>
   (
     await clientGateway.get<CommunityResponse>(`/communities/${communityID}`, {
+      headers: {
+        Authorization: token
+      }
+    })
+  ).data
+
+export const getGroups = async (
+  _: string,
+  communityID: string,
+  token: string
+) =>
+  (
+    await clientGateway.get<string[]>(`/communities/${communityID}/groups`, {
+      headers: {
+        Authorization: token
+      }
+    })
+  ).data?.reverse() ?? []
+
+export const getGroup = async (_: string, groupID: string, token: string) =>
+  (
+    await clientGateway.get<GroupResponse>(`/groups/${groupID}`, {
       headers: {
         Authorization: token
       }
@@ -85,6 +124,28 @@ export const getInvites = async (
     )
   ).data
 
+export const getMember = async (_: string, memberID: string, token: string) =>
+  (
+    await clientGateway.get<MemberResponse>(`/members/${memberID}`, {
+      headers: { Authorization: token }
+    })
+  ).data
+
+export const getMemberByUserID = async (
+  _: string,
+  communityID: string,
+  userID: string,
+  token: string
+) =>
+  (
+    await clientGateway.get<MemberResponse>(
+      `/communities/${communityID}/members/${userID}`,
+      {
+        headers: { Authorization: token }
+      }
+    )
+  ).data
+
 export const getMembers = async (
   _: string,
   communityID: string,
@@ -92,8 +153,11 @@ export const getMembers = async (
   lastMemberID: string
 ) =>
   (
-    await clientGateway.get<Member[]>(`/communities/${communityID}/members`, {
-      headers: { Authorization: token },
-      params: { last_member_id: lastMemberID }
-    })
+    await clientGateway.get<MemberResponse[]>(
+      `/communities/${communityID}/members`,
+      {
+        headers: { Authorization: token },
+        params: { last_member_id: lastMemberID }
+      }
+    )
   ).data

@@ -17,7 +17,7 @@ const secondsToTimestamp = (seconds: number) => {
     .padStart(2, '0')}`
 }
 
-const Embed = ({ url }: { url: string }) => {
+const AudioEmbed = ({ url }: { url: string }) => {
   const [audio, state, controls] = useAudio({
     src: url
   })
@@ -48,7 +48,7 @@ const Embed = ({ url }: { url: string }) => {
 }
 
 const Audio = {
-  Embed,
+  Embed: AudioEmbed,
   isCovfefe
 }
 

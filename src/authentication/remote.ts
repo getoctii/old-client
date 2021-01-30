@@ -5,12 +5,7 @@ type LoginResponse = {
 }
 
 export const login = async (values: { email: string; password: string }) =>
-  (
-    await clientGateway.post<LoginResponse>(
-      '/users/login',
-      values
-    )
-  ).data
+  (await clientGateway.post<LoginResponse>('/users/login', values)).data
 
 type RegisterResponse = {
   authorization: string
@@ -21,10 +16,4 @@ export const register = async (values: {
   username: string
   password: string
   betaCode: string
-}) =>
-  (
-    await clientGateway.post<RegisterResponse>(
-      '/users',
-      values
-    )
-  ).data
+}) => (await clientGateway.post<RegisterResponse>('/users', values)).data

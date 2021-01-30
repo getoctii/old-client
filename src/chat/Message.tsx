@@ -11,7 +11,12 @@ import {
 import { Plugins } from '@capacitor/core'
 import { Auth } from '../authentication/state'
 import { useMutation, useQuery } from 'react-query'
-import { clientGateway, MessageTypes, ModalTypes } from '../utils/constants'
+import {
+  clientGateway,
+  MessageTypes,
+  ModalTypes,
+  Permissions
+} from '../utils/constants'
 import { getUser } from '../user/remote'
 import { Measure } from './embeds/Measure'
 import Context from '../components/Context'
@@ -21,10 +26,10 @@ import useMarkdown from '@innatical/markdown'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCatSpace,
+  faPaintBrush,
   faTimesCircle,
   faUserNinja,
-  faUserShield,
-  faPaintBrush
+  faUserShield
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
@@ -38,6 +43,7 @@ import { withMentions } from '../utils/slate'
 import { createEditor } from 'slate'
 import Invite from './embeds/Invite'
 import Mention from './Mention'
+import { Permission } from '../utils/permissions'
 
 const { Clipboard } = Plugins
 dayjs.extend(dayjsUTC)
@@ -93,7 +99,7 @@ const EditBox = ({
   )
 }
 
-const View = memo(
+const MessageView = memo(
   ({
     id,
     authorID,
@@ -115,6 +121,7 @@ const View = memo(
     const uiStore = UI.useContainer()
     const { editingMessageID, setEditingMessageID } = Chat.useContainer()
     const auth = Auth.useContainer()
+    const { hasPermissions } = Permission.useContainer()
     const [deleteMessage] = useMutation(
       async () =>
         (
@@ -160,6 +167,8 @@ const View = memo(
           danger: false,
           onClick: () => setEditingMessageID(id)
         })
+      }
+      if (hasPermissions([Permissions.MANAGE_MESSAGES])) {
         items.push({
           text: 'Delete Message',
           icon: faTrashAlt,
@@ -186,7 +195,8 @@ const View = memo(
       id,
       uiStore,
       auth.id,
-      setEditingMessageID
+      setEditingMessageID,
+      hasPermissions
     ])
     const output = useMarkdown(content, {
       bold: (str, key) => <strong key={key}>{str}</strong>,
@@ -357,7 +367,7 @@ const View = memo(
   }
 )
 
-const Placeholder = () => {
+const MessagePlaceholder = () => {
   const username = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
   const message = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
   const isPrimary = useMemo(() => Math.floor(Math.random() * 1000000) + 1, [])
@@ -388,6 +398,6 @@ const Placeholder = () => {
   )
 }
 
-const Message = { View, Placeholder, Mention }
+const Message = { View: MessageView, Placeholder: MessagePlaceholder, Mention }
 
 export default Message

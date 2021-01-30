@@ -10,13 +10,17 @@ const useNewChannel = (eventSource: EventSourcePolyfill | null) => {
   useEffect(() => {
     if (!eventSource) return
     const handler = (e: MessageEvent) => {
-      const channel = JSON.parse(e.data)
+      const event = JSON.parse(e.data) as {
+        id: string
+        community_id: string
+        name: string
+      }
       log('Events', 'purple', 'NEW_CHANNEL')
       queryCache.setQueryData(
-        ['community', channel.community_id, token],
+        ['community', event.community_id, token],
         (initial: any) => {
           if (initial) {
-            initial.channels.push(channel.id)
+            initial.channels.push(event.id)
             return initial
           } else return initial
         }
@@ -24,7 +28,7 @@ const useNewChannel = (eventSource: EventSourcePolyfill | null) => {
 
       queryCache.setQueryData(['unreads', id, token], (initial: any) => ({
         ...initial,
-        [channel.id]: {}
+        [event.id]: {}
       }))
     }
 

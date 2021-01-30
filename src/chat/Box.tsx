@@ -33,7 +33,13 @@ const adjectives = [
   ' about Innatical'
 ]
 
-const View = ({ channelID }: { channelID: string }) => {
+const BoxView = ({
+  channelID,
+  hasPermission
+}: {
+  channelID: string
+  hasPermission: boolean
+}) => {
   const { sendMessage, uploadDetails, setUploadDetails } = Chat.useContainer()
   const { token } = Auth.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
@@ -49,7 +55,7 @@ const View = ({ channelID }: { channelID: string }) => {
   )
   return (
     <div>
-      <Suspense fallback={<Placeholder />}>
+      <Suspense fallback={<BoxPlaceholder />}>
         {uploadDetails && !emojiPicker && (
           <div className={styles.uploadPicker}>
             <Upload
@@ -84,92 +90,98 @@ const View = ({ channelID }: { channelID: string }) => {
           </div>
         )}
 
-        <Editor
-          editor={editor}
-          emptyEditor={emptyEditor}
-          newLines
-          className={styles.box}
-          mentionsClassName={styles.mentionsWrapper}
-          inputClassName={styles.input}
-          typingClassName={styles.typingIndicator}
-          placeholder={
-            <span className={styles.ph}>Say something{adjective}...</span>
-          }
-          userMentions
-          onTyping={async () => {
-            if (!token) return
-            await postTyping(channelID, token)
-          }}
-          onEnter={async (content) => {
-            if (content !== '' || uploadDetails) {
-              if (uploadDetails) {
-                setUploadDetails({
-                  status: 'uploading',
-                  file: uploadDetails.file
-                })
-                const url = await uploadFile(uploadDetails.file)
-                if (content !== '') {
-                  await sendMessage(`${content}\n${url}`)
-                } else {
-                  await sendMessage(url)
-                }
-                setUploadDetails(null)
-              } else {
-                await sendMessage(content)
-              }
+        {!!hasPermission ? (
+          <Editor
+            editor={editor}
+            emptyEditor={emptyEditor}
+            newLines
+            className={styles.box}
+            mentionsClassName={styles.mentionsWrapper}
+            inputClassName={styles.input}
+            typingClassName={styles.typingIndicator}
+            placeholder={
+              <span className={styles.ph}>Say something{adjective}...</span>
             }
-          }}
-        >
-          <div className={styles.buttons}>
-            {!isMobile && (
-              <Button
-                type='button'
-                onClick={() => setEmojiPicker(!emojiPicker)}
-              >
-                <FontAwesomeIcon icon={faSmileWink} />
-              </Button>
-            )}
-
-            <Button
-              type='button'
-              onClick={() => {
-                if (!!uploadDetails && emojiPicker) setEmojiPicker(false)
-                else if (!!uploadDetails) {
-                  if (uploadInput.current) uploadInput.current.value = ''
+            userMentions
+            onTyping={async () => {
+              if (!token) return
+              await postTyping(channelID, token)
+            }}
+            onEnter={async (content) => {
+              if (content !== '' || uploadDetails) {
+                if (uploadDetails) {
+                  setUploadDetails({
+                    status: 'uploading',
+                    file: uploadDetails.file
+                  })
+                  const url = await uploadFile(uploadDetails.file)
+                  if (content !== '') {
+                    await sendMessage(`${content}\n${url}`)
+                  } else {
+                    await sendMessage(url)
+                  }
                   setUploadDetails(null)
                 } else {
-                  uploadInput.current?.click()
+                  await sendMessage(content)
                 }
-              }}
-            >
-              <FontAwesomeIcon
-                icon={uploadDetails && !emojiPicker ? faTimes : faFileUpload}
-              />
-              <input
-                ref={uploadInput}
-                className={styles.uploadInput}
-                type='file'
-                accept='.jpg, .png, .jpeg, .gif'
-                onChange={async (event) => {
-                  if (!token || !event.target.files?.item(0)) return
-                  setUploadDetails({
-                    status: 'pending',
-                    file: event.target.files.item(0) as File
-                  })
-                }}
-              />
-              {uploadDetails && emojiPicker && (
-                <div className={`${styles.badge}`} />
+              }
+            }}
+          >
+            <div className={styles.buttons}>
+              {!isMobile && (
+                <Button
+                  type='button'
+                  onClick={() => setEmojiPicker(!emojiPicker)}
+                >
+                  <FontAwesomeIcon icon={faSmileWink} />
+                </Button>
               )}
-            </Button>
+
+              <Button
+                type='button'
+                onClick={() => {
+                  if (!!uploadDetails && emojiPicker) setEmojiPicker(false)
+                  else if (!!uploadDetails) {
+                    if (uploadInput.current) uploadInput.current.value = ''
+                    setUploadDetails(null)
+                  } else {
+                    uploadInput.current?.click()
+                  }
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={uploadDetails && !emojiPicker ? faTimes : faFileUpload}
+                />
+                <input
+                  ref={uploadInput}
+                  className={styles.uploadInput}
+                  type='file'
+                  accept='.jpg, .png, .jpeg, .gif'
+                  onChange={async (event) => {
+                    if (!token || !event.target.files?.item(0)) return
+                    setUploadDetails({
+                      status: 'pending',
+                      file: event.target.files.item(0) as File
+                    })
+                  }}
+                />
+                {uploadDetails && emojiPicker && (
+                  <div className={`${styles.badge}`} />
+                )}
+              </Button>
+            </div>
+          </Editor>
+        ) : (
+          <div className={styles.boxNoSend}>
+            Sending Messages is disabled for this community!
           </div>
-        </Editor>
+        )}
       </Suspense>
     </div>
   )
 }
 
-const Placeholder = () => {
+const BoxPlaceholder = () => {
   return (
     <div className={styles.placeholder}>
       <div className={styles.input} />
@@ -179,6 +191,6 @@ const Placeholder = () => {
   )
 }
 
-const Box = { View, Placeholder }
+const Box = { View: BoxView, Placeholder: BoxPlaceholder }
 
 export default Box

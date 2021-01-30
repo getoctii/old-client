@@ -56,9 +56,9 @@ const AddParticipant = ({
                   history.push(`/conversations/${result.id}`)
                   await clientGateway.post(
                     `/conversations/${result.id}`,
-                    new URLSearchParams({
+                    {
                       recipient: searchedUser.id
-                    }),
+                    },
                     { headers: { Authorization: token } }
                   )
                 }
@@ -67,9 +67,9 @@ const AddParticipant = ({
               } else if (groupID) {
                 await clientGateway.post(
                   `/conversations/${groupID}`,
-                  new URLSearchParams({
+                  {
                     recipient: searchedUser.id
-                  }),
+                  },
                   { headers: { Authorization: token } }
                 )
                 resetForm()

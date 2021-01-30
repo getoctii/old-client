@@ -35,11 +35,9 @@ const createConversation = async (
   values: { recipient: string }
 ) =>
   (
-    await clientGateway.post<ConversationResponse>(
-      '/conversations',
-      values,
-      { headers: { Authorization: token } }
-    )
+    await clientGateway.post<ConversationResponse>('/conversations', values, {
+      headers: { Authorization: token }
+    })
   ).data
 
 const AddFriend = () => {
