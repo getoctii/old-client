@@ -58,6 +58,7 @@ export const useHasPermission = () => {
           group.permissions.find(
             (permission) =>
               permissions.includes(permission) ||
+              community?.base_permissions?.includes(permission) ||
               (!overrides &&
                 (permission === Permissions.ADMINISTRATOR ||
                   permission === Permissions.OWNER))
@@ -65,7 +66,7 @@ export const useHasPermission = () => {
         ) || community?.owner_id === auth.id
       )
     },
-    [memberGroups, community?.owner_id, auth.id]
+    [memberGroups, community, auth.id]
   )
 
   const highestOrder = useMemo(() => getHighestOrder(memberGroups ?? []), [
