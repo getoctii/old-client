@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useState } from 'react'
+import React, { memo, Suspense, useCallback, useMemo, useState } from 'react'
 import { Editable, Slate, withReact } from 'slate-react'
 import styles from './Group.module.scss'
 import {
@@ -23,7 +23,7 @@ import * as NewGroup from './NewGroup'
 import Button from '../../../components/Button'
 import { useMedia, useSet } from 'react-use'
 import { Draggable } from '@react-forked/dnd'
-import { useQuery } from 'react-query'
+import { queryCache, useQuery } from 'react-query'
 import { faUsers } from '@fortawesome/pro-duotone-svg-icons'
 import { Permission } from '../../../utils/permissions'
 
@@ -154,6 +154,9 @@ const PermissionsEditor = ({
                   headers: { Authorization: token }
                 }
               )
+              if (base) {
+                await queryCache.invalidateQueries(['community', id])
+              }
             }}
             className={styles.save}
           >
@@ -179,8 +182,10 @@ const DraggableGroup = memo(({ id, index }: { id: string; index: number }) => {
         {...provided.dragHandleProps}
         style={provided.draggableProps.style}
       >
-        <GroupCard id={id} base={false} />
-        {provided.placeholder}
+        <Suspense fallback={<Group.Placeholder />}>
+          <GroupCard id={id} base={false} />
+          {provided.placeholder}
+        </Suspense>
       </div>
     ),
     [id]
@@ -261,6 +266,20 @@ const GroupCard = ({ id, base }: { id?: string; base?: boolean }) => {
   )
 }
 
-const Group = { Draggable: DraggableGroup, Card: GroupCard }
+const GroupPlaceholder = ({ className }: { className?: string }) => {
+  const name = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
+  return (
+    <div className={`${styles.placeholder} ${className ? className : ''}`}>
+      <div className={styles.icon} />
+      <div className={styles.name} style={{ width: `${name}rem` }} />
+    </div>
+  )
+}
+
+const Group = {
+  Draggable: DraggableGroup,
+  Card: GroupCard,
+  Placeholder: GroupPlaceholder
+}
 
 export default Group

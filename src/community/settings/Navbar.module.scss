@@ -30,3 +30,26 @@
     }
   }
 }
+
+.placeholder {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 10rem));
+  grid-gap: 0.8rem;
+  padding-left: 0;
+  margin: 1rem 0 0;
+
+  .item {
+    width: 10rem;
+    background: var(--neko-settings-card);
+    height: 2.9rem;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 740px) {
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+
+    .item {
+      width: 100%;
+    }
+  }
+}

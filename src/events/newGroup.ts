@@ -4,6 +4,7 @@ import { queryCache } from 'react-query'
 import { Events } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { log } from '../utils/logging'
+import { MembersResponse } from '../user/remote'
 
 const useNewGroup = (eventSource: EventSourcePolyfill | null) => {
   const { token, id } = Auth.useContainer()
@@ -19,9 +20,16 @@ const useNewGroup = (eventSource: EventSourcePolyfill | null) => {
         ['groups', event.community_id, token],
         (initial) => (initial ? [...initial, event.id] : [event.id])
       )
-      await queryCache.invalidateQueries(
-        (query) => query.queryKey[0] === 'memberGroups'
+      const communities = queryCache.getQueryData<MembersResponse>([
+        'communities',
+        id,
+        token
+      ])
+      const member = communities?.find(
+        (m) => m.community.id === event.community_id
       )
+      if (!!member?.id)
+        await queryCache.invalidateQueries(['member', member.id, token])
     }
 
     eventSource.addEventListener(Events.NEW_GROUP, handler)

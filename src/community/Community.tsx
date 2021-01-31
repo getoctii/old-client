@@ -8,12 +8,12 @@ import Channels from './sidebar/Sidebar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/pro-solid-svg-icons'
 import Button from '../components/Button'
-import { Settings } from './settings/Settings'
+import Settings from './settings/Settings'
 import { CommunityResponse, getCommunity } from './remote'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
 import Sidebar from '../sidebar/Sidebar'
-import { Members } from './Members'
+import Members from './Members'
 import { ModalTypes, Permissions } from '../utils/constants'
 import { Helmet } from 'react-helmet-async'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -107,10 +107,20 @@ const Channel = () => {
 
 const CommunityPlaceholder = () => {
   const isMobile = useMedia('(max-width: 740px)')
+  const matchTab = useRouteMatch<{ id: string; tab: string }>(
+    '/communities/:id/:tab'
+  )
   return (
     <>
       <Channels.Placeholder />
-      {!isMobile && <Chat.Placeholder />}
+      {!isMobile &&
+        (matchTab?.params.tab === 'settings' ? (
+          <Settings.Placeholder />
+        ) : matchTab?.params.tab === 'members' ? (
+          <Members.Placeholder />
+        ) : (
+          <Chat.Placeholder />
+        ))}
     </>
   )
 }
@@ -118,7 +128,9 @@ const CommunityPlaceholder = () => {
 const CommunityView = () => {
   const { path } = useRouteMatch()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
-  const matchTab = useRouteMatch<{ id: string }>('/communities/:id/:tab')
+  const matchTab = useRouteMatch<{ id: string; tab: string }>(
+    '/communities/:id/:tab'
+  )
   const isMobile = useMedia('(max-width: 740px)')
 
   const { community, hasPermissions } = Permission.useContainer()
@@ -145,16 +157,26 @@ const CommunityView = () => {
           ) : (
             <></>
           )}
-          <Suspense fallback={<Chat.Placeholder />}>
+          <Suspense
+            fallback={
+              matchTab?.params.tab === 'settings' ? (
+                <Settings.Placeholder />
+              ) : matchTab?.params.tab === 'members' ? (
+                <Members.Placeholder />
+              ) : (
+                <Chat.Placeholder />
+              )
+            }
+          >
             <Switch>
               <PrivateRoute
                 path={`${path}/settings/:tab?`}
-                component={Settings}
+                component={Settings.Router}
                 exact
               />
               <PrivateRoute
                 path={`${path}/members`}
-                component={Members}
+                component={Members.View}
                 exact
               />
               <PrivateRoute
@@ -185,7 +207,9 @@ const CommunityProviders = () => {
 }
 
 const Router = () => {
-  const matchTab = useRouteMatch<{ id: string }>('/communities/:id/:tab')
+  const matchTab = useRouteMatch<{ id: string; tab: string }>(
+    '/communities/:id/:tab'
+  )
   const isMobile = useMedia('(max-width: 740px)')
   return (
     <>
@@ -203,7 +227,4 @@ const Router = () => {
     </>
   )
 }
-
-// Router.whyDidYouRender = true
-
 export default Router

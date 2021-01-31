@@ -4,7 +4,7 @@ import styles from './Navbar.module.scss'
 import { Permission } from '../../utils/permissions'
 import { Permissions } from '../../utils/constants'
 
-export const Navbar = () => {
+const NavbarView = () => {
   const match = useRouteMatch<{ tab?: string; id: string }>(
     '/communities/:id/settings/:tab?'
   )
@@ -45,3 +45,17 @@ export const Navbar = () => {
     </ul>
   )
 }
+
+const NavbarPlaceholder = () => {
+  return (
+    <div className={styles.placeholder}>
+      <div className={styles.item} />
+      <div className={styles.item} />
+      <div className={styles.item} />
+    </div>
+  )
+}
+
+const Navbar = { Placeholder: NavbarPlaceholder, View: NavbarView }
+
+export default Navbar

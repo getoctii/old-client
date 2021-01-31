@@ -2,14 +2,16 @@
   outline: none;
 
   &:first-child {
-    .card {
+    .card,
+    .placeholder {
       border-top-left-radius: 14px;
       border-top-right-radius: 14px;
     }
   }
 
   &:last-child {
-    .card {
+    .card,
+    .placeholder {
       border-bottom-left-radius: 14px;
       border-bottom-right-radius: 14px;
     }
@@ -22,6 +24,30 @@
     .permissions {
       display: none;
     }
+  }
+}
+
+.placeholder {
+  background-color: var(--neko-settings-card);
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  .name {
+    background: var(--neko-settings-background);
+    width: 5rem;
+    border-radius: 5px;
+    height: 1.25rem;
+  }
+  .icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    min-height: 45px;
+    border-radius: 10px;
+    position: relative;
+    margin-right: 0.5rem;
+    background: var(--neko-settings-background);
   }
 }
 
@@ -103,11 +129,9 @@
 }
 
 .card {
-
   &.edit {
-      border-bottom-left-radius: 0 !important;
-      border-bottom-right-radius: 0 !important;
-
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
   }
 
   .actions {
@@ -187,4 +211,3 @@
     }
   }
 }
-

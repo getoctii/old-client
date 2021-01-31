@@ -1,3 +1,26 @@
+.groupsPlaceholder {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+  .cardPlaceholder {
+    &:first-child {
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
+    }
+  }
+
+  .cardPlaceholder {
+    &:last-child {
+      border-bottom-left-radius: 14px;
+      border-bottom-right-radius: 14px;
+    }
+  }
+}
+
+.completelyRounded {
+  border-radius: 14px;
+}
+
 .wrapper {
   height: 100%;
   width: 100%;
@@ -12,7 +35,7 @@
     }
     .body {
       margin-top: 1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
     }
     .header {
       display: flex;
@@ -55,6 +78,7 @@
       width: 100%;
       align-items: center;
       padding: 2rem;
+      margin-bottom: 1rem;
       border-radius: 10px;
       margin-top: 1rem;
       background: var(--neko-settings-card);
