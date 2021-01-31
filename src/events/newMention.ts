@@ -37,7 +37,7 @@ const useNewMention = (eventSource: EventSourcePolyfill | null) => {
     return () => {
       eventSource.removeEventListener(Events.NEW_MENTION, handler)
     }
-  })
+  }, [eventSource, id, token])
 }
 
 export default useNewMention

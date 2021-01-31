@@ -89,11 +89,11 @@ const PermissionsEditor = ({
   permissions: Permissions[]
   base?: boolean
 }) => {
-  const { token } = Auth.useContainer()
+  const auth = Auth.useContainer()
   const [set, { add, remove, has, reset }] = useSet<Permissions>(
     new Set(permissions ?? [])
   )
-  const { hasPermissions } = Permission.useContainer()
+  const { hasPermissions, community } = Permission.useContainer()
   const serverPermissions = useMemo(() => new Set(permissions ?? []), [
     permissions
   ])
@@ -111,26 +111,33 @@ const PermissionsEditor = ({
   return (
     <div className={styles.permissions}>
       {Object.entries(PermissionsGroups).map(([group, permissions]) => (
-        <div key={group}>
-          {/* @ts-ignore */}
-          <h5>{GroupNames[+group]}</h5>
-          <ul className={styles.list}>
-            {permissions.map(
-              (permission) =>
-                hasPermissions([permission], true) && (
-                  <NewGroup.PermissionToggle
-                    key={permission}
-                    name={PermissionNames[permission]}
-                    toggled={has(permission)}
-                    type={+group}
-                    onToggle={(val) =>
-                      val ? add(permission) : remove(permission)
-                    }
-                  />
-                )
-            )}
-          </ul>
-        </div>
+        <>
+          {hasPermissions(permissions) && (!base || group === '0') && (
+            <div key={group}>
+              {/* @ts-ignore */}
+              <h5>{GroupNames[+group]}</h5>
+              <ul className={styles.list}>
+                {permissions.map(
+                  (permission) =>
+                    ((permission !== Permissions.OWNER &&
+                      hasPermissions([permission])) ||
+                      (permission === Permissions.OWNER &&
+                        community?.owner_id === auth.id)) && (
+                      <NewGroup.PermissionToggle
+                        key={permission}
+                        name={PermissionNames[permission]}
+                        toggled={has(permission)}
+                        type={+group}
+                        onToggle={(val) =>
+                          val ? add(permission) : remove(permission)
+                        }
+                      />
+                    )
+                )}
+              </ul>
+            </div>
+          )}
+        </>
       ))}
 
       {!!showSave && (
@@ -151,7 +158,7 @@ const PermissionsEditor = ({
                   ? { base_permissions: Array.from(set) }
                   : { permissions: Array.from(set) },
                 {
-                  headers: { Authorization: token }
+                  headers: { Authorization: auth.token }
                 }
               )
               if (base) {
@@ -269,7 +276,7 @@ const GroupCard = ({ id, base }: { id?: string; base?: boolean }) => {
 const GroupPlaceholder = ({ className }: { className?: string }) => {
   const name = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
   return (
-    <div className={`${styles.placeholder} ${className ? className : ''}`}>
+    <div className={`${styles.groupPlaceholder} ${className ? className : ''}`}>
       <div className={styles.icon} />
       <div className={styles.name} style={{ width: `${name}rem` }} />
     </div>

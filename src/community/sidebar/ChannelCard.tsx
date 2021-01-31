@@ -20,7 +20,7 @@ import { UI } from '../../state/ui'
 import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
 import { Permission } from '../../utils/permissions'
 
-export const ChannelCard = ({
+const ChannelView = ({
   channelID,
   index
 }: {
@@ -212,3 +212,20 @@ export const ChannelCard = ({
     </Context.Wrapper>
   )
 }
+
+const ChannelCardPlaceholder = ({ index }: { index?: number }) => {
+  const name = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
+  return (
+    <>
+      {index !== 0 && <hr />}
+      <div className={styles.channelPlaceholder}>
+        <div className={styles.icon} />
+        <div className={styles.text} style={{ width: `${name}rem` }} />
+      </div>
+    </>
+  )
+}
+
+const ChannelCard = { View: ChannelView, Placeholder: ChannelCardPlaceholder }
+
+export default ChannelCard

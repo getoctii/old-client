@@ -1,4 +1,4 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik'
+import { ErrorMessage, Field, Form, Formik } from 'formik'
 import React, { useState } from 'react'
 import { BarLoader } from 'react-spinners'
 import Button from '../../../components/Button'
@@ -6,11 +6,11 @@ import Input from '../../../components/Input'
 import Modal from '../../../components/Modal'
 import {
   clientGateway,
+  GroupNames,
   Groups,
   PermissionNames,
-  PermissionsGroups,
   Permissions,
-  GroupNames
+  PermissionsGroups
 } from '../../../utils/constants'
 import styles from './NewGroup.module.scss'
 import { UI } from '../../../state/ui'
@@ -73,11 +73,20 @@ export const PermissionToggle = ({
 
 export const NewPermissionStandalone = () => {
   const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
-  const { token } = Auth.useContainer()
-  const { hasPermissions } = Permission.useContainer()
+  const auth = Auth.useContainer()
+  const { hasPermissions, community } = Permission.useContainer()
   const ui = UI.useContainer()
   const [editing, setEditing] = useState<Groups>()
-  const [set, { add, remove, has }] = useSet<Permissions>(new Set([]))
+  const [set, { add, remove, has }] = useSet<Permissions>(
+    new Set(
+      community?.base_permissions ?? [
+        Permissions.READ_MESSAGES,
+        Permissions.SEND_MESSAGES,
+        Permissions.CREATE_INVITES,
+        Permissions.EMBED_LINKS
+      ]
+    )
+  )
   return (
     <div className={styles.permission}>
       <h3>New Permission Group</h3>
@@ -90,7 +99,7 @@ export const NewPermissionStandalone = () => {
         ) => {
           if (!values?.name) return setFieldError('name', 'Required')
           try {
-            await createPermission(token!, match?.params.id!, {
+            await createPermission(auth.token!, match?.params.id!, {
               name: values.name,
               permissions: Array.from(set) || []
             })
@@ -113,44 +122,51 @@ export const NewPermissionStandalone = () => {
 
             <label className={styles.permissionsGroup}>Permissions</label>
             {Object.entries(PermissionsGroups).map(([group, permissions]) => (
-              <div className={styles.group}>
-                <div
-                  className={`${styles.title} ${
-                    +group === Groups.BASIC
-                      ? styles.basic
-                      : +group === Groups.MOD
-                      ? styles.mod
-                      : styles.admin
-                  }`}
-                  onClick={() =>
-                    setEditing(editing === +group ? undefined : +group)
-                  }
-                >
-                  {/* @ts-ignore */}
-                  {GroupNames[+group]}{' '}
-                  <FontAwesomeIcon
-                    icon={editing === +group ? faTimesCircle : faPencil}
-                  />
-                </div>
+              <>
+                {hasPermissions(permissions) && (
+                  <div className={styles.group}>
+                    <div
+                      className={`${styles.title} ${
+                        +group === Groups.BASIC
+                          ? styles.basic
+                          : +group === Groups.MOD
+                          ? styles.mod
+                          : styles.admin
+                      }`}
+                      onClick={() =>
+                        setEditing(editing === +group ? undefined : +group)
+                      }
+                    >
+                      {/* @ts-ignore */}
+                      {GroupNames[+group]}{' '}
+                      <FontAwesomeIcon
+                        icon={editing === +group ? faTimesCircle : faPencil}
+                      />
+                    </div>
 
-                {editing === +group && (
-                  <ul className={styles.list}>
-                    {permissions.map(
-                      (permission) =>
-                        hasPermissions([permission], true) && (
-                          <PermissionToggle
-                            name={PermissionNames[permission]}
-                            toggled={has(permission)}
-                            type={+group}
-                            onToggle={(val) =>
-                              val ? add(permission) : remove(permission)
-                            }
-                          />
-                        )
+                    {editing === +group && (
+                      <ul className={styles.list}>
+                        {permissions.map(
+                          (permission) =>
+                            ((permission !== Permissions.OWNER &&
+                              hasPermissions([permission])) ||
+                              (permission === Permissions.OWNER &&
+                                community?.owner_id === auth.id)) && (
+                              <PermissionToggle
+                                name={PermissionNames[permission]}
+                                toggled={has(permission)}
+                                type={+group}
+                                onToggle={(val) =>
+                                  val ? add(permission) : remove(permission)
+                                }
+                              />
+                            )
+                        )}
+                      </ul>
                     )}
-                  </ul>
+                  </div>
                 )}
-              </div>
+              </>
             ))}
             <Button disabled={isSubmitting} type='submit'>
               {isSubmitting ? (

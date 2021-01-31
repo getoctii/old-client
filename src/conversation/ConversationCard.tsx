@@ -214,6 +214,7 @@ const ConversationCardView = ({
           match?.params.id === conversationID ? styles.selected : ''
         }`}
         onClick={() => {
+          if (match?.params.id === conversationID) return
           history.push(`/conversations/${conversationID}`)
           setLastConversation(conversationID)
         }}

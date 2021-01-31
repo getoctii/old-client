@@ -4,6 +4,7 @@ import { queryCache } from 'react-query'
 import { Events } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { log } from '../utils/logging'
+import { CommunityResponse } from '../community/remote'
 
 const useNewChannel = (eventSource: EventSourcePolyfill | null) => {
   const { token, id } = Auth.useContainer()
@@ -16,13 +17,25 @@ const useNewChannel = (eventSource: EventSourcePolyfill | null) => {
         name: string
       }
       log('Events', 'purple', 'NEW_CHANNEL')
-      queryCache.setQueryData(
+      queryCache.setQueryData<CommunityResponse>(
         ['community', event.community_id, token],
-        (initial: any) => {
+        (initial) => {
           if (initial) {
-            initial.channels.push(event.id)
-            return initial
-          } else return initial
+            return {
+              ...initial,
+              channels: [...initial.channels, event.id]
+            }
+          } else {
+            return {
+              id: event.community_id,
+              name: 'unknown',
+              icon: '',
+              large: false,
+              base_permissions: [],
+              owner_id: '',
+              channels: [event.id]
+            }
+          }
         }
       )
 

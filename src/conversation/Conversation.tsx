@@ -145,18 +145,29 @@ const ConversationRouter = () => {
     ['participants', id, token],
     getParticipants
   )
+  const filteredParticipants = useMemo(
+    () =>
+      participants?.filter((part) => part.conversation.participants.length > 1),
+    [participants]
+  )
+
+  console.log(filteredParticipants)
+
   const isMobile = useMedia('(max-width: 740px)')
   return (
     <>
-      {(participants?.length ?? 0) > 0 ? (
+      {(filteredParticipants?.length ?? 0) > 0 ? (
         <>
           {!isMobile && <Conversations />}
           <Suspense fallback={<Chat.Placeholder />}>
             <ConversationProvider />
           </Suspense>
         </>
-      ) : (participants?.length ?? 0) < 1 ? (
-        <Empty />
+      ) : (filteredParticipants?.length ?? 0) < 1 ? (
+        <>
+          {isMobile && <Sidebar />}
+          <Empty />
+        </>
       ) : (
         <></>
       )}

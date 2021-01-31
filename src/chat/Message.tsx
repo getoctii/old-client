@@ -75,6 +75,7 @@ const EditBox = ({
   return (
     <div className={styles.innerInput}>
       <Editor
+        id={'editMessage'}
         editor={editor}
         userMentions={false}
         className={styles.editor}
@@ -168,7 +169,10 @@ const MessageView = memo(
           onClick: () => setEditingMessageID(id)
         })
       }
-      if (hasPermissions([Permissions.MANAGE_MESSAGES])) {
+      if (
+        hasPermissions([Permissions.MANAGE_MESSAGES]) ||
+        authorID === auth.id
+      ) {
         items.push({
           text: 'Delete Message',
           icon: faTrashAlt,

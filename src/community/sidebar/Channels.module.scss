@@ -6,13 +6,17 @@
 }
 
 .channels {
-  h4 {
+  .rooms {
     font-size: 1rem;
     font-weight: 400;
     margin: 0.7rem 0 0.3rem;
 
     span {
       float: right;
+    }
+
+    .add {
+      cursor: pointer;
     }
   }
 
@@ -26,11 +30,7 @@
   }
 }
 
-.add {
-  cursor: pointer;
-}
-
-.placeholder {
+.channelsPlaceholder {
   hr {
     margin: 0 0 0 2.6rem;
     border-color: var(--neko-sidebar-seperator);
@@ -43,32 +43,5 @@
     width: 4rem;
     background: var(--neko-sidebar-background);
     border-radius: 5px;
-  }
-  .channel {
-    border: inherit;
-    display: flex;
-    align-items: center;
-
-    padding-top: 0.6rem;
-    padding-bottom: 0.6rem;
-    border: inherit;
-    display: flex;
-    border-radius: 14px;
-    align-items: center;
-
-    .icon {
-      background: var(--neko-sidebar-background);
-      width: 2.25rem;
-      height: 2.25rem;
-      margin-right: 0.5rem;
-      border-radius: 10px;
-    }
-
-    .text {
-      height: 1rem;
-      background: var(--neko-sidebar-background);
-      width: 5rem;
-      border-radius: 4px;
-    }
   }
 }
