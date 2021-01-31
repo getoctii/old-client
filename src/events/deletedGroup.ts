@@ -5,6 +5,7 @@ import { Events } from '../utils/constants'
 import { log } from '../utils/logging'
 import { Auth } from '../authentication/state'
 import { MemberResponse } from '../community/remote'
+import { MembersResponse } from '../user/remote'
 
 const useDeletedGroup = (eventSource: EventSourcePolyfill | null) => {
   const { id, token } = Auth.useContainer()
@@ -21,27 +22,23 @@ const useDeletedGroup = (eventSource: EventSourcePolyfill | null) => {
         (initial) =>
           initial ? initial.filter((group) => group !== event.id) : []
       )
-
-      const member = queryCache.getQueryData<MemberResponse>([
-        'memberByUserID',
-        event.community_id,
+      const communities = queryCache.getQueryData<MembersResponse>([
+        'communities',
         id,
         token
       ])
-      if (member?.groups?.includes(event.id)) {
-        queryCache.setQueryData<MemberResponse>(
-          ['memberByUserID', event.community_id, id, token],
-          {
-            ...member,
-            groups: member.groups.filter((group) => group !== event.id)
-          }
-        )
-        await queryCache.invalidateQueries('group')
-        await queryCache.invalidateQueries([
-          'memberGroups',
-          member.groups,
+      const member = communities?.find(
+        (m) => m.community.id === event.community_id
+      )
+      if (!!member?.id) {
+        const memberGroups = queryCache.getQueryData<MemberResponse>([
+          'member',
+          member.id,
           token
         ])
+        if (memberGroups?.groups?.some((g) => g === event.id)) {
+          await queryCache.invalidateQueries(['member', member.id, token])
+        }
       }
     }
 

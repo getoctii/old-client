@@ -1,11 +1,10 @@
 import { faBoxOpen } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { DragDropContext, Droppable } from '@react-forked/dnd'
-import React, { Suspense, useCallback } from 'react'
+import React, { Suspense, useCallback, useMemo } from 'react'
 import { useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../../authentication/state'
 import Button from '../../../components/Button'
-import Loader from '../../../components/Loader'
 import { UI } from '../../../state/ui'
 import { ModalTypes, clientGateway } from '../../../utils/constants'
 import styles from './Groups.module.scss'
@@ -116,21 +115,40 @@ const GroupsList = () => {
   )
 }
 
+const GroupsPlaceholder = () => {
+  const length = useMemo(() => Math.floor(Math.random() * 4) + 1, [])
+  return (
+    <div className={styles.groupsPlaceholder}>
+      {Array.from(Array(length).keys()).map((_, index) => (
+        <Group.Placeholder key={index} className={styles.cardPlaceholder} />
+      ))}
+    </div>
+  )
+}
+
 const GroupsView = () => {
   const match = useRouteMatch<{ id: string }>('/communities/:id')
 
   return (
-    <Suspense fallback={<Loader />}>
-      <div className={styles.wrapper}>
-        <div className={styles.groups}>
-          <Suspense fallback={<></>}>
-            <GroupsList />
+    <div className={styles.wrapper}>
+      <div className={styles.groups}>
+        <Suspense fallback={<GroupsPlaceholder />}>
+          <GroupsList />
+        </Suspense>
+        {match?.params.id && (
+          <Suspense
+            fallback={
+              <Group.Placeholder className={styles.completelyRounded} />
+            }
+          >
+            <Group.Card base={true} />
           </Suspense>
-          {match?.params.id && <Group.Card base={true} />}
-        </div>
+        )}
       </div>
-    </Suspense>
+    </div>
   )
 }
 
-export default GroupsView
+const Groups = { View: GroupsView, Placeholder: GroupsPlaceholder }
+
+export default Groups

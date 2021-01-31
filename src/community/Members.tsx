@@ -5,7 +5,6 @@ import {
   faPaperPlane
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { AnimatePresence, motion } from 'framer-motion'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import dayjsCalendar from 'dayjs/plugin/calendar'
@@ -16,7 +15,6 @@ import { useMedia } from 'react-use'
 import { Waypoint } from 'react-waypoint'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
-import Loader from '../components/Loader'
 import { createConversation } from '../conversation/remote'
 import { getUser, ParticipantsResponse } from '../user/remote'
 import styles from './Members.module.scss'
@@ -49,7 +47,7 @@ const Group = ({ id }: { id: string }) => {
   )
 }
 
-const Member = memo(
+const MemberCard = memo(
   ({
     memberObj,
     owner,
@@ -67,19 +65,7 @@ const Member = memo(
     const user = useQuery(['users', memberObj.user_id, token], getUser)
     const { hasPermissions } = Permission.useContainer()
     return (
-      <motion.div
-        className={styles.member}
-        initial={{
-          opacity: 0
-        }}
-        animate={{
-          opacity: 1,
-          transition: { y: { stiffness: 1000, velocity: -100 } }
-        }}
-        exit={{
-          opacity: 0
-        }}
-      >
+      <div className={styles.member}>
         <Icon avatar={user.data?.avatar} state={user.data?.state} />
         <div className={styles.info}>
           <h4>
@@ -160,20 +146,14 @@ const Member = memo(
                 Message
               </Button>
             )}
-            {/* NOTE: Kick Button. Disabled until impl in backend */}
-            {/* {id === owner && member.user.id !== id && (
-            <Button type='button' className={styles.kick}>
-              <FontAwesomeIcon icon={faHouseLeave} />
-            </Button>
-          )} */}
           </div>
         )}
-      </motion.div>
+      </div>
     )
   }
 )
 
-export const Members = () => {
+const MembersList = () => {
   const history = useHistory()
   const { token } = Auth.useContainer()
   const { id } = useParams<{ id: string }>()
@@ -191,93 +171,127 @@ export const Members = () => {
   const [loading, setLoading] = useState(false)
   const isMobile = useMedia('(max-width: 740px)')
   return (
-    <Suspense fallback={<Loader />}>
-      <div className={styles.wrapper}>
-        <div className={styles.members}>
-          {members.length > 0 ? (
-            <>
-              <div className={styles.header}>
-                {isMobile ? (
-                  <div
-                    className={styles.icon}
-                    onClick={() =>
-                      isMobile &&
-                      history.push(`/communities/${community.data?.id}`)
-                    }
-                  >
-                    <FontAwesomeIcon
-                      className={styles.backButton}
-                      icon={faChevronLeft}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    className={styles.icon}
-                    style={{
-                      backgroundImage: `url('${community.data?.icon}')`
-                    }}
+    <div className={styles.wrapper}>
+      <div className={styles.members}>
+        {members.length > 0 ? (
+          <>
+            <div className={styles.header}>
+              {isMobile ? (
+                <div
+                  className={styles.icon}
+                  onClick={() =>
+                    isMobile &&
+                    history.push(`/communities/${community.data?.id}`)
+                  }
+                >
+                  <FontAwesomeIcon
+                    className={styles.backButton}
+                    icon={faChevronLeft}
                   />
-                )}
-                <div className={styles.title}>
-                  <small>{community.data?.name}</small>
-                  <h2>Members</h2>
                 </div>
+              ) : (
+                <div
+                  className={styles.icon}
+                  style={{
+                    backgroundImage: `url('${community.data?.icon}')`
+                  }}
+                />
+              )}
+              <div className={styles.title}>
+                <small>{community.data?.name}</small>
+                <h2>Members</h2>
               </div>
-              <div className={styles.body} ref={ref}>
-                <AnimatePresence>
-                  {members.map(
-                    (member) =>
-                      member && (
-                        <Member
-                          communityID={community.data?.id}
-                          memberObj={member}
-                          owner={community.data?.owner_id}
-                          key={member.id}
-                        />
-                      )
-                  )}
-                </AnimatePresence>
-                {!loading && canFetchMore ? (
-                  <Waypoint
-                    bottomOffset={20}
-                    onEnter={async () => {
-                      try {
-                        const current = ref.current
-                        if (!current || !current.scrollHeight) return
-                        setLoading(true)
-                        const oldHeight = current.scrollHeight
-                        const oldTop = current.scrollTop
-                        await fetchMore()
-                        current.scrollTop = current.scrollHeight
-                          ? current.scrollHeight - oldHeight + oldTop
-                          : 0
-                      } finally {
-                        setLoading(false)
-                      }
-                    }}
-                  />
-                ) : !!loading && canFetchMore ? (
-                  <div key='loader' className={styles.loader}>
-                    <h5>Loading more...</h5>
-                  </div>
-                ) : (
-                  <></>
-                )}
-              </div>
-            </>
-          ) : (
-            <>
-              <div className={styles.membersEmpty}>
-                <FontAwesomeIcon size={'5x'} icon={faBoxOpen} />
-                <br />
-                <h2>No members in this community!</h2>
-                <br />
-                <br />
-              </div>
-            </>
-          )}
-        </div>
+            </div>
+            <div className={styles.body} ref={ref}>
+              {members.map(
+                (member) =>
+                  member && (
+                    <Suspense fallback={<MemberPlaceholder />}>
+                      <MemberCard
+                        communityID={community.data?.id}
+                        memberObj={member}
+                        owner={community.data?.owner_id}
+                        key={member.id}
+                      />
+                    </Suspense>
+                  )
+              )}
+              {!loading && canFetchMore ? (
+                <Waypoint
+                  bottomOffset={20}
+                  onEnter={async () => {
+                    try {
+                      const current = ref.current
+                      if (!current || !current.scrollHeight) return
+                      setLoading(true)
+                      const oldHeight = current.scrollHeight
+                      const oldTop = current.scrollTop
+                      await fetchMore()
+                      current.scrollTop = current.scrollHeight
+                        ? current.scrollHeight - oldHeight + oldTop
+                        : 0
+                    } finally {
+                      setLoading(false)
+                    }
+                  }}
+                />
+              ) : !!loading && canFetchMore ? (
+                <div key='loader' className={styles.loader}>
+                  <h5>Loading more...</h5>
+                </div>
+              ) : (
+                <></>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className={styles.membersEmpty}>
+              <FontAwesomeIcon size={'5x'} icon={faBoxOpen} />
+              <br />
+              <h2>No members in this community!</h2>
+              <br />
+              <br />
+            </div>
+          </>
+        )}
       </div>
-    </Suspense>
+    </div>
   )
 }
+
+const MemberPlaceholder = () => {
+  return (
+    <div className={styles.memberPlaceholder}>
+      <div />
+      <div className={styles.info}></div>
+    </div>
+  )
+}
+
+const MembersPlaceholder = () => {
+  const length = useMemo(() => Math.floor(Math.random() * 4) + 1, [])
+  return (
+    <div className={styles.membersPlaceholder}>
+      <div className={styles.header}>
+        <div className={styles.icon} />
+        <div className={styles.title}>
+          <div className={styles.community} />
+          <div className={styles.subtitle} />
+        </div>
+      </div>
+      <div className={styles.body}>
+        {Array.from(Array(length).keys()).map((_, index) => (
+          <MemberPlaceholder key={index} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const Members = {
+  View: MembersList,
+  Placeholder: MembersPlaceholder
+}
+
+export default Members

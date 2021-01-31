@@ -13,6 +13,8 @@ export interface MemberResponse {
   created_at: string
   updated_at: string
   groups: string[]
+  permissions: Permissions[]
+  highest_order: number
 }
 
 export interface CommunityResponse {

@@ -1,9 +1,8 @@
 import { useQuery } from 'react-query'
 import {
-  fetchManyGroups,
   getCommunity,
   getGroups,
-  getMemberByUserID,
+  getMember,
   GroupResponse
 } from '../community/remote'
 import { Auth } from '../authentication/state'
@@ -11,6 +10,7 @@ import { useCallback, useMemo } from 'react'
 import { Permissions } from './constants'
 import { createContainer } from 'unstated-next'
 import { useRouteMatch } from 'react-router-dom'
+import { getCommunities } from '../user/remote'
 
 export const getHighestOrder = (groups: GroupResponse[]) => {
   const groupOrders = groups.map((group) => group?.order)
@@ -25,63 +25,64 @@ export const useHasPermission = () => {
     ['community', match?.params.id, auth.token],
     getCommunity,
     {
-      enabled: !!match?.params.id
+      enabled: !!auth.token && !!match?.params.id
     }
   )
   const { data: groupIDs } = useQuery(
     ['groups', match?.params.id, auth.token],
     getGroups,
     {
-      enabled: !!match?.params.id
+      enabled: !!auth.token && !!match?.params.id
     }
   )
-
+  const { data: communities } = useQuery(
+    ['communities', auth.id, auth.token],
+    getCommunities,
+    {
+      enabled: !!auth.token && !!auth.id
+    }
+  )
   const { data: member } = useQuery(
-    ['memberByUserID', match?.params.id, auth.id, auth.token],
-    getMemberByUserID,
+    [
+      'member',
+      communities?.find((c) => c.community.id === match?.params.id)?.id,
+      auth.token
+    ],
+    getMember,
     {
-      enabled: !!match?.params.id
-    }
-  )
-  const { data: memberGroups } = useQuery(
-    ['memberGroups', member?.groups ?? [], auth.token],
-    fetchManyGroups,
-    {
-      enabled: !!member
+      enabled:
+        !!auth.token &&
+        !!match?.params.id &&
+        communities?.find((c) => c.community.id === match?.params.id)
     }
   )
 
   const hasPermissions = useCallback(
     (permissions: Permissions[], overrides?: boolean) => {
       return (
-        !!memberGroups?.some((group) =>
-          group.permissions.find(
-            (permission) =>
-              permissions.includes(permission) ||
-              (!overrides &&
-                (permission === Permissions.ADMINISTRATOR ||
-                  permission === Permissions.OWNER))
-          )
+        !!member?.permissions.some(
+          (permission) =>
+            permissions.includes(permission) ||
+            (!overrides &&
+              (permission === Permissions.ADMINISTRATOR ||
+                permission === Permissions.OWNER))
         ) ||
         permissions.some((p) => community?.base_permissions?.includes(p)) ||
         community?.owner_id === auth.id
       )
     },
-    [memberGroups, community, auth.id]
+    [community, auth.id, member?.permissions]
   )
 
-  const highestOrder = useMemo(() => getHighestOrder(memberGroups ?? []), [
-    memberGroups
-  ])
   const protectedGroups = useMemo(() => {
     return community?.owner_id !== auth.id
       ? (groupIDs ?? []).filter((group, index) => {
           if (!groupIDs) return false
-          return groupIDs.length - index >= highestOrder
+          return groupIDs.length - index >= (member?.highest_order ?? 0)
         })
       : []
-  }, [groupIDs, highestOrder, auth.id, community?.owner_id])
-  return { community, hasPermissions, memberGroups, groupIDs, protectedGroups }
+  }, [groupIDs, member?.highest_order, auth.id, community?.owner_id])
+  return { community, hasPermissions, groupIDs, protectedGroups }
 }
 
 export const Permission = createContainer(useHasPermission)

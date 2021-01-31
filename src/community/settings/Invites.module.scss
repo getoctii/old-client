@@ -1,3 +1,56 @@
+.invitesPlaceholder {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+  .cardPlaceholder {
+    &:last-child {
+      border-bottom-left-radius: 14px;
+      border-bottom-right-radius: 14px;
+    }
+  }
+}
+
+.invitePlaceholder {
+  background-color: var(--neko-settings-card);
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 2.3rem;
+    .user {
+      background: var(--neko-settings-background);
+
+      border-radius: 5px;
+      height: 1.25rem;
+    }
+    .code {
+      background: var(--neko-settings-background);
+
+      border-radius: 5px;
+      height: 0.8rem;
+    }
+  }
+
+  .icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    min-height: 45px;
+    border-radius: 10px;
+    position: relative;
+    margin-right: 0.5rem;
+    background: var(--neko-settings-background);
+  }
+
+  &:first-child {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+  }
+}
 .invitesEmpty {
   display: flex;
   justify-content: center;
@@ -96,13 +149,26 @@
           }
         }
 
-
         &:first-child {
           border-top-left-radius: 14px;
           border-top-right-radius: 14px;
         }
 
         &:last-of-type {
+          border-bottom-left-radius: 14px;
+          border-bottom-right-radius: 14px;
+        }
+      }
+
+      &:first-child {
+        .invitePlaceholder {
+          border-top-left-radius: 14px;
+          border-top-right-radius: 14px;
+        }
+      }
+
+      &:last-child {
+        .invitePlaceholder {
           border-bottom-left-radius: 14px;
           border-bottom-right-radius: 14px;
         }

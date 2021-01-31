@@ -1,7 +1,7 @@
-import React, { memo } from 'react'
+import React, { memo, Suspense } from 'react'
 import { General } from './General'
-import { Invites } from './Invites'
-import { Navbar } from './Navbar'
+import Invites from './Invites'
+import Navbar from './Navbar'
 import { useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
@@ -21,7 +21,34 @@ import Groups from './groups/Groups'
 import { UI } from '../../state/ui'
 import { Permission } from '../../utils/permissions'
 
-export const Settings = memo(() => {
+const SettingsPlaceholder = () => {
+  const match = useRouteMatch<{ tab?: string; id: string }>(
+    '/communities/:id/settings/:tab?'
+  )
+  return (
+    <div className={styles.placeholder}>
+      <div className={styles.header}>
+        <div className={styles.icon} />
+        <div className={styles.title}>
+          <div className={styles.community} />
+          <div className={styles.subtitle} />
+        </div>
+      </div>
+      <Navbar.Placeholder />
+      <div>
+        {match?.params.tab === 'groups' ? (
+          <Groups.Placeholder />
+        ) : match?.params.tab === 'invites' ? (
+          <Invites.Placeholder />
+        ) : (
+          <></>
+        )}
+      </div>
+    </div>
+  )
+}
+
+const SettingsView = memo(() => {
   const isMobile = useMedia('(max-width: 740px)')
   const { id } = useParams<{ id: string }>()
   const { community, hasPermissions } = Permission.useContainer()
@@ -95,19 +122,19 @@ export const Settings = memo(() => {
               )}
             </div>
 
-            <Navbar />
+            <Navbar.View />
             <Switch>
               {hasPermissions([Permissions.MANAGE_INVITES]) && (
                 <PrivateRoute
                   path={`${path}/invites`}
-                  component={Invites}
+                  component={Invites.View}
                   exact
                 />
               )}
               {hasPermissions([Permissions.MANAGE_GROUPS]) && (
                 <PrivateRoute
                   path={`${path}/groups`}
-                  component={Groups}
+                  component={Groups.View}
                   exact
                 />
               )}
@@ -137,3 +164,15 @@ export const Settings = memo(() => {
     </>
   )
 })
+
+const SettingsRouter = () => {
+  return (
+    <Suspense fallback={SettingsPlaceholder}>
+      <SettingsView />
+    </Suspense>
+  )
+}
+
+const Settings = { Router: SettingsRouter, Placeholder: SettingsPlaceholder }
+
+export default Settings

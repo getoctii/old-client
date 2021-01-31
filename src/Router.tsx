@@ -33,6 +33,7 @@ import Admin from './admin/Admin'
 import ManageGroups from './community/ManageGroups'
 import { NewChannel } from './community/NewChannel'
 import NewInvite from './community/NewInvite'
+import { Permission } from './utils/permissions'
 const { PushNotifications } = Plugins
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
@@ -75,12 +76,18 @@ const Modals = () => {
   }, [uiStore])
   if (uiStore.modal) {
     return (
-      <AnimatePresence>
-        <ResolveModal {...uiStore.modal} />
-      </AnimatePresence>
+      <Permission.Provider>
+        <AnimatePresence>
+          <ResolveModal {...uiStore.modal} />
+        </AnimatePresence>
+      </Permission.Provider>
     )
   } else if (uiStore.contextMenu) {
-    return <Context.Menu {...uiStore.contextMenu} />
+    return (
+      <Permission.Provider>
+        <Context.Menu {...uiStore.contextMenu} />
+      </Permission.Provider>
+    )
   } else {
     return <></>
   }
@@ -181,7 +188,9 @@ export const Router = memo(() => {
           <>
             <IncomingCall />
             <EventSource />
-            <Modals />
+            <Suspense fallback={<></>}>
+              <Modals />
+            </Suspense>
             <Suspense fallback={<></>}>
               <Switch>
                 <PrivateRoute
