@@ -29,7 +29,7 @@ if (process.env.NODE_ENV === 'production') {
       'https://6f9ffeb08c814b15971d8241698bee28@o271654.ingest.sentry.io/5541960',
     integrations: [new SentryRRWeb(), new Integrations.BrowserTracing()],
     release: process.env.REACT_APP_VERSION,
-    tracesSampleRate: 0.75
+    tracesSampleRate: 0.5
   })
 }
 
