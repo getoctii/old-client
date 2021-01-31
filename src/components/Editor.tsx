@@ -40,6 +40,7 @@ const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
 }
 
 const EditorView = ({
+  id,
   editor,
   className,
   mentionsClassName,
@@ -56,6 +57,7 @@ const EditorView = ({
   userMentions,
   channelMentions
 }: {
+  id: string
   editor: Editor & ReactEditor & HistoryEditor
   className: string
   mentionsClassName?: string
@@ -75,13 +77,7 @@ const EditorView = ({
   const match = useRouteMatch<{ id: string }>('/communities/:id/:tab?/:tab2?')
   const isMobile = useMedia('(max-width: 740px)')
   const [typing, setTyping] = useState<boolean>(false)
-  useEffect(() => {
-    if (!onTyping) return
-    const interval = setInterval(() => typing && onTyping(), 7000)
-    return () => {
-      clearInterval(interval)
-    }
-  }, [typing, onTyping])
+
   useEffect(() => {
     editor.isInline = (element: Element) => {
       return element.type === 'user' || element.type === 'channel'
@@ -93,7 +89,16 @@ const EditorView = ({
     { range: Range; type: 'user' | 'channel' } | undefined
   >()
   const [search, setSearch] = useState('')
-
+  useEffect(() => {
+    if (!onTyping) return
+    const interval = setInterval(
+      () => typing && serialize(value) !== '' && onTyping(),
+      7000
+    )
+    return () => {
+      clearInterval(interval)
+    }
+  }, [typing, onTyping, value])
   const decorate = useCallback(([node, path]) => {
     const ranges: {
       anchor: {
@@ -230,9 +235,11 @@ const EditorView = ({
       if (
         !isMobile &&
         !isPlatform('ipad') &&
-        (event.target as any)?.type !== 'text'
+        (event.target as any)?.type !== 'text' &&
+        (!(event.target as any)?.id || (event.target as any)?.id === id)
       ) {
         ReactEditor.focus(editor)
+        Transforms.move(editor)
       }
     }
 
@@ -241,7 +248,7 @@ const EditorView = ({
     return () => {
       document.removeEventListener('keydown', handler)
     }
-  }, [editor, isMobile])
+  }, [editor, isMobile, id])
 
   return (
     <>
@@ -340,10 +347,11 @@ const EditorView = ({
             placeholder={placeholder}
             renderLeaf={renderLeaf}
             renderElement={renderElement}
+            id={id}
             decorate={decorate}
             onKeyDown={async (event) => {
-              if (!typing && onTyping) onTyping()
-              setTyping(true)
+              if (!typing && onTyping && serialize(value) !== '') onTyping()
+              if (serialize(value) !== '') setTyping(true)
               switch (event.key) {
                 case 'Escape': {
                   if (onDismiss) {

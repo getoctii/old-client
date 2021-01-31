@@ -260,11 +260,18 @@ const MembersList = () => {
   )
 }
 
-const MemberPlaceholder = () => {
+const MemberPlaceholder = ({ className }: { className?: string }) => {
+  const user = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
+  const date = useMemo(() => Math.floor(Math.random() * 4) + 3, [])
   return (
-    <div className={styles.memberPlaceholder}>
-      <div />
-      <div className={styles.info}></div>
+    <div
+      className={`${styles.memberPlaceholder} ${className ? className : ''}`}
+    >
+      <div className={styles.icon} />
+      <div className={styles.info}>
+        <div className={styles.user} style={{ width: `${user}rem` }} />
+        <div className={styles.date} style={{ width: `${date}rem` }} />
+      </div>
     </div>
   )
 }
@@ -282,7 +289,7 @@ const MembersPlaceholder = () => {
       </div>
       <div className={styles.body}>
         {Array.from(Array(length).keys()).map((_, index) => (
-          <MemberPlaceholder key={index} />
+          <MemberPlaceholder key={index} className={styles.cardPlaceholder} />
         ))}
       </div>
     </div>

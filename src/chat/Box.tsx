@@ -92,6 +92,7 @@ const BoxView = ({
 
         {!!hasPermission ? (
           <Editor
+            id={'sendMessage'}
             editor={editor}
             emptyEditor={emptyEditor}
             newLines

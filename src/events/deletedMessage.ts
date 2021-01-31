@@ -87,7 +87,7 @@ const useDeletedMessage = (eventSource: EventSourcePolyfill | null) => {
     return () => {
       eventSource.removeEventListener(Events.DELETED_MESSAGE, handler)
     }
-  })
+  }, [eventSource, id, token])
 }
 
 export default useDeletedMessage

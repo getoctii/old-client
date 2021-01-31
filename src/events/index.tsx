@@ -20,6 +20,7 @@ import useDeletedGroupMember from './deletedGroupMember'
 import useNewGroupMember from './newGroupMember'
 import useUpdatedGroup from './updatedGroup'
 import useReorderedGroups from './reorderedGroups'
+import useUpdatedCommunity from './updatedCommunity'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
@@ -45,7 +46,7 @@ const EventSource = () => {
   useUpdatedConversation(eventSource)
   useUpdatedGroup(eventSource)
   useUpdatedMessage(eventSource)
-
+  useUpdatedCommunity(eventSource)
   return <></>
 }
 

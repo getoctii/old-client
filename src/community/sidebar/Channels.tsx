@@ -1,12 +1,11 @@
 import { faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
+import React, { Suspense, useMemo } from 'react'
 import styles from './Channels.module.scss'
 import { ModalTypes, Permissions } from '../../utils/constants'
-import { ChannelCard } from './ChannelCard'
+import ChannelCard from './ChannelCard'
 import { UI } from '../../state/ui'
 import { Permission } from '../../utils/permissions'
-
 const ChannelsView = () => {
   const ui = UI.useContainer()
 
@@ -14,7 +13,7 @@ const ChannelsView = () => {
 
   return (
     <div className={styles.channels}>
-      <h4>
+      <h4 className={styles.rooms}>
         Rooms
         {hasPermissions([Permissions.MANAGE_CHANNELS]) && (
           <span>
@@ -29,7 +28,11 @@ const ChannelsView = () => {
       <div className={styles.list}>
         {community && community.channels.length > 0 ? (
           community.channels.map((channel, index) => (
-            <ChannelCard key={channel} channelID={channel} index={index} />
+            <div key={channel}>
+              <Suspense fallback={<ChannelCard.Placeholder index={index} />}>
+                <ChannelCard.View channelID={channel} index={index} />
+              </Suspense>
+            </div>
           ))
         ) : (
           <></>
@@ -40,18 +43,12 @@ const ChannelsView = () => {
 }
 
 const ChannelsPlaceholder = () => {
+  const length = useMemo(() => Math.floor(Math.random() * 10) + 1, [])
   return (
-    <div className={styles.placeholder}>
-      <div className={styles.rooms} />
-      <div className={styles.channel}>
-        <div className={styles.icon} />
-        <div className={styles.text} />
-      </div>
-      <hr />
-      <div className={styles.channel}>
-        <div className={styles.icon} />
-        <div className={styles.text} />
-      </div>
+    <div className={styles.channelsPlaceholder}>
+      {Array.from(Array(length).keys()).map((_, index) => (
+        <ChannelCard.Placeholder key={index} index={index} />
+      ))}
     </div>
   )
 }

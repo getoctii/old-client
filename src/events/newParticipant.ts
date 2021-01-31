@@ -4,6 +4,7 @@ import { queryCache } from 'react-query'
 import { Events } from '../utils/constants'
 import { log } from '../utils/logging'
 import { Auth } from '../authentication/state'
+import { ParticipantsResponse } from '../user/remote'
 
 const useNewParticipant = (eventSource: EventSourcePolyfill | null) => {
   const { id, token } = Auth.useContainer()
@@ -20,12 +21,16 @@ const useNewParticipant = (eventSource: EventSourcePolyfill | null) => {
         }
       }
       log('Events', 'purple', 'NEW_PARTICIPANT')
-      queryCache.setQueryData(['participants', id, token], (initial) => {
-        if (initial instanceof Array) {
-          initial.push(participant)
-          return initial
-        } else return initial
-      })
+      queryCache.setQueryData<ParticipantsResponse>(
+        ['participants', id, token],
+        (initial) => {
+          if (initial) {
+            return [...initial, participant]
+          } else {
+            return [participant]
+          }
+        }
+      )
     }
 
     eventSource.addEventListener(Events.NEW_PARTICIPANT, handler)

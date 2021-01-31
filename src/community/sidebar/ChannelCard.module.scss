@@ -68,3 +68,30 @@
     }
   }
 }
+
+.channelPlaceholder {
+  border: inherit;
+  display: flex;
+  align-items: center;
+
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+  border: inherit;
+  display: flex;
+  border-radius: 14px;
+  align-items: center;
+
+  .icon {
+    background: var(--neko-sidebar-background);
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-right: 0.5rem;
+    border-radius: 10px;
+  }
+
+  .text {
+    height: 1rem;
+    background: var(--neko-sidebar-background);
+    border-radius: 4px;
+  }
+}

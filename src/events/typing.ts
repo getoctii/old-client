@@ -23,7 +23,7 @@ const useTyping = (eventSource: EventSourcePolyfill | null) => {
     return () => {
       eventSource.removeEventListener(Events.TYPING, handler)
     }
-  })
+  }, [eventSource, startTyping])
 }
 
 export default useTyping

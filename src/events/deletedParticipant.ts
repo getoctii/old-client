@@ -27,25 +27,30 @@ const useDeletedParticipant = (eventSource: EventSourcePolyfill | null) => {
         (p) => p.conversation.id === event.conversation_id
       )
 
-      queryCache.setQueryData(['participants', id, token], (initial) => {
-        if (initial instanceof Array) {
-          return (initial as ParticipantsResponse)
-            .filter((p) => p.id !== event.id)
-            .map((p) =>
-              p.conversation.id === event.conversation_id
-                ? {
-                    ...p,
-                    conversation: {
-                      ...p.conversation,
-                      participants: p.conversation.participants.filter(
-                        (p) => p !== event.user_id
-                      )
+      queryCache.setQueryData<ParticipantsResponse>(
+        ['participants', id, token],
+        (initial) => {
+          if (initial) {
+            return initial
+              .filter((p) => p.id !== event.id)
+              .map((p) =>
+                p.conversation.id === event.conversation_id
+                  ? {
+                      ...p,
+                      conversation: {
+                        ...p.conversation,
+                        participants: p.conversation.participants.filter(
+                          (p) => p !== event.user_id
+                        )
+                      }
                     }
-                  }
-                : p
-            )
-        } else return initial
-      })
+                  : p
+              )
+          } else {
+            return []
+          }
+        }
+      )
 
       if (event.user_id === id)
         queryCache.removeQueries([
