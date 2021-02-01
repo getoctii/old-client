@@ -1,15 +1,101 @@
 import { faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { Suspense, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styles from './Channels.module.scss'
-import { ModalTypes, Permissions } from '../../utils/constants'
+import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
 import ChannelCard from './ChannelCard'
 import { UI } from '../../state/ui'
 import { Permission } from '../../utils/permissions'
+import { DragDropContext, Droppable } from '@react-forked/dnd'
+import { queryCache } from 'react-query'
+import { Auth } from '../../authentication/state'
+import { CommunityResponse } from '../remote'
+
+const reorder = (
+  list: string[],
+  startIndex: number,
+  endIndex: number
+): string[] => {
+  const result = Array.from(list)
+  const [removed] = result.splice(startIndex, 1)
+  result.splice(endIndex, 0, removed)
+  return result
+}
+
 const ChannelsView = () => {
   const ui = UI.useContainer()
-
+  const auth = Auth.useContainer()
   const { community, hasPermissions } = Permission.useContainer()
+
+  const onDragEnd = useCallback(
+    async (result) => {
+      if (
+        !result.destination ||
+        result.destination.index === result.source.index
+      )
+        return
+      const reorderedChannels = reorder(
+        community?.channels ?? [],
+        result.source.index,
+        result.destination.index
+      )
+      queryCache.setQueryData<CommunityResponse>(
+        ['community', community?.id, auth.token],
+        (initial) => {
+          if (initial) {
+            return {
+              ...initial,
+              channels: reorderedChannels
+            }
+          } else {
+            return {
+              id: community?.id ?? '',
+              name: community?.name ?? '',
+              icon: community?.icon ?? '',
+              large: community?.large ?? false,
+              channels: reorderedChannels,
+              base_permissions: community?.base_permissions ?? []
+            }
+          }
+        }
+      )
+      await clientGateway.patch(
+        `/communities/${community?.id}/channels`,
+        {
+          order: reorderedChannels
+        },
+        {
+          headers: {
+            Authorization: auth.token
+          }
+        }
+      )
+    },
+    [auth.token, community]
+  )
+
+  const DroppableComponent = useCallback(
+    (provided) => (
+      <div
+        className={styles.body}
+        {...provided.droppableProps}
+        ref={provided.innerRef}
+      >
+        {community?.channels?.map(
+          (channelID, index) =>
+            channelID && (
+              <ChannelCard.Draggable
+                key={channelID}
+                id={channelID}
+                index={index}
+              />
+            )
+        )}
+        {provided.placeholder}
+      </div>
+    ),
+    [community?.channels]
+  )
 
   return (
     <div className={styles.channels}>
@@ -26,14 +112,12 @@ const ChannelsView = () => {
         )}
       </h4>
       <div className={styles.list}>
-        {community && community.channels.length > 0 ? (
-          community.channels.map((channel, index) => (
-            <div key={channel}>
-              <Suspense fallback={<ChannelCard.Placeholder index={index} />}>
-                <ChannelCard.View channelID={channel} index={index} />
-              </Suspense>
-            </div>
-          ))
+        {(community?.channels?.length ?? 0) > 0 ? (
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId='groups' direction='vertical'>
+              {DroppableComponent}
+            </Droppable>
+          </DragDropContext>
         ) : (
           <></>
         )}
