@@ -6,7 +6,7 @@ import {
   faTrashAlt
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useCallback, useMemo } from 'react'
+import React, { memo, Suspense, useCallback, useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
 import { Clipboard } from '@capacitor/core'
@@ -19,14 +19,44 @@ import { useSuspenseStorageItem } from '../../utils/storage'
 import { UI } from '../../state/ui'
 import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
 import { Permission } from '../../utils/permissions'
+import { Draggable } from '@react-forked/dnd'
 
-const ChannelView = ({
-  channelID,
-  index
-}: {
-  channelID: string
-  index: number
-}) => {
+const ChannelCardDraggable = memo(
+  ({ id, index }: { id: string; index: number }) => {
+    const { hasPermissions } = Permission.useContainer()
+
+    const draggableChild = useCallback(
+      (provided, snapshot) => (
+        <div
+          className={`${styles.draggable} ${
+            !!snapshot.isDragging ? styles.dragging : ''
+          }`}
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          style={provided.draggableProps.style}
+        >
+          <Suspense fallback={<ChannelCardPlaceholder />}>
+            <ChannelCardView id={id} index={index} />
+            {provided.placeholder}
+          </Suspense>
+        </div>
+      ),
+      [id, index]
+    )
+    return (
+      <Draggable
+        draggableId={id}
+        index={index}
+        isDragDisabled={!hasPermissions([Permissions.MANAGE_CHANNELS])}
+      >
+        {draggableChild}
+      </Draggable>
+    )
+  }
+)
+
+const ChannelCardView = ({ id, index }: { id: string; index: number }) => {
   const matchTab = useRouteMatch<{ id: string; channelID: string }>(
     '/communities/:id/channels/:channelID'
   )
@@ -39,14 +69,11 @@ const ChannelView = ({
 
   const ui = UI.useContainer()
   const auth = Auth.useContainer()
-  const { data: channel } = useQuery(
-    ['channel', channelID, auth.token],
-    getChannel
-  )
+  const { data: channel } = useQuery(['channel', id, auth.token], getChannel)
   const [deleteChannel] = useMutation(
     async () =>
       (
-        await clientGateway.delete(`/channels/${channelID}`, {
+        await clientGateway.delete(`/channels/${id}`, {
           headers: { Authorization: auth.token }
         })
       ).data
@@ -226,6 +253,10 @@ const ChannelCardPlaceholder = ({ index }: { index?: number }) => {
   )
 }
 
-const ChannelCard = { View: ChannelView, Placeholder: ChannelCardPlaceholder }
+const ChannelCard = {
+  View: ChannelCardView,
+  Placeholder: ChannelCardPlaceholder,
+  Draggable: ChannelCardDraggable
+}
 
 export default ChannelCard

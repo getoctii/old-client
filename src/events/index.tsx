@@ -21,6 +21,7 @@ import useNewGroupMember from './newGroupMember'
 import useUpdatedGroup from './updatedGroup'
 import useReorderedGroups from './reorderedGroups'
 import useUpdatedCommunity from './updatedCommunity'
+import useReorderedChannels from './reorderedChannels'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
@@ -41,6 +42,7 @@ const EventSource = () => {
   useNewMessage(eventSource)
   useNewParticipant(eventSource)
   useNewVoiceSession(eventSource)
+  useReorderedChannels(eventSource)
   useReorderedGroups(eventSource)
   useTyping(eventSource)
   useUpdatedConversation(eventSource)
