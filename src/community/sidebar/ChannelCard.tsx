@@ -17,7 +17,12 @@ import { getChannel } from '../../chat/remote'
 import { getMentions, getUnreads } from '../../user/remote'
 import { useSuspenseStorageItem } from '../../utils/storage'
 import { UI } from '../../state/ui'
-import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
+import {
+  ChannelTypes,
+  clientGateway,
+  ModalTypes,
+  Permissions
+} from '../../utils/constants'
 import { Permission } from '../../utils/permissions'
 import { Draggable } from '@react-forked/dnd'
 
@@ -149,7 +154,11 @@ const ChannelCardView = ({ id, index }: { id: string; index: number }) => {
       key={channel.id}
       items={getItems(channel.id)}
     >
-      <>
+      <div
+        className={
+          channel.type === ChannelTypes.CATEGORY ? styles.category : ''
+        }
+      >
         {index !== 0 && (
           <hr
             className={
@@ -170,10 +179,17 @@ const ChannelCardView = ({ id, index }: { id: string; index: number }) => {
               : {}
           }
           className={`${styles.channel} ${
-            matchTab?.params.channelID === channel.id ? styles.selected : ''
+            matchTab?.params.channelID === channel.id &&
+            channel.type === ChannelTypes.TEXT
+              ? styles.selected
+              : ''
           }`}
           onClick={() => {
-            if (matchTab?.params.channelID === channel.id) return
+            if (
+              matchTab?.params.channelID === channel.id ||
+              channel.type !== ChannelTypes.TEXT
+            )
+              return
             return history.push(
               `/communities/${community?.id}/channels/${channel.id}`
             )
@@ -235,7 +251,7 @@ const ChannelCardView = ({ id, index }: { id: string; index: number }) => {
             </div>
           </h4>
         </div>
-      </>
+      </div>
     </Context.Wrapper>
   )
 }

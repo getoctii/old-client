@@ -5,6 +5,12 @@ export const clientGateway = axios.create({
   baseURL: CLIENT_GATEWAY_URL
 })
 
+export enum ChannelTypes {
+  TEXT = 1,
+  CATEGORY = 2,
+  CUSTOM = 3
+}
+
 export enum ModalTypes {
   ADD_PARTICIPANT,
   DELETE_CHANNEL,
@@ -132,7 +138,7 @@ export enum MessageTypes {
   ADMINISTRATOR = 5
 }
 
-export enum ChannelTypes {
+export enum InternalChannelTypes {
   PrivateChannel,
   GroupChannel,
   CommunityChannel

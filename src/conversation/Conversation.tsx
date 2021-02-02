@@ -4,7 +4,7 @@ import Chat from '../chat/Channel'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
-import { ChannelTypes } from '../utils/constants'
+import { InternalChannelTypes } from '../utils/constants'
 import { getParticipants } from '../user/remote'
 import { Conversations } from './Conversations'
 import { useMedia } from 'react-use'
@@ -46,8 +46,8 @@ const ConversationView = () => {
         <Chat.View
           type={
             (people?.length ?? 0) > 1
-              ? ChannelTypes.GroupChannel
-              : ChannelTypes.PrivateChannel
+              ? InternalChannelTypes.GroupChannel
+              : InternalChannelTypes.PrivateChannel
           }
           channelID={participant.conversation.channel_id}
           conversationID={match?.params.id}

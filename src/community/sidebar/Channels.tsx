@@ -6,10 +6,10 @@ import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
 import ChannelCard from './ChannelCard'
 import { UI } from '../../state/ui'
 import { Permission } from '../../utils/permissions'
-import { DragDropContext, Droppable } from '@react-forked/dnd'
 import { queryCache } from 'react-query'
 import { Auth } from '../../authentication/state'
 import { CommunityResponse } from '../remote'
+import { DragDropContext, Droppable } from '@react-forked/dnd'
 
 const reorder = (
   list: string[],

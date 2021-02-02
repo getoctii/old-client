@@ -1,7 +1,11 @@
 import React, { Suspense, useEffect, useMemo } from 'react'
 import styles from './Channel.module.scss'
 import { useQuery } from 'react-query'
-import { ChannelTypes, ModalTypes, Permissions } from '../utils/constants'
+import {
+  InternalChannelTypes,
+  ModalTypes,
+  Permissions
+} from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { useDropArea, useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -71,7 +75,7 @@ const Header = ({
   channel
 }: {
   participants?: string[]
-  type: ChannelTypes
+  type: InternalChannelTypes
   channel?: ChannelResponse
 }) => {
   const { token } = Auth.useContainer()
@@ -82,9 +86,9 @@ const Header = ({
 
   return (
     <div className={styles.title}>
-      {type === ChannelTypes.PrivateChannel ? (
+      {type === InternalChannelTypes.PrivateChannel ? (
         <PrivateName id={participants?.[0]} />
-      ) : type === ChannelTypes.GroupChannel ? (
+      ) : type === InternalChannelTypes.GroupChannel ? (
         users?.map((i) => i.username).join(', ')
       ) : (
         channel?.name
@@ -98,7 +102,7 @@ const CommunityChannelView = () => {
   const { id, channelID } = useParams<{ id: string; channelID: string }>()
   return (
     <ChannelView
-      type={ChannelTypes.CommunityChannel}
+      type={InternalChannelTypes.CommunityChannel}
       channelID={channelID}
       communityID={id}
     />
@@ -113,7 +117,7 @@ const ChannelView = ({
   communityID,
   conversationID
 }: {
-  type: ChannelTypes
+  type: InternalChannelTypes
   channelID: string
   participants?: string[]
   communityID?: string
@@ -164,7 +168,7 @@ const ChannelView = ({
               className={styles.icon}
               onClick={() => {
                 if (isMobile) {
-                  if (type === ChannelTypes.CommunityChannel) {
+                  if (type === InternalChannelTypes.CommunityChannel) {
                     history.push(`/communities/${channel.data?.community_id}`)
                   } else {
                     history.push('/')
@@ -190,8 +194,8 @@ const ChannelView = ({
             />
           </Suspense>
           <div className={styles.buttonGroup}>
-            {type === ChannelTypes.PrivateChannel ||
-            type === ChannelTypes.GroupChannel ? (
+            {type === InternalChannelTypes.PrivateChannel ||
+            type === InternalChannelTypes.GroupChannel ? (
               <Button
                 type='button'
                 onClick={() => {
@@ -199,12 +203,12 @@ const ChannelView = ({
                     name: ModalTypes.ADD_PARTICIPANT,
                     props: {
                       participant:
-                        type === ChannelTypes.PrivateChannel
+                        type === InternalChannelTypes.PrivateChannel
                           ? participants?.[0]
                           : undefined,
-                      isPrivate: type === ChannelTypes.PrivateChannel,
+                      isPrivate: type === InternalChannelTypes.PrivateChannel,
                       groupID:
-                        type === ChannelTypes.GroupChannel
+                        type === InternalChannelTypes.GroupChannel
                           ? conversationID
                           : undefined
                     }
@@ -216,7 +220,7 @@ const ChannelView = ({
             ) : (
               <></>
             )}
-            {type === ChannelTypes.PrivateChannel && participants ? (
+            {type === InternalChannelTypes.PrivateChannel && participants ? (
               call.otherUserID !== participants[0] && [0] && (
                 <Button
                   type='button'
@@ -249,7 +253,7 @@ const ChannelView = ({
         <Box.View
           {...{
             hasPermission:
-              type === ChannelTypes.CommunityChannel
+              type === InternalChannelTypes.CommunityChannel
                 ? hasPermissions([Permissions.SEND_MESSAGES])
                 : true,
             participants,
