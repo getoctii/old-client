@@ -137,9 +137,9 @@ export const Router = memo(() => {
 
       if (localStorage.getItem('requested-notifications') !== 'true') {
         PushNotifications.requestPermission()
-          .then(({ granted }) => {
+          .then(async ({ granted }) => {
             if (granted) {
-              PushNotifications.register()
+              await PushNotifications.register()
               localStorage.setItem('requested-notifications', 'true')
             }
           })

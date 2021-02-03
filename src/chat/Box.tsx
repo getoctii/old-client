@@ -101,7 +101,9 @@ const BoxView = ({
             inputClassName={styles.input}
             typingClassName={styles.typingIndicator}
             placeholder={
-              <span className={styles.ph}>Say something{adjective}...</span>
+              <span id='placeholder' className={styles.ph}>
+                Say something{adjective}...
+              </span>
             }
             userMentions
             onTyping={async () => {
