@@ -3,7 +3,7 @@ import { EventSourcePolyfill } from 'event-source-polyfill'
 import { queryCache, useQuery } from 'react-query'
 import { isPlatform } from '@ionic/react'
 import Typing from '../state/typing'
-import { Plugins, HapticsNotificationType } from '@capacitor/core'
+import { Plugins } from '@capacitor/core'
 import { Events } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { getUser, State, UserResponse } from '../user/remote'
@@ -124,12 +124,6 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
         !mutedChannels?.includes(event.channel_id) &&
         user.data?.state !== State.dnd
       ) {
-        if (isPlatform('capacitor')) {
-          Plugins.Haptics.notification({
-            type: HapticsNotificationType.SUCCESS
-          })
-        }
-
         const output = parseMarkdown(event.content, {
           bold: (str) => str,
           italic: (str) => str,
@@ -146,46 +140,51 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
                   str,
                   token
                 ])
-                return `@${mention?.username || 'unknown'}`
+                return `@${mention?.username || 'someone'}`
               }
             ]
           ]
         }).join('')
         if (window.inntronNotify) {
-          await window.inntronNotify(
-            `${
-              event.community_name
-                ? event.community_name
-                : event.author.username
-            }${event.channel_name ? ` #${event.channel_name}` : ''}`,
-            `${
-              event.community_name ? `${event.author.username}: ` : ''
-            }${output}`
-          )
+          try {
+            await window.inntronNotify(
+              `${
+                event.community_name
+                  ? event.community_name
+                  : event.author.username
+              }${event.channel_name ? ` #${event.channel_name}` : ''}`,
+              `${
+                event.community_name ? `${event.author.username}: ` : ''
+              }${output}`
+            )
+          } catch (error) {
+            console.error(error)
+          }
         } else if (!isPlatform('capacitor')) {
-          Plugins.LocalNotifications.requestPermission()
-            .then((granted) => {
-              if (granted) {
-                Plugins.LocalNotifications.schedule({
-                  notifications: [
-                    {
-                      title: `${
-                        event.community_name
-                          ? event.community_name
-                          : event.author.username
-                      }${event.channel_name ? ` #${event.channel_name}` : ''}`,
-                      body: `${
-                        event.community_name ? `${event.author.username}: ` : ''
-                      }${output}`,
-                      id: 1
-                    }
-                  ]
-                })
-              }
-            })
-            .catch(() => {
-              console.warn('Failed to send notification')
-            })
+          try {
+            const {
+              granted
+            } = await Plugins.LocalNotifications.requestPermission()
+            if (granted) {
+              await Plugins.LocalNotifications.schedule({
+                notifications: [
+                  {
+                    title: `${
+                      event.community_name
+                        ? event.community_name
+                        : event.author.username
+                    }${event.channel_name ? ` #${event.channel_name}` : ''}`,
+                    body: `${
+                      event.community_name ? `${event.author.username}: ` : ''
+                    }${output}`,
+                    id: 1
+                  }
+                ]
+              })
+            }
+          } catch (error) {
+            console.error(error)
+          }
         }
       }
       stopTyping(event.channel_id, event.author.id)

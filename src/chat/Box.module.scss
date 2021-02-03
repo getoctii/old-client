@@ -113,17 +113,19 @@
     color: var(--neko-input-text);
     user-select: none;
     font-size: 1.05rem;
-    user-select: none;
+
     user-modify: read-only;
     -webkit-user-modify: read-only;
     -webkit-user-select: none;
     -moz-user-select: none;
+    pointer-events: none;
     -moz-user-modify: read-only;
     white-space: nowrap;
     overflow: hidden;
   }
 
   .input {
+    word-break: break-word;
     overflow-y: auto;
     width: 100%;
     min-height: 3.125rem;
