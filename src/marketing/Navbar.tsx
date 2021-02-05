@@ -10,10 +10,6 @@ const Navbar = () => {
   return (
     <div className={styles.navbar}>
       <div className={styles.branding}>
-        <picture>
-          <source srcSet='/logo.webp' type='image/webp' />
-          <img alt='Octii' src='/logo.png' />
-        </picture>
         <h1>Octii</h1>
       </div>
       <Button
