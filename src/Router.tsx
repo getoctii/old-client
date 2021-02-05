@@ -1,4 +1,4 @@
-import React, { memo, Suspense, useEffect } from 'react'
+import React, { memo, Suspense, useEffect, useMemo } from 'react'
 import { useMedia } from 'react-use'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { Authenticate } from './authentication/Authenticate'
@@ -34,6 +34,10 @@ import ManageGroups from './community/ManageGroups'
 import { NewChannel } from './community/NewChannel'
 import NewInvite from './community/NewInvite'
 import { Permission } from './utils/permissions'
+import { useQuery } from 'react-query'
+import { getCommunities, getParticipants } from './user/remote'
+import OnBoarding from './marketing/OnBoarding'
+import { useSuspenseStorageItem } from './utils/storage'
 const { PushNotifications } = Plugins
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
@@ -98,7 +102,6 @@ const IncomingCall = () => {
   const call = Call.useContainer()
   const uiStore = UI.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
-
   return auth.authenticated && isMobile ? (
     <>
       <Suspense fallback={<></>}>
@@ -113,11 +116,78 @@ const IncomingCall = () => {
   )
 }
 
-export const Router = memo(() => {
+const MarketingRouter = () => {
+  const auth = Auth.useContainer()
+  const isPWA = useMedia('(display-mode: standalone)')
+
+  return (
+    <Switch>
+      {!isPlatform('capacitor') && !isPWA ? (
+        <Route path='/home' component={Home} exact />
+      ) : (
+        <Redirect path='/home' to='/authenticate/login' exact />
+      )}
+      {isPlatform('capacitor') || isPWA ? (
+        <Redirect path='/downloads' to='/authenticate/login' exact />
+      ) : (
+        <PrivateRoute path='/downloads' component={Downloads} exact />
+      )}
+      <Route
+        path={'/invite/:invite/:code?'}
+        component={() => (
+          <>
+            {auth.authenticated && <Sidebar />}
+            <Invite />
+          </>
+        )}
+        exact
+      />
+      <Route path='/authenticate' component={Authenticate} />
+      {!auth.authenticated && (
+        <Redirect
+          path='/'
+          to={isPlatform('capacitor') ? '/authenticate/login' : '/home'}
+        />
+      )}
+    </Switch>
+  )
+}
+
+const AppRouter = () => {
   const auth = Auth.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
   const isPWA = useMedia('(display-mode: standalone)')
   const call = Call.useContainer()
+
+  const [onboardingComplete] = useSuspenseStorageItem<boolean>(
+    'onboarding-complete',
+    false
+  )
+  const { data: communities } = useQuery(
+    ['communities', auth.id, auth.token],
+    getCommunities
+  )
+  const { data: participants } = useQuery(
+    ['participants', auth.id, auth.token],
+    getParticipants
+  )
+  const filteredParticipants = useMemo(
+    () =>
+      participants?.filter((part) => part.conversation.participants.length > 1),
+    [participants]
+  )
+
+  console.log(communities)
+  console.log(filteredParticipants)
+
+  const showOnBoarding = useMemo(() => {
+    return (
+      (communities?.length ?? 0) < 1 &&
+      (filteredParticipants?.length ?? 0) < 1 &&
+      !onboardingComplete
+    )
+  }, [communities?.length, filteredParticipants?.length, onboardingComplete])
+
   useEffect(() => {
     if (auth.authenticated && isPlatform('capacitor')) {
       PushNotifications.addListener('registration', async (token) => {
@@ -151,93 +221,73 @@ export const Router = memo(() => {
     }
   }, [auth])
 
+  console.log(showOnBoarding)
+  return (
+    <>
+      <IncomingCall />
+      {onboardingComplete && <EventSource />}
+      <Suspense fallback={<></>}>
+        <Modals />
+      </Suspense>
+      <Suspense fallback={<></>}>
+        {showOnBoarding ? (
+          <OnBoarding />
+        ) : (
+          <Switch>
+            <PrivateRoute
+              path='/settings'
+              sidebar
+              component={() => (
+                <>
+                  {isMobile && <Sidebar />}
+                  <Suspense fallback={<Loader />}>
+                    <Settings />
+                  </Suspense>
+                </>
+              )}
+            />
+            <PrivateRoute path={'/admin'} sidebar component={Admin} />
+            <PrivateRoute
+              path='/communities/:id'
+              sidebar
+              component={Community}
+            />
+            <PrivateRoute
+              sidebar
+              path={'/conversations/:id?'}
+              component={() => (
+                <Suspense fallback={<></>}>
+                  <Conversation />
+                </Suspense>
+              )}
+              redirect={
+                isPlatform('mobile') || isPWA ? '/authenticate/login' : '/home'
+              }
+              exact
+            />
+            <Redirect path={'/'} to={'/conversations'} exact />
+          </Switch>
+        )}
+      </Suspense>
+      {!isMobile && (
+        <>
+          <Suspense fallback={<></>}>
+            {call.callState !== 'idle' && <Current />}
+          </Suspense>
+        </>
+      )}
+    </>
+  )
+}
+
+export const Router = memo(() => {
+  const auth = Auth.useContainer()
   return (
     <div id='main'>
       <BrowserRouter>
         <Context.Global />
-        <Switch>
-          {!isPlatform('capacitor') && !isPWA ? (
-            <Route path='/home' component={Home} exact />
-          ) : (
-            <Redirect path='/home' to='/authenticate/login' exact />
-          )}
-          {isPlatform('capacitor') || isPWA ? (
-            <Redirect path='/downloads' to='/authenticate/login' exact />
-          ) : (
-            <PrivateRoute path='/downloads' component={Downloads} exact />
-          )}
-          <Route
-            path={'/invite/:invite/:code?'}
-            component={() => (
-              <>
-                {auth.authenticated && <Sidebar />}
-                <Invite />
-              </>
-            )}
-            exact
-          />
-          <Route path='/authenticate' component={Authenticate} />
-          {!auth.authenticated && (
-            <Redirect
-              path='/'
-              to={isPlatform('capacitor') ? '/authenticate/login' : '/home'}
-            />
-          )}
-        </Switch>
-        {auth.authenticated && (
-          <>
-            <IncomingCall />
-            <EventSource />
-            <Suspense fallback={<></>}>
-              <Modals />
-            </Suspense>
-            <Suspense fallback={<></>}>
-              <Switch>
-                <PrivateRoute
-                  path='/settings'
-                  sidebar
-                  component={() => (
-                    <>
-                      {isMobile && <Sidebar />}
-                      <Suspense fallback={<Loader />}>
-                        <Settings />
-                      </Suspense>
-                    </>
-                  )}
-                />
-                <PrivateRoute path={'/admin'} sidebar component={Admin} />
-                <PrivateRoute
-                  path='/communities/:id'
-                  sidebar
-                  component={Community}
-                />
-                <PrivateRoute
-                  sidebar
-                  path={'/conversations/:id?'}
-                  component={() => (
-                    <Suspense fallback={<></>}>
-                      <Conversation />
-                    </Suspense>
-                  )}
-                  redirect={
-                    isPlatform('mobile') || isPWA
-                      ? '/authenticate/login'
-                      : '/home'
-                  }
-                  exact
-                />
-                <Redirect path={'/'} to={'/conversations'} exact />
-              </Switch>
-            </Suspense>
-            {!isMobile && (
-              <>
-                <Suspense fallback={<></>}>
-                  {call.callState !== 'idle' && <Current />}
-                </Suspense>
-              </>
-            )}
-          </>
-        )}
+        <MarketingRouter />
+        {auth.authenticated && <AppRouter />}
       </BrowserRouter>
     </div>
   )

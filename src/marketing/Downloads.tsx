@@ -2,17 +2,26 @@ import React from 'react'
 import Navbar from './Navbar'
 import styles from './Downloads.module.scss'
 import Button from '../components/Button'
+import Footer from './Footer'
 
 const Downloads = () => {
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.centered}>
+    <div className={styles.downloads}>
+      <div className={styles.hero}>
         <Navbar />
-        <h1>Downloads</h1>
+        <div className={styles.info}>
+          <h1>Downloads</h1>
+          <p>This following are downloads to Octii </p>
+        </div>
+      </div>
+      <div className={styles.body}>
         <ul>
           <li>
             <h3>macOS</h3>
-            <p>Note: This version of the app does not include updates.</p>
+            <p>
+              Note: You might have to click View then Force Update in the menu
+              to update the client.
+            </p>
             <Button
               type='button'
               onClick={() =>
@@ -39,12 +48,6 @@ const Downloads = () => {
           </li>
           <li>
             <h3>Windows</h3>
-            <p>
-              Note: Windows app requires{' '}
-              <a href='https://developer.microsoft.com/en-us/microsoft-edge/webview2/'>
-                WebView2
-              </a>
-            </p>
             <Button
               type='button'
               onClick={() =>
@@ -64,6 +67,7 @@ const Downloads = () => {
           </li>
         </ul>
       </div>
+      <Footer />
     </div>
   )
 }

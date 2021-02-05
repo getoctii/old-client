@@ -22,6 +22,10 @@ import { Chat } from './chat/state'
 import { Integrations } from '@sentry/tracing'
 import { AxiosError } from 'axios'
 import { HelmetProvider } from 'react-helmet-async'
+// @ts-ignore
+import smoothscroll from 'smoothscroll-polyfill'
+
+smoothscroll.polyfill()
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
