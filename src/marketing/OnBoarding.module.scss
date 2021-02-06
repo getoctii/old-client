@@ -27,17 +27,7 @@
         border-radius: 13px;
         width: 100%;
         margin-bottom: 0.5rem;
-        justify-content: left;
-        display: flex;
         cursor: pointer;
-        svg {
-          margin-left: auto;
-          font-size: 1.4rem;
-        }
-      }
-
-      .popup {
-        position: fixed;
       }
     }
     p {
@@ -70,6 +60,7 @@
     }
 
     .skip {
+      color: var(--neko-default-text);
       margin-top: 0;
       background: transparent;
     }
@@ -81,11 +72,6 @@
     button {
       justify-content: center;
       background: var(--neko-default-danger);
-    }
-
-    .skip {
-      margin-top: 0;
-      background: transparent;
     }
   }
 }

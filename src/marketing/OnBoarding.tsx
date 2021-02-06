@@ -51,8 +51,12 @@ const Welcome = ({ onClick }: { onClick: () => void }) => {
   )
 }
 
-const OctiiTesters = ({ onClick }: { onClick: () => void }) => {
+const OctiiTesters = () => {
   const auth = Auth.useContainer()
+  const [, setOnboardingComplete] = useSuspenseStorageItem<boolean>(
+    'onboarding-complete',
+    false
+  )
   return (
     <div className={styles.octiiTesters}>
       <h1>Octii Testers</h1>
@@ -68,23 +72,23 @@ const OctiiTesters = ({ onClick }: { onClick: () => void }) => {
             {},
             { headers: { Authorization: auth.token } }
           )
-          onClick()
+          setOnboardingComplete(true)
         }}
       >
         Join Octii Testers
       </Button>
-      <Button className={styles.skip} type='button' onClick={() => onClick()}>
+      <Button
+        className={styles.skip}
+        type='button'
+        onClick={() => setOnboardingComplete(true)}
+      >
         Skip
       </Button>
     </div>
   )
 }
 
-const Disclosure = () => {
-  const [, setOnboardingComplete] = useSuspenseStorageItem<boolean>(
-    'onboarding-complete',
-    false
-  )
+const Disclosure = ({ onClick }: { onClick: () => void }) => {
   return (
     <div className={styles.disclosure}>
       <h1>Beta Disclosure</h1>
@@ -96,7 +100,7 @@ const Disclosure = () => {
       <Button
         type='button'
         onClick={() => {
-          setOnboardingComplete(true)
+          onClick()
         }}
       >
         I understand
@@ -110,8 +114,8 @@ const OnBoarding = () => {
   return (
     <div className={styles.onboarding}>
       {page === 0 && <Welcome onClick={() => setPage(1)} />}
-      {page === 1 && <OctiiTesters onClick={() => setPage(2)} />}
-      {page === 2 && <Disclosure />}
+      {page === 1 && <Disclosure onClick={() => setPage(2)} />}
+      {page === 2 && <OctiiTesters />}
     </div>
   )
 }
