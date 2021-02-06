@@ -1,49 +1,29 @@
 .navbar {
-  display: flex;
-  z-index: 2;
-  max-width: 70rem;
-  margin-top: 2rem;
+  max-width: 700px;
   width: 100%;
-  .branding {
-    display: flex;
-    align-items: center;
-    h1 {
-      margin: 0;
-      padding: 0;
-      font-weight: 800;
-      color: var(--neko-default-text);
-    }
+  display: flex;
+  img,
+  picture {
+    width: 3rem;
+    height: 3rem;
+  }
 
-    img,
-    picture {
-      width: 50px;
-      height: 50px;
-      margin-right: 0.7rem;
-    }
+  h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    cursor: pointer;
   }
 
   button {
-    background: var(--neko-default-primary);
+    cursor: pointer;
+    border: 0;
+    margin: 0;
+    background: transparent;
+    padding: 0;
+    font-size: 1.2rem;
+    opacity: 0.8;
     margin-left: auto;
-    min-height: 3rem;
+    color: var(--neko-default-text);
   }
-}
-
-@media (max-width: 740px) {
-  .navbar {
-    .branding {
-      h1 {
-        font-size: 1.25rem;
-      }
-
-      img,
-      picture {
-        width: 38px;
-        height: 38px;
-      }
-    }
-    button {
-      height: 2rem;
-    }
-  }
+  align-items: center;
 }

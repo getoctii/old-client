@@ -6,7 +6,8 @@ import dayjsCalendar from 'dayjs/plugin/calendar'
 import {
   faCopy,
   faTrashAlt,
-  IconDefinition
+  IconDefinition,
+  faPencilAlt
 } from '@fortawesome/pro-solid-svg-icons'
 import { Plugins } from '@capacitor/core'
 import { Auth } from '../authentication/state'
@@ -33,7 +34,6 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
-import { faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 import { patchMessage } from './remote'
 import Editor from '../components/Editor'
 import { Chat } from './state'
