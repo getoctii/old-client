@@ -225,7 +225,7 @@ const AppRouter = () => {
   return (
     <>
       <IncomingCall />
-      {onboardingComplete && <EventSource />}
+      <EventSource />
       <Suspense fallback={<></>}>
         <Modals />
       </Suspense>

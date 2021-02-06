@@ -24,34 +24,33 @@ interface SubResponse {
   updated_at: number
 }
 
-const Subscriber = memo(({ email, created_at, ind }: any) => {
-  return (
-    <motion.div
-      className={styles.sub}
-      initial={{
-        opacity: 0
-      }}
-      animate={{
-        opacity: 1,
-        transition: { y: { stiffness: 1000, velocity: -100 } }
-      }}
-      exit={{
-        opacity: 0
-      }}
-    >
-      <div className={styles.icon}>
-        <FontAwesomeIcon icon={faUserClock} />
-      </div>
-      <div className={styles.info}>
-        <h4>
-          {email}
-          {ind}
-        </h4>
-        <time>{dayjs.utc(created_at).local().calendar()}</time>
-      </div>
-    </motion.div>
-  )
-})
+const Subscriber = memo(
+  ({ email, created_at }: { email: string; created_at: number }) => {
+    return (
+      <motion.div
+        className={styles.sub}
+        initial={{
+          opacity: 0
+        }}
+        animate={{
+          opacity: 1,
+          transition: { y: { stiffness: 1000, velocity: -100 } }
+        }}
+        exit={{
+          opacity: 0
+        }}
+      >
+        <div className={styles.icon}>
+          <FontAwesomeIcon icon={faUserClock} />
+        </div>
+        <div className={styles.info}>
+          <h4>{email}</h4>
+          <time>{dayjs.utc(created_at).local().calendar()}</time>
+        </div>
+      </motion.div>
+    )
+  }
+)
 
 export const Newsletters = () => {
   const history = useHistory()
@@ -111,11 +110,7 @@ export const Newsletters = () => {
                 <AnimatePresence>
                   {subscribers.map((subscriber, index) =>
                     subscriber ? (
-                      <Subscriber
-                        key={subscriber.email}
-                        {...subscriber}
-                        ind={index}
-                      />
+                      <Subscriber key={subscriber.email} {...subscriber} />
                     ) : (
                       <></>
                     )

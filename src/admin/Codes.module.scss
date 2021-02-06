@@ -76,6 +76,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
+          color: var(--neko-text-inverse);
           background: var(--neko-colors-warning);
           &.used {
             background: var(--neko-colors-primary);
@@ -128,7 +129,7 @@
         background-color: var(--neko-settings-card);
         background-size: contain;
         border-radius: 12px;
-
+        color: var(--neko-text-inverse);
         display: flex;
         justify-content: center;
         align-items: center;
