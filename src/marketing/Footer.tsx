@@ -26,7 +26,7 @@ const Footer = () => {
         Made with{' '}
         <span role='img' aria-label='heart'>
           ❤️
-        </span>
+        </span>{' '}
         in Minnesota & California
       </p>
       <h4>© 2021 Innatical</h4>
