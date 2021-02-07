@@ -38,24 +38,15 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 console.log(
-  '%c+',
-  `background: url("https://file.coffee/u/wkV2Mrh7bl.png") no-repeat; background-size: 500px 696px; color: transparent; font-size: 1px; padding: 348px 250px; ${
-    /^((?!chrome|android).)*safari/i.test(navigator.userAgent) &&
-    'line-height: 696px;'
-  }`
-)
-console.log(
   `%cHey!
 
 If anyone told you to paste something here, they're deceiving you. Anything pasted here has access to your account. Thank you for using Octii!
 
 With love,
-Octii-chan and Lleyton
+Lleyton
 
 P.S. If you do know what you're doing, maybe you should join us :P.
 lleyton@innatical.com
-
-P.P.S. Thanks to https://twitter.com/TheDragonGirl24 for the amazing art!
 `,
   'font-size: 18px; font-family: Inter, sans-serif; font-weight: 600'
 )
