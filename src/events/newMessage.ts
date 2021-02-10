@@ -4,13 +4,20 @@ import { queryCache, useQuery } from 'react-query'
 import { isPlatform } from '@ionic/react'
 import Typing from '../state/typing'
 import { Plugins } from '@capacitor/core'
-import { Events } from '../utils/constants'
+import { Events, MessageTypes } from '../utils/constants'
 import { Auth } from '../authentication/state'
-import { getUser, State, UserResponse } from '../user/remote'
+import {
+  getUser,
+  ParticipantsResponse,
+  State,
+  Unreads,
+  UserResponse
+} from '../user/remote'
 import { log } from '../utils/logging'
 import { Chat } from '../chat/state'
 import { parseMarkdown } from '@innatical/markdown'
 import { useSuspenseStorageItem } from '../utils/storage'
+import { MessageResponse } from '../chat/remote'
 
 interface Message {
   id: string
@@ -21,7 +28,7 @@ interface Message {
     avatar: string
     discriminator: number
   }
-  type: string
+  type: MessageTypes
   created_at: string
   updated_at: string
   content: string
@@ -51,14 +58,14 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
     const handler = async (e: MessageEvent) => {
       const event = JSON.parse(e.data) as Message
       log('Events', 'purple', 'NEW_MESSAGE')
-      const initial = queryCache.getQueryData([
+      const initial = queryCache.getQueryData<MessageResponse[][]>([
         'messages',
         event.channel_id,
         token
       ])
 
       if (initial instanceof Array) {
-        queryCache.setQueryData(
+        queryCache.setQueryData<MessageResponse[][]>(
           ['messages', event.channel_id, token],
           initial[0].length < 25
             ? [
@@ -82,26 +89,45 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
               ]
         )
       }
-      queryCache.setQueryData(['unreads', id, token], (initial: any) => ({
-        ...initial,
-        [event.channel_id]: {
-          ...(initial[event.channel_id] ?? {}),
-          last_message_id: event.id,
-          read:
-            id === event.author.id ||
-            (autoRead && event.channel_id === channelID)
-              ? event.id
-              : initial[event.channel_id]?.read
+      queryCache.setQueryData<Unreads>(['unreads', id, token], (initial) => {
+        if (initial) {
+          return {
+            ...initial,
+            [event.channel_id]: {
+              ...(initial[event.channel_id] ?? {}),
+              last_message_id: event.id,
+              read:
+                id === event.author.id ||
+                (autoRead && event.channel_id === channelID)
+                  ? event.id
+                  : initial[event.channel_id]?.read
+            }
+          }
+        } else {
+          return {
+            [event.channel_id]: {
+              last_message_id: event.id,
+              read:
+                id === event.author.id ||
+                (autoRead && event.channel_id === channelID)
+                  ? event.id
+                  : ''
+            }
+          }
         }
-      }))
-      queryCache.setQueryData(['message', event.id, token], {
+      })
+      queryCache.setQueryData<MessageResponse>(['message', event.id, token], {
         ...event,
         author_id: event.author.id
       })
 
-      const participants = queryCache.getQueryData(['participants', id, token])
+      const participants = queryCache.getQueryData<ParticipantsResponse>([
+        'participants',
+        id,
+        token
+      ])
       if (participants instanceof Array) {
-        queryCache.setQueryData(
+        queryCache.setQueryData<ParticipantsResponse>(
           ['participants', id, token],
           participants.map((participant) =>
             participant?.conversation?.channel_id === event.channel_id

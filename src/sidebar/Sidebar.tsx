@@ -32,6 +32,7 @@ import { ScrollPosition } from '../state/scroll'
 import { getCommunity } from '../community/remote'
 import { ModalTypes } from '../utils/constants'
 import { useSuspenseStorageItem } from '../utils/storage'
+import { faUsers } from '@fortawesome/pro-duotone-svg-icons'
 
 const reorder = (
   list: MembersResponse,
@@ -302,12 +303,20 @@ const Sidebar = () => {
             </Button>
           </>
         )}
-
+        <Button
+          className={`${styles.friends} ${
+            matchTab?.params.tab === 'friends' ? styles.selected : ''
+          }`}
+          type='button'
+          onClick={() => {
+            history.push('/friends')
+          }}
+        >
+          <FontAwesomeIcon className={styles.symbol} icon={faUsers} size='2x' />
+        </Button>
         <Button
           className={`${styles.messages} ${
-            matchTab?.params.tab === 'conversations' || !matchTab
-              ? styles.selected
-              : ''
+            matchTab?.params.tab === 'conversations' ? styles.selected : ''
           }`}
           type='button'
           onClick={() => {
