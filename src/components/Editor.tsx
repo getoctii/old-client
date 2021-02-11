@@ -125,7 +125,7 @@ const EditorView = ({
   const match = useRouteMatch<{ id: string }>('/communities/:id/:tab?/:tab2?')
   const isMobile = useMedia('(max-width: 740px)')
   const [typing, setTyping] = useState<boolean>(false)
-
+  console.log('...')
   useEffect(() => {
     editor.isInline = (element: Element) => {
       return element.type === 'user' || element.type === 'channel'

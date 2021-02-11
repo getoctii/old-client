@@ -74,6 +74,8 @@ export const useHasPermission = () => {
     [community, auth.id, member?.permissions]
   )
 
+  console.log('a')
+
   const protectedGroups = useMemo(() => {
     return community?.owner_id !== auth.id
       ? (groupIDs ?? []).filter((group, index) => {

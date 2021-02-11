@@ -184,6 +184,8 @@ const BoxView = ({
   )
 }
 
+BoxView.whyDidYouRender = true
+
 const BoxPlaceholder = () => {
   return (
     <div className={styles.placeholder}>
