@@ -22,6 +22,8 @@ import useUpdatedGroup from './updatedGroup'
 import useReorderedGroups from './reorderedGroups'
 import useUpdatedCommunity from './updatedCommunity'
 import useReorderedChannels from './reorderedChannels'
+import useNewRelationship from './newRelationship'
+import useDeletedRelationship from './deletedRelationship'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
@@ -34,6 +36,7 @@ const EventSource = () => {
   useDeletedMember(eventSource)
   useDeletedMessage(eventSource)
   useDeletedParticipant(eventSource)
+  useDeletedRelationship(eventSource)
   useNewChannel(eventSource)
   useNewGroup(eventSource)
   useNewGroupMember(eventSource)
@@ -41,6 +44,7 @@ const EventSource = () => {
   useNewMention(eventSource)
   useNewMessage(eventSource)
   useNewParticipant(eventSource)
+  useNewRelationship(eventSource)
   useNewVoiceSession(eventSource)
   useReorderedChannels(eventSource)
   useReorderedGroups(eventSource)

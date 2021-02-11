@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './FriendCard.module.scss'
-import { queryCache, useQuery } from 'react-query'
+import { useQuery } from 'react-query'
 import { Auth } from '../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserTimes, faUserCheck } from '@fortawesome/pro-duotone-svg-icons'
@@ -9,7 +9,11 @@ import { getUser } from '../user/remote'
 import { RelationshipResponse, RelationshipTypes } from './remote'
 import { clientGateway } from '../utils/constants'
 
-const FriendCard = ({ user_id, recipient_id, type }: RelationshipResponse) => {
+const FriendCardView = ({
+  user_id,
+  recipient_id,
+  type
+}: RelationshipResponse) => {
   const { token, id } = Auth.useContainer()
   const { data: user } = useQuery(['users', user_id, token], getUser)
   const { data: recipient } = useQuery(['users', recipient_id, token], getUser)
@@ -30,7 +34,7 @@ const FriendCard = ({ user_id, recipient_id, type }: RelationshipResponse) => {
           : user?.discriminator.toString().padStart(4, '0')}
       </h4>
       <div className={styles.buttons}>
-        {type === RelationshipTypes.INCOMING_FRIEND_REQUEST && (
+        {type === RelationshipTypes.INCOMING_FRIEND_REQUEST ? (
           <>
             <FontAwesomeIcon
               className={styles.primary}
@@ -38,31 +42,11 @@ const FriendCard = ({ user_id, recipient_id, type }: RelationshipResponse) => {
               fixedWidth
               onClick={async () => {
                 await clientGateway.post(
-                  `/relationships/${user_id}`,
+                  `/relationships/${user_id === id ? recipient_id : user_id}`,
                   {},
                   {
                     headers: {
                       Authorization: token
-                    }
-                  }
-                )
-                queryCache.setQueryData<RelationshipResponse[]>(
-                  ['relationships', id, token],
-                  (initial) => {
-                    if (initial) {
-                      return initial.map((fr) =>
-                        fr.user_id === user_id
-                          ? { ...fr, type: RelationshipTypes.FRIEND }
-                          : fr
-                      )
-                    } else {
-                      return [
-                        {
-                          user_id,
-                          recipient_id,
-                          type: RelationshipTypes.FRIEND
-                        }
-                      ]
                     }
                   }
                 )
@@ -73,18 +57,51 @@ const FriendCard = ({ user_id, recipient_id, type }: RelationshipResponse) => {
               icon={faUserTimes}
               fixedWidth
               onClick={async () => {
-                await clientGateway.delete(`/relationships/${user_id}`, {
-                  headers: {
-                    Authorization: token
+                await clientGateway.delete(
+                  `/relationships/${user_id === id ? recipient_id : user_id}`,
+                  {
+                    headers: {
+                      Authorization: token
+                    }
                   }
-                })
+                )
               }}
             />
           </>
+        ) : type === RelationshipTypes.FRIEND ||
+          type === RelationshipTypes.OUTGOING_FRIEND_REQUEST ? (
+          <FontAwesomeIcon
+            className={styles.danger}
+            icon={faUserTimes}
+            fixedWidth
+            onClick={async () => {
+              await clientGateway.delete(
+                `/relationships/${user_id === id ? recipient_id : user_id}`,
+                {
+                  headers: {
+                    Authorization: token
+                  }
+                }
+              )
+            }}
+          />
+        ) : (
+          <></>
         )}
       </div>
     </div>
   )
 }
+
+const FriendCardPlaceholder = () => {
+  return (
+    <div className={styles.friendPlaceholder}>
+      <div className={styles.icon} />
+      <div className={styles.tag} />
+    </div>
+  )
+}
+
+const FriendCard = { View: FriendCardView, Placeholder: FriendCardPlaceholder }
 
 export default FriendCard

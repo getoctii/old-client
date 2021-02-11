@@ -7,8 +7,9 @@
   align-items: center;
   text-align: center;
   background: var(--neko-channels-background);
+
   .container {
-    max-width: 250px;
+    max-width: 300px;
     margin-bottom: 1rem;
     h1 {
       margin-bottom: 0.8rem;
@@ -21,61 +22,6 @@
       font-size: 1rem;
       font-weight: 300;
       margin-bottom: 0.8rem;
-    }
-
-    .addFriend {
-      margin-top: 0.5rem;
-      form {
-        display: block;
-        width: 100%;
-
-        position: relative;
-        input {
-          font-size: 0.8rem;
-          font-weight: 400;
-          width: 100%;
-          background: var(--neko-sidebar-background);
-
-          &::-webkit-input-placeholder {
-            color: var(--neko-text-normal);
-            opacity: 0.5;
-          }
-        }
-
-        .search {
-          position: absolute;
-          bottom: 0.5rem;
-          padding: 0;
-          background: none;
-          color: var(--neko-text-inverse);
-          background: var(--neko-colors-primary);
-          border-radius: 50%;
-          padding: 0.5rem;
-          right: 0.9rem;
-        }
-
-        .searchError {
-          position: absolute;
-          bottom: 0.5rem;
-          padding: 0;
-          background: none;
-          color: var(--neko-text-inverse);
-          background: var(--neko-colors-danger);
-          border-radius: 50%;
-          padding: 0.5rem;
-          right: 0.9rem;
-        }
-
-        .searchPlaceholder {
-          position: absolute;
-          bottom: 0.9rem;
-          padding: 0;
-          background: none;
-          color: var(--neko-text-normal);
-          right: 1.2rem;
-          opacity: 0.5;
-        }
-      }
     }
   }
 

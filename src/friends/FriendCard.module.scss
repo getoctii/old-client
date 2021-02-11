@@ -1,6 +1,6 @@
 .card {
   max-width: 300px;
-  width: 300px;
+  width: 100%;
   background: var(--neko-sidebar-background);
   display: flex;
   align-items: center;
@@ -32,12 +32,36 @@
   }
 }
 
-.card:first-child {
+.friendPlaceholder {
+  max-width: 300px;
+  width: 100%;
+  background: var(--neko-sidebar-background);
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.25rem;
+
+  .icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 8px;
+    background: var(--neko-channels-background);
+  }
+  .tag {
+    margin-left: 0.5rem;
+    height: 1rem;
+    width: 8rem;
+    background: var(--neko-channels-background);
+  }
+}
+.card:first-child,
+.friendPlaceholder:first-child {
   border-top-left-radius: 14px;
   border-top-right-radius: 14px;
 }
 
-.card:last-child {
+.card:last-child,
+.friendPlaceholder:last-child {
   border-bottom-left-radius: 14px;
   border-bottom-right-radius: 14px;
 }

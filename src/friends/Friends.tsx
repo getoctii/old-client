@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { Suspense, useMemo, useState } from 'react'
 import styles from './Friends.module.scss'
 import FriendCard from './FriendCard'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -7,6 +7,9 @@ import { useQuery } from 'react-query'
 import { Auth } from '../authentication/state'
 import { RelationshipTypes, getRelationships } from './remote'
 import EmptyFriends from './EmptyFriends'
+import AddFriend from './AddFriend'
+import { useMedia } from 'react-use'
+import Sidebar from '../sidebar/Sidebar'
 
 const Friends = () => {
   const { id, token } = Auth.useContainer()
@@ -14,6 +17,7 @@ const Friends = () => {
     ['relationships', id, token],
     getRelationships
   )
+  const isMobile = useMedia('(max-width: 740px)')
   const incoming = useMemo(
     () =>
       relationships?.filter(
@@ -41,43 +45,69 @@ const Friends = () => {
   const [showOutgoing, setShowOutgoing] = useState(false)
 
   return (
-    <div className={styles.friends}>
-      <h1>Friends</h1>
-      {(incoming?.length ?? 0) > 0 && (
-        <div className={styles.incoming}>
-          <div
-            className={styles.card}
-            onClick={() => setShowIncoming(!showIncoming)}
-          >
-            <FontAwesomeIcon icon={faUserClock} /> Incoming{' '}
-            <span>{incoming?.length}</span>
+    <>
+      {isMobile && <Sidebar />}
+      <div className={styles.friends}>
+        {(friends?.length ?? 0) > 0 && (
+          <>
+            <h1>Friends</h1>
+            <AddFriend />
+          </>
+        )}
+        {(incoming?.length ?? 0) > 0 && (
+          <div className={styles.incoming}>
+            <div
+              className={styles.dropdown}
+              onClick={() => setShowIncoming(!showIncoming)}
+            >
+              <FontAwesomeIcon icon={faUserClock} /> Incoming{' '}
+              <span>{incoming?.length}</span>
+            </div>
+            <div className={styles.cards}>
+              {showIncoming &&
+                incoming?.map((friend) => (
+                  <Suspense fallback={<FriendCard.Placeholder />}>
+                    <FriendCard.View key={friend.recipient_id} {...friend} />
+                  </Suspense>
+                ))}
+            </div>
+            <br />
           </div>
-          <div className={styles.cards}>
-            {showIncoming &&
-              incoming?.map((friend) => <FriendCard {...friend} />)}
-          </div>
-          <br />
+        )}
+        <div className={styles.list}>
+          {(friends?.length ?? 0) > 0 ? (
+            friends?.map((friend) => (
+              <Suspense fallback={<FriendCard.Placeholder />}>
+                <FriendCard.View key={friend.recipient_id} {...friend} />
+              </Suspense>
+            ))
+          ) : (
+            <EmptyFriends />
+          )}
         </div>
-      )}
-      <div>
-        {(friends?.length ?? 0) > 0 ? (
-          friends?.map((friend) => <FriendCard {...friend} />)
-        ) : (
-          <EmptyFriends />
+        <br />
+        {(outgoing?.length ?? 0) > 0 && (
+          <div className={styles.incoming}>
+            <br />
+            <div
+              className={styles.dropdown}
+              onClick={() => setShowOutgoing(!showOutgoing)}
+            >
+              <FontAwesomeIcon icon={faUserClock} /> Outgoing{' '}
+              <span>{outgoing?.length}</span>
+            </div>
+            <div className={styles.cards}>
+              {showOutgoing &&
+                outgoing?.map((friend) => (
+                  <Suspense fallback={<FriendCard.Placeholder />}>
+                    <FriendCard.View {...friend} />
+                  </Suspense>
+                ))}
+            </div>
+          </div>
         )}
       </div>
-      <br />
-      {(outgoing?.length ?? 0) > 0 && (
-        <>
-          <br />
-          <div className={styles.card}>
-            Outgoing <FontAwesomeIcon icon={faUserClock} />
-          </div>
-          {showOutgoing &&
-            outgoing?.map((friend) => <FriendCard {...friend} />)}
-        </>
-      )}
-    </div>
+    </>
   )
 }
 
