@@ -38,6 +38,7 @@ import { useQuery } from 'react-query'
 import { getCommunities, getParticipants } from './user/remote'
 import OnBoarding from './marketing/OnBoarding'
 import { useSuspenseStorageItem } from './utils/storage'
+import Friends from './friends/Friends'
 const { PushNotifications } = Plugins
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
@@ -177,9 +178,6 @@ const AppRouter = () => {
     [participants]
   )
 
-  console.log(communities)
-  console.log(filteredParticipants)
-
   const showOnBoarding = useMemo(() => {
     return (
       (communities?.length ?? 0) < 1 &&
@@ -221,7 +219,6 @@ const AppRouter = () => {
     }
   }, [auth])
 
-  console.log(showOnBoarding)
   return (
     <>
       <IncomingCall />
@@ -252,6 +249,7 @@ const AppRouter = () => {
               sidebar
               component={Community}
             />
+            <PrivateRoute sidebar path='/friends' component={Friends} exact />
             <PrivateRoute
               sidebar
               path={'/conversations/:id?'}

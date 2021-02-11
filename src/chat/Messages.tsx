@@ -25,14 +25,22 @@ const { Keyboard } = Plugins
 
 dayjs.extend(dayjsUTC)
 
-const MessagesView = ({
-  channel,
-  autoRead
-}: {
-  channel: ChannelResponse
-  autoRead: boolean
-}) => {
-  const { tracking, setTracking, editingMessageID } = Chat.useContainer()
+const MessagesView = ({ channel }: { channel: ChannelResponse }) => {
+  const {
+    tracking,
+    setTracking,
+    editingMessageID,
+    autoRead,
+    setAutoRead,
+    setChannelID
+  } = Chat.useContainer()
+
+  useEffect(() => {
+    setChannelID(channel.id)
+    setAutoRead(true)
+    setTracking(true)
+  }, [setAutoRead, setTracking, setChannelID, channel.id])
+
   const { token, id } = Auth.useContainer()
   const { data, canFetchMore, fetchMore } = useInfiniteQuery<
     MessageResponse[],

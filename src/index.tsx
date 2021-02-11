@@ -24,6 +24,7 @@ import { AxiosError } from 'axios'
 import { HelmetProvider } from 'react-helmet-async'
 // @ts-ignore
 import smoothscroll from 'smoothscroll-polyfill'
+import { isPlatform } from '@ionic/react'
 
 smoothscroll.polyfill()
 
@@ -107,20 +108,22 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-serviceWorkerRegistration.register({
-  onUpdate: (registration) => {
-    const waitingServiceWorker = registration.waiting
-    if (waitingServiceWorker) {
-      waitingServiceWorker.addEventListener('statechange', (event) => {
-        // @ts-ignore
-        if (event?.target?.state === 'activated') {
-          window.location.reload()
-        }
-      })
+if (!isPlatform('capacitor')) {
+  serviceWorkerRegistration.register({
+    onUpdate: (registration) => {
+      const waitingServiceWorker = registration.waiting
+      if (waitingServiceWorker) {
+        waitingServiceWorker.addEventListener('statechange', (event) => {
+          // @ts-ignore
+          if (event?.target?.state === 'activated') {
+            window.location.reload()
+          }
+        })
+      }
+      // @ts-ignore
+      window.waitingServiceWorker = waitingServiceWorker
+      // @ts-ignore
+      window.setModal({ name: 'update' })
     }
-    // @ts-ignore
-    window.waitingServiceWorker = waitingServiceWorker
-    // @ts-ignore
-    window.setModal({ name: 'update' })
-  }
-})
+  })
+}

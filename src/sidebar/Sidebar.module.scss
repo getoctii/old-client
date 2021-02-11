@@ -143,6 +143,12 @@
     color: #ffffff;
   }
 
+  .friends {
+    @extend .button;
+    background: var(--neko-colors-primary);
+    color: #ffffff;
+  }
+
   .hub {
     @extend .button;
     background: var(--neko-colors-primary);
