@@ -59,39 +59,37 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
       const event = JSON.parse(e.data) as Message
       log('Events', 'purple', 'NEW_MESSAGE')
 
-      queryCache.setQueryData<MessageResponse[][]>(
-        ['messages', event.channel_id, token],
-        (initial) =>
-          initial
-            ? initial[0].length < 25
-              ? [
-                  [
-                    {
-                      ...event,
-                      author_id: event.author.id
-                    },
-                    ...initial[0]
-                  ],
-                  ...initial.slice(1)
-                ]
-              : [
-                  [
-                    {
-                      ...event,
-                      author_id: event.author.id
-                    }
-                  ],
-                  ...initial
-                ]
+      const initial = queryCache.getQueryData<MessageResponse[][]>([
+        'messages',
+        event.channel_id,
+        token
+      ])
+
+      if (initial instanceof Array) {
+        queryCache.setQueryData<MessageResponse[][]>(
+          ['messages', event.channel_id, token],
+          initial[0].length < 25
+            ? [
+                [
+                  {
+                    ...event,
+                    author_id: event.author.id
+                  },
+                  ...initial[0]
+                ],
+                ...initial.slice(1)
+              ]
             : [
                 [
                   {
                     ...event,
                     author_id: event.author.id
                   }
-                ]
+                ],
+                ...initial
               ]
-      )
+        )
+      }
 
       queryCache.setQueryData<Unreads>(['unreads', id, token], (initial) => {
         if (initial) {
