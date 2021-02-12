@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useMemo } from 'react'
+import React, { Suspense, useMemo } from 'react'
 import styles from './Channel.module.scss'
 import { useQuery } from 'react-query'
 import {
@@ -123,20 +123,16 @@ const ChannelView = ({
   communityID?: string
   conversationID?: string
 }) => {
-  const {
-    autoRead,
-    setTracking,
-    setAutoRead,
-    setChannelID,
-    setUploadDetails
-  } = Chat.useContainer()
+  const { setUploadDetails } = Chat.useContainer()
   const { token, id } = Auth.useContainer()
   const call = Call.useContainer()
   const uiStore = UI.useContainer()
   const { typing } = Typing.useContainer()
-  const typingUsers = typing[channelID]
-    ?.filter((userID) => userID[0] !== id)
-    .map((t) => t[1])
+  const typingUsers = useMemo(
+    () =>
+      typing[channelID]?.filter((userID) => userID[0] !== id).map((t) => t[1]),
+    [typing, channelID, id]
+  )
 
   const isMobile = useMedia('(max-width: 740px)')
   const history = useHistory()
@@ -152,12 +148,6 @@ const ChannelView = ({
         })
     }
   })
-
-  useEffect(() => {
-    setChannelID(channelID)
-    setTracking(true)
-    setAutoRead(false)
-  }, [setAutoRead, setTracking, setChannelID, channelID, type])
 
   return (
     <Suspense fallback={<ChannelPlaceholder />}>
@@ -245,7 +235,7 @@ const ChannelView = ({
         </div>
         <Suspense fallback={<Messages.Placeholder />}>
           {channel.data ? (
-            <Messages.View channel={channel.data} autoRead={autoRead} />
+            <Messages.View channel={channel.data} />
           ) : (
             <Messages.Placeholder />
           )}

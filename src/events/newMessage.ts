@@ -3,14 +3,21 @@ import { EventSourcePolyfill } from 'event-source-polyfill'
 import { queryCache, useQuery } from 'react-query'
 import { isPlatform } from '@ionic/react'
 import Typing from '../state/typing'
-import { Plugins, HapticsNotificationType } from '@capacitor/core'
-import { Events } from '../utils/constants'
+import { Plugins } from '@capacitor/core'
+import { Events, MessageTypes } from '../utils/constants'
 import { Auth } from '../authentication/state'
-import { getUser, State, UserResponse } from '../user/remote'
+import {
+  getUser,
+  ParticipantsResponse,
+  State,
+  Unreads,
+  UserResponse
+} from '../user/remote'
 import { log } from '../utils/logging'
 import { Chat } from '../chat/state'
 import { parseMarkdown } from '@innatical/markdown'
 import { useSuspenseStorageItem } from '../utils/storage'
+import { MessageResponse } from '../chat/remote'
 
 interface Message {
   id: string
@@ -21,7 +28,7 @@ interface Message {
     avatar: string
     discriminator: number
   }
-  type: string
+  type: MessageTypes
   created_at: string
   updated_at: string
   content: string
@@ -51,14 +58,15 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
     const handler = async (e: MessageEvent) => {
       const event = JSON.parse(e.data) as Message
       log('Events', 'purple', 'NEW_MESSAGE')
-      const initial = queryCache.getQueryData([
+
+      const initial = queryCache.getQueryData<MessageResponse[][]>([
         'messages',
         event.channel_id,
         token
       ])
 
       if (initial instanceof Array) {
-        queryCache.setQueryData(
+        queryCache.setQueryData<MessageResponse[][]>(
           ['messages', event.channel_id, token],
           initial[0].length < 25
             ? [
@@ -82,26 +90,47 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
               ]
         )
       }
-      queryCache.setQueryData(['unreads', id, token], (initial: any) => ({
-        ...initial,
-        [event.channel_id]: {
-          ...(initial[event.channel_id] ?? {}),
-          last_message_id: event.id,
-          read:
-            id === event.author.id ||
-            (autoRead && event.channel_id === channelID)
-              ? event.id
-              : initial[event.channel_id]?.read
+
+      queryCache.setQueryData<Unreads>(['unreads', id, token], (initial) => {
+        if (initial) {
+          return {
+            ...initial,
+            [event.channel_id]: {
+              ...(initial[event.channel_id] ?? {}),
+              last_message_id: event.id,
+              read:
+                id === event.author.id ||
+                (autoRead && event.channel_id === channelID)
+                  ? event.id
+                  : initial[event.channel_id]?.read
+            }
+          }
+        } else {
+          return {
+            [event.channel_id]: {
+              last_message_id: event.id,
+              read:
+                id === event.author.id ||
+                (autoRead && event.channel_id === channelID)
+                  ? event.id
+                  : ''
+            }
+          }
         }
-      }))
-      queryCache.setQueryData(['message', event.id, token], {
+      })
+      queryCache.setQueryData<MessageResponse>(['message', event.id, token], {
         ...event,
         author_id: event.author.id
       })
 
-      const participants = queryCache.getQueryData(['participants', id, token])
+      const participants = queryCache.getQueryData<ParticipantsResponse>([
+        'participants',
+        id,
+        token
+      ])
+      // maybe its this?
       if (participants instanceof Array) {
-        queryCache.setQueryData(
+        queryCache.setQueryData<ParticipantsResponse>(
           ['participants', id, token],
           participants.map((participant) =>
             participant?.conversation?.channel_id === event.channel_id
@@ -124,12 +153,6 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
         !mutedChannels?.includes(event.channel_id) &&
         user.data?.state !== State.dnd
       ) {
-        if (isPlatform('capacitor')) {
-          Plugins.Haptics.notification({
-            type: HapticsNotificationType.SUCCESS
-          })
-        }
-
         const output = parseMarkdown(event.content, {
           bold: (str) => str,
           italic: (str) => str,
@@ -146,46 +169,51 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
                   str,
                   token
                 ])
-                return `@${mention?.username || 'unknown'}`
+                return `@${mention?.username || 'someone'}`
               }
             ]
           ]
         }).join('')
         if (window.inntronNotify) {
-          await window.inntronNotify(
-            `${
-              event.community_name
-                ? event.community_name
-                : event.author.username
-            }${event.channel_name ? ` #${event.channel_name}` : ''}`,
-            `${
-              event.community_name ? `${event.author.username}: ` : ''
-            }${output}`
-          )
+          try {
+            await window.inntronNotify(
+              `${
+                event.community_name
+                  ? event.community_name
+                  : event.author.username
+              }${event.channel_name ? ` #${event.channel_name}` : ''}`,
+              `${
+                event.community_name ? `${event.author.username}: ` : ''
+              }${output}`
+            )
+          } catch (error) {
+            console.error(error)
+          }
         } else if (!isPlatform('capacitor')) {
-          Plugins.LocalNotifications.requestPermission()
-            .then((granted) => {
-              if (granted) {
-                Plugins.LocalNotifications.schedule({
-                  notifications: [
-                    {
-                      title: `${
-                        event.community_name
-                          ? event.community_name
-                          : event.author.username
-                      }${event.channel_name ? ` #${event.channel_name}` : ''}`,
-                      body: `${
-                        event.community_name ? `${event.author.username}: ` : ''
-                      }${output}`,
-                      id: 1
-                    }
-                  ]
-                })
-              }
-            })
-            .catch(() => {
-              console.warn('Failed to send notification')
-            })
+          try {
+            const {
+              granted
+            } = await Plugins.LocalNotifications.requestPermission()
+            if (granted) {
+              await Plugins.LocalNotifications.schedule({
+                notifications: [
+                  {
+                    title: `${
+                      event.community_name
+                        ? event.community_name
+                        : event.author.username
+                    }${event.channel_name ? ` #${event.channel_name}` : ''}`,
+                    body: `${
+                      event.community_name ? `${event.author.username}: ` : ''
+                    }${output}`,
+                    id: 1
+                  }
+                ]
+              })
+            }
+          } catch (error) {
+            console.error(error)
+          }
         }
       }
       stopTyping(event.channel_id, event.author.id)

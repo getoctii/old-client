@@ -1,29 +1,23 @@
-import React from 'react'
+import { useQuery } from 'react-query'
 import { useHistory } from 'react-router-dom'
 import { Auth } from '../authentication/state'
-import Button from '../components/Button'
+import { getUser } from '../user/remote'
 import styles from './Navbar.module.scss'
 
 const Navbar = () => {
   const history = useHistory()
   const auth = Auth.useContainer()
+
+  const { data: user } = useQuery(['users', auth.id, auth.token], getUser, {
+    enabled: !!auth.authenticated
+  })
+
   return (
     <div className={styles.navbar}>
-      <div className={styles.branding}>
-        <picture>
-          <source srcSet='/logo.webp' type='image/webp' />
-          <img alt='Octii' src='/logo.png' />
-        </picture>
-        <h1>Octii</h1>
-      </div>
-      <Button
-        type='button'
-        onClick={() =>
-          auth.authenticated ? history.push('/') : history.push('/authenticate')
-        }
-      >
-        {auth.authenticated ? 'Access' : 'Login'}
-      </Button>
+      <h1 onClick={() => history.push('/home')}>Octii</h1>
+      <button onClick={() => history.push('/authenticate/login')}>
+        {user?.username ?? 'Login'}
+      </button>
     </div>
   )
 }

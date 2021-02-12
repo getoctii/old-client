@@ -22,6 +22,11 @@ import { Chat } from './chat/state'
 import { Integrations } from '@sentry/tracing'
 import { AxiosError } from 'axios'
 import { HelmetProvider } from 'react-helmet-async'
+// @ts-ignore
+import smoothscroll from 'smoothscroll-polyfill'
+import { isPlatform } from '@ionic/react'
+
+smoothscroll.polyfill()
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
@@ -34,24 +39,15 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 console.log(
-  '%c+',
-  `background: url("https://file.coffee/u/wkV2Mrh7bl.png") no-repeat; background-size: 500px 696px; color: transparent; font-size: 1px; padding: 348px 250px; ${
-    /^((?!chrome|android).)*safari/i.test(navigator.userAgent) &&
-    'line-height: 696px;'
-  }`
-)
-console.log(
   `%cHey!
 
 If anyone told you to paste something here, they're deceiving you. Anything pasted here has access to your account. Thank you for using Octii!
 
 With love,
-Octii-chan and Lleyton
+Lleyton
 
 P.S. If you do know what you're doing, maybe you should join us :P.
 lleyton@innatical.com
-
-P.P.S. Thanks to https://twitter.com/TheDragonGirl24 for the amazing art!
 `,
   'font-size: 18px; font-family: Inter, sans-serif; font-weight: 600'
 )
@@ -112,20 +108,22 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-serviceWorkerRegistration.register({
-  onUpdate: (registration) => {
-    const waitingServiceWorker = registration.waiting
-    if (waitingServiceWorker) {
-      waitingServiceWorker.addEventListener('statechange', (event) => {
-        // @ts-ignore
-        if (event?.target?.state === 'activated') {
-          window.location.reload()
-        }
-      })
+if (!isPlatform('capacitor')) {
+  serviceWorkerRegistration.register({
+    onUpdate: (registration) => {
+      const waitingServiceWorker = registration.waiting
+      if (waitingServiceWorker) {
+        waitingServiceWorker.addEventListener('statechange', (event) => {
+          // @ts-ignore
+          if (event?.target?.state === 'activated') {
+            window.location.reload()
+          }
+        })
+      }
+      // @ts-ignore
+      window.waitingServiceWorker = waitingServiceWorker
+      // @ts-ignore
+      window.setModal({ name: 'update' })
     }
-    // @ts-ignore
-    window.waitingServiceWorker = waitingServiceWorker
-    // @ts-ignore
-    window.setModal({ name: 'update' })
-  }
-})
+  })
+}

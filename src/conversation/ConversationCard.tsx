@@ -5,7 +5,8 @@ import {
   faCopy,
   faHouseLeave,
   faTrashAlt,
-  faUserFriends
+  faUserFriends,
+  faGlasses
 } from '@fortawesome/pro-solid-svg-icons'
 import { useQuery, useMutation, queryCache } from 'react-query'
 import { clientGateway, MessageTypes } from '../utils/constants'
@@ -22,7 +23,6 @@ import {
 import { getMessage } from '../message/remote'
 import { getChannel } from '../chat/remote'
 import { Clipboard } from '@capacitor/core'
-import { faGlasses } from '@fortawesome/free-solid-svg-icons'
 import Context from '../components/Context'
 import { ContextMenuItems } from '../state/ui'
 import useMarkdown from '@innatical/markdown'

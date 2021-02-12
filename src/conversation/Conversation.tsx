@@ -151,8 +151,6 @@ const ConversationRouter = () => {
     [participants]
   )
 
-  console.log(filteredParticipants)
-
   const isMobile = useMedia('(max-width: 740px)')
   return (
     <>

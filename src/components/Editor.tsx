@@ -39,6 +39,54 @@ const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   )
 }
 
+const allowedKeys = new Set([
+  'Digit0',
+  'Digit1',
+  'Digit2',
+  'Digit3',
+  'Digit4',
+  'Digit5',
+  'Digit6',
+  'Digit7',
+  'Digit8',
+  'Digit9',
+  'KeyQ',
+  'KeyW',
+  'KeyE',
+  'KeyR',
+  'KeyT',
+  'KeyY',
+  'KeyU',
+  'KeyI',
+  'KeyO',
+  'KeyP',
+  'BracketLeft',
+  'BracketRight',
+  'KeyA',
+  'KeyS',
+  'KeyD',
+  'KeyF',
+  'KeyG',
+  'KeyH',
+  'KeyJ',
+  'KeyK',
+  'KeyL',
+  'Semicolon',
+  'Quote',
+  'Backquote',
+  'Baskslash',
+  'KeyZ',
+  'KeyX',
+  'KeyC',
+  'KeyV',
+  'KeyB',
+  'KeyN',
+  'KeyM',
+  'Comma',
+  'Period',
+  'Slash'
+])
+
 const EditorView = ({
   id,
   editor,
@@ -77,7 +125,6 @@ const EditorView = ({
   const match = useRouteMatch<{ id: string }>('/communities/:id/:tab?/:tab2?')
   const isMobile = useMedia('(max-width: 740px)')
   const [typing, setTyping] = useState<boolean>(false)
-
   useEffect(() => {
     editor.isInline = (element: Element) => {
       return element.type === 'user' || element.type === 'channel'
@@ -236,7 +283,12 @@ const EditorView = ({
         !isMobile &&
         !isPlatform('ipad') &&
         (event.target as any)?.type !== 'text' &&
-        (!(event.target as any)?.id || (event.target as any)?.id === id)
+        (!(event.target as any)?.id || (event.target as any)?.id === id) &&
+        !!allowedKeys.has(event.code) &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        !event.metaKey &&
+        !event.shiftKey
       ) {
         ReactEditor.focus(editor)
         Transforms.move(editor)
@@ -293,7 +345,6 @@ const EditorView = ({
           onChange={(value) => {
             setValue(value)
             const { selection } = editor
-
             if (selection && Range.isCollapsed(selection)) {
               const [start] = Range.edges(selection)
               const characterBefore = Editor.before(editor, start, {
@@ -302,12 +353,14 @@ const EditorView = ({
               const wordBefore = Editor.before(editor, start, {
                 unit: 'word'
               })
+
               const mentionType =
                 characterBefore &&
                 Editor.string(
                   editor,
                   Editor.range(editor, characterBefore, start)
                 )
+
               const before =
                 mentionType === '@' || mentionType === '#'
                   ? characterBefore
@@ -352,6 +405,7 @@ const EditorView = ({
             onKeyDown={async (event) => {
               if (!typing && onTyping && serialize(value) !== '') onTyping()
               if (serialize(value) !== '') setTyping(true)
+
               switch (event.key) {
                 case 'Escape': {
                   if (onDismiss) {

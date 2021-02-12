@@ -1,62 +1,203 @@
-html,
-body {
-  height: 100vh;
-  @media not all and (display-mode: standalone) {
-    height: -webkit-fill-available;
-  }
-}
-
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-  background: var(--neko-default-background);
-  z-index: 0;
-}
-
-.centered {
-  padding-left: 10rem;
-  padding-right: 10rem;
+.downloads {
+  overflow-y: scroll;
   width: 100%;
   height: 100%;
+  background: var(--neko-default-background);
+  .hero {
+    width: 100%;
+    height: 30vh;
+    padding: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--neko-default-gradient-background);
+    justify-content: space-between;
 
-  overflow-x: scroll;
-  max-width: 1200px;
-
-  ul {
-    padding: 0;
-    li {
-      list-style: none;
-      text-decoration: none;
-
-      button {
-        min-width: 220px;
-        white-space: nowrap;
-        background: var(--neko-default-primary);
+    .info {
+      position: relative;
+      text-align: center;
+      max-width: 400px;
+      h1 {
+        font-weight: 900;
+        font-size: 2rem;
+        margin: 0;
+        margin-bottom: 0.5rem;
       }
 
-      a {
-        color: var(--neko-text-href);
+      p {
+        opacity: 0.7;
+        font-weight: 400;
+        font-size: 1.2rem;
+        margin: 0;
+        margin-bottom: 1.5rem;
+      }
+      .form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .input {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          max-width: 325px;
+          button {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            border-radius: 100%;
+            min-width: 1rem;
+            min-height: 1rem;
+            max-width: 1rem;
+            max-height: 1rem;
+            padding: 1rem;
+
+            background: var(--neko-default-primary);
+
+            &.error {
+              background: var(--neko-default-danger);
+              color: var(--neko-default-text-inline);
+            }
+            &:disabled {
+              cursor: default;
+              background: var(--neko-default-secondary);
+            }
+          }
+        }
+        label {
+          font-weight: 300;
+          margin-bottom: 0.45rem;
+        }
+
+        input {
+          text-align: center;
+          &::placeholder {
+            text-align: center;
+            font-weight: 300;
+            opacity: 0.35;
+          }
+        }
+      }
+    }
+
+    .next {
+      cursor: pointer;
+      text-align: center;
+      p {
+        margin-top: 0;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        width: 100px;
+      }
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  .body {
+    width: 100%;
+    padding: 3.5rem;
+    padding-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    ul {
+      padding: 0;
+      margin: 0;
+      li {
+        margin-bottom: 1.5rem;
+        list-style: none;
+        text-decoration: none;
+        h3,
+        p {
+          margin: 0;
+        }
+
+        p {
+          margin-bottom: 0.5rem;
+        }
+        button {
+          min-width: 220px;
+          white-space: nowrap;
+          background: var(--neko-default-primary);
+        }
+
+        a {
+          color: var(--neko-text-href);
+        }
       }
     }
   }
+
+  hr {
+    width: 20rem;
+    border-radius: 10px;
+    border-color: var(--neko-default-foreground);
+    opacity: 0.5;
+    margin-bottom: 2rem;
+    height: 2px;
+  }
 }
 
-@media (max-width: 740px) {
-  .centered {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-}
+// html,
+// body {
+//   height: 100vh;
+//   @media not all and (display-mode: standalone) {
+//     height: -webkit-fill-available;
+//   }
+// }
 
-@media (max-height: 480px) {
-  .centered {
-    display: block;
-    height: auto;
-  }
-  .wrapper {
-    display: block;
-    overflow-y: scroll;
-  }
-}
+// .wrapper {
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   height: 100%;
+//   background: var(--neko-default-background);
+//   z-index: 0;
+// }
+
+// .centered {
+//   padding-left: 10rem;
+//   padding-right: 10rem;
+//   width: 100%;
+//   height: 100%;
+
+//   overflow-x: scroll;
+//   max-width: 1200px;
+
+//   ul {
+//     padding: 0;
+//     li {
+//       list-style: none;
+//       text-decoration: none;
+
+//       button {
+//         min-width: 220px;
+//         white-space: nowrap;
+//         background: var(--neko-default-primary);
+//       }
+
+//       a {
+//         color: var(--neko-text-href);
+//       }
+//     }
+//   }
+// }
+
+// @media (max-width: 740px) {
+//   .centered {
+//     padding-left: 2rem;
+//     padding-right: 2rem;
+//   }
+// }
+
+// @media (max-height: 480px) {
+//   .centered {
+//     display: block;
+//     height: auto;
+//   }
+//   .wrapper {
+//     display: block;
+//     overflow-y: scroll;
+//   }
+// }

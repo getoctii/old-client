@@ -76,6 +76,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
+          color: var(--neko-text-inverse);
           background: var(--neko-colors-warning);
           &.used {
             background: var(--neko-colors-primary);
@@ -128,7 +129,7 @@
         background-color: var(--neko-settings-card);
         background-size: contain;
         border-radius: 12px;
-
+        color: var(--neko-text-inverse);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -149,71 +150,6 @@
       margin-bottom: 0.3rem;
       span {
         float: right;
-      }
-    }
-
-    i table {
-      @media (max-width: 740px) {
-        display: block;
-        overflow-x: scroll;
-        white-space: nowrap;
-      }
-      width: 100%;
-      margin-top: 0;
-      thead {
-        padding: 30px;
-        th {
-          padding: 0;
-          font-weight: 500;
-          font-size: 1.1rem;
-          text-align: left;
-        }
-      }
-
-      tr:first-child {
-        td:first-child {
-          border-top-left-radius: 10px;
-        }
-        td:last-child {
-          border-top-right-radius: 10px;
-        }
-      }
-
-      tr:last-child {
-        td:first-child {
-          border-bottom-left-radius: 10px;
-        }
-        td:last-child {
-          border-bottom-right-radius: 10px;
-        }
-      }
-
-      tbody {
-        tr {
-          padding: 30px;
-          height: 30px;
-          background-color: var(--neko-settings-card);
-          td {
-            text-align: left;
-            font-weight: 400;
-            padding: 15px;
-            font-size: 1rem;
-            white-space: nowrap;
-          }
-
-          .copyAction {
-            width: 49px;
-            background-color: var(--neko-colors-primary);
-            text-align: center;
-            color: var(--neko-text);
-          }
-
-          .deleteAction {
-            width: 49px;
-            background-color: var(--neko-colors-danger);
-            text-align: center;
-          }
-        }
       }
     }
   }

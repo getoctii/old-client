@@ -6,7 +6,8 @@ import dayjsCalendar from 'dayjs/plugin/calendar'
 import {
   faCopy,
   faTrashAlt,
-  IconDefinition
+  IconDefinition,
+  faPencilAlt
 } from '@fortawesome/pro-solid-svg-icons'
 import { Plugins } from '@capacitor/core'
 import { Auth } from '../authentication/state'
@@ -26,14 +27,13 @@ import useMarkdown from '@innatical/markdown'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCatSpace,
-  faPaintBrush,
   faTimesCircle,
   faUserNinja,
-  faUserShield
+  faUserShield,
+  faHeart
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
-import { faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 import { patchMessage } from './remote'
 import Editor from '../components/Editor'
 import { Chat } from './state'
@@ -333,11 +333,8 @@ const MessageView = memo(
                       icon={faCatSpace}
                     />
                   ) : user.data?.id ===
-                    '4e317329-8b17-4473-b1e1-4ceb9056cb5b' ? (
-                    <FontAwesomeIcon
-                      className={styles.badge}
-                      icon={faPaintBrush}
-                    />
+                    '71df7ca2-93c5-4a8a-be6e-f068fd91d68e' ? (
+                    <FontAwesomeIcon className={styles.badge} icon={faHeart} />
                   ) : (
                     user.data?.discriminator === 0 && (
                       <FontAwesomeIcon
