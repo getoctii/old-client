@@ -1,4 +1,11 @@
-import React, { memo, Suspense, useEffect, useMemo } from 'react'
+import React, {
+  memo,
+  Suspense,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback
+} from 'react'
 import { useMedia } from 'react-use'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { Authenticate } from './authentication/Authenticate'
@@ -154,11 +161,12 @@ const MarketingRouter = () => {
   )
 }
 
-const AppRouter = () => {
+const OnboardingHandler = ({
+  onboardingStateChange
+}: {
+  onboardingStateChange: (state: boolean) => void
+}) => {
   const auth = Auth.useContainer()
-  const isMobile = useMedia('(max-width: 740px)')
-  const isPWA = useMedia('(display-mode: standalone)')
-  const call = Call.useContainer()
 
   const [onboardingComplete] = useSuspenseStorageItem<boolean>(
     'onboarding-complete',
@@ -185,6 +193,19 @@ const AppRouter = () => {
       !onboardingComplete
     )
   }, [communities?.length, filteredParticipants?.length, onboardingComplete])
+
+  useEffect(() => {
+    onboardingStateChange(showOnBoarding)
+  }, [showOnBoarding, onboardingStateChange])
+
+  return <></>
+}
+
+const AppRouter = () => {
+  const auth = Auth.useContainer()
+  const isMobile = useMedia('(max-width: 740px)')
+  const isPWA = useMedia('(display-mode: standalone)')
+  const call = Call.useContainer()
 
   useEffect(() => {
     if (auth.authenticated && isPlatform('capacitor')) {
@@ -219,8 +240,15 @@ const AppRouter = () => {
     }
   }, [auth])
 
+  const [showOnBoarding, setShowOnBoarding] = useState(false)
+
+  const onboardingHandler = useCallback((state: boolean) => {
+    setShowOnBoarding(state)
+  }, [])
+
   return (
     <>
+      <OnboardingHandler onboardingStateChange={onboardingHandler} />
       <IncomingCall />
       <EventSource />
       <Suspense fallback={<></>}>
@@ -277,6 +305,8 @@ const AppRouter = () => {
     </>
   )
 }
+
+AppRouter.whyDidYouRender = true
 
 export const Router = memo(() => {
   const auth = Auth.useContainer()
