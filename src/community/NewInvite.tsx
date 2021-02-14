@@ -1,6 +1,6 @@
 import { faTimesCircle } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { Suspense } from 'react'
+import { Suspense } from 'react'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import Modal from '../components/Modal'

@@ -1,7 +1,6 @@
 import { faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ErrorMessage, Field, Formik, Form } from 'formik'
-import React from 'react'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import Modal from '../components/Modal'

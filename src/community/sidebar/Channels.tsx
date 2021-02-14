@@ -1,6 +1,6 @@
 import { faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import styles from './Channels.module.scss'
 import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
 import ChannelCard from './ChannelCard'

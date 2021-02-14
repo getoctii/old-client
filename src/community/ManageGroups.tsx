@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'

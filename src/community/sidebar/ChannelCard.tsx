@@ -6,7 +6,7 @@ import {
   faTrashAlt
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { memo, Suspense, useCallback, useMemo } from 'react'
+import { memo, Suspense, useCallback, useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
 import { Clipboard } from '@capacitor/core'

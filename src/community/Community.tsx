@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import { Suspense } from 'react'
 import styles from './Community.module.scss'
 import Chat from '../chat/Channel'
 import { Redirect, Switch, useParams, useRouteMatch } from 'react-router-dom'
@@ -6,89 +6,32 @@ import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import Channels from './sidebar/Sidebar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRight } from '@fortawesome/pro-solid-svg-icons'
-import Button from '../components/Button'
 import Settings from './settings/Settings'
 import { CommunityResponse, getCommunity } from './remote'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
 import Sidebar from '../sidebar/Sidebar'
 import Members from './Members'
-import { ModalTypes, Permissions } from '../utils/constants'
+import { Permissions } from '../utils/constants'
 import { Helmet } from 'react-helmet-async'
 import { ErrorBoundary } from 'react-error-boundary'
 import { faLock } from '@fortawesome/pro-duotone-svg-icons'
-import { UI } from '../state/ui'
+import EmptyCommunity from './EmptyCommunity'
 import { Permission } from '../utils/permissions'
 import { useMemo } from 'react'
 
-const EmptyCommunity = ({
-  community,
-  missingPermissions
-}: {
-  community: CommunityResponse
-  missingPermissions?: boolean
-}) => {
-  const auth = Auth.useContainer()
-  const ui = UI.useContainer()
-  return (
-    <div className={styles.communityEmpty}>
-      <Helmet>
-        <title>Octii - {community?.name}</title>
-      </Helmet>
-
-      {missingPermissions ? (
-        <>
-          <FontAwesomeIcon icon={faLock} size='4x' />
-          <small>{community?.name}</small>
-          <h3>
-            Looks like you don't have permissions to view this community :(
-          </h3>
-        </>
-      ) : (
-        <>
-          {ui.modal?.name !== ModalTypes.NEW_CHANNEL && (
-            <>
-              <small>{community?.name}</small>
-              <h1 style={{ marginTop: 0 }}>
-                <span role='img' aria-label='hands'>
-                  🙌{' '}
-                </span>
-                Hi, this community is empty.
-              </h1>
-              {community?.owner_id === auth.id ? (
-                <Button
-                  type='button'
-                  className={styles.createButton}
-                  style={{ maxWidth: '300px', marginTop: 0 }}
-                  onClick={() => {
-                    ui.setModal({ name: ModalTypes.NEW_CHANNEL })
-                  }}
-                >
-                  Create a Channel <FontAwesomeIcon icon={faArrowRight} />
-                </Button>
-              ) : (
-                <></>
-              )}
-              <br />
-              <h3>Here's a meme for now.</h3>
-              <iframe
-                className={styles.video}
-                title='sgn'
-                width='966'
-                height='543'
-                src='https://www.youtube.com/embed/dQw4w9WgXcQ'
-                frameBorder={0}
-                allow='autoplay; encrypted-media'
-                allowFullScreen={false}
-              />
-            </>
-          )}
-        </>
-      )}
+const NoPermission = ({ name }: CommunityResponse) => (
+  <div className={styles.communityEmpty}>
+    <Helmet>
+      <title>Octii - {name}</title>
+    </Helmet>
+    <div className={styles.locked}>
+      <FontAwesomeIcon icon={faLock} size='4x' />
+      <small>{name}</small>
+      <h3>Looks like you don't have permissions to view this community :(</h3>
     </div>
-  )
-}
+  </div>
+)
 
 const Channel = () => {
   const { id, channelID } = useParams<{ id: string; channelID: string }>()
@@ -138,13 +81,13 @@ const CommunityView = () => {
   if (!community) return <></>
 
   if (!hasPermissions([Permissions.READ_MESSAGES])) {
-    return <EmptyCommunity community={community} missingPermissions />
+    return <NoPermission {...community} />
   }
 
   return (
     <>
       {community.channels.length <= 0 ? (
-        <EmptyCommunity community={community} />
+        <EmptyCommunity {...community} />
       ) : (
         <div className={styles.community} key={match?.params.id}>
           <Helmet>

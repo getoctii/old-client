@@ -1,6 +1,6 @@
 import { faAddressBook, faUserCog } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styles from './Integrations.module.scss'
 import { Permission } from '../../utils/permissions'
