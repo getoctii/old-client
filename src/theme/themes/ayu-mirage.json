@@ -38,20 +38,11 @@
     },
     "channels": {
       "background": "#232834",
-      "seperator": "#383838",
-      "search": {
-        "background": "string",
-        "text": "string",
-        "placeholder": "string"
-      }
+      "seperator": "#383838"
     },
     "chat": {
       "background": "#191E2A",
-      "hover": "#232834AC",
-      "header": {
-        "channel": "string",
-        "description": "string"
-      }
+      "hover": "#232834AC"
     },
     "context": {
       "seperator": "#1F2430",
@@ -117,20 +108,11 @@
     },
     "channels": {
       "background": "#8A91991A",
-      "seperator": "#FFFFFF",
-      "search": {
-        "background": "string",
-        "text": "string",
-        "placeholder": "string"
-      }
+      "seperator": "#FFFFFF"
     },
     "chat": {
       "background": "#FAFAFA",
-      "hover": "#FFFFFFAC",
-      "header": {
-        "channel": "string",
-        "description": "string"
-      }
+      "hover": "#FFFFFFAC"
     },
     "context": {
       "seperator": "#ffffff",

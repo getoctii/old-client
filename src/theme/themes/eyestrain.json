@@ -9,7 +9,7 @@
       "success": "#8f8f8f",
       "info": "#8f8f8f",
       "danger": "linear-gradient(224deg, #FC9D9D 0%, #F86464 100%)",
-      "warning": "#8f8f8f",
+      "warning": "linear-gradient(224deg, #FFD575 0%, #FF7200 100%)",
       "light": "#dadada",
       "dark": "#040a0f"
     },
@@ -18,12 +18,12 @@
       "inverse": "#FEFEFE",
       "href": "#1089FF",
       "danger": "#F86464",
-      "warning": "",
-      "secondary": ""
+      "warning": "#FF7D0E",
+      "secondary": "#646464"
     },
     "sidebar": {
       "background": "#000000",
-      "seperator": "#000000",
+      "seperator": "#383838",
       "shadow": "0 -9px 10px 0 rgba(0, 0, 0, 0.42)"
     },
     "settings": {
@@ -33,12 +33,7 @@
     },
     "channels": {
       "background": "#000000",
-      "seperator": "#000000",
-      "search": {
-        "background": "string",
-        "text": "string",
-        "placeholder": "string"
-      }
+      "seperator": "#383838"
     },
     "mention": {
       "me": "#1089FF",
@@ -46,11 +41,7 @@
     },
     "chat": {
       "background": "#000000",
-      "hover": "#000000",
-      "header": {
-        "channel": "string",
-        "description": "string"
-      }
+      "hover": "#000000"
     },
     "context": {
       "seperator": "#000000",
@@ -88,7 +79,7 @@
       "success": "#8f8f8f",
       "info": "#8f8f8f",
       "danger": "linear-gradient(224deg, #FC9D9D 0%, #F86464 100%)",
-      "warning": "#8f8f8f",
+      "warning": "linear-gradient(224deg, #FFD575 0%, #FF7200 100%)",
       "light": "#dadada",
       "dark": "#040a0f"
     },
@@ -97,8 +88,8 @@
       "inverse": "#FFFFFF",
       "href": "#1089FF",
       "danger": "#F86464",
-      "warning": "",
-      "secondary": ""
+      "warning": "#FF7D0E",
+      "secondary": "#646464"
     },
     "mention": {
       "me": "#1089FF",
@@ -106,7 +97,7 @@
     },
     "sidebar": {
       "background": "#FFFFFF",
-      "seperator": "#FFFFFF",
+      "seperator": "#F1F1F1",
       "shadow": "0 -9px 12px -2px rgba(255, 255, 255, 1)"
     },
     "settings": {
@@ -116,23 +107,14 @@
     },
     "channels": {
       "background": "#FFFFFF",
-      "seperator": "#FFFFFF",
-      "search": {
-        "background": "string",
-        "text": "string",
-        "placeholder": "string"
-      }
+      "seperator": "#F1F1F1"
     },
     "chat": {
       "background": "#FFFFFF",
-      "hover": "#FFFFFF",
-      "header": {
-        "channel": "string",
-        "description": "string"
-      }
+      "hover": "#FFFFFF"
     },
     "context": {
-      "seperator": "#ffffff",
+      "seperator": "#F1F1F1",
       "background": "rgba(0, 0, 0, 0.1)"
     },
     "status": {
