@@ -66,8 +66,15 @@ const Friends = () => {
             <div className={styles.cards}>
               {showIncoming &&
                 incoming?.map((friend) => (
-                  <Suspense fallback={<FriendCard.Placeholder />}>
-                    <FriendCard.View key={friend.recipient_id} {...friend} />
+                  <Suspense
+                    key={
+                      friend.recipient_id === id
+                        ? friend.user_id
+                        : friend.recipient_id
+                    }
+                    fallback={<FriendCard.Placeholder />}
+                  >
+                    <FriendCard.View {...friend} />
                   </Suspense>
                 ))}
             </div>
@@ -77,8 +84,15 @@ const Friends = () => {
         <div className={styles.list}>
           {(friends?.length ?? 0) > 0 ? (
             friends?.map((friend) => (
-              <Suspense fallback={<FriendCard.Placeholder />}>
-                <FriendCard.View key={friend.recipient_id} {...friend} />
+              <Suspense
+                key={
+                  friend.recipient_id === id
+                    ? friend.user_id
+                    : friend.recipient_id
+                }
+                fallback={<FriendCard.Placeholder />}
+              >
+                <FriendCard.View {...friend} />
               </Suspense>
             ))
           ) : (
@@ -99,7 +113,14 @@ const Friends = () => {
             <div className={styles.cards}>
               {showOutgoing &&
                 outgoing?.map((friend) => (
-                  <Suspense fallback={<FriendCard.Placeholder />}>
+                  <Suspense
+                    key={
+                      friend.recipient_id === id
+                        ? friend.user_id
+                        : friend.recipient_id
+                    }
+                    fallback={<FriendCard.Placeholder />}
+                  >
                     <FriendCard.View {...friend} />
                   </Suspense>
                 ))}
