@@ -1,4 +1,5 @@
 .lookup {
+  padding-top: env(safe-area-inset-top);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -16,7 +17,6 @@
       margin-bottom: 0.8rem;
       display: flex;
       .title {
-
         margin: 0;
         display: flex;
         flex-direction: column;
@@ -35,19 +35,19 @@
       grid-template-columns: auto auto;
       gap: 0.5rem;
 
-        button {
-          background: var(--neko-colors-danger);
+      button {
+        background: var(--neko-colors-danger);
 
-          &:disabled {
-            background: var(--neko-colors-secondary);
-            cursor: pointer;
-          }
-          &:first-child {
-            background: var(--neko-colors-primary);
-          }
-          &.disabled {
-            background: var(--neko-colors-warning);
-          }
+        &:disabled {
+          background: var(--neko-colors-secondary);
+          cursor: pointer;
+        }
+        &:first-child {
+          background: var(--neko-colors-primary);
+        }
+        &.disabled {
+          background: var(--neko-colors-warning);
+        }
       }
     }
 
@@ -58,13 +58,13 @@
       }
     }
 
-
     background: var(--neko-channels-background);
     max-width: 450px;
     width: 100%;
     padding: 2rem;
     border-radius: 16px;
-    h4, p {
+    h4,
+    p {
       margin: 0;
     }
 
@@ -140,7 +140,6 @@
     font-size: 1.5rem;
     font-weight: 700;
   }
-
 
   p {
     font-size: 1rem;
