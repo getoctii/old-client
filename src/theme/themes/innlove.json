@@ -27,7 +27,7 @@
     },
     "sidebar": {
       "background": "#0F040F",
-      "seperator": "#383838",
+      "seperator": "#2C1A25",
       "shadow": " 0 -9px 10px 0 rgba(0, 0, 0, 0.42)"
     },
     "settings": {
@@ -41,7 +41,7 @@
     },
     "chat": {
       "background": "#0F040F",
-      "hover": "#1A1F2CAC"
+      "hover": "#2C1A25AC"
     },
     "context": {
       "seperator": "#0F040F",

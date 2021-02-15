@@ -105,14 +105,16 @@ const ConversationsPlaceholder = () => {
 export const Conversations = () => {
   const isMobile = useMedia('(max-width: 740px)')
   return (
-    <div className={styles.sidebar}>
-      {isMobile && <div className={styles.statusBar} />}
-      <h3>Messages</h3>
-      <NewConversation />
-      <div className={styles.list}>
-        <React.Suspense fallback={<ConversationsPlaceholder />}>
-          <ConversationList />
-        </React.Suspense>
+    <div className={styles.sidebarWrapper}>
+      <div className={styles.sidebar}>
+        {isMobile && <div className={styles.statusBar} />}
+        <h3>Messages</h3>
+        <NewConversation />
+        <div className={styles.list}>
+          <React.Suspense fallback={<ConversationsPlaceholder />}>
+            <ConversationList />
+          </React.Suspense>
+        </div>
       </div>
     </div>
   )

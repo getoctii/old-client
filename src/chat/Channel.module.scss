@@ -11,10 +11,10 @@
   height: 100%;
 
   .header {
-    padding: 2rem 2rem 1rem;
+    padding: calc(env(safe-area-inset-top) + 2rem) 2rem 1rem;
     display: flex;
-    height: 5.65rem;
-    min-height: 5.65rem;
+    height: calc(5.65rem + env(safe-area-inset-top));
+    min-height: calc(5.65rem + env(safe-area-inset-top));
     z-index: 3;
     flex-direction: row;
     align-items: center;
@@ -172,7 +172,6 @@
   }
 
   @media (max-width: 740px) {
-    padding-top: calc(env(safe-area-inset-top) + 2rem);
     .header {
       margin-top: 0;
     }

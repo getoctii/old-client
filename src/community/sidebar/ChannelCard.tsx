@@ -197,7 +197,7 @@ const ChannelCardView = ({ id, index }: { id: string; index: number }) => {
                 fixedWidth={true}
                 style={
                   matchTab?.params.channelID === channel.id
-                    ? channel.color
+                    ? channel.color !== '#0081FF'
                       ? {
                           color: channel.color
                         }
