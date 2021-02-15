@@ -5,6 +5,7 @@ import octii from './themes/octii.json'
 import octiiHub from './themes/octii-hub.json'
 import ayu from './themes/ayu-mirage.json'
 import eyestrain from './themes/eyestrain.json'
+import innlove from './themes/innlove.json'
 import { isPlatform } from '@ionic/react'
 import {
   KeyboardResize,
@@ -66,19 +67,10 @@ interface Theme {
   channels: {
     background: string
     seperator: string
-    search: {
-      background: string
-      text: string
-      placeholder: string
-    }
   }
   chat: {
     background: string
     hover: string
-    header: {
-      channel: string
-      description: string
-    }
   }
 
   status: {
@@ -121,7 +113,7 @@ const globalStyle = document.createElement('style')
 globalStyle.type = 'text/css'
 document.head.appendChild(globalStyle)
 
-export const themes = [octii, octiiHub, ayu, eyestrain]
+export const themes = [octii, innlove, octiiHub, ayu, eyestrain]
 
 const useTheme = () => {
   const [themeID, setThemeID] = useSuspenseStorageItem<string>(

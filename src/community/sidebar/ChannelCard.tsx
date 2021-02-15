@@ -24,14 +24,14 @@ import {
   Permissions
 } from '../../utils/constants'
 import { Permission } from '../../utils/permissions'
-import { Draggable } from '@react-forked/dnd'
+import { Draggable, DraggableStateSnapshot } from '@react-forked/dnd'
 
 const ChannelCardDraggable = memo(
   ({ id, index }: { id: string; index: number }) => {
     const { hasPermissions } = Permission.useContainer()
 
     const draggableChild = useCallback(
-      (provided, snapshot) => (
+      (provided, snapshot: DraggableStateSnapshot) => (
         <div
           className={`${styles.draggable} ${
             !!snapshot.isDragging ? styles.dragging : ''
@@ -213,7 +213,7 @@ const ChannelCardView = ({ id, index }: { id: string; index: number }) => {
                 fixedWidth={true}
                 style={
                   matchTab?.params.channelID === channel.id
-                    ? channel.color
+                    ? channel.color !== '#0081FF'
                       ? {
                           color: channel.color
                         }

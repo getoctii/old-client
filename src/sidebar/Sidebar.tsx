@@ -26,7 +26,6 @@ import {
   MembersResponse,
   State
 } from '../user/remote'
-import { isPlatform } from '@ionic/react'
 import { useScroll } from 'react-use'
 import { ScrollPosition } from '../state/scroll'
 import { getCommunity } from '../community/remote'
@@ -255,7 +254,6 @@ const Sidebar = () => {
   return (
     <div className={styles.sidebar}>
       <div className={styles.scrollable} ref={scrollRef}>
-        {isPlatform('capacitor') && !isMobile && <br />}
         {isMobile && (
           <>
             <Button

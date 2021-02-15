@@ -4,7 +4,7 @@
   height: 100%;
   display: flex;
   flex: 2 1;
-
+  overflow: hidden;
 
   @media (max-width: 740px) {
     display: flex;

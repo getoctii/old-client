@@ -85,6 +85,17 @@
       background-color: var(--neko-text-inverse) !important;
     }
   }
+
+  @media (max-width: 740px) {
+    .icon {
+      font-size: 1.05rem;
+      border-radius: 12px;
+      padding: 0.58rem;
+    }
+    h4 {
+      font-size: 1.05rem;
+    }
+  }
 }
 
 .channelPlaceholder {
