@@ -13,6 +13,7 @@
 
     a {
       color: var(--neko-text-normal);
+      color: var(--neko-default-text);
     }
   }
 
@@ -21,9 +22,11 @@
     margin: 0;
     margin-top: 1rem;
     margin-bottom: 0.35rem;
+    color: var(--neko-default-text);
   }
 
   h4 {
     margin: 0;
+    color: var(--neko-default-text);
   }
 }
