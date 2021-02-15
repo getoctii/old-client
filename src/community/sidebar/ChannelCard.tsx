@@ -19,14 +19,14 @@ import { useSuspenseStorageItem } from '../../utils/storage'
 import { UI } from '../../state/ui'
 import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
 import { Permission } from '../../utils/permissions'
-import { Draggable } from '@react-forked/dnd'
+import { Draggable, DraggableStateSnapshot } from '@react-forked/dnd'
 
 const ChannelCardDraggable = memo(
   ({ id, index }: { id: string; index: number }) => {
     const { hasPermissions } = Permission.useContainer()
 
     const draggableChild = useCallback(
-      (provided, snapshot) => (
+      (provided, snapshot: DraggableStateSnapshot) => (
         <div
           className={`${styles.draggable} ${
             !!snapshot.isDragging ? styles.dragging : ''

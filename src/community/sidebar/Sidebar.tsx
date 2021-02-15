@@ -41,78 +41,74 @@ const SidebarView = () => {
       ).data
   )
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.sidebarWrapper}>
       <div className={styles.sidebar}>
-        <div className={styles.container}>
-          <h3>
-            {community?.name ? community?.name : ''}{' '}
-            <span
-              className={styles.leave}
-              onClick={() => {
-                setMenu(!menu)
-              }}
-            >
-              <FontAwesomeIcon icon={faEllipsisH} className={styles.menuIcon} />
-            </span>
-          </h3>
-          {menu && (
-            <div className={styles.menu}>
-              {hasPermissions([
-                Permissions.CREATE_INVITES,
-                Permissions.MANAGE_INVITES
-              ]) && (
-                <div
-                  className={styles.menuItem}
-                  onClick={() => ui.setModal({ name: ModalTypes.NEW_INVITE })}
-                >
-                  <span>Create Invite</span>{' '}
-                  <FontAwesomeIcon icon={faUserPlus} fixedWidth />
-                </div>
-              )}
+        <h3>
+          {community?.name ? community?.name : ''}{' '}
+          <span
+            className={styles.leave}
+            onClick={() => {
+              setMenu(!menu)
+            }}
+          >
+            <FontAwesomeIcon icon={faEllipsisH} className={styles.menuIcon} />
+          </span>
+        </h3>
+        {menu && (
+          <div className={styles.menu}>
+            {hasPermissions([
+              Permissions.CREATE_INVITES,
+              Permissions.MANAGE_INVITES
+            ]) && (
               <div
                 className={styles.menuItem}
-                onClick={() => {
-                  if (!community?.id) return
-                  if (muted?.includes(community.id))
-                    setMuted(
-                      muted.filter(
-                        (communities) => communities !== community?.id
-                      )
-                    )
-                  else setMuted([...(muted || []), community.id])
-                }}
+                onClick={() => ui.setModal({ name: ModalTypes.NEW_INVITE })}
               >
-                {community && muted?.includes(community.id) ? (
-                  <>
-                    <span>Unmute Community</span>{' '}
-                    <FontAwesomeIcon icon={faBell} fixedWidth />
-                  </>
-                ) : (
-                  <>
-                    <span>Mute Community</span>{' '}
-                    <FontAwesomeIcon icon={faBellSlash} fixedWidth />
-                  </>
-                )}
+                <span>Create Invite</span>{' '}
+                <FontAwesomeIcon icon={faUserPlus} fixedWidth />
               </div>
-              {community?.owner_id !== auth.id && (
+            )}
+            <div
+              className={styles.menuItem}
+              onClick={() => {
+                if (!community?.id) return
+                if (muted?.includes(community.id))
+                  setMuted(
+                    muted.filter((communities) => communities !== community?.id)
+                  )
+                else setMuted([...(muted || []), community.id])
+              }}
+            >
+              {community && muted?.includes(community.id) ? (
                 <>
-                  <hr />
-                  <div
-                    className={`${styles.menuItem} ${styles.danger}`}
-                    onClick={async () => {
-                      await leaveCommunity()
-                    }}
-                  >
-                    <span>Leave Community</span>{' '}
-                    <FontAwesomeIcon icon={faHouseLeave} fixedWidth />
-                  </div>
+                  <span>Unmute Community</span>{' '}
+                  <FontAwesomeIcon icon={faBell} fixedWidth />
+                </>
+              ) : (
+                <>
+                  <span>Mute Community</span>{' '}
+                  <FontAwesomeIcon icon={faBellSlash} fixedWidth />
                 </>
               )}
             </div>
-          )}
-          <Integrations.View />
-          <Channels.View />
-        </div>
+            {community?.owner_id !== auth.id && (
+              <>
+                <hr />
+                <div
+                  className={`${styles.menuItem} ${styles.danger}`}
+                  onClick={async () => {
+                    await leaveCommunity()
+                  }}
+                >
+                  <span>Leave Community</span>{' '}
+                  <FontAwesomeIcon icon={faHouseLeave} fixedWidth />
+                </div>
+              </>
+            )}
+          </div>
+        )}
+        <Integrations.View />
+        <Channels.View />
       </div>
     </div>
   )

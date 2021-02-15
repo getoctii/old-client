@@ -1,11 +1,11 @@
 .sidebarWrapper {
+  padding-top: env(safe-area-inset-top);
   background: var(--neko-channels-background);
-
+  height: 100%;
   .sidebar {
     display: flex;
     flex-direction: column;
     max-width: 18rem;
-    width: 18rem;
     min-width: 18rem;
     min-height: 5rem;
     z-index: 0;
@@ -14,11 +14,6 @@
     background: var(--neko-channels-background);
     border: 0;
     height: 100%;
-    margin-top: calc(env(safe-area-inset-top));
-
-    @media (max-width: 740px) {
-      width: 100%;
-    }
 
     h1,
     h2 {
@@ -50,6 +45,17 @@
         h4 {
           margin: 0 auto 0 0.75rem;
           font-weight: 500;
+        }
+
+        @media (max-width: 740px) {
+          .icon {
+            font-size: 1.05rem;
+            border-radius: 12px;
+            padding: 0.58rem;
+          }
+          h4 {
+            font-size: 1.05rem;
+          }
         }
         img {
           border-radius: 25px;
@@ -132,14 +138,22 @@
       border-radius: 10px;
       color: var(--neko-text-inverse);
       padding: 0.75rem;
+      width: 100%;
       cursor: pointer;
     }
-    // , (max-height: 420px)
-    @media (max-width: 740px) {
-      padding-top: 0;
+  }
+
+  @media (max-width: 740px) {
+    width: 100%;
+
+    .sidebar {
+      max-height: 100%;
       max-width: 100%;
       width: 100%;
-      min-width: 100%;
+
+      h2 {
+        font-size: 2rem;
+      }
     }
   }
 }
