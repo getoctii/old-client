@@ -5,7 +5,7 @@ import { matchPath, useHistory } from 'react-router-dom'
 import Button from '../../components/Button'
 import styles from './Invite.module.scss'
 import { useQuery } from 'react-query'
-import { getInvite } from '../../invite/remote'
+import { getUseInvite } from '../../invite/remote'
 import { Auth } from '../../authentication/state'
 import { getCommunities } from '../../user/remote'
 import { clientGateway } from '../../utils/constants'
@@ -23,31 +23,35 @@ const InviteEmbed = ({ url }: { url: string }) => {
     exact: true,
     strict: false
   })
-  const invite = useQuery(['invite', match?.params.code, token], getInvite, {
-    retry: 1
-  })
-  const communities = useQuery(['communities', id, token], getCommunities)
+  const { data: invite } = useQuery(
+    ['invite', match?.params.code, token],
+    getUseInvite,
+    {
+      retry: 1
+    }
+  )
+  const { data: communities } = useQuery(
+    ['communities', id, token],
+    getCommunities
+  )
   const isAlreadyInCommunity = useMemo(
     () =>
-      !!communities.data?.find(
-        (member) => member.community.id === invite.data?.community?.id
+      !!communities?.find(
+        (member) => member.community.id === invite?.community?.id
       ),
-    [communities, invite.data?.community?.id]
+    [communities, invite?.community?.id]
   )
   return (
     <div className={styles.inviteEmbed}>
       <div className={styles.details}>
-        <img
-          alt={invite.data?.community?.name}
-          src={invite.data?.community?.icon}
-        />
+        <img alt={invite?.community?.name} src={invite?.community?.icon} />
         <div className={styles.title}>
           <h4>
             {isAlreadyInCommunity
               ? 'You are already in this community!'
               : "You've been invited to a community!"}
           </h4>
-          <h2>{invite.data?.community?.name}</h2>
+          <h2>{invite?.community?.name}</h2>
         </div>
       </div>
       <Button
@@ -55,7 +59,7 @@ const InviteEmbed = ({ url }: { url: string }) => {
         type='button'
         onClick={async () => {
           const { data } = await clientGateway.post<{ community_id: string }>(
-            `/invites/${invite.data?.code}/use`,
+            `/invites/${match?.params.code}/use`,
             {},
             { headers: { Authorization: token } }
           )
