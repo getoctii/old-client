@@ -140,19 +140,20 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
   )
 }
 
+const joinCommunity = async (invite: string, token: string) =>
+  (
+    await clientGateway.post<{ community_id: string }>(
+      `/invites/${invite}/use`,
+      {},
+      { headers: { Authorization: token } }
+    )
+  ).data
+
 export const NewCommunity = () => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
   const [createCommunityMenu, setCreateCommunityMenu] = useState(false)
   const history = useHistory()
-  const joinCommunity = async (invite: string) =>
-    (
-      await clientGateway.post<{ community_id: string }>(
-        `/invites/${invite}/use`,
-        {},
-        { headers: { Authorization: token } }
-      )
-    ).data
 
   return (
     <Modal onDismiss={() => ui.clearModal()}>
@@ -168,9 +169,11 @@ export const NewCommunity = () => {
               values,
               { setSubmitting, setErrors, setFieldError }
             ) => {
+              if (!token) return
               if (!values?.invite) return setFieldError('invite', 'Required')
               try {
-                const id = (await joinCommunity(values.invite)).community_id
+                const id = (await joinCommunity(values.invite, token))
+                  .community_id
                 history.push(`/communities/${id}`)
                 ui.clearModal()
               } catch (e) {
