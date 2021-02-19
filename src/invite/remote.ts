@@ -11,7 +11,7 @@ export const getUseInvite = async (_: string, code: string, token: string) =>
         large: boolean
         owner_id: string
       }
-    }>(`/invites/${code}`, {
+    }>(`/invites/${code}/use`, {
       headers: {
         Authorization: token
       }
