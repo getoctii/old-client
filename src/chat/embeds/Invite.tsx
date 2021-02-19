@@ -11,9 +11,7 @@ import { getCommunities } from '../../user/remote'
 import { clientGateway } from '../../utils/constants'
 
 const isInvite = (url: string) =>
-  /^https:\/\/octii\.chat\/invite\/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/g.test(
-    url
-  )
+  /^https:\/\/octii\.(chat|com)(\/invite)?\/[A-Za-z0-9_-]*/g.test(url)
 
 const InviteEmbed = ({ url }: { url: string }) => {
   const { token, id } = Auth.useContainer()
