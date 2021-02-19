@@ -55,7 +55,7 @@ const InviteCard = memo((invite: InviteResponse) => {
             type='button'
             onClick={async () => {
               await Plugins.Clipboard.write({
-                string: `https://octii.chat/invite/${invite.code}`
+                string: `https://octii.com/${invite.code}`
               })
             }}
           >

@@ -2,15 +2,24 @@ import React, { useEffect, useState } from 'react'
 import { Redirect, useHistory, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { Auth } from '../authentication/state'
-import { getInvite } from './remote'
-import { InviteResponse } from '../community/remote'
+import { getUseInvite } from './remote'
 import styles from './Invite.module.scss'
 import { getCommunities, getUser } from '../user/remote'
 import Button from '../components/Button'
 import { clientGateway } from '../utils/constants'
 import { Helmet } from 'react-helmet-async'
 
-const InvitePreview = (invite: InviteResponse) => {
+const InvitePreview = (invite: {
+  code: string
+  author_id: string
+  community: {
+    id: string
+    name: string
+    icon: string
+    large: boolean
+    owner_id: string
+  }
+}) => {
   const { token, id } = Auth.useContainer()
   const history = useHistory()
   const user = useQuery(['users', invite.author_id, token], getUser)
@@ -55,14 +64,17 @@ const InvitePreview = (invite: InviteResponse) => {
 const Invite = () => {
   const { token } = Auth.useContainer()
   const params = useParams<{ invite: string; code?: string }>()
-  const invite = useQuery(['invite', params.invite, token], getInvite)
+  const { data: invite } = useQuery(
+    ['useInvite', params.invite, token],
+    getUseInvite
+  )
 
   return (
     <div className={styles.invite}>
       <Helmet>
-        <title>Octii - {invite.data?.community?.name}</title>
+        <title>Octii - {invite?.community?.name}</title>
       </Helmet>
-      {invite.data && <InvitePreview {...invite.data} />}
+      {invite && <InvitePreview code={params.invite} {...invite} />}
     </div>
   )
 }
