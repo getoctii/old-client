@@ -1,5 +1,4 @@
 import { clientGateway } from '../utils/constants'
-import { InviteResponse } from '../community/remote'
 
 export const getUseInvite = async (_: string, code: string, token: string) =>
   (
