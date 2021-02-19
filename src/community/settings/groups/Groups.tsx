@@ -1,4 +1,3 @@
-import { faBoxOpen } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { DragDropContext, Droppable } from '@react-forked/dnd'
 import React, { Suspense, useCallback, useMemo } from 'react'
@@ -12,6 +11,7 @@ import Group from './Group'
 import { queryCache, useQuery } from 'react-query'
 import { getGroups } from '../../remote'
 import { AnimatePresence } from 'framer-motion'
+import { faPlusCircle, faUsersCrown } from '@fortawesome/pro-duotone-svg-icons'
 
 const reorder = (
   list: string[],
@@ -96,16 +96,18 @@ const GroupsList = () => {
         ) : (
           <>
             <div className={styles.empty}>
-              <FontAwesomeIcon size={'5x'} icon={faBoxOpen} />
-              <br />
-              <h2>No permission groups in this community!</h2>
-              <br />
-              <br />
+              <FontAwesomeIcon size={'5x'} icon={faUsersCrown} />
+              <h2>Get started with groups!</h2>
+              <p>
+                Groups allow you to manage community members. For example, you
+                can assign members to a moderator role so they can run the
+                community while you chill.
+              </p>
               <Button
                 type='button'
                 onClick={() => ui.setModal({ name: ModalTypes.NEW_PERMISSION })}
               >
-                Create Permission Group
+                Create Group <FontAwesomeIcon icon={faPlusCircle} />
               </Button>
             </div>
           </>

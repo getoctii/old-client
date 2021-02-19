@@ -7,7 +7,7 @@ import { useQuery } from 'react-query'
 import Channels from './sidebar/Sidebar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Settings from './settings/Settings'
-import { CommunityResponse, getCommunity } from './remote'
+import { CommunityResponse, getChannels, getCommunity } from './remote'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
 import Sidebar from '../sidebar/Sidebar'
@@ -69,6 +69,7 @@ const CommunityPlaceholder = () => {
 }
 
 const CommunityView = () => {
+  const { token } = Auth.useContainer()
   const { path } = useRouteMatch()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const matchTab = useRouteMatch<{ id: string; tab: string }>(
@@ -76,7 +77,18 @@ const CommunityView = () => {
   )
   const isMobile = useMedia('(max-width: 740px)')
 
-  const { community, hasPermissions } = Permission.useContainer()
+  const { data: community } = useQuery(
+    ['community', match?.params.id, token],
+    getCommunity
+  )
+  const { data: channels } = useQuery(
+    ['channels', match?.params.id, token],
+    getChannels
+  )
+  const textChannels = useMemo(() => {
+    return (channels ?? []).filter((channel) => channel.type === 1)
+  }, [channels])
+  const { hasPermissions } = Permission.useContainer()
 
   if (!community) return <></>
 
@@ -86,7 +98,7 @@ const CommunityView = () => {
 
   return (
     <>
-      {community.channels.length <= 0 ? (
+      {textChannels.length <= 0 ? (
         <EmptyCommunity {...community} />
       ) : (
         <div className={styles.community} key={match?.params.id}>
@@ -130,7 +142,7 @@ const CommunityView = () => {
               {!isMobile && (
                 <Redirect
                   path='*'
-                  to={`/communities/${match?.params.id}/channels/${community.channels[0]}`}
+                  to={`/communities/${match?.params.id}/channels/${textChannels[0].id}`}
                 />
               )}
             </Switch>

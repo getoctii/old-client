@@ -89,7 +89,7 @@ export const NewPermissionStandalone = () => {
   )
   return (
     <div className={styles.permission}>
-      <h3>New Permission Group</h3>
+      <h3>Create Group</h3>
       <Formik
         initialValues={{ name: '' }}
         validate={validatePermission}
@@ -169,11 +169,7 @@ export const NewPermissionStandalone = () => {
               </>
             ))}
             <Button disabled={isSubmitting} type='submit'>
-              {isSubmitting ? (
-                <BarLoader color='#ffffff' />
-              ) : (
-                'Create Permission Group'
-              )}
+              {isSubmitting ? <BarLoader color='#ffffff' /> : 'Create Group'}
             </Button>
           </Form>
         )}

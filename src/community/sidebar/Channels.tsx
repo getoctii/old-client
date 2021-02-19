@@ -1,68 +1,163 @@
 import { faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styles from './Channels.module.scss'
-import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
+import {
+  ChannelTypes,
+  clientGateway,
+  ModalTypes,
+  Permissions
+} from '../../utils/constants'
 import ChannelCard from './ChannelCard'
 import { UI } from '../../state/ui'
 import { Permission } from '../../utils/permissions'
-import { queryCache } from 'react-query'
+import { queryCache, useQuery } from 'react-query'
 import { Auth } from '../../authentication/state'
-import { CommunityResponse } from '../remote'
-import { DragDropContext, Droppable } from '@react-forked/dnd'
+import { ChannelResponse, getChannels } from '../remote'
+import { useRouteMatch } from 'react-router-dom'
+import { DragDropContext, DropResult } from '@react-forked/dnd'
+import CategoryCard from './channel/CategoryCard'
 
 const reorder = (
-  list: string[],
+  list: ChannelResponse[],
   startIndex: number,
   endIndex: number
-): string[] => {
+): ChannelResponse[] => {
   const result = Array.from(list)
   const [removed] = result.splice(startIndex, 1)
   result.splice(endIndex, 0, removed)
   return result
 }
 
+type Categories = {
+  [key in string]: {
+    type: ChannelTypes
+    children: ChannelResponse[]
+  }
+}
+
+const groupByCategories = (channels: ChannelResponse[]) => {
+  const items: Categories = {}
+  const categories = channels.filter(
+    (channel) => channel.type === ChannelTypes.CATEGORY || !channel.parent_id
+  )
+  console.log(categories)
+
+  categories.forEach((category) => {
+    if (category.type !== ChannelTypes.CATEGORY) {
+      items['rooms'] = {
+        type: ChannelTypes.CATEGORY,
+        children: [...(items['rooms']?.children ?? []), category]
+      }
+      return
+    }
+    const categoryChildren = channels.filter(
+      (channel) => channel.parent_id === category.id
+    )
+    items[category.id] = {
+      type: category.type,
+      children: categoryChildren
+    }
+  })
+
+  return items
+}
+
 const ChannelsView = () => {
   const ui = UI.useContainer()
   const auth = Auth.useContainer()
-  const { community, hasPermissions } = Permission.useContainer()
+  const match = useRouteMatch<{ id: string }>('/communities/:id')
+  const { data: channels } = useQuery(
+    ['channels', match?.params.id, auth.token],
+    getChannels
+  )
+
+  const constructCursedTree = useMemo(() => {
+    return groupByCategories(channels ?? [])
+  }, [channels])
+  console.log(constructCursedTree)
+
+  const { hasPermissions } = Permission.useContainer()
 
   const onDragEnd = useCallback(
-    async (result) => {
+    async (result: DropResult) => {
       if (
         !result.destination ||
         result.destination.index === result.source.index
       )
         return
+      const channel = channels?.find((c) => c.id === result.draggableId)
+      if (!channel) return
+      console.log(result.destination.index)
+      const channelBefore =
+        result.destination.index > 0
+          ? channels?.[result.destination.index - 1]
+          : undefined
+      console.log(channel)
+      console.log(channelBefore)
       const reorderedChannels = reorder(
-        community?.channels ?? [],
+        channels ?? [],
         result.source.index,
         result.destination.index
       )
-      queryCache.setQueryData<CommunityResponse>(
-        ['community', community?.id, auth.token],
-        (initial) => {
-          if (initial) {
-            return {
-              ...initial,
-              channels: reorderedChannels
+      if (channel.type !== ChannelTypes.CATEGORY && channelBefore) {
+        const parentID =
+          channelBefore.type === ChannelTypes.CATEGORY
+            ? channelBefore.id
+            : channelBefore.parent_id
+            ? channelBefore.parent_id
+            : undefined
+        if (
+          (parentID && !channel.parent_id) ||
+          channel.parent_id !== parentID
+        ) {
+          await clientGateway.patch(
+            `/channels/${channel.id}`,
+            {
+              parent: channelBefore.id,
+              parent_order: reorderedChannels
+                .filter((c) => c.parent_id === parentID || c.id === channel.id)
+                .map((c) => c.id)
+            },
+            {
+              headers: {
+                Authorization: auth.token
+              }
             }
-          } else {
-            return {
-              id: community?.id ?? '',
-              name: community?.name ?? '',
-              icon: community?.icon ?? '',
-              large: community?.large ?? false,
-              channels: reorderedChannels,
-              base_permissions: community?.base_permissions ?? []
+          )
+          return
+        } else if (parentID && channel.parent_id) {
+          await clientGateway.post(
+            `/channels/${channel.id}/reorder`,
+            {
+              order: reorderedChannels
+                .filter(
+                  (c) =>
+                    c.parent_id === channelBefore.parent_id ||
+                    c.id === channel.id
+                )
+                .map((channel) => channel.id)
+            },
+            {
+              headers: {
+                Authorization: auth.token
+              }
             }
-          }
+          )
+          return
         }
+      } else if (channel.type !== ChannelTypes.CATEGORY && !channelBefore) {
+      }
+
+      queryCache.setQueryData<ChannelResponse[]>(
+        ['channels', match?.params.id, auth.token],
+        reorderedChannels
       )
+
       await clientGateway.patch(
-        `/communities/${community?.id}/channels`,
+        `/communities/${match?.params.id}/channels`,
         {
-          order: reorderedChannels
+          order: reorderedChannels.map((channel) => channel.id)
         },
         {
           headers: {
@@ -71,31 +166,50 @@ const ChannelsView = () => {
         }
       )
     },
-    [auth.token, community]
+    [auth.token, channels, match?.params.id]
   )
 
+  /*
   const DroppableComponent = useCallback(
-    (provided) => (
+    (provided: DroppableProvided) => (
       <div
         className={styles.body}
         {...provided.droppableProps}
         ref={provided.innerRef}
       >
-        {community?.channels?.map(
+        <h1></h1>
+        {Object.keys(constructCursedTree)?.map(
           (channelID, index) =>
             channelID && (
-              <ChannelCard.Draggable
-                key={channelID}
-                id={channelID}
-                index={index}
-              />
+              <div key={channelID}>
+                <ChannelCard.Draggable
+                  key={channelID}
+                  id={channelID}
+                  index={index}
+                  type={constructCursedTree[channelID].type}
+                  children={
+                    constructCursedTree[channelID].type ===
+                      ChannelTypes.CATEGORY &&
+                    constructCursedTree[
+                      channelID
+                    ].children.map((cha, index) => (
+                      <ChannelCard.View
+                        key={cha.id}
+                        id={cha.id}
+                        index={index}
+                      />
+                    ))
+                  }
+                />
+              </div>
             )
         )}
         {provided.placeholder}
       </div>
     ),
-    [community?.channels]
+    [constructCursedTree]
   )
+*/
 
   return (
     <div className={styles.channels}>
@@ -112,11 +226,25 @@ const ChannelsView = () => {
         )}
       </h4>
       <div className={styles.list}>
-        {(community?.channels?.length ?? 0) > 0 ? (
+        {(Object.keys(constructCursedTree)?.length ?? 0) > 0 ? (
           <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId='groups' direction='vertical'>
-              {DroppableComponent}
-            </Droppable>
+            {constructCursedTree['rooms'] &&
+              constructCursedTree['rooms'].children.length > 0 && (
+                <CategoryCard
+                  id={'rooms'}
+                  items={constructCursedTree['rooms'].children.map((c) => c.id)}
+                />
+              )}
+
+            {Object.keys(constructCursedTree)
+              .filter((c) => c !== 'rooms')
+              .map((key) => (
+                <CategoryCard
+                  id={key}
+                  name={channels?.find((c) => c.id === key)?.name ?? ''}
+                  items={constructCursedTree[key].children.map((c) => c.id)}
+                />
+              ))}
           </DragDropContext>
         ) : (
           <></>

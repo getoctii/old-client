@@ -8,22 +8,22 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { memo, ReactNode, Suspense, useCallback, useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { Auth } from '../../authentication/state'
+import { Auth } from '../../../authentication/state'
 import { Clipboard } from '@capacitor/core'
-import Context from '../../components/Context'
-import styles from './ChannelCard.module.scss'
+import Context from '../../../components/Context'
+import styles from '../ChannelCard.module.scss'
 import { useMutation, useQuery } from 'react-query'
-import { getChannel } from '../../chat/remote'
-import { getMentions, getUnreads } from '../../user/remote'
-import { useSuspenseStorageItem } from '../../utils/storage'
-import { UI } from '../../state/ui'
+import { getChannel } from '../../../chat/remote'
+import { getMentions, getUnreads } from '../../../user/remote'
+import { useSuspenseStorageItem } from '../../../utils/storage'
+import { UI } from '../../../state/ui'
 import {
   ChannelTypes,
   clientGateway,
   ModalTypes,
   Permissions
-} from '../../utils/constants'
-import { Permission } from '../../utils/permissions'
+} from '../../../utils/constants'
+import { Permission } from '../../../utils/permissions'
 import { Draggable, DraggableStateSnapshot } from '@react-forked/dnd'
 
 const ChannelCardDraggable = memo(

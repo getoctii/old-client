@@ -1,0 +1,19 @@
+.category {
+  width: 100%;
+
+  &.dragging {
+    opacity: 0.5;
+    font-weight: 400;
+    cursor: move;
+  }
+  .name {
+      width: 100%;
+      margin: 0 auto 0 0;
+      font-weight: 500;
+      width: 100%;
+      padding: 0.5rem 0 0.25rem;
+      display: flex;
+      align-items: center;
+
+  }
+}
