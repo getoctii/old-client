@@ -86,7 +86,7 @@ const CommunityView = () => {
     getChannels
   )
   const textChannels = useMemo(() => {
-    return (channels ?? []).filter((channel) => channel.type === 1)
+    return (channels ?? []).filter((channel) => channel?.type === 1)
   }, [channels])
   const { hasPermissions } = Permission.useContainer()
 

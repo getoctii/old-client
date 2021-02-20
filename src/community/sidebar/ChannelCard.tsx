@@ -6,7 +6,7 @@ import {
   faTrashAlt
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { memo, ReactNode, Suspense, useCallback, useMemo } from 'react'
+import { memo, Suspense, useCallback, useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
 import { Clipboard } from '@capacitor/core'
@@ -42,7 +42,11 @@ const ChannelCardDraggable = memo(
           style={provided.draggableProps.style}
         >
           <Suspense fallback={<ChannelCardPlaceholder />}>
-            <ChannelCardView id={id} index={index} />
+            <ChannelCardView
+              id={id}
+              index={index}
+              dragging={!!snapshot.isDragging}
+            />
             {provided.placeholder}
           </Suspense>
         </div>
@@ -169,7 +173,7 @@ const ChannelCardView = ({
             : ''
         }
       >
-        {index !== 0 && (
+        {index !== 0 && !dragging && (
           <hr
             className={
               matchTab?.params.channelID === channel.id ? styles.hidden : ''

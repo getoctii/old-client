@@ -34,7 +34,8 @@ export interface ChannelResponse {
   description: string
   color: string
   type: ChannelTypes
-  parent_id: string
+  parent_id?: string
+  order: number
 }
 
 export interface InviteResponse {

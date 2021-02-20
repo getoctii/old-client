@@ -1,16 +1,7 @@
-import { faPlus } from '@fortawesome/pro-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useCallback, useMemo } from 'react'
 import styles from './Channels.module.scss'
-import {
-  ChannelTypes,
-  clientGateway,
-  ModalTypes,
-  Permissions
-} from '../../utils/constants'
+import { ChannelTypes, clientGateway } from '../../utils/constants'
 import ChannelCard from './ChannelCard'
-import { UI } from '../../state/ui'
-import { Permission } from '../../utils/permissions'
 import { queryCache, useQuery } from 'react-query'
 import { Auth } from '../../authentication/state'
 import { ChannelResponse, getChannels } from '../remote'
@@ -26,6 +17,7 @@ const reorder = (
   const result = Array.from(list)
   const [removed] = result.splice(startIndex, 1)
   result.splice(endIndex, 0, removed)
+  console.log(result)
   return result
 }
 
@@ -38,9 +30,12 @@ type Categories = {
 
 const groupByCategories = (channels: ChannelResponse[]) => {
   const items: Categories = {}
-  const categories = channels.filter(
-    (channel) => channel.type === ChannelTypes.CATEGORY || !channel.parent_id
-  )
+  const categories = channels
+    .filter(
+      (channel) =>
+        channel?.type === ChannelTypes.CATEGORY || !channel?.parent_id
+    )
+    .sort((a, b) => a.order - b.order)
   console.log(categories)
 
   categories.forEach((category) => {
@@ -51,9 +46,9 @@ const groupByCategories = (channels: ChannelResponse[]) => {
       }
       return
     }
-    const categoryChildren = channels.filter(
-      (channel) => channel.parent_id === category.id
-    )
+    const categoryChildren = channels
+      .filter((channel) => channel?.parent_id === category.id)
+      .sort((a, b) => a.order - b.order)
     items[category.id] = {
       type: category.type,
       children: categoryChildren
@@ -64,7 +59,6 @@ const groupByCategories = (channels: ChannelResponse[]) => {
 }
 
 const ChannelsView = () => {
-  const ui = UI.useContainer()
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const { data: channels } = useQuery(
@@ -75,49 +69,60 @@ const ChannelsView = () => {
   const constructCursedTree = useMemo(() => {
     return groupByCategories(channels ?? [])
   }, [channels])
-  console.log(constructCursedTree)
-
-  const { hasPermissions } = Permission.useContainer()
-
   const onDragEnd = useCallback(
     async (result: DropResult) => {
-      if (
-        !result.destination ||
-        result.destination.index === result.source.index
-      )
-        return
+      console.log(result)
+      if (!result.destination) return
       const channel = channels?.find((c) => c.id === result.draggableId)
+      console.log('c', channel)
       if (!channel) return
-      console.log(result.destination.index)
-      const channelBefore =
-        result.destination.index > 0
-          ? channels?.[result.destination.index - 1]
-          : undefined
-      console.log(channel)
-      console.log(channelBefore)
-      const reorderedChannels = reorder(
-        channels ?? [],
-        result.source.index,
-        result.destination.index
+
+      console.log('i', result.destination.droppableId)
+      const channelBefore = channels?.find(
+        (c) => c.id === result.destination?.droppableId
       )
+
+      console.log('cb', channelBefore)
       if (channel.type !== ChannelTypes.CATEGORY && channelBefore) {
         const parentID =
           channelBefore.type === ChannelTypes.CATEGORY
             ? channelBefore.id
             : channelBefore.parent_id
-            ? channelBefore.parent_id
-            : undefined
-        if (
-          (parentID && !channel.parent_id) ||
-          channel.parent_id !== parentID
-        ) {
+        console.log(parentID)
+        if (parentID && channel.parent_id !== parentID) {
+          console.log('Parent switched')
+          const reorderedChannels = reorder(
+            channels?.filter(
+              (c) => c?.parent_id === parentID || c?.id === channel.id
+            ) ?? [],
+            result.source.index,
+            result.destination.index
+          )
+            .filter((c) => !!c)
+            .map((c, index) => ({
+              ...c,
+              order: index + 1,
+              parent_id: parentID
+            }))
+          console.log(reorderedChannels)
+          queryCache.setQueryData<ChannelResponse[]>(
+            ['channels', match?.params.id, auth.token],
+            [
+              ...(channels?.filter(
+                (c) => c.parent_id !== parentID && c.id !== channel.id
+              ) ?? []),
+              ...reorderedChannels
+            ]
+          )
           await clientGateway.patch(
             `/channels/${channel.id}`,
             {
-              parent: channelBefore.id,
+              parent: parentID,
               parent_order: reorderedChannels
-                .filter((c) => c.parent_id === parentID || c.id === channel.id)
-                .map((c) => c.id)
+                .filter(
+                  (c) => c?.parent_id === parentID || c?.id === channel.id
+                )
+                .map((c) => c?.id)
             },
             {
               headers: {
@@ -125,16 +130,32 @@ const ChannelsView = () => {
               }
             }
           )
+
           return
-        } else if (parentID && channel.parent_id) {
+        } else if (parentID && channel.parent_id === parentID) {
+          console.log('Parent reordered')
+          const reorderedChannels = reorder(
+            channels?.filter(
+              (c) => c.parent_id === channel.parent_id || c.id === channel.id
+            ) ?? [],
+            result.source.index,
+            result.destination.index
+          ).map((c, index) => ({ ...c, order: index + 1, parent_id: parentID }))
+          console.log(reorderedChannels)
+          queryCache.setQueryData<ChannelResponse[]>(
+            ['channels', match?.params.id, auth.token],
+            [
+              ...(channels?.filter((c) => c.parent_id !== parentID) ?? []),
+              ...reorderedChannels
+            ]
+          )
           await clientGateway.post(
-            `/channels/${channel.id}/reorder`,
+            `/channels/${channel.parent_id}/reorder`,
             {
               order: reorderedChannels
                 .filter(
                   (c) =>
-                    c.parent_id === channelBefore.parent_id ||
-                    c.id === channel.id
+                    c.parent_id === channel.parent_id || c.id === channel.id
                 )
                 .map((channel) => channel.id)
             },
@@ -144,15 +165,55 @@ const ChannelsView = () => {
               }
             }
           )
+
           return
         }
-      } else if (channel.type !== ChannelTypes.CATEGORY && !channelBefore) {
+      } else if (
+        channel.type !== ChannelTypes.CATEGORY &&
+        !channelBefore &&
+        !!channel.parent_id
+      ) {
+        console.log('Parent unassigned')
+        const reorderedChannels = reorder(
+          channels?.filter((c) => !c.parent_id || c.id === channel.id) ?? [],
+          result.source.index,
+          result.destination.index
+        ).map((c, index) => ({ ...c, order: index + 1, parent_id: undefined }))
+        console.log(reorderedChannels)
+        queryCache.setQueryData<ChannelResponse[]>(
+          ['channels', match?.params.id, auth.token],
+          [
+            ...(channels?.filter((c) => !!c.parent_id && c.id !== channel.id) ??
+              []),
+            ...reorderedChannels
+          ]
+        )
+        await clientGateway.patch(
+          `/channels/${channel.id}`,
+          {
+            parent: null,
+            parent_order: reorderedChannels.map((c) => c.id)
+          },
+          {
+            headers: {
+              Authorization: auth.token
+            }
+          }
+        )
+        return
       }
-
-      queryCache.setQueryData<ChannelResponse[]>(
-        ['channels', match?.params.id, auth.token],
-        reorderedChannels
+      console.log('General reorder')
+      const reorderedChannels = reorder(
+        channels?.filter((c) => !c.parent_id) ?? [],
+        result.source.index,
+        result.destination.index
       )
+
+      await queryCache.invalidateQueries([
+        'channels',
+        match?.params.id,
+        auth.token
+      ])
 
       await clientGateway.patch(
         `/communities/${match?.params.id}/channels`,
@@ -169,77 +230,24 @@ const ChannelsView = () => {
     [auth.token, channels, match?.params.id]
   )
 
-  /*
-  const DroppableComponent = useCallback(
-    (provided: DroppableProvided) => (
-      <div
-        className={styles.body}
-        {...provided.droppableProps}
-        ref={provided.innerRef}
-      >
-        <h1></h1>
-        {Object.keys(constructCursedTree)?.map(
-          (channelID, index) =>
-            channelID && (
-              <div key={channelID}>
-                <ChannelCard.Draggable
-                  key={channelID}
-                  id={channelID}
-                  index={index}
-                  type={constructCursedTree[channelID].type}
-                  children={
-                    constructCursedTree[channelID].type ===
-                      ChannelTypes.CATEGORY &&
-                    constructCursedTree[
-                      channelID
-                    ].children.map((cha, index) => (
-                      <ChannelCard.View
-                        key={cha.id}
-                        id={cha.id}
-                        index={index}
-                      />
-                    ))
-                  }
-                />
-              </div>
-            )
-        )}
-        {provided.placeholder}
-      </div>
-    ),
-    [constructCursedTree]
-  )
-*/
-
   return (
     <div className={styles.channels}>
-      <h4 className={styles.rooms}>
-        Rooms
-        {hasPermissions([Permissions.MANAGE_CHANNELS]) && (
-          <span>
-            <FontAwesomeIcon
-              className={styles.add}
-              icon={faPlus}
-              onClick={() => ui.setModal({ name: ModalTypes.NEW_CHANNEL })}
-            />
-          </span>
-        )}
-      </h4>
       <div className={styles.list}>
         {(Object.keys(constructCursedTree)?.length ?? 0) > 0 ? (
           <DragDropContext onDragEnd={onDragEnd}>
-            {constructCursedTree['rooms'] &&
-              constructCursedTree['rooms'].children.length > 0 && (
-                <CategoryCard
-                  id={'rooms'}
-                  items={constructCursedTree['rooms'].children.map((c) => c.id)}
-                />
-              )}
-
+            <CategoryCard
+              key={'rooms'}
+              id={'rooms'}
+              name={'Rooms'}
+              items={
+                constructCursedTree['rooms']?.children?.map((c) => c.id) ?? []
+              }
+            />
             {Object.keys(constructCursedTree)
               .filter((c) => c !== 'rooms')
               .map((key) => (
                 <CategoryCard
+                  key={key}
                   id={key}
                   name={channels?.find((c) => c.id === key)?.name ?? ''}
                   items={constructCursedTree[key].children.map((c) => c.id)}
