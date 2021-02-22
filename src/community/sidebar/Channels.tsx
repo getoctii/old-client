@@ -53,8 +53,6 @@ const groupByCategories = (channels: ChannelResponse[]) => {
         channel?.type === ChannelTypes.CATEGORY || !channel?.parent_id
     )
     .sort((a, b) => a.order - b.order)
-  console.log(categories)
-
   categories.forEach((category) => {
     if (category.type !== ChannelTypes.CATEGORY) {
       items['unassigned'] = {
@@ -94,9 +92,7 @@ const ChannelsView = () => {
   }, [channels])
   const onDragEnd = useCallback(
     async (result: Dropper) => {
-      console.log(result)
       if (!result.destination) return
-      const channel = channels?.find((c) => c.id === result.draggableId)
       if (result.type === 'parents') {
         const children = (channels ?? []).filter((c) => !!c.parent_id)
         const unassignedChildren = (channels ?? []).filter(
@@ -153,10 +149,13 @@ const ChannelsView = () => {
               [...reorderedChildren, ...parentsAndChildren]
             )
 
-            await clientGateway.post(
-              `/channels/${result.source.droppableId}/reorder`,
+            await clientGateway.patch(
+              `/communities/${match?.params.id}/channels`,
               {
-                order: reorderedChildren.map((c) => c.id)
+                order: [
+                  ...reorderedChildren.map((c) => c.id),
+                  ...parents.map((c) => c.id)
+                ]
               },
               {
                 headers: {
@@ -203,8 +202,8 @@ const ChannelsView = () => {
             const parents = (channels ?? []).filter(
               (c) => c.type === ChannelTypes.CATEGORY
             )
-            const parentsAndChildren = (channels ?? []).filter(
-              (c) => !!c.parent_id || c.type === ChannelTypes.CATEGORY
+            const otherChannels = (channels ?? []).filter(
+              (c) => !!c.parent_id && c.parent_id !== result.source.droppableId
             )
             const destinationChildren = (channels ?? []).filter(
               (c) => !c.parent_id && c.type !== ChannelTypes.CATEGORY
@@ -223,13 +222,17 @@ const ChannelsView = () => {
             const orderedDestinationChildren = [
               ...destinationChildren,
               ...parents
-            ]
+            ].map((c, index) => ({
+              ...c,
+              order: index + 1,
+              parent_id: undefined
+            }))
 
             queryCache.setQueryData<ChannelResponse[]>(
               ['channels', match?.params.id, auth.token],
               [
                 ...orderedDestinationChildren,
-                ...parentsAndChildren,
+                ...otherChannels,
                 ...orderedSourceChildren
               ]
             )
@@ -238,6 +241,61 @@ const ChannelsView = () => {
               `/channels/${draggedItem.id}`,
               {
                 parent: null,
+                parent_order: orderedDestinationChildren.map((c) => c.id)
+              },
+              {
+                headers: {
+                  Authorization: auth.token
+                }
+              }
+            )
+
+            return
+          } else if (result.source.droppableId === 'unassigned') {
+            const parents = (channels ?? []).filter(
+              (c) => c.type === ChannelTypes.CATEGORY
+            )
+            const otherChildren = (channels ?? []).filter(
+              (c) =>
+                !!c.parent_id &&
+                c.parent_id !== result.destination?.droppableId &&
+                c.type !== ChannelTypes.CATEGORY
+            )
+            const destinationChildren = (channels ?? []).filter(
+              (c) => result.destination?.droppableId === c.parent_id
+            )
+            const sourceChildren = (channels ?? []).filter((c) => !c.parent_id)
+            const [draggedItem] = sourceChildren.splice(result.source.index, 1)
+            destinationChildren.splice(result.destination.index, 0, draggedItem)
+
+            const orderedSourceChildren = [...sourceChildren, ...parents].map(
+              (c, index) => ({
+                ...c,
+                order: index + 1
+              })
+            )
+
+            const orderedDestinationChildren = destinationChildren.map(
+              (c, index) => ({
+                ...c,
+                order: index + 1,
+                parent_id: result.destination?.droppableId
+              })
+            )
+
+            queryCache.setQueryData<ChannelResponse[]>(
+              ['channels', match?.params.id, auth.token],
+              [
+                ...orderedDestinationChildren,
+                ...orderedSourceChildren,
+                ...otherChildren
+              ]
+            )
+
+            await clientGateway.patch(
+              `/channels/${draggedItem.id}`,
+              {
+                parent: result.destination.droppableId,
                 parent_order: orderedDestinationChildren.map((c) => c.id)
               },
               {

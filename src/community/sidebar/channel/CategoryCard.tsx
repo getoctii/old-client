@@ -9,6 +9,8 @@ import {
 import React, { useCallback } from 'react'
 import ChannelCard from './ChannelCard'
 import styles from './CategoryCard.module.scss'
+import { Permission } from '../../../utils/permissions'
+import { Permissions } from '../../../utils/constants'
 
 export const CategoryChannelsDraggable = ({
   id,
@@ -56,6 +58,7 @@ export const CategoryCardView = ({
   items: string[]
   index: number
 }) => {
+  const { hasPermissions } = Permission.useContainer()
   const DraggableComponent = useCallback(
     (provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
       <div>
@@ -75,7 +78,11 @@ export const CategoryCardView = ({
   )
 
   return (
-    <Draggable draggableId={id} index={index}>
+    <Draggable
+      draggableId={id}
+      index={index}
+      isDragDisabled={!hasPermissions([Permissions.MANAGE_CHANNELS])}
+    >
       {DraggableComponent}
     </Draggable>
   )
