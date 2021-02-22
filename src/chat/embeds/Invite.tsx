@@ -16,13 +16,22 @@ const isInvite = (url: string) =>
 const InviteEmbed = ({ url }: { url: string }) => {
   const { token, id } = Auth.useContainer()
   const history = useHistory()
-  const match = matchPath<{ code: string }>(new URL(url).pathname, {
-    path: '/invite/:code',
-    exact: true,
-    strict: false
-  })
+  const match = matchPath<{ invite: string; code: string }>(
+    new URL(url).pathname,
+    {
+      path: '/:invite/:code?',
+      exact: true,
+      strict: false
+    }
+  )
   const { data: invite } = useQuery(
-    ['invite', match?.params.code, token],
+    [
+      'invite',
+      match?.params.invite === 'invite'
+        ? match?.params.code
+        : match?.params.invite,
+      token
+    ],
     getUseInvite,
     {
       retry: 1

@@ -47,10 +47,7 @@ const DisplayInvite = () => {
           />
         </span>
       </h4>
-      <Input
-        defaultValue={`octii.chat/invite/${invite?.code ?? ''}`}
-        disabled
-      />
+      <Input defaultValue={`octii.com/${invite?.code ?? ''}`} disabled />
       <Button
         type='submit'
         onClick={async () => {
