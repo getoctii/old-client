@@ -4,7 +4,6 @@ import { queryCache } from 'react-query'
 import { Events } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { log } from '../utils/logging'
-import { CommunityResponse } from '../community/remote'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 
 const useDeletedChannel = (eventSource: EventSourcePolyfill | null) => {
@@ -15,33 +14,18 @@ const useDeletedChannel = (eventSource: EventSourcePolyfill | null) => {
   )
   useEffect(() => {
     if (!eventSource) return
-    const handler = (e: MessageEvent) => {
+    const handler = async (e: MessageEvent) => {
       const event = JSON.parse(e.data) as {
         community_id: string
         id: string
       }
       log('Events', 'purple', 'DELETED_CHANNEL')
-      queryCache.setQueryData<CommunityResponse>(
-        ['community', event.community_id, token],
-        (initial) => {
-          if (initial) {
-            return {
-              ...initial,
-              channels: initial.channels.filter(
-                (channelID) => channelID !== event.id
-              )
-            }
-          } else
-            return {
-              id: event.community_id,
-              channels: [event.id],
-              large: false,
-              name: 'unknown',
-              icon: undefined,
-              owner_id: undefined
-            }
-        }
-      )
+      await queryCache.invalidateQueries([
+        'channels',
+        event.community_id,
+        token
+      ])
+
       if (match?.params.channelID === event.id)
         history.push(`/communities/${match.params.id}`)
     }
