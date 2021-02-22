@@ -6,12 +6,12 @@ import {
   faTrashAlt
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { memo, ReactNode, Suspense, useCallback, useMemo } from 'react'
+import { memo, Suspense, useCallback, useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../../authentication/state'
 import { Clipboard } from '@capacitor/core'
 import Context from '../../../components/Context'
-import styles from '../ChannelCard.module.scss'
+import styles from './ChannelCard.module.scss'
 import { useMutation, useQuery } from 'react-query'
 import { getChannel } from '../../../chat/remote'
 import { getMentions, getUnreads } from '../../../user/remote'
@@ -24,27 +24,35 @@ import {
   Permissions
 } from '../../../utils/constants'
 import { Permission } from '../../../utils/permissions'
-import { Draggable, DraggableStateSnapshot } from '@react-forked/dnd'
+import {
+  Draggable,
+  DraggableProvided,
+  DraggableStateSnapshot
+} from '@react-forked/dnd'
 
 const ChannelCardDraggable = memo(
   ({ id, index }: { id: string; index: number }) => {
     const { hasPermissions } = Permission.useContainer()
     const draggableChild = useCallback(
-      (provided, snapshot: DraggableStateSnapshot) => (
-        <div
-          key={id}
-          className={`${styles.draggable} ${
-            !!snapshot.isDragging ? styles.dragging : ''
-          }`}
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          style={provided.draggableProps.style}
-        >
-          <Suspense fallback={<ChannelCardPlaceholder />}>
-            <ChannelCardView id={id} index={index} />
-            {provided.placeholder}
-          </Suspense>
+      (provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
+        <div>
+          <div
+            className={`${styles.draggable} ${
+              !!snapshot.isDragging ? styles.dragging : ''
+            }`}
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            style={provided.draggableProps.style}
+          >
+            <Suspense fallback={<ChannelCardPlaceholder />}>
+              <ChannelCardView
+                id={id}
+                index={index}
+                dragging={!!snapshot.isDragging}
+              />
+            </Suspense>
+          </div>
         </div>
       ),
       [id, index]
@@ -169,7 +177,7 @@ const ChannelCardView = ({
             : ''
         }
       >
-        {index !== 0 && (
+        {index !== 0 && !dragging && (
           <hr
             className={
               matchTab?.params.channelID === channel.id ? styles.hidden : ''

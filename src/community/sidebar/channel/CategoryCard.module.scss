@@ -14,19 +14,12 @@
     padding: 0.5rem 0 0.25rem;
     display: flex;
     align-items: center;
+    cursor: pointer;
   }
 
-  .rooms {
-    font-size: 1rem;
-    font-weight: 400;
-    margin: 0.7rem 0 0.3rem;
 
-    span {
-      float: right;
-    }
+}
 
-    .add {
-      cursor: pointer;
-    }
-  }
+.children {
+  min-height: 2.5px;
 }

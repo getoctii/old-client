@@ -1,13 +1,30 @@
 import React, { useCallback, useMemo } from 'react'
 import styles from './Channels.module.scss'
-import { ChannelTypes, clientGateway } from '../../utils/constants'
-import ChannelCard from './ChannelCard'
+import {
+  ChannelTypes,
+  clientGateway,
+  ModalTypes,
+  Permissions
+} from '../../utils/constants'
+import ChannelCard from './channel/ChannelCard'
 import { queryCache, useQuery } from 'react-query'
 import { Auth } from '../../authentication/state'
 import { ChannelResponse, getChannels } from '../remote'
 import { useRouteMatch } from 'react-router-dom'
-import { DragDropContext, DropResult } from '@react-forked/dnd'
-import CategoryCard from './channel/CategoryCard'
+import {
+  DragDropContext,
+  Droppable,
+  DroppableProvided,
+  DropResult
+} from '@react-forked/dnd'
+import {
+  CategoryCardView,
+  CategoryChannelsDraggable
+} from './channel/CategoryCard'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/pro-solid-svg-icons'
+import { Permission } from '../../utils/permissions'
+import { UI } from '../../state/ui'
 
 const reorder = (
   list: ChannelResponse[],
@@ -40,9 +57,9 @@ const groupByCategories = (channels: ChannelResponse[]) => {
 
   categories.forEach((category) => {
     if (category.type !== ChannelTypes.CATEGORY) {
-      items['rooms'] = {
+      items['unassigned'] = {
         type: ChannelTypes.CATEGORY,
-        children: [...(items['rooms']?.children ?? []), category]
+        children: [...(items['unassigned']?.children ?? []), category]
       }
       return
     }
@@ -58,6 +75,10 @@ const groupByCategories = (channels: ChannelResponse[]) => {
   return items
 }
 
+interface Dropper extends DropResult {
+  type: string
+}
+
 const ChannelsView = () => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
@@ -65,134 +86,41 @@ const ChannelsView = () => {
     ['channels', match?.params.id, auth.token],
     getChannels
   )
+  const ui = UI.useContainer()
+  const { hasPermissions } = Permission.useContainer()
 
   const constructCursedTree = useMemo(() => {
     return groupByCategories(channels ?? [])
   }, [channels])
   const onDragEnd = useCallback(
-    async (result: DropResult) => {
+    async (result: Dropper) => {
       console.log(result)
       if (!result.destination) return
       const channel = channels?.find((c) => c.id === result.draggableId)
-      console.log('c', channel)
-      if (!channel) return
-
-      console.log('i', result.destination.droppableId)
-      const channelBefore = channels?.find(
-        (c) => c.id === result.destination?.droppableId
-      )
-
-      console.log('cb', channelBefore)
-      if (channel.type !== ChannelTypes.CATEGORY && channelBefore) {
-        const parentID =
-          channelBefore.type === ChannelTypes.CATEGORY
-            ? channelBefore.id
-            : channelBefore.parent_id
-        console.log(parentID)
-        if (parentID && channel.parent_id !== parentID) {
-          console.log('Parent switched')
-          const reorderedChannels = reorder(
-            channels?.filter(
-              (c) => c?.parent_id === parentID || c?.id === channel.id
-            ) ?? [],
-            result.source.index,
-            result.destination.index
-          )
-            .filter((c) => !!c)
-            .map((c, index) => ({
-              ...c,
-              order: index + 1,
-              parent_id: parentID
-            }))
-          console.log(reorderedChannels)
-          queryCache.setQueryData<ChannelResponse[]>(
-            ['channels', match?.params.id, auth.token],
-            [
-              ...(channels?.filter(
-                (c) => c.parent_id !== parentID && c.id !== channel.id
-              ) ?? []),
-              ...reorderedChannels
-            ]
-          )
-          await clientGateway.patch(
-            `/channels/${channel.id}`,
-            {
-              parent: parentID,
-              parent_order: reorderedChannels
-                .filter(
-                  (c) => c?.parent_id === parentID || c?.id === channel.id
-                )
-                .map((c) => c?.id)
-            },
-            {
-              headers: {
-                Authorization: auth.token
-              }
-            }
-          )
-
-          return
-        } else if (parentID && channel.parent_id === parentID) {
-          console.log('Parent reordered')
-          const reorderedChannels = reorder(
-            channels?.filter(
-              (c) => c.parent_id === channel.parent_id || c.id === channel.id
-            ) ?? [],
-            result.source.index,
-            result.destination.index
-          ).map((c, index) => ({ ...c, order: index + 1, parent_id: parentID }))
-          console.log(reorderedChannels)
-          queryCache.setQueryData<ChannelResponse[]>(
-            ['channels', match?.params.id, auth.token],
-            [
-              ...(channels?.filter((c) => c.parent_id !== parentID) ?? []),
-              ...reorderedChannels
-            ]
-          )
-          await clientGateway.post(
-            `/channels/${channel.parent_id}/reorder`,
-            {
-              order: reorderedChannels
-                .filter(
-                  (c) =>
-                    c.parent_id === channel.parent_id || c.id === channel.id
-                )
-                .map((channel) => channel.id)
-            },
-            {
-              headers: {
-                Authorization: auth.token
-              }
-            }
-          )
-
-          return
-        }
-      } else if (
-        channel.type !== ChannelTypes.CATEGORY &&
-        !channelBefore &&
-        !!channel.parent_id
-      ) {
-        console.log('Parent unassigned')
+      if (result.type === 'parents') {
+        const children = (channels ?? []).filter((c) => !!c.parent_id)
+        const unassignedChildren = (channels ?? []).filter(
+          (c) => !c.parent_id && c.type !== ChannelTypes.CATEGORY
+        )
         const reorderedChannels = reorder(
-          channels?.filter((c) => !c.parent_id || c.id === channel.id) ?? [],
+          channels?.filter(
+            (c) => !c.parent_id && c.type === ChannelTypes.CATEGORY
+          ) ?? [],
           result.source.index,
           result.destination.index
-        ).map((c, index) => ({ ...c, order: index + 1, parent_id: undefined }))
-        console.log(reorderedChannels)
+        ).map((c, index) => ({ ...c, order: index + 1 }))
+
         queryCache.setQueryData<ChannelResponse[]>(
           ['channels', match?.params.id, auth.token],
-          [
-            ...(channels?.filter((c) => !!c.parent_id && c.id !== channel.id) ??
-              []),
-            ...reorderedChannels
-          ]
+          [...unassignedChildren, ...reorderedChannels, ...children]
         )
+
         await clientGateway.patch(
-          `/channels/${channel.id}`,
+          `/communities/${match?.params.id}/channels`,
           {
-            parent: null,
-            parent_order: reorderedChannels.map((c) => c.id)
+            order: [...unassignedChildren, ...reorderedChannels].map(
+              (channel) => channel.id
+            )
           },
           {
             headers: {
@@ -201,58 +129,231 @@ const ChannelsView = () => {
           }
         )
         return
-      }
-      console.log('General reorder')
-      const reorderedChannels = reorder(
-        channels?.filter((c) => !c.parent_id) ?? [],
-        result.source.index,
-        result.destination.index
-      )
+      } else if (result.type === 'children') {
+        // Case #1: Children Reordered inside same parent
+        if (result.source.droppableId === result.destination.droppableId) {
+          if (result.source.droppableId === 'unassigned') {
+            const parents = (channels ?? []).filter(
+              (c) => c.type === ChannelTypes.CATEGORY
+            )
+            const parentsAndChildren = (channels ?? []).filter(
+              (c) => !!c.parent_id || c.type === ChannelTypes.CATEGORY
+            )
+            const destinationChildren = (channels ?? []).filter(
+              (c) => !c.parent_id && c.type !== ChannelTypes.CATEGORY
+            )
+            const reorderedChildren = reorder(
+              destinationChildren,
+              result.source.index,
+              result.destination.index
+            ).map((c, index) => ({ ...c, order: index + 1 }))
 
-      await queryCache.invalidateQueries([
-        'channels',
-        match?.params.id,
-        auth.token
-      ])
+            queryCache.setQueryData<ChannelResponse[]>(
+              ['channels', match?.params.id, auth.token],
+              [...reorderedChildren, ...parentsAndChildren]
+            )
 
-      await clientGateway.patch(
-        `/communities/${match?.params.id}/channels`,
-        {
-          order: reorderedChannels.map((channel) => channel.id)
-        },
-        {
-          headers: {
-            Authorization: auth.token
+            await clientGateway.post(
+              `/channels/${result.source.droppableId}/reorder`,
+              {
+                order: reorderedChildren.map((c) => c.id)
+              },
+              {
+                headers: {
+                  Authorization: auth.token
+                }
+              }
+            )
+            return
           }
+          const parents = (channels ?? []).filter(
+            (c) => c.parent_id !== result.source.droppableId
+          )
+          const parentChildren = (channels ?? []).filter(
+            (c) => c.parent_id === result.source.droppableId
+          )
+          const reorderedChildren = reorder(
+            parentChildren,
+            result.source.index,
+            result.destination.index
+          ).map((c, index) => ({ ...c, order: index + 1 }))
+
+          queryCache.setQueryData<ChannelResponse[]>(
+            ['channels', match?.params.id, auth.token],
+            [...parents, ...reorderedChildren]
+          )
+
+          await clientGateway.post(
+            `/channels/${result.source.droppableId}/reorder`,
+            {
+              order: reorderedChildren.map((c) => c.id)
+            },
+            {
+              headers: {
+                Authorization: auth.token
+              }
+            }
+          )
+          return
+        } else if (
+          result.destination.droppableId !== result.source.droppableId
+        ) {
+          // Case #2: Child unassigned
+          if (result.destination.droppableId === 'unassigned') {
+            const parents = (channels ?? []).filter(
+              (c) => c.type === ChannelTypes.CATEGORY
+            )
+            const parentsAndChildren = (channels ?? []).filter(
+              (c) => !!c.parent_id || c.type === ChannelTypes.CATEGORY
+            )
+            const destinationChildren = (channels ?? []).filter(
+              (c) => !c.parent_id && c.type !== ChannelTypes.CATEGORY
+            )
+            const sourceChildren = (channels ?? []).filter(
+              (c) => c.parent_id === result.source.droppableId
+            )
+            const [draggedItem] = sourceChildren.splice(result.source.index, 1)
+            destinationChildren.splice(result.destination.index, 0, draggedItem)
+
+            const orderedSourceChildren = sourceChildren.map((c, index) => ({
+              ...c,
+              order: index + 1
+            }))
+
+            const orderedDestinationChildren = [
+              ...destinationChildren,
+              ...parents
+            ]
+
+            queryCache.setQueryData<ChannelResponse[]>(
+              ['channels', match?.params.id, auth.token],
+              [
+                ...orderedDestinationChildren,
+                ...parentsAndChildren,
+                ...orderedSourceChildren
+              ]
+            )
+
+            await clientGateway.patch(
+              `/channels/${draggedItem.id}`,
+              {
+                parent: null,
+                parent_order: orderedDestinationChildren.map((c) => c.id)
+              },
+              {
+                headers: {
+                  Authorization: auth.token
+                }
+              }
+            )
+
+            return
+          }
+          // Case #3: Child reassigned
+          const parents = (channels ?? []).filter(
+            (c) =>
+              c.parent_id !== result.source.droppableId &&
+              c.parent_id !== result.destination?.droppableId
+          )
+          const destinationChildren = (channels ?? []).filter(
+            (c) => c.parent_id === result.destination?.droppableId
+          )
+          const sourceChildren = (channels ?? []).filter(
+            (c) => c.parent_id === result.source.droppableId
+          )
+          const [draggedItem] = sourceChildren.splice(result.source.index, 1)
+          destinationChildren.splice(result.destination.index, 0, draggedItem)
+
+          const orderedSourceChildren = sourceChildren.map((c, index) => ({
+            ...c,
+            order: index + 1
+          }))
+
+          const orderedDestinationChildren = destinationChildren.map(
+            (c, index) => ({
+              ...c,
+              order: index + 1,
+              parent_id: result.destination?.droppableId
+            })
+          )
+
+          queryCache.setQueryData<ChannelResponse[]>(
+            ['channels', match?.params.id, auth.token],
+            [
+              ...parents,
+              ...orderedDestinationChildren,
+              ...orderedSourceChildren
+            ]
+          )
+
+          await clientGateway.patch(
+            `/channels/${draggedItem.id}`,
+            {
+              parent: result.destination.droppableId,
+              parent_order: orderedDestinationChildren.map((c) => c?.id)
+            },
+            {
+              headers: {
+                Authorization: auth.token
+              }
+            }
+          )
+
+          return
         }
-      )
+      }
     },
     [auth.token, channels, match?.params.id]
   )
 
+  const DroppableComponent = useCallback(
+    (provided: DroppableProvided) => (
+      <div ref={provided.innerRef} {...provided.droppableProps}>
+        {Object.keys(constructCursedTree)
+          .filter((c) => c !== 'unassigned')
+          .map((key, index) => (
+            <CategoryCardView
+              key={key}
+              id={key}
+              index={index}
+              name={channels?.find((c) => c.id === key)?.name ?? ''}
+              items={constructCursedTree[key].children.map((c) => c.id)}
+            />
+          ))}
+        {provided.placeholder}
+      </div>
+    ),
+    [channels, constructCursedTree]
+  )
+
   return (
     <div className={styles.channels}>
+      <h4 className={styles.rooms}>
+        Rooms
+        {hasPermissions([Permissions.MANAGE_CHANNELS]) && (
+          <span>
+            <FontAwesomeIcon
+              className={styles.add}
+              icon={faPlus}
+              onClick={() => ui.setModal({ name: ModalTypes.NEW_CHANNEL })}
+            />
+          </span>
+        )}
+      </h4>
       <div className={styles.list}>
         {(Object.keys(constructCursedTree)?.length ?? 0) > 0 ? (
           <DragDropContext onDragEnd={onDragEnd}>
-            <CategoryCard
-              key={'rooms'}
-              id={'rooms'}
-              name={'Rooms'}
+            <CategoryChannelsDraggable
+              key={'unassigned'}
+              id={'unassigned'}
               items={
-                constructCursedTree['rooms']?.children?.map((c) => c.id) ?? []
+                constructCursedTree['unassigned']?.children?.map((c) => c.id) ??
+                []
               }
             />
-            {Object.keys(constructCursedTree)
-              .filter((c) => c !== 'rooms')
-              .map((key) => (
-                <CategoryCard
-                  key={key}
-                  id={key}
-                  name={channels?.find((c) => c.id === key)?.name ?? ''}
-                  items={constructCursedTree[key].children.map((c) => c.id)}
-                />
-              ))}
+            <Droppable droppableId={'channels'} type={'parents'}>
+              {DroppableComponent}
+            </Droppable>
           </DragDropContext>
         ) : (
           <></>

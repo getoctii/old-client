@@ -6,7 +6,19 @@
 }
 
 .channels {
+  .rooms {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0.7rem 0 0.3rem;
 
+    span {
+      float: right;
+    }
+
+    .add {
+      cursor: pointer;
+    }
+  }
 
   .list {
     hr {
