@@ -5,7 +5,6 @@ import styles from './EmptyCommunity.module.scss'
 import { Helmet } from 'react-helmet-async'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faChevronCircleRight,
   faFilm,
   faMapPin,
   faPlusCircle,
@@ -13,8 +12,6 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ModalTypes } from '../utils/constants'
 import Button from '../components/Button'
-import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
 
 const cards = [
   {
@@ -37,9 +34,6 @@ const cards = [
 const EmptyCommunity = ({ name, owner_id }: CommunityResponse) => {
   const auth = Auth.useContainer()
   const ui = UI.useContainer()
-  const [templateSelected, setTemplateSelected] = useState<string | undefined>(
-    undefined
-  )
   return (
     <div className={styles.communityEmpty}>
       <Helmet>
@@ -48,59 +42,18 @@ const EmptyCommunity = ({ name, owner_id }: CommunityResponse) => {
       {ui.modal?.name !== ModalTypes.NEW_CHANNEL && (
         <div className={styles.container}>
           <small>{name}</small>
-          <AnimatePresence>
-            {!templateSelected && (
+          <h1>Let’s get started on your new community!</h1>
+          <h3>Here are some ideas for a community</h3>
+          <div className={styles.cards}>
+            {cards.map((card) => (
               <>
-                <motion.h1>Let’s get started on your new community!</motion.h1>
-                <motion.h3>What type of community are you creating?</motion.h3>
+                <div className={styles.card}>
+                  {card.title}
+                  <FontAwesomeIcon icon={card.icon} fixedWidth />
+                </div>
               </>
-            )}
-
-            <div className={styles.cards}>
-              {cards.map(
-                (card) =>
-                  (!templateSelected || templateSelected === card.id) && (
-                    <>
-                      <motion.div
-                        transition={{
-                          type: 'spring',
-                          duration: 2,
-                          stiffness: 200,
-                          damping: 30
-                        }}
-                        animate={
-                          templateSelected === card.id ? 'open' : 'closed'
-                        }
-                        variants={{
-                          open: {
-                            backgroundImage: 'var(--neko-colors-secondary)'
-                          },
-                          closed: {
-                            backgroundImage: 'var(--neko-sidebar-background)'
-                          }
-                        }}
-                        exit={{ opacity: 0 }}
-                        className={styles.card}
-                        onClick={() =>
-                          setTemplateSelected(
-                            templateSelected === card.id ? undefined : card.id
-                          )
-                        }
-                      >
-                        {card.title}
-                        <FontAwesomeIcon icon={card.icon} fixedWidth />
-                      </motion.div>
-                    </>
-                  )
-              )}
-            </div>
-          </AnimatePresence>
-          {!templateSelected && (
-            <button className={styles.more}>
-              Import or find more templates{' '}
-              <FontAwesomeIcon icon={faChevronCircleRight} />
-            </button>
-          )}
+            ))}
+          </div>
           {owner_id === auth.id && (
             <Button
               type='button'
@@ -109,7 +62,7 @@ const EmptyCommunity = ({ name, owner_id }: CommunityResponse) => {
                 ui.setModal({ name: ModalTypes.NEW_CHANNEL })
               }}
             >
-              {templateSelected ? 'Create Community' : 'Create from Scratch'}{' '}
+              Create Community
               <FontAwesomeIcon icon={faPlusCircle} />
             </Button>
           )}

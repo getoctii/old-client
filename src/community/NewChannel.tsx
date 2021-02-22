@@ -9,7 +9,7 @@ import { ChannelTypes, clientGateway } from '../utils/constants'
 import { BarLoader } from 'react-spinners'
 import styles from './NewChannel.module.scss'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { getCommunity } from './remote'
+import { getChannels, getCommunity } from './remote'
 import { UI } from '../state/ui'
 import { useQuery } from 'react-query'
 
@@ -42,6 +42,11 @@ export const NewChannel = () => {
     {
       enabled: !!match?.params.id && !!token
     }
+  )
+
+  const { data: channels } = useQuery(
+    ['channels', match?.params.id, token],
+    getChannels
   )
 
   return (
@@ -119,15 +124,21 @@ export const NewChannel = () => {
                 >
                   Text Channel
                 </Button>
-                <Button
-                  type={'button'}
-                  className={`${
-                    values.type === ChannelTypes.CATEGORY ? styles.selected : ''
-                  }`}
-                  onClick={() => setFieldValue('type', ChannelTypes.CATEGORY)}
-                >
-                  Category
-                </Button>
+                {(channels ?? []).filter(
+                  (c) => c.type !== ChannelTypes.CATEGORY
+                ).length > 0 && (
+                  <Button
+                    type={'button'}
+                    className={`${
+                      values.type === ChannelTypes.CATEGORY
+                        ? styles.selected
+                        : ''
+                    }`}
+                    onClick={() => setFieldValue('type', ChannelTypes.CATEGORY)}
+                  >
+                    Category
+                  </Button>
+                )}
               </div>
               <label htmlFor='name' className={styles.label}>
                 Name
