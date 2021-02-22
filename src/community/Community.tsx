@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, useCallback, useEffect, useState } from 'react'
 import styles from './Community.module.scss'
 import Chat from '../chat/Channel'
 import { Redirect, Switch, useParams, useRouteMatch } from 'react-router-dom'
@@ -12,7 +12,7 @@ import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
 import Sidebar from '../sidebar/Sidebar'
 import Members from './Members'
-import { Permissions } from '../utils/constants'
+import { ChannelTypes, Permissions } from '../utils/constants'
 import { Helmet } from 'react-helmet-async'
 import { ErrorBoundary } from 'react-error-boundary'
 import { faLock } from '@fortawesome/pro-duotone-svg-icons'
@@ -36,16 +36,14 @@ const NoPermission = ({ name }: CommunityResponse) => (
 const Channel = () => {
   const { id, channelID } = useParams<{ id: string; channelID: string }>()
   const auth = Auth.useContainer()
-  const { data: community } = useQuery(
-    ['community', id, auth.token],
-    getCommunity
-  )
+  const { data: channels } = useQuery(['channels', id, auth.token], getChannels)
+
   const channel = useMemo(
-    () => community?.channels.find((channel) => channel === channelID),
-    [community, channelID]
+    () => channels?.find((channel) => channel.id === channelID),
+    [channels, channelID]
   )
-  if (!channel) return <></>
-  return <Chat.Community key={channel} />
+  if (!channel || channel.type !== ChannelTypes.TEXT) return <></>
+  return <Chat.Community key={channel.id} />
 }
 
 const CommunityPlaceholder = () => {
@@ -66,6 +64,31 @@ const CommunityPlaceholder = () => {
         ))}
     </>
   )
+}
+
+const EmptyCommunityHandler = ({
+  emptyStateChange
+}: {
+  emptyStateChange: (state: boolean) => void
+}) => {
+  const { token } = Auth.useContainer()
+  const match = useRouteMatch<{ id: string }>('/communities/:id')
+  const { data: channels } = useQuery(
+    ['channels', match?.params.id, token],
+    getChannels
+  )
+
+  const showEmpty = useMemo(() => {
+    return (
+      (channels ?? []).filter((c) => c.type === ChannelTypes.TEXT).length <= 0
+    )
+  }, [channels])
+
+  useEffect(() => {
+    emptyStateChange(showEmpty)
+  }, [showEmpty, emptyStateChange])
+
+  return <></>
 }
 
 const CommunityView = () => {
@@ -90,6 +113,12 @@ const CommunityView = () => {
   }, [channels])
   const { hasPermissions } = Permission.useContainer()
 
+  const [showEmpty, setShowEmpty] = useState(false)
+
+  const emptyHandler = useCallback((state: boolean) => {
+    setShowEmpty(state)
+  }, [])
+
   if (!community) return <></>
 
   if (!hasPermissions([Permissions.READ_MESSAGES])) {
@@ -98,7 +127,8 @@ const CommunityView = () => {
 
   return (
     <>
-      {textChannels.length <= 0 ? (
+      <EmptyCommunityHandler emptyStateChange={emptyHandler} />
+      {showEmpty ? (
         <EmptyCommunity {...community} />
       ) : (
         <div className={styles.community} key={match?.params.id}>

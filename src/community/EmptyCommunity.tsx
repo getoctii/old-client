@@ -46,12 +46,10 @@ const EmptyCommunity = ({ name, owner_id }: CommunityResponse) => {
           <h3>Here are some ideas for a community</h3>
           <div className={styles.cards}>
             {cards.map((card) => (
-              <>
-                <div className={styles.card}>
-                  {card.title}
-                  <FontAwesomeIcon icon={card.icon} fixedWidth />
-                </div>
-              </>
+              <div className={styles.card} key={card.id}>
+                {card.title}
+                <FontAwesomeIcon icon={card.icon} fixedWidth />
+              </div>
             ))}
           </div>
           {owner_id === auth.id && (
