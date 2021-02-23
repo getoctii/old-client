@@ -1,7 +1,7 @@
 import { faEllipsisH } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Integrations from './Integrations'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useMutation } from 'react-query'
 import { useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'

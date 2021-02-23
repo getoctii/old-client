@@ -5,16 +5,17 @@ import { Events } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { log } from '../utils/logging'
 
-const useReorderedChannels = (eventSource: EventSourcePolyfill | null) => {
+const useReorderedChildren = (eventSource: EventSourcePolyfill | null) => {
   const { token, id } = Auth.useContainer()
   useEffect(() => {
     if (!eventSource || !token) return
     const handler = async (e: MessageEvent) => {
       const event = JSON.parse(e.data) as {
+        id: string
         community_id: string
         order: string[]
       }
-      log('Events', 'purple', 'REORDERED_CHANNELS')
+      log('Events', 'purple', 'REORDERED_CHILDREN')
       await queryCache.invalidateQueries([
         'channels',
         event.community_id,
@@ -22,12 +23,12 @@ const useReorderedChannels = (eventSource: EventSourcePolyfill | null) => {
       ])
     }
 
-    eventSource.addEventListener(Events.REORDERED_CHANNELS, handler)
+    eventSource.addEventListener(Events.REORDERED_CHILDREN, handler)
 
     return () => {
-      eventSource.removeEventListener(Events.REORDERED_CHANNELS, handler)
+      eventSource.removeEventListener(Events.REORDERED_CHILDREN, handler)
     }
   }, [eventSource, token, id])
 }
 
-export default useReorderedChannels
+export default useReorderedChildren

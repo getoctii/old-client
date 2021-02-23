@@ -24,6 +24,7 @@ import useUpdatedCommunity from './updatedCommunity'
 import useReorderedChannels from './reorderedChannels'
 import useNewRelationship from './newRelationship'
 import useDeletedRelationship from './deletedRelationship'
+import useReorderedChildren from './reorderedChildren'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
@@ -47,6 +48,7 @@ const EventSource = () => {
   useNewRelationship(eventSource)
   useNewVoiceSession(eventSource)
   useReorderedChannels(eventSource)
+  useReorderedChildren(eventSource)
   useReorderedGroups(eventSource)
   useTyping(eventSource)
   useUpdatedConversation(eventSource)

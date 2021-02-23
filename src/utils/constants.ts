@@ -5,6 +5,12 @@ export const clientGateway = axios.create({
   baseURL: CLIENT_GATEWAY_URL
 })
 
+export enum ChannelTypes {
+  TEXT = 1,
+  CATEGORY = 2,
+  CUSTOM = 3
+}
+
 export enum ModalTypes {
   ADD_PARTICIPANT,
   DELETE_CHANNEL,
@@ -117,6 +123,7 @@ export enum Events {
   NEW_RELATIONSHIP = 'NEW_RELATIONSHIP',
   NEW_VOICE_SESSION = 'NEW_VOICE_SESSION',
   REORDERED_CHANNELS = 'REORDERED_CHANNELS',
+  REORDERED_CHILDREN = 'REORDERED_CHILDREN',
   REORDERED_GROUPS = 'REORDERED_GROUPS',
   TYPING = 'TYPING',
   UPDATED_COMMUNITY = 'UPDATED_COMMUNITY',
@@ -134,7 +141,7 @@ export enum MessageTypes {
   ADMINISTRATOR = 5
 }
 
-export enum ChannelTypes {
+export enum InternalChannelTypes {
   PrivateChannel,
   GroupChannel,
   CommunityChannel

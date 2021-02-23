@@ -53,7 +53,7 @@ const Welcome = ({ onClick }: { onClick: () => void }) => {
 
 const OctiiTesters = () => {
   const auth = Auth.useContainer()
-  const [, setOnboardingComplete] = useSuspenseStorageItem<boolean>(
+  const [, setOnBoardingComplete] = useSuspenseStorageItem<boolean>(
     'onboarding-complete',
     false
   )
@@ -61,7 +61,7 @@ const OctiiTesters = () => {
     <div className={styles.octiiTesters}>
       <h1>Octii Testers</h1>
       <p>
-        The offical community for reporting bugs and feedback directly to us,
+        The official community for reporting bugs and feedback directly to us,
         the developers of Octii.
       </p>
       <Button
@@ -72,7 +72,7 @@ const OctiiTesters = () => {
             {},
             { headers: { Authorization: auth.token } }
           )
-          setOnboardingComplete(true)
+          setOnBoardingComplete(true)
         }}
       >
         Join Octii Testers
@@ -80,7 +80,7 @@ const OctiiTesters = () => {
       <Button
         className={styles.skip}
         type='button'
-        onClick={() => setOnboardingComplete(true)}
+        onClick={() => setOnBoardingComplete(true)}
       >
         Skip
       </Button>

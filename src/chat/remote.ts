@@ -1,13 +1,14 @@
 import axios from 'axios'
-import { clientGateway, MessageTypes } from '../utils/constants'
+import { ChannelTypes, clientGateway, MessageTypes } from '../utils/constants'
 
 export interface ChannelResponse {
   id: string
   name: string
   color?: string
-  // read?: string
   description?: string
-  // last_message_id?: string
+  type: ChannelTypes
+  order: number
+  category_id?: string
   community_id?: string
 }
 

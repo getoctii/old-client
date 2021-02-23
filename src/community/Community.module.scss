@@ -5,60 +5,10 @@
   display: flex;
   flex: 2 1;
   overflow: hidden;
-}
 
-.communityEmpty {
-  display: flex;
-  justify-content: center;
-  background: var(--neko-channels-background);
-  height: 100%;
-  width: 100%;
-  align-items: center;
-  padding: 1rem;
-  flex-direction: column;
-
-  h1 {
-    text-align: center;
-    margin-top: 0;
-  }
-
-  h3 {
-    text-align: center;
-    max-width: 220px;
-  }
-  .video {
-    width: 75%;
-    max-width: 740px;
-    height: 50%;
-  }
-
-  .createButton {
-    background: var(--neko-colors-primary);
-  }
-
-  svg {
-    margin-bottom: 1rem;
-    color: var(--neko-text-warning);
-  }
-  iframe {
-    border-radius: 15px;
-  }
-}
-
-@media (max-width: 740px) {
-  .community {
+  @media (max-width: 740px) {
     display: flex;
     flex-direction: column;
   }
-  .communityEmpty {
-    button {
-      background: var(--neko-colors-primary);
-      margin-bottom: 1rem;
-    }
-    padding: 2rem;
-    .video {
-      height: 300px;
-      width: 95%;
-    }
-  }
 }
+

@@ -2,19 +2,33 @@
   outline: none;
 }
 
+
+.category {
+  .channel {
+    .icon {
+      display: none;
+    }
+  }
+
+  hr {
+    display: none;
+  }
+}
+
 .channel {
   cursor: pointer;
-  padding-top: 0.6rem;
-  padding-bottom: 0.6rem;
-  border: inherit;
+  padding: 0.6rem 0 0.6rem;
+
   display: flex;
   border-radius: 14px;
   align-items: center;
+  border: inherit;
+
   .icon {
     margin-right: 0.5rem;
-    padding: 0.5rem;
     color: var(--neko-text-inverse);
     border-radius: 10px;
+    padding: 0.5rem;
   }
   h4 {
     padding: 0;

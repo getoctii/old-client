@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@atlaskit/tree": "^8.2.0",
     "@capacitor-community/react-hooks": "^0.0.11",
     "@capacitor/android": "2.4.6",
     "@capacitor/cli": "^2.4.6",

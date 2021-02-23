@@ -6,40 +6,53 @@ import {
   faTrashAlt
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { memo, Suspense, useCallback, useMemo } from 'react'
+import { memo, Suspense, useCallback, useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { Auth } from '../../authentication/state'
+import { Auth } from '../../../authentication/state'
 import { Clipboard } from '@capacitor/core'
-import Context from '../../components/Context'
+import Context from '../../../components/Context'
 import styles from './ChannelCard.module.scss'
 import { useMutation, useQuery } from 'react-query'
-import { getChannel } from '../../chat/remote'
-import { getMentions, getUnreads } from '../../user/remote'
-import { useSuspenseStorageItem } from '../../utils/storage'
-import { UI } from '../../state/ui'
-import { clientGateway, ModalTypes, Permissions } from '../../utils/constants'
-import { Permission } from '../../utils/permissions'
-import { Draggable, DraggableStateSnapshot } from '@react-forked/dnd'
+import { getChannel } from '../../../chat/remote'
+import { getMentions, getUnreads } from '../../../user/remote'
+import { useSuspenseStorageItem } from '../../../utils/storage'
+import { UI } from '../../../state/ui'
+import {
+  ChannelTypes,
+  clientGateway,
+  ModalTypes,
+  Permissions
+} from '../../../utils/constants'
+import { Permission } from '../../../utils/permissions'
+import {
+  Draggable,
+  DraggableProvided,
+  DraggableStateSnapshot
+} from '@react-forked/dnd'
 
 const ChannelCardDraggable = memo(
   ({ id, index }: { id: string; index: number }) => {
     const { hasPermissions } = Permission.useContainer()
-
     const draggableChild = useCallback(
-      (provided, snapshot: DraggableStateSnapshot) => (
-        <div
-          className={`${styles.draggable} ${
-            !!snapshot.isDragging ? styles.dragging : ''
-          }`}
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          style={provided.draggableProps.style}
-        >
-          <Suspense fallback={<ChannelCardPlaceholder />}>
-            <ChannelCardView id={id} index={index} />
-            {provided.placeholder}
-          </Suspense>
+      (provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
+        <div>
+          <div
+            className={`${styles.draggable} ${
+              !!snapshot.isDragging ? styles.dragging : ''
+            }`}
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            style={provided.draggableProps.style}
+          >
+            <Suspense fallback={<ChannelCardPlaceholder />}>
+              <ChannelCardView
+                id={id}
+                index={index}
+                dragging={!!snapshot.isDragging}
+              />
+            </Suspense>
+          </div>
         </div>
       ),
       [id, index]
@@ -56,7 +69,15 @@ const ChannelCardDraggable = memo(
   }
 )
 
-const ChannelCardView = ({ id, index }: { id: string; index: number }) => {
+const ChannelCardView = ({
+  id,
+  index,
+  dragging
+}: {
+  id: string
+  index: number
+  dragging?: boolean
+}) => {
   const matchTab = useRouteMatch<{ id: string; channelID: string }>(
     '/communities/:id/channels/:channelID'
   )
@@ -149,8 +170,14 @@ const ChannelCardView = ({ id, index }: { id: string; index: number }) => {
       key={channel.id}
       items={getItems(channel.id)}
     >
-      <>
-        {index !== 0 && (
+      <div
+        className={
+          channel.type === ChannelTypes.CATEGORY
+            ? `${styles.category} ${dragging ? styles.dragging : ''}`
+            : ''
+        }
+      >
+        {index !== 0 && !dragging && (
           <hr
             className={
               matchTab?.params.channelID === channel.id ? styles.hidden : ''
@@ -170,10 +197,17 @@ const ChannelCardView = ({ id, index }: { id: string; index: number }) => {
               : {}
           }
           className={`${styles.channel} ${
-            matchTab?.params.channelID === channel.id ? styles.selected : ''
+            matchTab?.params.channelID === channel.id &&
+            channel.type === ChannelTypes.TEXT
+              ? styles.selected
+              : ''
           }`}
           onClick={() => {
-            if (matchTab?.params.channelID === channel.id) return
+            if (
+              matchTab?.params.channelID === channel.id ||
+              channel.type !== ChannelTypes.TEXT
+            )
+              return
             return history.push(
               `/communities/${community?.id}/channels/${channel.id}`
             )
@@ -235,7 +269,7 @@ const ChannelCardView = ({ id, index }: { id: string; index: number }) => {
             </div>
           </h4>
         </div>
-      </>
+      </div>
     </Context.Wrapper>
   )
 }

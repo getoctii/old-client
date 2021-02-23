@@ -1,4 +1,4 @@
-import { clientGateway, Permissions } from '../utils/constants'
+import { ChannelTypes, clientGateway, Permissions } from '../utils/constants'
 import { queryCache } from 'react-query'
 
 export const fetchManyGroups = (_: string, ids: string[], token: string) => {
@@ -33,6 +33,9 @@ export interface ChannelResponse {
   name: string
   description: string
   color: string
+  type: ChannelTypes
+  parent_id?: string
+  order: number
 }
 
 export interface InviteResponse {

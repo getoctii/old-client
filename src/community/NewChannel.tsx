@@ -1,32 +1,32 @@
-import { faTimesCircle } from '@fortawesome/pro-solid-svg-icons'
+import { faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ErrorMessage, Field, Formik, Form } from 'formik'
-import React from 'react'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import Modal from '../components/Modal'
 import Input from '../components/Input'
-import { clientGateway } from '../utils/constants'
+import { ChannelTypes, clientGateway } from '../utils/constants'
 import { BarLoader } from 'react-spinners'
 import styles from './NewChannel.module.scss'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { getCommunity } from './remote'
+import { getChannels, getCommunity } from './remote'
 import { UI } from '../state/ui'
 import { useQuery } from 'react-query'
 
-type formData = { name: string }
+type formData = { name: string; type: ChannelTypes }
 
 const validate = (values: formData) => {
-  const errors: { name?: string } = {}
-  if (
-    !values ||
-    !(
-      values.name.length <= 30 &&
-      values.name.length >= 2 &&
-      /^[a-zA-Z0-9_-]+$/.test(values.name)
-    )
-  )
-    errors.name = 'Invalid Name'
+  const errors: { name?: string; type?: string } = {}
+  const name = values.name
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '')
+  if (!(name.length <= 30 && name.length >= 2)) errors.name = 'Invalid Name'
+  if (!values.type) errors.type = 'Invalid Type'
   return errors
 }
 
@@ -44,10 +44,15 @@ export const NewChannel = () => {
     }
   )
 
+  const { data: channels } = useQuery(
+    ['channels', match?.params.id, token],
+    getChannels
+  )
+
   return (
     <Modal onDismiss={() => ui.clearModal()}>
       <Formik
-        initialValues={{ name: '' }}
+        initialValues={{ name: '', type: ChannelTypes.TEXT }}
         validate={validate}
         onSubmit={async (
           values,
@@ -55,14 +60,27 @@ export const NewChannel = () => {
         ) => {
           try {
             if (!values.name) return setFieldError('name', 'Required')
+
+            const name =
+              values.type === ChannelTypes.TEXT
+                ? values.name
+                    .toString()
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w-]+/g, '')
+                    .replace(/--+/g, '-')
+                    .replace(/^-+/, '')
+                    .replace(/-+$/, '')
+                : values.name
+
             const channel = await clientGateway.post(
               `/communities/${match?.params.id}/channels`,
-              { name: values.name.split(' ').join('-') },
+              { name, type: values.type ?? ChannelTypes.TEXT },
               {
                 headers: { Authorization: token }
               }
             )
-            if (channel?.data?.id)
+            if (channel?.data?.id && values.type === ChannelTypes.TEXT)
               history.push(
                 `/communities/${match?.params.id}/channels/${channel.data.id}`
               )
@@ -79,26 +97,49 @@ export const NewChannel = () => {
           }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, values, setFieldValue }) => (
           <Form>
             <div className={styles.newChannel}>
-              <h5>{community?.name}</h5>
-              <h4>
-                Create
-                <span style={{ float: 'right' }}>
+              <h5>
+                {community?.name}{' '}
+                <span className={styles.closeIcon}>
                   <FontAwesomeIcon
                     onClick={() => ui.clearModal()}
                     icon={faTimesCircle}
                   />
                 </span>
-              </h4>
-              <h3>
-                <span role='img' aria-label='thinking'>
-                  🤔
-                </span>{' '}
-                What would you like to call this channel?
-              </h3>
+              </h5>
+              <h4>New Channel</h4>
 
+              <label htmlFor='type' className={styles.label}>
+                Type
+              </label>
+              <div className={styles.type}>
+                <Button
+                  type={'button'}
+                  className={`${
+                    values.type === ChannelTypes.TEXT ? styles.selected : ''
+                  }`}
+                  onClick={() => setFieldValue('type', ChannelTypes.TEXT)}
+                >
+                  Text Channel
+                </Button>
+                {(channels ?? []).filter(
+                  (c) => c.type !== ChannelTypes.CATEGORY
+                ).length > 0 && (
+                  <Button
+                    type={'button'}
+                    className={`${
+                      values.type === ChannelTypes.CATEGORY
+                        ? styles.selected
+                        : ''
+                    }`}
+                    onClick={() => setFieldValue('type', ChannelTypes.CATEGORY)}
+                  >
+                    Category
+                  </Button>
+                )}
+              </div>
               <label htmlFor='name' className={styles.label}>
                 Name
               </label>
