@@ -21,14 +21,14 @@ import { Permission } from '../utils/permissions'
 import { useMemo } from 'react'
 
 const NoPermission = ({ name }: CommunityResponse) => (
-  <div className={styles.communityEmpty}>
+  <div className={styles.noPermission}>
     <Helmet>
       <title>Octii - {name}</title>
     </Helmet>
     <div className={styles.locked}>
       <FontAwesomeIcon icon={faLock} size='4x' />
       <small>{name}</small>
-      <h3>Looks like you don't have permissions to view this community :(</h3>
+      <h3>You cannot view this community!</h3>
     </div>
   </div>
 )
@@ -99,6 +99,7 @@ const CommunityView = () => {
     '/communities/:id/:tab'
   )
   const isMobile = useMedia('(max-width: 740px)')
+  const { hasPermissions } = Permission.useContainer()
 
   const { data: community } = useQuery(
     ['community', match?.params.id, token],
@@ -106,12 +107,14 @@ const CommunityView = () => {
   )
   const { data: channels } = useQuery(
     ['channels', match?.params.id, token],
-    getChannels
+    getChannels,
+    {
+      enabled: !!hasPermissions([Permissions.READ_MESSAGES])
+    }
   )
   const textChannels = useMemo(() => {
     return (channels ?? []).filter((channel) => channel?.type === 1)
   }, [channels])
-  const { hasPermissions } = Permission.useContainer()
 
   const [showEmpty, setShowEmpty] = useState(false)
 
