@@ -277,7 +277,16 @@ const AppRouter = () => {
               sidebar
               component={Community}
             />
-            <PrivateRoute sidebar path='/friends' component={Friends} exact />
+            <PrivateRoute
+              sidebar
+              path='/friends'
+              component={() => (
+                <Suspense fallback={<></>}>
+                  <Friends />
+                </Suspense>
+              )}
+              exact
+            />
             <PrivateRoute
               sidebar
               path={'/conversations/:id?'}
