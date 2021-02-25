@@ -91,6 +91,27 @@ const EmptyCommunityHandler = ({
   return <></>
 }
 
+const CommunityChannelFallback = () => {
+  const { token } = Auth.useContainer()
+  const match = useRouteMatch<{ id: string }>('/communities/:id')
+  const { data: channels } = useQuery(
+    ['channels', match?.params.id, token],
+    getChannels
+  )
+  const textChannels = useMemo(() => {
+    return (channels ?? [])
+      .filter((channel) => channel?.type === 1)
+      .sort((a, b) => b.order - a.order)
+  }, [channels])
+
+  return (
+    <Redirect
+      path='*'
+      to={`/communities/${match?.params.id}/channels/${textChannels[0].id}`}
+    />
+  )
+}
+
 const CommunityView = () => {
   const { token } = Auth.useContainer()
   const { path } = useRouteMatch()
@@ -105,17 +126,6 @@ const CommunityView = () => {
     ['community', match?.params.id, token],
     getCommunity
   )
-  const { data: channels } = useQuery(
-    ['channels', match?.params.id, token],
-    getChannels,
-    {
-      enabled: !!hasPermissions([Permissions.READ_MESSAGES])
-    }
-  )
-  const textChannels = useMemo(() => {
-    return (channels ?? []).filter((channel) => channel?.type === 1)
-  }, [channels])
-
   const [showEmpty, setShowEmpty] = useState(false)
 
   const emptyHandler = useCallback((state: boolean) => {
@@ -173,9 +183,13 @@ const CommunityView = () => {
                 exact
               />
               {!isMobile && (
-                <Redirect
-                  path='*'
-                  to={`/communities/${match?.params.id}/channels/${textChannels[0].id}`}
+                <PrivateRoute
+                  component={() => (
+                    <Suspense fallback={<Chat.Placeholder />}>
+                      <CommunityChannelFallback />
+                    </Suspense>
+                  )}
+                  path={'*'}
                 />
               )}
             </Switch>
