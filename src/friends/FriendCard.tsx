@@ -1,13 +1,12 @@
 import React from 'react'
 import styles from './FriendCard.module.scss'
-import { useQuery } from 'react-query'
 import { Auth } from '../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserTimes, faUserCheck } from '@fortawesome/pro-duotone-svg-icons'
 import Icon from '../user/Icon'
-import { getUser } from '../user/remote'
 import { RelationshipResponse, RelationshipTypes } from './remote'
 import { clientGateway } from '../utils/constants'
+import { useUser } from '../user/state'
 
 const FriendCardView = ({
   user_id,
@@ -15,8 +14,8 @@ const FriendCardView = ({
   type
 }: RelationshipResponse) => {
   const { token, id } = Auth.useContainer()
-  const { data: user } = useQuery(['users', user_id, token], getUser)
-  const { data: recipient } = useQuery(['users', recipient_id, token], getUser)
+  const user = useUser(user_id)
+  const recipient = useUser(recipient_id)
   return (
     <div className={styles.card}>
       <Icon

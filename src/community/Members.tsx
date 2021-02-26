@@ -16,7 +16,7 @@ import { Waypoint } from 'react-waypoint'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import { createConversation } from '../conversation/remote'
-import { getUser, ParticipantsResponse } from '../user/remote'
+import { ParticipantsResponse } from '../user/remote'
 import styles from './Members.module.scss'
 import {
   getCommunity,
@@ -30,6 +30,7 @@ import { faEllipsisHAlt } from '@fortawesome/pro-duotone-svg-icons'
 import { UI } from '../state/ui'
 import { ModalTypes, Permissions } from '../utils/constants'
 import { Permission } from '../utils/permissions'
+import { useUser } from '../user/state'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
@@ -62,18 +63,18 @@ const MemberCard = memo(
     const history = useHistory()
     const ui = UI.useContainer()
     const member = useQuery(['member', memberObj.id, token], getMember)
-    const user = useQuery(['users', memberObj.user_id, token], getUser)
+    const user = useUser(memberObj.user_id)
     const { hasPermissions } = Permission.useContainer()
     return (
       <div className={styles.member}>
-        <Icon avatar={user.data?.avatar} state={user.data?.state} />
+        <Icon avatar={user?.avatar} state={user?.state} />
         <div className={styles.info}>
           <h4>
-            {user.data?.username}#
-            {user.data?.discriminator === 0
+            {user?.username}#
+            {user?.discriminator === 0
               ? 'inn'
-              : user.data?.discriminator.toString().padStart(4, '0')}
-            {user.data?.id === owner && <FontAwesomeIcon icon={faCrown} />}
+              : user?.discriminator.toString().padStart(4, '0')}
+            {user?.id === owner && <FontAwesomeIcon icon={faCrown} />}
           </h4>
           <time>{dayjs.utc(member?.data?.created_at).local().calendar()}</time>
         </div>
@@ -116,7 +117,7 @@ const MemberCard = memo(
         </div>
         {!isMobile && (
           <div className={styles.actions}>
-            {user.data?.id !== id && (
+            {user?.id !== id && (
               <Button
                 type='button'
                 onClick={async () => {

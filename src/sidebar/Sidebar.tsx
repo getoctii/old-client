@@ -22,7 +22,6 @@ import {
   getMentions,
   getParticipants,
   getUnreads,
-  getUser,
   MembersResponse,
   State
 } from '../user/remote'
@@ -32,6 +31,7 @@ import { getCommunity } from '../community/remote'
 import { ModalTypes } from '../utils/constants'
 import { useSuspenseStorageItem } from '../utils/storage'
 import { faUsers } from '@fortawesome/pro-duotone-svg-icons'
+import { useUser } from '../user/state'
 
 const reorder = (
   list: MembersResponse,
@@ -215,7 +215,7 @@ const Sidebar = () => {
   const history = useHistory()
   const isMobile = useMedia('(max-width: 740px)')
   const matchTab = useRouteMatch<{ tab: string }>('/:tab')
-  const user = useQuery(['users', auth.id, auth.token], getUser)
+  const user = useUser(auth.id ?? undefined)
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const currentScrollPosition = useScroll(scrollRef)
@@ -263,24 +263,24 @@ const Sidebar = () => {
               }`}
             >
               <img
-                src={user.data?.avatar}
-                alt={user.data?.username}
+                src={user?.avatar}
+                alt={user?.username}
                 onClick={() => history.push('/settings')}
               />
               <div
                 className={styles.overlay}
                 onClick={() => history.push('/settings')}
               />
-              {user.data?.state && (
+              {user?.state && (
                 <div
                   className={`${styles.badge} ${
-                    user.data.state === State.online
+                    user.state === State.online
                       ? styles.online
-                      : user.data.state === State.dnd
+                      : user.state === State.dnd
                       ? styles.dnd
-                      : user.data.state === State.idle
+                      : user.state === State.idle
                       ? styles.idle
-                      : user.data.state === State.offline
+                      : user.state === State.offline
                       ? styles.offline
                       : ''
                   }`}
@@ -358,22 +358,22 @@ const Sidebar = () => {
               type='button'
             >
               <img
-                src={user.data?.avatar}
-                alt={user.data?.username}
+                src={user?.avatar}
+                alt={user?.username}
                 onClick={() => {
                   history.push('/settings')
                 }}
               />
-              {matchTab?.params.tab !== 'settings' && user.data?.state && (
+              {matchTab?.params.tab !== 'settings' && user?.state && (
                 <div
                   className={`${styles.badge} ${
-                    user.data.state === State.online
+                    user.state === State.online
                       ? styles.online
-                      : user.data.state === State.dnd
+                      : user.state === State.dnd
                       ? styles.dnd
-                      : user.data.state === State.idle
+                      : user.state === State.idle
                       ? styles.idle
-                      : user.data.state === State.offline
+                      : user.state === State.offline
                       ? styles.offline
                       : ''
                   }`}

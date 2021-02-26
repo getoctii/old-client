@@ -10,17 +10,17 @@ import {
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { Plugins } from '@capacitor/core'
-import { queryCache, useQuery } from 'react-query'
-import { getUser } from '../user/remote'
+import { queryCache } from 'react-query'
 import GitInfo from 'react-git-info/macro'
 import { isPlatform } from '@ionic/react'
+import { useUser } from '../user/state'
 
 const gitInfo = GitInfo()
 
 const Sidebar = () => {
   const auth = Auth.useContainer()
   const history = useHistory()
-  const user = useQuery(['users', auth.id, auth.token], getUser)
+  const user = useUser(auth.id ?? undefined)
   const match = useRouteMatch<{ page: string }>('/settings/:page')
   return (
     <div className={styles.sidebarWrapper}>
@@ -62,7 +62,7 @@ const Sidebar = () => {
             </div>{' '}
             Themes
           </div>
-          {user?.data?.discriminator === 0 && (
+          {user?.discriminator === 0 && (
             <>
               <hr />
               <div

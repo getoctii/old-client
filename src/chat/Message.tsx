@@ -11,14 +11,13 @@ import {
 } from '@fortawesome/pro-solid-svg-icons'
 import { Plugins } from '@capacitor/core'
 import { Auth } from '../authentication/state'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation } from 'react-query'
 import {
   clientGateway,
   MessageTypes,
   ModalTypes,
   Permissions
 } from '../utils/constants'
-import { getUser } from '../user/remote'
 import { Measure } from './embeds/Measure'
 import Context from '../components/Context'
 import Audio from './embeds/Audio'
@@ -44,6 +43,7 @@ import { createEditor } from 'slate'
 import Invite from './embeds/Invite'
 import Mention from './Mention'
 import { Permission } from '../utils/permissions'
+import { useUser } from '../user/state'
 
 const { Clipboard } = Plugins
 dayjs.extend(dayjsUTC)
@@ -131,7 +131,7 @@ const MessageView = memo(
           })
         ).data
     )
-    const user = useQuery(['users', authorID, auth.token], getUser)
+    const user = useUser(authorID)
     const getItems = useCallback(() => {
       const items: {
         text: string
@@ -290,7 +290,7 @@ const MessageView = memo(
     )
     return (
       <Context.Wrapper
-        title={`${user.data?.username || 'Unknown'}'s Message`}
+        title={`${user?.username || 'Unknown'}'s Message`}
         message={content}
         key={id}
         items={getItems()}
@@ -309,7 +309,7 @@ const MessageView = memo(
           {primary && type === MessageTypes.NORMAL && (
             <div
               className={styles.avatar}
-              style={{ backgroundImage: `url(${user.data?.avatar})` }}
+              style={{ backgroundImage: `url(${user?.avatar})` }}
             />
           )}
           <div
@@ -320,23 +320,21 @@ const MessageView = memo(
             {primary && type === MessageTypes.NORMAL && (
               <h2 key='username'>
                 <span>
-                  {user.data?.username}
-                  {user.data?.id === '987d59ba-1979-4cc4-8818-7fe2f3d4b560' ? (
+                  {user?.username}
+                  {user?.id === '987d59ba-1979-4cc4-8818-7fe2f3d4b560' ? (
                     <FontAwesomeIcon
                       className={styles.badge}
                       icon={faUserNinja}
                     />
-                  ) : user.data?.id ===
-                    '99343aac-2301-415d-aece-17b021d3a459' ? (
+                  ) : user?.id === '99343aac-2301-415d-aece-17b021d3a459' ? (
                     <FontAwesomeIcon
                       className={styles.badge}
                       icon={faCatSpace}
                     />
-                  ) : user.data?.id ===
-                    '71df7ca2-93c5-4a8a-be6e-f068fd91d68e' ? (
+                  ) : user?.id === '71df7ca2-93c5-4a8a-be6e-f068fd91d68e' ? (
                     <FontAwesomeIcon className={styles.badge} icon={faHeart} />
                   ) : (
-                    user.data?.discriminator === 0 && (
+                    user?.discriminator === 0 && (
                       <FontAwesomeIcon
                         className={styles.badge}
                         icon={faUserShield}

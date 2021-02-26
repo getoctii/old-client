@@ -18,14 +18,17 @@ import { Permission } from '../utils/permissions'
 const ConversationView = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
   const { id, token } = Auth.useContainer()
-  const { data } = useQuery(['participants', id, token], getParticipants)
+  const { data: participants } = useQuery(
+    ['participants', id, token],
+    getParticipants
+  )
 
   const participant = useMemo(
     () =>
-      data?.find(
+      participants?.find(
         (participant) => participant.conversation.id === match?.params.id
       ),
-    [data, match]
+    [participants, match]
   )
   const people = useMemo(
     () =>

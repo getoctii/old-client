@@ -1,16 +1,12 @@
-import { useQuery } from 'react-query'
 import { useHistory } from 'react-router-dom'
 import { Auth } from '../authentication/state'
-import { getUser } from '../user/remote'
 import styles from './Navbar.module.scss'
+import { useUser } from '../user/state'
 
 const Navbar = () => {
   const history = useHistory()
   const auth = Auth.useContainer()
-
-  const { data: user } = useQuery(['users', auth.id, auth.token], getUser, {
-    enabled: !!auth.authenticated
-  })
+  const user = useUser(auth.id ?? undefined)
 
   return (
     <div className={styles.navbar}>
