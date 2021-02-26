@@ -14,6 +14,7 @@ import { useMedia } from 'react-use'
 import { getUser } from '../user/remote'
 import { useHistory } from 'react-router-dom'
 import IconPicker from '../components/IconPicker'
+import { useUser } from '../user/state'
 type profileFormData = { username: string; avatar: string; status: string }
 
 const validateProfile = (values: profileFormData) => {
@@ -26,7 +27,7 @@ const validateProfile = (values: profileFormData) => {
 
 const Profile = () => {
   const { token, id } = Auth.useContainer()
-  const user = useQuery(['users', id, token], getUser)
+  const user = useUser(id ?? undefined)
   const isMobile = useMedia('(max-width: 740px)')
   const history = useHistory()
   return (
@@ -47,9 +48,9 @@ const Profile = () => {
       </h2>
       <Formik
         initialValues={{
-          username: user.data?.username || '',
-          avatar: user.data?.avatar || '',
-          status: user.data?.status || ''
+          username: user?.username || '',
+          avatar: user?.avatar || '',
+          status: user?.status || ''
         }}
         validate={validateProfile}
         onSubmit={async (
@@ -61,7 +62,7 @@ const Profile = () => {
             await clientGateway.patch(
               `/users/${id}`,
               {
-                ...(values.username !== user.data?.username && {
+                ...(values.username !== user?.username && {
                   username: values.username
                 }),
                 avatar: values.avatar,
@@ -86,8 +87,8 @@ const Profile = () => {
                 Avatar
               </label>
               <IconPicker
-                alt={user.data?.username || 'unknown'}
-                defaultIcon={user.data?.avatar}
+                alt={user?.username || 'unknown'}
+                defaultIcon={user?.avatar}
                 onUpload={(url) => {
                   setFieldValue('avatar', url)
                 }}
@@ -113,9 +114,9 @@ const Profile = () => {
                 component={Input}
                 name='discriminator'
                 value={
-                  user.data?.discriminator === 0
+                  user?.discriminator === 0
                     ? 'inn'
-                    : user.data?.discriminator.toString().padStart(4, '0')
+                    : user?.discriminator.toString().padStart(4, '0')
                 }
                 disabled
               />
@@ -131,7 +132,7 @@ const Profile = () => {
               <Field
                 component={Input}
                 name='email'
-                value={user.data?.email}
+                value={user?.email}
                 disabled
               />
               <ErrorMessage component='p' name='email' />

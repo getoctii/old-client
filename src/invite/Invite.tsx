@@ -8,6 +8,7 @@ import { getCommunities, getUser } from '../user/remote'
 import Button from '../components/Button'
 import { clientGateway } from '../utils/constants'
 import { Helmet } from 'react-helmet-async'
+import { useUser } from '../user/state'
 
 const InvitePreview = (invite: {
   code: string
@@ -22,17 +23,17 @@ const InvitePreview = (invite: {
 }) => {
   const { token, id } = Auth.useContainer()
   const history = useHistory()
-  const user = useQuery(['users', invite.author_id, token], getUser)
-  const owner = useQuery(['users', invite.community?.owner_id, token], getUser)
+  const user = useUser(invite.author_id)
+  const owner = useUser(invite.community?.owner_id)
   const communities = useQuery(['communities', id, token], getCommunities)
   return (
     <div>
-      <h4>{user.data?.username} invited you to a new community!</h4>
+      <h4>{user?.username} invited you to a new community!</h4>
       <div className={styles.community}>
         <img alt={invite.community?.name} src={invite.community?.icon} />
         <div className={styles.name}>
           <h4>{invite.community?.name}</h4>
-          <p>By {owner.data?.username}</p>
+          <p>By {owner?.username}</p>
         </div>
       </div>
       <Button

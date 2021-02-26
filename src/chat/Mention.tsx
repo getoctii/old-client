@@ -1,19 +1,24 @@
 import React from 'react'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
-import { getUser } from '../user/remote'
 import styles from './Mention.module.scss'
 import { getChannel } from './remote'
 import { useHistory } from 'react-router-dom'
+import { useUser } from '../user/state'
 
-const User = ({ userID, selected, attributes, children }: {
-  userID: string,
-  selected?: boolean,
+const User = ({
+  userID,
+  selected,
+  attributes,
+  children
+}: {
+  userID: string
+  selected?: boolean
   attributes?: any
   children?: React.ReactChild
 }) => {
-  const { token, id } = Auth.useContainer()
-  const user = useQuery(['users', userID, token], getUser)
+  const { id } = Auth.useContainer()
+  const user = useUser(id ?? undefined)
   return (
     <span
       {...attributes}
@@ -21,7 +26,7 @@ const User = ({ userID, selected, attributes, children }: {
         selected ? styles.selected : ''
       }`}
     >
-      @{user.data?.username}
+      @{user?.username}
       {children}
     </span>
   )
@@ -33,8 +38,8 @@ const Channel = ({
   attributes,
   children
 }: {
-  channelID: string,
-  selected?: boolean,
+  channelID: string
+  selected?: boolean
   attributes?: any
   children?: React.ReactChild
 }) => {
@@ -47,7 +52,12 @@ const Channel = ({
       className={`${styles.mention} ${styles.isMe} ${
         selected ? styles.selected : ''
       }`}
-      onClick={() => !attributes && history.push(`/communities/${channel.data?.community_id}/channels/${channelID}`)}
+      onClick={() =>
+        !attributes &&
+        history.push(
+          `/communities/${channel.data?.community_id}/channels/${channelID}`
+        )
+      }
     >
       #{channel.data?.name}
       {children}

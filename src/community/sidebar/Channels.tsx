@@ -264,10 +264,11 @@ const ChannelsView = () => {
             const destinationChildren = (channels ?? []).filter(
               (c) => result.destination?.droppableId === c.parent_id
             )
-            const sourceChildren = (channels ?? []).filter((c) => !c.parent_id)
+            const sourceChildren = (channels ?? []).filter(
+              (c) => !c.parent_id && c.type !== ChannelTypes.CATEGORY
+            )
             const [draggedItem] = sourceChildren.splice(result.source.index, 1)
             destinationChildren.splice(result.destination.index, 0, draggedItem)
-
             const orderedSourceChildren = [...sourceChildren, ...parents].map(
               (c, index) => ({
                 ...c,
@@ -304,7 +305,6 @@ const ChannelsView = () => {
                 }
               }
             )
-
             return
           }
           // Case #3: Child reassigned

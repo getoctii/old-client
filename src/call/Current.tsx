@@ -8,14 +8,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
 import { Call } from '../state/call'
 import styles from './Current.module.scss'
-import { useQuery } from 'react-query'
-import { Auth } from '../authentication/state'
-import { getUser } from '../user/remote'
+import { useUser } from '../user/state'
 
 const Current = () => {
-  const { token } = Auth.useContainer()
   const call = Call.useContainer()
-  const user = useQuery(['users', call.otherUserID, token], getUser)
+  const user = useUser(call.otherUserID ?? undefined)
   const [audio] = useState(new Audio())
 
   useEffect(() => {
@@ -26,7 +23,7 @@ const Current = () => {
   }, [audio, call.stream])
   return (
     <div className={styles.current}>
-      <h3>Call w/{user.data?.username}</h3>
+      <h3>Call w/{user?.username}</h3>
       <p>
         {call.callState === 'waiting'
           ? 'Connecting to peer...'

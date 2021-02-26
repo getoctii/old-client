@@ -1,6 +1,6 @@
 import React, { Suspense, useState } from 'react'
-import { queryCache, useMutation, useQuery } from 'react-query'
-import { getUser, ParticipantsResponse } from '../user/remote'
+import { queryCache, useMutation } from 'react-query'
+import { ParticipantsResponse } from '../user/remote'
 import { Auth } from '../authentication/state'
 import styles from './Lookup.module.scss'
 import { Field, Form, Formik } from 'formik'
@@ -18,11 +18,12 @@ import { useHistory } from 'react-router-dom'
 import { clientGateway } from '../utils/constants'
 import { Plugins } from '@capacitor/core'
 import { useMedia } from 'react-use'
+import { useUser } from '../user/state'
 
 const UserLookup = ({ userID }: { userID: string }) => {
   const history = useHistory()
   const auth = Auth.useContainer()
-  const user = useQuery(['users', userID, auth.token], getUser)
+  const user = useUser(userID)
   const [toggleUser] = useMutation(
     async () =>
       (
@@ -45,15 +46,15 @@ const UserLookup = ({ userID }: { userID: string }) => {
   return (
     <div className={styles.user}>
       <div className={styles.profile}>
-        <Icon avatar={user.data?.avatar} state={user.data?.state} />
+        <Icon avatar={user?.avatar} state={user?.state} />
         <div className={styles.title}>
           <h4>
-            {user.data?.username}#
-            {user.data?.discriminator === 0
+            {user?.username}#
+            {user?.discriminator === 0
               ? 'inn'
-              : user.data?.discriminator.toString().padStart(4, '0')}
+              : user?.discriminator.toString().padStart(4, '0')}
           </h4>
-          <p>{user.data?.status || 'No status set'}</p>
+          <p>{user?.status || 'No status set'}</p>
         </div>
       </div>
       <div className={styles.details}>
@@ -61,20 +62,20 @@ const UserLookup = ({ userID }: { userID: string }) => {
           <strong>Email:</strong>{' '}
           <kbd
             onClick={async () =>
-              await Plugins.Clipboard.write({ string: user.data?.email })
+              await Plugins.Clipboard.write({ string: user?.email })
             }
           >
-            {user.data?.email}
+            {user?.email}
           </kbd>
         </p>
         <p>
           <strong>ID:</strong>{' '}
           <kbd
             onClick={async () =>
-              await Plugins.Clipboard.write({ string: user.data?.id })
+              await Plugins.Clipboard.write({ string: user?.id })
             }
           >
-            {user.data?.id}
+            {user?.id}
           </kbd>
         </p>
       </div>
@@ -104,13 +105,13 @@ const UserLookup = ({ userID }: { userID: string }) => {
         </Button>
         <Button
           type='button'
-          disabled={user.data?.discriminator === 0}
-          className={`${user.data?.disabled ? styles.disabled : ''}`}
+          disabled={user?.discriminator === 0}
+          className={`${user?.disabled ? styles.disabled : ''}`}
           onClick={async () => {
             await toggleUser()
           }}
         >
-          {user.data?.disabled ? 'Enable' : 'Disable'}
+          {user?.disabled ? 'Enable' : 'Disable'}
         </Button>
       </div>
     </div>
