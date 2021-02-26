@@ -22,7 +22,6 @@ import {
   getMentions,
   getParticipants,
   getUnreads,
-  getUser,
   MembersResponse,
   State
 } from '../user/remote'
