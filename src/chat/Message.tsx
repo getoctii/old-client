@@ -356,7 +356,11 @@ const MessageView = memo(
             ) : (
               <p key={id}>{main}</p>
             )}
-            <Measure onResize={onResize}>{embeds}</Measure>
+            {embeds.length > 0 ? (
+              <Measure onResize={onResize}>{embeds}</Measure>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </Context.Wrapper>
