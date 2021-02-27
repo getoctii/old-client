@@ -1,5 +1,5 @@
-import React, { ReactNode, useEffect } from 'react'
-import { useMeasure } from 'react-use'
+/// <reference types="resize-observer-browser" />
+import React, { ReactNode, useEffect, useMemo, useRef } from 'react'
 
 export const Measure = ({
   children,
@@ -8,10 +8,20 @@ export const Measure = ({
   children: ReactNode
   onResize: () => void
 }) => {
-  const [ref, size] = useMeasure<HTMLDivElement>()
+  const observer = useMemo(() => new ResizeObserver(() => onResize()), [
+    onResize
+  ])
+  const ref = useRef<HTMLDivElement | null>(null)
+
   useEffect(() => {
-    onResize()
-  }, [size, onResize])
+    const current = ref.current
+    if (!current) return
+
+    observer.observe(current)
+    return () => {
+      observer.unobserve(current)
+    }
+  }, [ref, observer])
+
   return <div ref={ref}>{children}</div>
 }
-// wait I think I have hax

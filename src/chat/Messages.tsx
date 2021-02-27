@@ -70,12 +70,12 @@ const MessagesView = ({ channel }: { channel: ChannelResponse }) => {
   const [loading, setLoading] = useState(false)
   const trackingRef = useRef(tracking)
 
-  const autoScroll = useCallback(() => {
+  const autoScroll = useCallback((smooth = true) => {
     const scrollRef = ref?.current
     if (trackingRef.current && scrollRef) {
       scrollRef.scroll({
         top: scrollRef.scrollHeight,
-        behavior: 'smooth'
+        ...(smooth ? { behavior: 'smooth' } : {})
       })
     }
   }, [])
@@ -113,7 +113,17 @@ const MessagesView = ({ channel }: { channel: ChannelResponse }) => {
       })
     }
   }, [])
-  useLayoutEffect(autoScroll, [messages, autoScroll])
+
+  const initalized = useRef<boolean>(false)
+
+  useLayoutEffect(() => {
+    if (!initalized.current) {
+      initalized.current = true
+      autoScroll(false)
+    } else {
+      autoScroll()
+    }
+  }, [messages, autoScroll])
   const unreads = useQuery(['unreads', id, token], getUnreads)
 
   const setAsRead = useCallback(async () => {
