@@ -18,7 +18,7 @@ const User = ({
   children?: React.ReactChild
 }) => {
   const { id } = Auth.useContainer()
-  const user = useUser(id ?? undefined)
+  const user = useUser(userID)
   return (
     <span
       {...attributes}
