@@ -10,18 +10,20 @@ import { faPoop } from '@fortawesome/pro-duotone-svg-icons'
 const IconPicker = ({
   alt,
   defaultIcon,
-  onUpload
+  onUpload,
+  className
 }: {
   alt: string
   defaultIcon?: string
   onUpload: (url: string) => Promise<void> | void
+  className?: string
 }) => {
   const input = useRef<HTMLInputElement | null>(null)
   const [icon, setIcon] = useState<string | undefined>(defaultIcon || undefined)
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
   return (
-    <div className={styles.icon}>
+    <div className={`${styles.icon} ${className ?? ''}`}>
       <img src={icon} alt={alt} />
       <div className={styles.details}>
         <p>Recommended icon size is 100x100</p>

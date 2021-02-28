@@ -11,9 +11,16 @@
     min-width: 500px;
   }
 
+  h2,
+  h5,
   h4,
-  h2 {
+  h6,
+  p {
     margin: 0;
+  }
+
+  h2 {
+    margin-bottom: 1rem;
   }
 
   h4 {
@@ -73,8 +80,33 @@
     }
   }
 
-  @media (max-height: 740px) {
-    padding-top: 2.5rem;
+  @media (max-width: 990px) and (min-width: 741px) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 2rem;
+    width: 100%;
+    .options {
+      background: var(--neko-settings-background);
+      padding: 0;
+      max-width: 100%;
+      min-width: 100%;
+    }
+    .variations {
+      background: var(--neko-settings-card);
+    }
+    .colors {
+    }
+    form {
+      padding: 0;
+      width: 100%;
+      background: var(--neko-settings-background);
+
+      .password {
+        input {
+          background: var(--neko-settings-card);
+        }
+      }
+    }
   }
 
   @media (max-width: 740px) {
