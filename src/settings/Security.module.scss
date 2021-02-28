@@ -1,26 +1,25 @@
 .security {
   padding-top: 5rem;
   overflow-y: scroll;
-
-  .form {
-    margin-top: 1rem;
+  h2,
+  h5,
+  h4,
+  h6,
+  p {
+    margin: 0;
   }
 
-  form,
-  .form {
+  h2 {
+    margin-bottom: 1rem;
+  }
+  form {
     background: var(--neko-settings-card);
     padding: 2rem;
     margin-bottom: 2rem;
     border-radius: 14px;
     height: auto;
     max-width: 500px;
-    h2,
-    h5,
-    h4,
-    h6,
-    p {
-      margin: 0;
-    }
+    min-width: 500px;
 
     h4 {
       font-weight: 400;
@@ -53,6 +52,25 @@
     padding-top: 2.5rem;
   }
 
+  @media (max-width: 990px) and (min-width: 741px) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 2rem;
+    width: 100%;
+    form {
+      padding: 0;
+      max-width: 100%;
+      min-width: 100%;
+      background: var(--neko-settings-background);
+
+      .password {
+        input {
+          background: var(--neko-settings-card);
+        }
+      }
+    }
+  }
+
   @media (max-width: 740px) {
     padding-top: calc(env(safe-area-inset-top) + 2rem);
     margin-top: 0;
@@ -75,6 +93,8 @@
 
     form {
       padding: 1.5rem;
+      max-width: 100%;
+      min-width: 100%;
     }
 
     h2 {

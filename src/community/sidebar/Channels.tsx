@@ -425,6 +425,7 @@ const ChannelsPlaceholder = () => {
   const length = useMemo(() => Math.floor(Math.random() * 10) + 1, [])
   return (
     <div className={styles.channelsPlaceholder}>
+      <div className={styles.rooms} />
       {Array.from(Array(length).keys()).map((_, index) => (
         <ChannelCard.Placeholder key={index} index={index} />
       ))}

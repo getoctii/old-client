@@ -86,6 +86,7 @@ const Profile = () => {
                 Avatar
               </label>
               <IconPicker
+                className={styles.iconPicker}
                 alt={user?.username || 'unknown'}
                 defaultIcon={user?.avatar}
                 onUpload={(url) => {
