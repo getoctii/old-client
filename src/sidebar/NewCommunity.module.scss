@@ -61,7 +61,7 @@
 
   .bottom {
     background: var(--neko-channels-background);
-    padding: 1.25rem 2rem calc(env(safe-area-inset-bottom) + 2rem);
+    padding: 1.25rem 2rem 2rem;
     button {
       width: 100%;
     }
@@ -88,6 +88,7 @@
     }
     .bottom {
       margin-top: auto;
+      padding: 1.25rem 2rem calc(env(safe-area-inset-bottom) + 2rem);
     }
   }
 }
