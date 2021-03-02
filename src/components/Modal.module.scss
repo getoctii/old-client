@@ -26,7 +26,6 @@
   }
 
   .content {
-
     margin-top: 2rem;
     margin-bottom: 2rem;
     max-width: 50%;
@@ -40,15 +39,11 @@
   @media (max-width: 740px) {
     justify-content: flex-end;
     .content {
-
-      border-radius: 0;
-      border-top-left-radius: 14px;
-      border-top-right-radius: 14px;
-      margin: 0;
+      border-radius: 14px 14px 0 0;
       width: 100%;
       max-width: 100%;
       height: calc(100% - (env(safe-area-inset-top) + 2rem));
-      margin-top: env(safe-area-inset-top) + 2rem;
+      margin: calc(env(safe-area-inset-top) + 2rem) 0 0;
       padding: 2rem 0 0;
     }
   }
