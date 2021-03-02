@@ -66,4 +66,21 @@
       height: 3rem;
     }
   }
+
+  &.small {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    img {
+      margin-bottom: 0.5rem;
+    }
+    button {
+      margin-top: 0.5rem;
+      margin-left: 0;
+      width: 100%;
+      background: var(--neko-colors-primary);
+      height: 3rem;
+    }
+  }
 }

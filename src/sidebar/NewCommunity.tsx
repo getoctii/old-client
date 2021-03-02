@@ -1,21 +1,17 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik'
-import React, { useRef, useState } from 'react'
+import { useState } from 'react'
 import { BarLoader } from 'react-spinners'
 import Button from '../components/Button'
 import Input from '../components/Input'
-import Modal from '../components/Modal'
 import { clientGateway } from '../utils/constants'
 import styles from './NewCommunity.module.scss'
 import { UI } from '../state/ui'
 import { isInvite, isUsername } from '../utils/validations'
 import { Auth } from '../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faChevronCircleLeft,
-  faFileUpload
-} from '@fortawesome/pro-solid-svg-icons'
-import axios from 'axios'
+import { faChevronLeft, faTimes } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory } from 'react-router-dom'
+import IconPicker from '../components/IconPicker'
 
 interface ConversationResponse {
   id: string
@@ -47,96 +43,85 @@ const createCommunity = async (token: string, values: createCommunityData) =>
 const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
-  const input = useRef<any>(null)
-  const [avatar, setAvatar] = useState('')
   const history = useHistory()
   return (
-    <div className={styles.invite}>
-      <h3>
-        <FontAwesomeIcon
-          icon={faChevronCircleLeft}
-          onClick={() => dismiss(false)}
-        />{' '}
-        Create a Community
-      </h3>
-      <Formik
-        initialValues={{ name: '', icon: '' }}
-        validate={validateCommunity}
-        onSubmit={async (
-          values,
-          { setSubmitting, setErrors, setFieldError }
-        ) => {
-          if (!values?.name) return setFieldError('invite', 'Required')
-          try {
-            const community = await createCommunity(token!, {
-              name: values.name,
-              icon: values?.icon || ''
-            })
-            ui.clearModal()
-            if (community?.id) history.push(`/communities/${community.id}`)
-          } catch (e) {
-            if (e.response.data.errors.includes('CommunityNameInvalid'))
-              setErrors({ name: 'Invalid Community Name' })
-            if (e.response.data.errors.includes('InvalidIcon'))
-              setErrors({ icon: 'Invalid Community Icon' })
-          } finally {
-            setSubmitting(false)
-          }
-        }}
-      >
-        {({ isSubmitting, setFieldValue }) => (
-          <Form>
-            <div>
-              <div className={styles.avatarContainer}>
-                {avatar && (
-                  <img
-                    src={avatar}
-                    className={styles.avatar}
-                    alt={'community'}
+    <Formik
+      initialValues={{ name: '', icon: '' }}
+      validate={validateCommunity}
+      onSubmit={async (values, { setSubmitting, setErrors, setFieldError }) => {
+        if (!values?.name) return setFieldError('invite', 'Required')
+        try {
+          const community = await createCommunity(token!, {
+            name: values.name,
+            icon: values?.icon || ''
+          })
+          ui.clearModal()
+          if (community?.id) history.push(`/communities/${community.id}`)
+        } catch (e) {
+          if (e.response.data.errors.includes('CommunityNameInvalid'))
+            setErrors({ name: 'Invalid Community Name' })
+          if (e.response.data.errors.includes('InvalidIcon'))
+            setErrors({ icon: 'Invalid Community Icon' })
+        } finally {
+          setSubmitting(false)
+        }
+      }}
+    >
+      {({ isSubmitting, setFieldValue }) => (
+        <Form>
+          <div className={styles.invite}>
+            <div className={styles.body}>
+              <div className={styles.header}>
+                <div className={styles.icon} onClick={() => dismiss()}>
+                  <FontAwesomeIcon
+                    className={styles.backButton}
+                    icon={faChevronLeft}
                   />
-                )}
-                <div
-                  className={avatar ? styles.hideOverlay : styles.overlay}
-                  onClick={() => input.current.click()}
-                >
-                  <FontAwesomeIcon icon={faFileUpload} size='2x' />
                 </div>
-                <input
-                  ref={input}
-                  type='file'
-                  accept='.jpg, .png, .jpeg, .gif'
-                  onChange={async (event) => {
-                    const image = event.target.files?.item(0) as any
-                    const formData = new FormData()
-                    formData.append('file', image)
-                    const response = await axios.post(
-                      'https://covfefe.innatical.com/api/v1/upload',
-                      formData
-                    )
-                    setAvatar(response.data?.url)
-                    setFieldValue('icon', response.data?.url)
+                <div className={styles.title}>
+                  <h2>New Community</h2>
+                </div>
+              </div>
+              <div>
+                <IconPicker
+                  className={styles.iconPicker}
+                  forcedSmall
+                  alt={'community'}
+                  onUpload={(url: string) => {
+                    setFieldValue('icon', url)
                   }}
                 />
-              </div>
-              <ErrorMessage component='p' name='icon' />
-            </div>
 
-            <label htmlFor='tag' className={styles.inputName}>
-              Name
-            </label>
-            <Field component={Input} name='name' />
-            <ErrorMessage component='p' name='name' />
-            <Button disabled={isSubmitting} type='submit'>
-              {isSubmitting ? (
-                <BarLoader color='#ffffff' />
-              ) : (
-                'Create Community'
-              )}
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    </div>
+                <ErrorMessage
+                  className={styles.error}
+                  component='p'
+                  name='icon'
+                />
+              </div>
+
+              <label htmlFor='tag' className={styles.inputName}>
+                Name
+              </label>
+              <Field component={Input} name='name' />
+              <ErrorMessage
+                className={styles.error}
+                component='p'
+                name='name'
+              />
+            </div>
+            <div className={styles.bottom}>
+              <Button disabled={isSubmitting} type='submit'>
+                {isSubmitting ? (
+                  <BarLoader color='#ffffff' />
+                ) : (
+                  'Create Community'
+                )}
+              </Button>
+            </div>
+          </div>
+        </Form>
+      )}
+    </Formik>
   )
 }
 
@@ -156,67 +141,81 @@ export const NewCommunity = () => {
   const history = useHistory()
 
   return (
-    <Modal onDismiss={() => ui.clearModal()}>
+    <>
       {createCommunityMenu ? (
         <CreateCommunity dismiss={setCreateCommunityMenu} />
       ) : (
         <div className={styles.invite}>
-          <h3>Join a Community</h3>
-          <Formik
-            initialValues={{ invite: '' }}
-            validate={validateInvite}
-            onSubmit={async (
-              values,
-              { setSubmitting, setErrors, setFieldError }
-            ) => {
-              if (!token) return
-              if (!values?.invite) return setFieldError('invite', 'Required')
-              try {
-                const id = (await joinCommunity(values.invite, token))
-                  .community_id
-                history.push(`/communities/${id}`)
-                ui.clearModal()
-              } catch (e) {
-                if (e.response.data.errors.includes('InvalidCode'))
-                  setErrors({ invite: 'Invalid Invite' })
-                if (e.response.data.errors.includes('InviteNotFound'))
-                  setErrors({ invite: 'Invite not found' })
-                if (e.response.data.errors.includes('AlreadyInCommunity'))
-                  setErrors({
-                    invite: 'You are already in this community'
-                  })
-              } finally {
-                setSubmitting(false)
-              }
-            }}
-          >
-            {({ isSubmitting }) => (
-              <Form>
-                <label htmlFor='tag' className={styles.inputName}>
-                  Invite
-                </label>
-                <Field component={Input} name='invite' />
-                <ErrorMessage component='p' name='invite' />
-                <Button disabled={isSubmitting} type='submit'>
-                  {isSubmitting ? (
-                    <BarLoader color='#ffffff' />
-                  ) : (
-                    'Join Community'
-                  )}
-                </Button>
-              </Form>
-            )}
-          </Formik>
-          <hr />
-          <Button
-            type='button'
-            className={styles.createButton}
-            onClick={() => setCreateCommunityMenu(true)}
-          >
-            Or Create a Community
-          </Button>
+          <div className={styles.body}>
+            <div className={styles.header}>
+              <div className={styles.icon} onClick={() => ui.clearModal()}>
+                <FontAwesomeIcon className={styles.backButton} icon={faTimes} />
+              </div>
+              <div className={styles.title}>
+                <h2>New Community</h2>
+              </div>
+            </div>
+            <Formik
+              initialValues={{ invite: '' }}
+              validate={validateInvite}
+              onSubmit={async (
+                values,
+                { setSubmitting, setErrors, setFieldError }
+              ) => {
+                if (!token) return
+                if (!values?.invite) return setFieldError('invite', 'Required')
+                try {
+                  const id = (await joinCommunity(values.invite, token))
+                    .community_id
+                  history.push(`/communities/${id}`)
+                  ui.clearModal()
+                } catch (e) {
+                  if (e.response.data.errors.includes('InvalidCode'))
+                    setErrors({ invite: 'Invalid Invite' })
+                  if (e.response.data.errors.includes('InviteNotFound'))
+                    setErrors({ invite: 'Invite not found' })
+                  if (e.response.data.errors.includes('AlreadyInCommunity'))
+                    setErrors({
+                      invite: 'You are already in this community'
+                    })
+                } finally {
+                  setSubmitting(false)
+                }
+              }}
+            >
+              {({ isSubmitting }) => (
+                <Form>
+                  <label htmlFor='tag' className={styles.inputName}>
+                    Invite
+                  </label>
+                  <Field component={Input} name='invite' />
+                  <ErrorMessage component='p' name='invite' />
+                  <Button
+                    className={styles.joinButton}
+                    disabled={isSubmitting}
+                    type='submit'
+                  >
+                    {isSubmitting ? (
+                      <BarLoader color='#ffffff' />
+                    ) : (
+                      'Join Community'
+                    )}
+                  </Button>
+                </Form>
+              )}
+            </Formik>
+          </div>
+          <div className={styles.bottom}>
+            <Button
+              type='button'
+              className={styles.createButton}
+              onClick={() => setCreateCommunityMenu(true)}
+            >
+              Or Create a Community
+            </Button>
+          </div>
         </div>
       )}
-    </Modal>
+    </>
   )
 }

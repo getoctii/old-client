@@ -1,6 +1,13 @@
-.addParticipant {
+.addParticipant, .noFriends {
+  position: absolute;
+  right: 2rem;
+  top: calc(env(safe-area-inset-bottom) + 5.85rem);
+  background: var(--neko-input-background);
+  border-radius: 12px;
+  padding: 1.5rem;
   h3 {
     margin: 0 0 0.25rem;
+    font-size: 1rem;
   }
   form {
     display: block;
@@ -11,7 +18,7 @@
       font-size: 0.8rem;
       font-weight: 400;
       width: 100%;
-      background: var(--neko-channels-background);
+      background: var(--neko-chat-background);
 
       &::-webkit-input-placeholder {
         color: var(--neko-text-normal);
@@ -28,8 +35,6 @@
       background: var(--neko-colors-primary);
       border-radius: 50%;
       padding: 0.5rem;
-      right: 0.9rem;
-      // 0.9rem 1.2rem
     }
 
     .searchError {
@@ -46,12 +51,29 @@
 
     .searchPlaceholder {
       position: absolute;
-      bottom: 0.9rem;
+      bottom: 0rem;
       padding: 0;
       background: none;
       color: var(--neko-text-normal);
-      right: 1.2rem;
+      right: 0;
       opacity: 0.5;
     }
+  }
+
+  @media (max-width: 740px) {
+    width: calc(100% - 4rem);
+    left: 2rem;
+  }
+}
+
+.noFriends {
+  h2 {
+    font-size: 1rem;
+    margin: 0;
+  }
+  button {
+    margin-top: 0.5rem;
+    margin-left: 0 !important;
+    width: 100% !important;
   }
 }

@@ -23,7 +23,8 @@ export enum ModalTypes {
   NEW_PERMISSION,
   PREVIEW_IMAGE,
   STATUS,
-  MANAGE_MEMBER_GROUPS
+  MANAGE_MEMBER_GROUPS,
+  UPDATE
 }
 
 export enum Groups {

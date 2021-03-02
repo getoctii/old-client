@@ -1,11 +1,7 @@
-import React, { Suspense, useMemo } from 'react'
+import React, { Suspense, useMemo, useState } from 'react'
 import styles from './Channel.module.scss'
 import { useQuery } from 'react-query'
-import {
-  InternalChannelTypes,
-  ModalTypes,
-  Permissions
-} from '../utils/constants'
+import { InternalChannelTypes, Permissions } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { useDropArea, useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -14,6 +10,7 @@ import {
   faHashtag,
   faPhone,
   faPhoneSlash,
+  faTimes,
   faUserPlus
 } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useParams } from 'react-router-dom'
@@ -25,8 +22,8 @@ import { ChannelResponse, getChannel } from './remote'
 import Messages from './Messages'
 import { fetchManyUsers, getUser } from '../user/remote'
 import { Chat } from './state'
-import { UI } from '../state/ui'
 import { Permission } from '../utils/permissions'
+import AddParticipant from './AddParticipant'
 
 const TypingIndicator = ({ channelID }: { channelID: string }) => {
   const { id } = Auth.useContainer()
@@ -126,7 +123,6 @@ const ChannelView = ({
   const { setUploadDetails } = Chat.useContainer()
   const { token, id } = Auth.useContainer()
   const call = Call.useContainer()
-  const uiStore = UI.useContainer()
   const { typing } = Typing.useContainer()
   const typingUsers = useMemo(
     () =>
@@ -134,6 +130,7 @@ const ChannelView = ({
     [typing, channelID, id]
   )
 
+  const [showAddParticipant, setShowAddParticipant] = useState(false)
   const isMobile = useMedia('(max-width: 740px)')
   const history = useHistory()
 
@@ -189,23 +186,12 @@ const ChannelView = ({
               <Button
                 type='button'
                 onClick={() => {
-                  uiStore.setModal({
-                    name: ModalTypes.ADD_PARTICIPANT,
-                    props: {
-                      participant:
-                        type === InternalChannelTypes.PrivateChannel
-                          ? participants?.[0]
-                          : undefined,
-                      isPrivate: type === InternalChannelTypes.PrivateChannel,
-                      groupID:
-                        type === InternalChannelTypes.GroupChannel
-                          ? conversationID
-                          : undefined
-                    }
-                  })
+                  setShowAddParticipant(!showAddParticipant)
                 }}
               >
-                <FontAwesomeIcon icon={faUserPlus} />
+                <FontAwesomeIcon
+                  icon={showAddParticipant ? faTimes : faUserPlus}
+                />
               </Button>
             ) : (
               <></>
@@ -230,7 +216,16 @@ const ChannelView = ({
               <></>
             )}
           </div>
-
+          {showAddParticipant && (
+            <AddParticipant
+              isPrivate={type === InternalChannelTypes.PrivateChannel}
+              groupID={
+                type === InternalChannelTypes.GroupChannel
+                  ? conversationID
+                  : undefined
+              }
+            />
+          )}
           <div className={styles.bg} />
         </div>
         <Suspense fallback={<Messages.Placeholder />}>

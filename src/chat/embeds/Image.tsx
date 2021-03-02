@@ -1,7 +1,6 @@
 import { faTimesCircle } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
-import Modal from '../../components/Modal'
 import { UI } from '../../state/ui'
 import { ModalTypes } from '../../utils/constants'
 import styles from './Image.module.scss'
@@ -14,25 +13,23 @@ const isCovfefe = (url: string) =>
 const ImagePreview = ({ url }: { url: string }) => {
   const ui = UI.useContainer()
   return (
-    <Modal onDismiss={() => ui.clearModal()}>
-      <div className={styles.imagePreview}>
-        <div className={styles.header}>
-          <h5>
-            <a target='_blank' rel='noopener noreferrer' href={url}>
-              {url.replace('https://', '')}
-            </a>
-          </h5>
-          <FontAwesomeIcon
-            icon={faTimesCircle}
-            size='lg'
-            onClick={() => ui.clearModal()}
-          />
-        </div>
-        <div className={styles.image}>
-          <img alt={url} src={url} loading='lazy' />
-        </div>
+    <div className={styles.imagePreview}>
+      <div className={styles.header}>
+        <h5>
+          <a target='_blank' rel='noopener noreferrer' href={url}>
+            {url.replace('https://', '')}
+          </a>
+        </h5>
+        <FontAwesomeIcon
+          icon={faTimesCircle}
+          size='lg'
+          onClick={() => ui.clearModal()}
+        />
       </div>
-    </Modal>
+      <div className={styles.image}>
+        <img alt={url} src={url} loading='lazy' />
+      </div>
+    </div>
   )
 }
 

@@ -12,97 +12,43 @@ import { Authenticate } from './authentication/Authenticate'
 import { PrivateRoute } from './authentication/PrivateRoute'
 import Community from './community/Community'
 import { UI } from './state/ui'
-import NewConversation from './conversation/NewConversation'
 import Settings from './settings/Settings'
 import Conversation from './conversation/Conversation'
 import Sidebar from './sidebar/Sidebar'
-import { NewCommunity } from './sidebar/NewCommunity'
 import { AnimatePresence } from 'framer-motion'
 import Loader from './components/Loader'
 import { Auth } from './authentication/state'
 import Home from './marketing/Home'
-import Status from './components/Status'
 import { isPlatform } from '@ionic/react'
 import Incoming from './call/Incoming'
 import { Call } from './state/call'
 import Current from './call/Current'
 import EventSource from './events'
 import Context from './components/Context'
-import Image from './chat/embeds/Image'
 import { Plugins } from '@capacitor/core'
 import { clientGateway, ModalTypes } from './utils/constants'
-import AddParticipant from './chat/AddParticipant'
-import { Confirmation } from './components/Confirmation'
 import Downloads from './marketing/Downloads'
-import { NewGroup } from './community/settings/groups/NewGroup'
 import Invite from './invite/Invite'
 import Admin from './admin/Admin'
-import ManageGroups from './community/ManageGroups'
-import { NewChannel } from './community/NewChannel'
-import NewInvite from './community/NewInvite'
-import { Permission } from './utils/permissions'
 import { useQuery } from 'react-query'
 import { getCommunities, getParticipants } from './user/remote'
 import OnBoarding from './marketing/OnBoarding'
 import { useSuspenseStorageItem } from './utils/storage'
 import Friends from './friends/Friends'
+import Modal from './components/Modal'
+import { Permission } from './utils/permissions'
 const { PushNotifications } = Plugins
 
-const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
-  const isMobile = useMedia('(max-width: 740px)')
-  switch (name) {
-    case ModalTypes.ADD_PARTICIPANT:
-      return <AddParticipant {...props} />
-    case ModalTypes.DELETE_MESSAGE:
-      return <Confirmation {...props} />
-    case ModalTypes.INCOMING_CALL:
-      return !isMobile ? <Incoming {...props} /> : <></>
-    case ModalTypes.NEW_COMMUNITY:
-      return <NewCommunity />
-    case ModalTypes.NEW_CONVERSATION:
-      return <NewConversation />
-    case ModalTypes.NEW_PERMISSION:
-      return <NewGroup />
-    case ModalTypes.PREVIEW_IMAGE:
-      return <Image.Preview {...props} />
-    case ModalTypes.STATUS:
-      return <Status />
-    case ModalTypes.NEW_CHANNEL:
-      return <NewChannel />
-    case ModalTypes.NEW_INVITE:
-      return <NewInvite />
-    case ModalTypes.DELETE_CHANNEL:
-      return <Confirmation {...props} />
-    case ModalTypes.MANAGE_MEMBER_GROUPS:
-      return <ManageGroups {...props} />
-    default:
-      return <></>
-  }
-}
-
-const Modals = () => {
+const ContextMenuHandler = () => {
   const uiStore = UI.useContainer()
-  useEffect(() => {
-    // @ts-ignore
-    window.setModal = uiStore.setModal
-  }, [uiStore])
-  if (uiStore.modal) {
-    return (
-      <Permission.Provider>
-        <AnimatePresence>
-          <ResolveModal {...uiStore.modal} />
-        </AnimatePresence>
-      </Permission.Provider>
-    )
-  } else if (uiStore.contextMenu) {
-    return (
-      <Permission.Provider>
-        <Context.Menu {...uiStore.contextMenu} />
-      </Permission.Provider>
-    )
-  } else {
-    return <></>
-  }
+
+  return uiStore.contextMenu ? (
+    <Permission.Provider>
+      <Context.Menu {...uiStore.contextMenu} />
+    </Permission.Provider>
+  ) : (
+    <></>
+  )
 }
 
 const IncomingCall = () => {
@@ -249,10 +195,12 @@ const AppRouter = () => {
   return (
     <>
       <OnboardingHandler onboardingStateChange={onboardingHandler} />
-      <IncomingCall />
       <EventSource />
       <Suspense fallback={<></>}>
-        <Modals />
+        <AnimatePresence>
+          <Modal />
+          <ContextMenuHandler />
+        </AnimatePresence>
       </Suspense>
       <Suspense fallback={<></>}>
         {showOnBoarding ? (
@@ -311,6 +259,7 @@ const AppRouter = () => {
           </Suspense>
         </>
       )}
+      <IncomingCall />
     </>
   )
 }

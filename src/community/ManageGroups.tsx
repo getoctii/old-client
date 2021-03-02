@@ -1,8 +1,7 @@
-import { Suspense, useMemo, useState } from 'react'
+import React, { Suspense, useMemo, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
-import Modal from '../components/Modal'
 import styles from './ManageGroups.module.scss'
 import { getGroup, getGroups, getMember } from './remote'
 import { UI } from '../state/ui'
@@ -11,6 +10,7 @@ import { useQuery } from 'react-query'
 import { faPlusCircle, faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
 import { clientGateway } from '../utils/constants'
 import { Permission } from '../utils/permissions'
+import { faTimes } from '@fortawesome/pro-solid-svg-icons'
 
 const Group = ({
   id,
@@ -90,31 +90,35 @@ const Content = ({
   ) {
     return (
       <div className={styles.manageGroups}>
-        <h4>
-          Add Group to Member
-          <span style={{ float: 'right' }}>
-            <FontAwesomeIcon
-              onClick={() => ui.clearModal()}
-              icon={faTimesCircle}
-            />
-          </span>
-        </h4>
-        <div>
-          {filteredGroups
-            .filter((g) => !protectedGroups.includes(g))
-            .map((group) => (
-              <Group id={group} add memberID={memberID} key={group} />
-            ))}
+        <div className={styles.body}>
+          <div className={styles.header}>
+            <div className={styles.icon} onClick={() => ui.clearModal()}>
+              <FontAwesomeIcon className={styles.backButton} icon={faTimes} />
+            </div>
+            <div className={styles.title}>
+              <small>{user?.username}</small>
+              <h2>Manage Member</h2>
+            </div>
+          </div>
+          <div>
+            {filteredGroups
+              .filter((g) => !protectedGroups.includes(g))
+              .map((group) => (
+                <Group id={group} add memberID={memberID} key={group} />
+              ))}
+          </div>
         </div>
 
         {(member?.groups.length ?? 0) > 0 &&
           (member?.groups.length ?? 0) < (groups?.length ?? 0) && (
-            <Button
-              type='button'
-              onClick={() => setSelectGroups(!selectGroups)}
-            >
-              {selectGroups ? 'Member Groups' : 'Add Group'}
-            </Button>
+            <div className={styles.bottom}>
+              <Button
+                type='button'
+                onClick={() => setSelectGroups(!selectGroups)}
+              >
+                {selectGroups ? 'Member Groups' : 'Add Group'}
+              </Button>
+            </div>
           )}
       </div>
     )
@@ -122,26 +126,33 @@ const Content = ({
 
   return (
     <div className={styles.manageGroups}>
-      <h4>
-        {user?.username}'s Groups
-        <span style={{ float: 'right' }}>
-          <FontAwesomeIcon
-            onClick={() => ui.clearModal()}
-            icon={faTimesCircle}
-          />
-        </span>
-      </h4>
-
-      <div className={styles.groups}>
-        {member?.groups?.map((group) => (
-          <Group memberID={memberID} id={group} key={group} />
-        ))}
+      <div className={styles.body}>
+        <div className={styles.header}>
+          <div className={styles.icon} onClick={() => ui.clearModal()}>
+            <FontAwesomeIcon className={styles.backButton} icon={faTimes} />
+          </div>
+          <div className={styles.title}>
+            <small>{user?.username}</small>
+            <h2>Manage Member</h2>
+          </div>
+        </div>
+        <div>
+          {member?.groups?.map((group) => (
+            <Group memberID={memberID} id={group} key={group} />
+          ))}
+        </div>
       </div>
+
       {(member?.groups.length ?? 0) > 0 &&
         (member?.groups.length ?? 0) < (groups?.length ?? 0) && (
-          <Button type='button' onClick={() => setSelectGroups(!selectGroups)}>
-            {selectGroups ? 'Member Groups' : 'Add Group'}
-          </Button>
+          <div className={styles.bottom}>
+            <Button
+              type='button'
+              onClick={() => setSelectGroups(!selectGroups)}
+            >
+              {selectGroups ? 'Member Groups' : 'Add Group'}
+            </Button>
+          </div>
         )}
     </div>
   )
@@ -156,17 +167,10 @@ const ManageGroups = ({
   memberID: string
   userID: string
 }) => {
-  const ui = UI.useContainer()
   return (
-    <Modal onDismiss={() => ui.clearModal()}>
-      <Suspense fallback={<></>}>
-        <Content
-          communityID={communityID}
-          memberID={memberID}
-          userID={userID}
-        />
-      </Suspense>
-    </Modal>
+    <Suspense fallback={<></>}>
+      <Content communityID={communityID} memberID={memberID} userID={userID} />
+    </Suspense>
   )
 }
 

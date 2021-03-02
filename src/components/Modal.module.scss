@@ -12,6 +12,7 @@
   justify-content: center;
   align-items: center;
 
+
   .background {
     position: fixed;
     width: 100%;
@@ -25,26 +26,35 @@
   }
 
   .content {
+
+    margin-top: 2rem;
+    margin-bottom: 2rem;
     max-width: 50%;
     position: relative;
-    margin: 2rem auto 2rem auto;
     z-index: 10;
-    padding: 2rem;
     border-radius: 16px;
     background: var(--neko-modal-foreground);
     overflow-y: auto;
   }
 
   @media (max-width: 740px) {
+    justify-content: flex-end;
     .content {
-      width: 90%;
-      max-width: 90%;
+
+      border-radius: 0;
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
+      margin: 0;
+      width: 100%;
+      max-width: 100%;
+      height: calc(100% - (env(safe-area-inset-top) + 2rem));
+      margin-top: env(safe-area-inset-top) + 2rem;
+      padding: 2rem 0 0;
     }
   }
 
   &.fullscreen {
     display: flex;
-
     overflow: hidden;
 
     .background {

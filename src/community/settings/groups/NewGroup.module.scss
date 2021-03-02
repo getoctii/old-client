@@ -1,70 +1,119 @@
-.permission {
+.newGroup {
+  max-width: 380px;
   overflow-y: scroll;
   h3,
   p {
     margin: 0;
   }
 
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-
-  label {
-    margin-top: 1rem;
-    margin-bottom: 0.3rem;
-  }
-
   p {
     margin-top: 0.3rem;
   }
 
-  .group {
-    .title {
-      padding-left: 1rem;
-      padding-right: 1rem;
-      svg {
-        margin-left: auto;
-        color: var(--neko-text-normal);
-      }
-      cursor: pointer;
-      width: 100%;
-      height: 50px;
-      border-radius: 13px;
+  .body {
+    padding: 2rem 2rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+
+    .inputName {
+      margin-top: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .header {
       display: flex;
-      justify-content: center;
       align-items: center;
-      margin-bottom: 0.5rem;
-
-      &.basic {
-        background: var(--neko-colors-primary);
+      small {
+        padding: 0;
+        margin: 0;
       }
-
-      &.mod {
-        background: var(--neko-colors-warning);
+      h2 {
+        padding: 0;
+        margin: 0;
+        font-size: 1.2rem;
       }
+      .icon {
+        background: var(--neko-colors-secondary);
+        margin-right: 0.7rem;
+        padding: 0.5rem;
+        height: 2.65rem;
+        width: 2.65rem;
 
-      &.admin {
-        background: var(--neko-colors-danger);
+        border-radius: 12px;
+        font-size: 1.25rem;
+        color: var(--neko-text-inverse);
+        cursor: pointer;
+        svg {
+          align-self: center;
+        }
+        display: flex;
+        vertical-align: middle;
+        justify-content: center;
       }
     }
 
-    .list {
-      padding: 0;
-      li {
-        margin-bottom: 0.5rem;
-        border-radius: 11px;
-        padding: 0.7rem;
-        background: var(--neko-channels-background);
-        list-style: none;
-        width: 100%;
-        display: flex;
-        align-items: center;
+    .group {
+      .title {
+        padding-left: 1rem;
+        padding-right: 1rem;
         svg {
-          font-size: 1.8rem;
           margin-left: auto;
+          color: var(--neko-text-normal);
+        }
+        cursor: pointer;
+        width: 100%;
+        height: 50px;
+        border-radius: 13px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        &.basic {
+          background: var(--neko-colors-primary);
+        }
+
+        &.mod {
+          background: var(--neko-colors-warning);
+        }
+
+        &.admin {
+          background: var(--neko-colors-danger);
         }
       }
+
+      .list {
+        padding: 0;
+        li {
+          margin-bottom: 0.5rem;
+          border-radius: 11px;
+          padding: 0.7rem;
+          background: var(--neko-channels-background);
+          list-style: none;
+          width: 100%;
+          display: flex;
+          align-items: center;
+          svg {
+            font-size: 1.8rem;
+            margin-left: auto;
+          }
+        }
+      }
+
+      &:last-child {
+        .title {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+  .bottom {
+    background: var(--neko-channels-background);
+    margin-top: auto;
+    padding: 1.25rem 2rem calc(env(safe-area-inset-bottom) + 2rem);
+
+    @media (max-width: 740px) {
+      padding-top: 2rem;
     }
   }
 
@@ -75,76 +124,20 @@
   }
 
   button {
-    margin-top: 0.8rem;
+    width: 100%;
     background: var(--neko-colors-primary);
     height: 3rem;
   }
 
-  hr {
-    opacity: 0.25;
-  }
-
-  p {
-    color: var(--neko-text-danger);
-  }
-
-  .avatar {
-    object-fit: cover;
-    border-radius: 10px;
-    height: 124px;
-    width: 124px;
-    margin: 0;
-  }
-
-  .overlay {
-    width: 100%;
-    transition: opacity 300ms ease-in-out;
-    border-radius: 10px;
+  @media (max-width: 740px) {
+    max-width: 100%;
     display: flex;
-    opacity: 1;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    flex-direction: column;
     height: 100%;
-    background: var(--neko-modal-background);
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-
-    svg {
-      color: #fff;
+    .body {
+      overflow-y: scroll;
+      padding: 0 2rem;
     }
-  }
-
-  .hideOverlay {
-    @extend .overlay;
-
-    opacity: 0;
-  }
-  .avatarContainer {
-    display: flex;
-    background: var(--neko-modal-background);
-    justify-content: center;
-    border-radius: 10px;
-    height: 150px;
-    align-items: center;
-    margin-top: 0.8rem;
-    position: relative;
-
-    input {
-      display: none;
-    }
-  }
-  .avatarContainer:hover {
-    .overlay {
-      opacity: 1;
-    }
-  }
-
-  .avatar:hover {
-    background: var(--neko-modal-background);
   }
 }
 
