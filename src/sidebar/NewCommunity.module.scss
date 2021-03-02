@@ -1,99 +1,97 @@
 .invite {
   h3,
+  h2,
   p {
     margin: 0;
   }
 
-  form {
+  .header {
+    display: flex;
+    align-items: center;
+    h2 {
+      font-size: 1.2rem;
+    }
+    .icon {
+      background: var(--neko-colors-secondary);
+      margin-right: 0.7rem;
+      padding: 0.5rem;
+      height: 2.65rem;
+      width: 2.65rem;
+
+      border-radius: 12px;
+      font-size: 1.25rem;
+      color: var(--neko-text-inverse);
+      cursor: pointer;
+      svg {
+        align-self: center;
+      }
+      display: flex;
+      vertical-align: middle;
+      justify-content: center;
+    }
+  }
+  button {
+    background: var(--neko-colors-primary);
+  }
+  .body {
+    padding: 2rem 2rem 1.25rem;
     display: flex;
     flex-direction: column;
+    .inputName {
+      margin-top: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .iconPicker {
+      margin-top: 1rem;
+      background: var(--neko-input-background);
+      max-width: 100%;
+      width: 100%;
+    }
+
+    .error {
+      color: var(--neko-text-danger);
+    }
+
+    .joinButton {
+      margin-top: 0.7rem;
+    }
+
   }
 
-  label {
-    margin-top: 1rem;
-    margin-bottom: 0.3rem;
+  .bottom {
+    background: var(--neko-channels-background);
+    padding: 1.25rem 2rem calc(env(safe-area-inset-bottom) + 2rem);
+    button {
+      width: 100%;
+    }
+    @media (max-width: 740px) {
+      padding-top: 2rem;
+    }
+    .createButton {
+      background: var(--neko-colors-secondary);
+    }
   }
 
-  p {
-    margin-top: 0.3rem;
-  }
-
-  .createButton {
-    margin-top: 0;
-    width: 100%;
-    background: var(--neko-colors-secondary);
-  }
-
-  button {
-    margin-top: 0.8rem;
-    background: var(--neko-colors-primary);
-    height: 3rem;
-  }
-
-  hr {
-    opacity: 0.25;
-  }
-
-  p {
-    color: var(--neko-text-danger);
-  }
-
-  .avatar {
-    object-fit: cover;
-    border-radius: 10px;
-    height: 124px;
-    width: 124px;
+  @media (max-width: 740px) {
+    max-width: 100%;
+    display: flex;
+    padding: 0;
     margin: 0;
-  }
-
-  .overlay {
-    width: 100%;
-    transition: opacity 300ms ease-in-out;
-    border-radius: 10px;
-    display: flex;
-    opacity: 1;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    flex-direction: column;
     height: 100%;
-    background: var(--neko-modal-background);
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-
-    svg {
-      color: #fff;
+    .body {
+      padding-top: 0;
+    }
+    form {
+      height: 100%;
+    }
+    .bottom {
+      margin-top: auto;
     }
   }
+}
 
-  .hideOverlay {
-    @extend .overlay;
-
-    opacity: 0;
-  }
-  .avatarContainer {
-    display: flex;
-    background: var(--neko-modal-background);
-    justify-content: center;
-    border-radius: 10px;
-    height: 150px;
-    align-items: center;
-    margin-top: 0.8rem;
-    position: relative;
-
-    input {
-      display: none;
-    }
-  }
-  .avatarContainer:hover {
-    .overlay {
-      opacity: 1;
-    }
-  }
-
-  .avatar:hover {
-    background: var(--neko-modal-background);
-  }
+form {
+  height: 100%;
 }

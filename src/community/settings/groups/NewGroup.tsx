@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { BarLoader } from 'react-spinners'
 import Button from '../../../components/Button'
 import Input from '../../../components/Input'
-import Modal from '../../../components/Modal'
 import {
   clientGateway,
   GroupNames,
@@ -17,7 +16,11 @@ import { UI } from '../../../state/ui'
 import { isUsername } from '../../../utils/validations'
 import { Auth } from '../../../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPencil, faTimesCircle } from '@fortawesome/pro-solid-svg-icons'
+import {
+  faPencil,
+  faTimes,
+  faTimesCircle
+} from '@fortawesome/pro-solid-svg-icons'
 import { useRouteMatch } from 'react-router-dom'
 import { faToggleOff, faToggleOn } from '@fortawesome/pro-duotone-svg-icons'
 import { useSet } from 'react-use'
@@ -88,39 +91,44 @@ export const NewPermissionStandalone = () => {
     )
   )
   return (
-    <div className={styles.permission}>
-      <h3>Create Group</h3>
-      <Formik
-        initialValues={{ name: '' }}
-        validate={validatePermission}
-        onSubmit={async (
-          values,
-          { setSubmitting, setErrors, setFieldError }
-        ) => {
-          if (!values?.name) return setFieldError('name', 'Required')
-          try {
-            await createPermission(auth.token!, match?.params.id!, {
-              name: values.name,
-              permissions: Array.from(set) || []
-            })
-            ui.clearModal()
-          } catch (e) {
-            if (e.response.data.errors.includes('GroupNameInvalid'))
-              setErrors({ name: 'Invaild Group Name' })
-          } finally {
-            setSubmitting(false)
-          }
-        }}
-      >
-        {({ isSubmitting }) => (
-          <Form>
+    <Formik
+      initialValues={{ name: '' }}
+      validate={validatePermission}
+      onSubmit={async (values, { setSubmitting, setErrors, setFieldError }) => {
+        if (!values?.name) return setFieldError('name', 'Required')
+        try {
+          await createPermission(auth.token!, match?.params.id!, {
+            name: values.name,
+            permissions: Array.from(set) || []
+          })
+          ui.clearModal()
+        } catch (e) {
+          if (e.response.data.errors.includes('GroupNameInvalid'))
+            setErrors({ name: 'Invaild Group Name' })
+        } finally {
+          setSubmitting(false)
+        }
+      }}
+    >
+      {({ isSubmitting }) => (
+        <Form className={styles.newGroup}>
+          <div className={styles.body}>
+            <div className={styles.header}>
+              <div className={styles.icon} onClick={() => ui.clearModal()}>
+                <FontAwesomeIcon className={styles.backButton} icon={faTimes} />
+              </div>
+              <div className={styles.title}>
+                <h2>New Group</h2>
+              </div>
+            </div>
+
             <label htmlFor='tag' className={styles.inputName}>
               Name
             </label>
             <Field component={Input} name='name' />
             <ErrorMessage component='p' name='name' />
 
-            <label className={styles.permissionsGroup}>Permissions</label>
+            <label className={styles.inputName}>Permissions</label>
             {Object.entries(PermissionsGroups).map(([group, permissions]) => (
               <>
                 {hasPermissions(permissions) && (
@@ -168,21 +176,18 @@ export const NewPermissionStandalone = () => {
                 )}
               </>
             ))}
+          </div>
+          <div className={styles.bottom}>
             <Button disabled={isSubmitting} type='submit'>
               {isSubmitting ? <BarLoader color='#ffffff' /> : 'Create Group'}
             </Button>
-          </Form>
-        )}
-      </Formik>
-    </div>
+          </div>
+        </Form>
+      )}
+    </Formik>
   )
 }
 
 export const NewGroup = () => {
-  const ui = UI.useContainer()
-  return (
-    <Modal onDismiss={() => ui.clearModal()}>
-      <NewPermissionStandalone />
-    </Modal>
-  )
+  return <NewPermissionStandalone />
 }

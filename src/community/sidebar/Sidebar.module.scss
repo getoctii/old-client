@@ -7,7 +7,7 @@
   min-height: 5rem;
   max-width: 18rem;
   padding-top: calc(env(safe-area-inset-top));
-
+  position: relative;
   .sidebar {
     padding: 1.5rem;
     overflow-y: scroll;
@@ -98,7 +98,7 @@
 
 .menu {
   position: absolute;
-  width: 100%;
+  width: calc(100% - 3rem);
   z-index: 100;
   background: var(--neko-context-background);
   @-moz-document url-prefix() {

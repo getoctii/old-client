@@ -2,7 +2,6 @@ import { faCheck, faTimes } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect } from 'react'
 import Button from '../components/Button'
-import Modal from '../components/Modal'
 import styles from './Incoming.module.scss'
 import { Call } from '../state/call'
 import { useQuery } from 'react-query'
@@ -73,7 +72,7 @@ const Incoming = ({
       </div>
     </>
   ) : (
-    <Modal>
+    <>
       {audio}
       <div className={styles.incoming}>
         <img src={user?.data?.avatar} alt={user.data?.username} />
@@ -111,7 +110,7 @@ const Incoming = ({
           </div>
         </div>
       </div>
-    </Modal>
+    </>
   )
 }
 

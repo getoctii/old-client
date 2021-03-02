@@ -25,6 +25,7 @@ import { HelmetProvider } from 'react-helmet-async'
 // @ts-ignore
 import smoothscroll from 'smoothscroll-polyfill'
 import { isPlatform } from '@ionic/react'
+import { ModalTypes } from './utils/constants'
 
 smoothscroll.polyfill()
 
@@ -123,7 +124,7 @@ if (!isPlatform('capacitor')) {
       // @ts-ignore
       window.waitingServiceWorker = waitingServiceWorker
       // @ts-ignore
-      window.setModal({ name: 'update' })
+      window.setModal({ name: ModalTypes.UPDATE })
     }
   })
 }

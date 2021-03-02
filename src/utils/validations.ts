@@ -31,4 +31,6 @@ export const isUsername = (value: string) =>
   (/^[a-zA-Z ]+$/.test(value) && value.length <= 16 && value.length >= 3)
 
 export const isInvite = (value: string) =>
-  !value || /^[a-zA-Z0-9_-]+$/.test(value)
+  !value ||
+  /^[a-zA-Z0-9_-]+$/.test(value) ||
+  /^https:\/\/octii\.(chat|com)(\/invite)?\/[A-Za-z0-9_-]*/g.test(value)

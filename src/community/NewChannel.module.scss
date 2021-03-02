@@ -1,71 +1,100 @@
 .newChannel {
-  max-width: 300px;
+  max-width: 380px;
   display: flex;
   flex-direction: column;
 
-  h5 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 300;
-
-    .closeIcon {
-      margin-left: auto;
-      font-size: 1.6rem;
+  .body {
+    padding: 2rem 2rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    .inputName {
+      margin-top: 1rem;
+      margin-bottom: 0.3rem;
     }
 
-    display: flex;
-    align-items: center;
-  }
+    .type {
+      button {
+        margin-bottom: 0.5rem;
+        background: var(--neko-input-background);
+        width: 100%;
+        &.selected {
+          background: var(--neko-colors-secondary);
+        }
 
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
 
-  .type {
-    button {
-      margin-bottom: 0.5rem;
-      background: var(--neko-input-background);
+    ul {
+      padding-left: 1.1rem;
+    }
 
-      &.selected {
+    .error {
+      margin-top: 0.25rem;
+      margin-bottom: 0;
+      color: var(--neko-text-danger);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      small {
+        padding: 0;
+        margin: 0;
+      }
+      h2 {
+        padding: 0;
+        margin: 0;
+        font-size: 1.2rem;
+      }
+      .icon {
         background: var(--neko-colors-secondary);
+        margin-right: 0.7rem;
+        padding: 0.5rem;
+        height: 2.65rem;
+        width: 2.65rem;
+
+        border-radius: 12px;
+        font-size: 1.25rem;
+        color: var(--neko-text-inverse);
+        cursor: pointer;
+        svg {
+          align-self: center;
+        }
+        display: flex;
+        vertical-align: middle;
+        justify-content: center;
       }
     }
   }
-  h3 {
-    margin-top: 0;
-  }
-  h4 {
-    font-size: 1.5rem;
-    margin-top: 0.8rem;
-    margin-bottom: 0.8rem;
-  }
 
   ul {
-    padding-left: 1.1rem;
+    margin-bottom: 0;
+  }
+  .bottom {
+    background: var(--neko-channels-background);
+    margin-top: auto;
+    padding: 1.25rem 2rem calc(env(safe-area-inset-bottom) + 2rem);
+
+    button {
+      width: 100%;
+      background: var(--neko-colors-primary);
+    }
+    @media (max-width: 740px) {
+      padding-top: 2rem;
+    }
   }
 
-  form {
+  @media (max-width: 740px) {
+    max-width: 100%;
     display: flex;
     flex-direction: column;
-  }
-
-  .label {
-    margin-bottom: 0.3rem;
-  }
-
-  p {
-    margin-top: 0.3rem;
-  }
-
-  input {
-    width: 100%;
-  }
-
-  button {
-    width: 100%;
-    background: var(--neko-colors-primary);
-  }
-
-  .error {
-    margin-top: 0.25rem;
-    margin-bottom: 0;
-    color: var(--neko-text-danger);
+    height: 100%;
+    .body {
+      padding: 0 2rem;
+    }
   }
 }
