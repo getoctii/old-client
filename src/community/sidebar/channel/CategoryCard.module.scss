@@ -1,6 +1,6 @@
 .category {
   width: 100%;
-
+  outline: none;
   &.dragging {
     opacity: 0.5;
     font-weight: 400;
@@ -16,8 +16,6 @@
     align-items: center;
     cursor: pointer;
   }
-
-
 }
 
 .children {

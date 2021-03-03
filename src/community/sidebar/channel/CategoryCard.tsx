@@ -6,11 +6,22 @@ import {
   DroppableProvided,
   DroppableStateSnapshot
 } from '@react-forked/dnd'
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import ChannelCard from './ChannelCard'
 import styles from './CategoryCard.module.scss'
 import { Permission } from '../../../utils/permissions'
-import { Permissions } from '../../../utils/constants'
+import {
+  clientGateway,
+  ModalTypes,
+  Permissions
+} from '../../../utils/constants'
+import Context from '../../../components/Context'
+import { faCopy, faPen, faTrashAlt } from '@fortawesome/pro-duotone-svg-icons'
+import { Clipboard } from '@capacitor/core'
+import { UI } from '../../../state/ui'
+import { useMutation } from 'react-query'
+import { Auth } from '../../../authentication/state'
+import { ConfirmationType } from '../../../components/Confirmation'
 
 export const CategoryChannelsDraggable = ({
   id,
@@ -58,23 +69,77 @@ export const CategoryCardView = ({
   items: string[]
   index: number
 }) => {
+  const auth = Auth.useContainer()
+  const ui = UI.useContainer()
   const { hasPermissions } = Permission.useContainer()
+  const [deleteChannel] = useMutation(
+    async () =>
+      (
+        await clientGateway.delete(`/channels/${id}`, {
+          headers: { Authorization: auth.token }
+        })
+      ).data
+  )
+  const menuItems = useMemo(() => {
+    const items = [
+      {
+        text: 'Copy ID',
+        icon: faCopy,
+        danger: false,
+        onClick: async () => {
+          await Clipboard.write({
+            string: id
+          })
+        }
+      }
+    ]
+    if (hasPermissions([Permissions.MANAGE_CHANNELS])) {
+      items.push(
+        {
+          text: 'Edit Channel',
+          icon: faPen,
+          danger: false,
+          onClick: async () => {}
+        },
+        {
+          text: 'Delete Channel',
+          icon: faTrashAlt,
+          danger: true,
+          onClick: async () =>
+            ui.setModal({
+              name: ModalTypes.DELETE_CHANNEL,
+              props: {
+                type: ConfirmationType.CATEGORY,
+                onConfirm: async () => {
+                  await deleteChannel()
+                  ui.clearModal()
+                }
+              }
+            })
+        }
+      )
+    }
+    return items
+  }, [hasPermissions, id, deleteChannel, ui])
+
   const DraggableComponent = useCallback(
     (provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
-      <div>
-        <div
-          className={styles.category}
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-        >
-          <h4 className={styles.name} {...provided.dragHandleProps}>
-            {name}
-          </h4>
-          <CategoryChannelsDraggable id={id} items={items} />
+      <Context.Wrapper title={name} message={'Category'} items={menuItems}>
+        <div>
+          <div
+            className={styles.category}
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+          >
+            <h4 className={styles.name} {...provided.dragHandleProps}>
+              {name}
+            </h4>
+            <CategoryChannelsDraggable id={id} items={items} />
+          </div>
         </div>
-      </div>
+      </Context.Wrapper>
     ),
-    [id, items, name]
+    [id, items, name, menuItems]
   )
 
   return (

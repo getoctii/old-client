@@ -3,24 +3,30 @@ import styles from './Confirmation.module.scss'
 import Button from './Button'
 import { UI } from '../state/ui'
 
+export enum ConfirmationType {
+  TEXT = 'channel',
+  CATEGORY = 'category',
+  MESSAGE = 'message'
+}
 export const Confirmation = ({
   type,
   onConfirm
 }: {
-  type: 'channel' | 'message'
+  type: ConfirmationType
   onConfirm: () => Promise<void> | void
 }) => {
   const ui = UI.useContainer()
   return (
     <div className={styles.confirmation}>
-      <h3>
-        Are you sure you want to delete this{' '}
-        {type === 'channel' ? 'channel' : 'message'}?
-      </h3>
+      <h3>Are you sure you want to delete this {type}?</h3>
       <p>
-        {type === 'channel'
+        {type === ConfirmationType.TEXT
           ? "One you do this, you cannot retrieve the channel and it's messages so beware."
-          : 'One you do this, you cannot retrieve this message again so beware.'}
+          : type === ConfirmationType.CATEGORY
+          ? 'One you do this, the category is gone forever so beware.'
+          : type === ConfirmationType.MESSAGE
+          ? 'One you do this, you cannot retrieve this message again so beware.'
+          : 'One you do this, you cannot undo it.'}
       </p>
       <div>
         <Button

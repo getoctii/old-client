@@ -6,39 +6,23 @@ import Input from '../components/Input'
 import { clientGateway } from '../utils/constants'
 import styles from './NewCommunity.module.scss'
 import { UI } from '../state/ui'
-import { isInvite, isUsername } from '../utils/validations'
 import { Auth } from '../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft, faTimes } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory } from 'react-router-dom'
 import IconPicker from '../components/IconPicker'
+import * as Yup from 'yup'
 
-interface ConversationResponse {
-  id: string
-  channel_id: string
-}
+const CommunitySchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, 'Too short, must be at least 2 characters.')
+    .max(16, 'Too long, must be less then 30 characters.'),
+  icon: Yup.string().url()
+})
 
-type createCommunityData = { name: string; icon: string }
-type inviteData = { invite: string }
-
-const validateCommunity = (values: createCommunityData) => {
-  const errors: { name?: string; icon?: string } = {}
-  if (!isUsername(values.name)) errors.name = 'A valid name is required'
-  return errors
-}
-
-const validateInvite = (values: inviteData) => {
-  const errors: { name?: string; icon?: string } = {}
-  if (!isInvite(values.invite)) errors.name = 'A valid invite is required'
-  return errors
-}
-
-const createCommunity = async (token: string, values: createCommunityData) =>
-  (
-    await clientGateway.post<ConversationResponse>('/communities', values, {
-      headers: { Authorization: token }
-    })
-  ).data
+const InviteSchema = Yup.object().shape({
+  name: Yup.string()
+})
 
 const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
   const { token } = Auth.useContainer()
@@ -47,14 +31,26 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
   return (
     <Formik
       initialValues={{ name: '', icon: '' }}
-      validate={validateCommunity}
+      validationSchema={CommunitySchema}
       onSubmit={async (values, { setSubmitting, setErrors, setFieldError }) => {
         if (!values?.name) return setFieldError('invite', 'Required')
         try {
-          const community = await createCommunity(token!, {
-            name: values.name,
-            icon: values?.icon || ''
-          })
+          const { data: community } = await clientGateway.post<{
+            id: string
+            name: string
+            icon?: string
+            large: boolean
+            owner_id: string
+          }>(
+            '/communities',
+            {
+              name: values.name,
+              icon: values?.icon || ''
+            },
+            {
+              headers: { Authorization: token }
+            }
+          )
           ui.clearModal()
           if (community?.id) history.push(`/communities/${community.id}`)
         } catch (e) {
@@ -157,7 +153,7 @@ export const NewCommunity = () => {
             </div>
             <Formik
               initialValues={{ invite: '' }}
-              validate={validateInvite}
+              validationSchema={InviteSchema}
               onSubmit={async (
                 values,
                 { setSubmitting, setErrors, setFieldError }
@@ -189,7 +185,11 @@ export const NewCommunity = () => {
                     Invite
                   </label>
                   <Field component={Input} name='invite' />
-                  <ErrorMessage component='p' name='invite' />
+                  <ErrorMessage
+                    component='p'
+                    name='invite'
+                    className={styles.error}
+                  />
                   <Button
                     className={styles.joinButton}
                     disabled={isSubmitting}
