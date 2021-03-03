@@ -24,7 +24,8 @@ export enum ModalTypes {
   PREVIEW_IMAGE,
   STATUS,
   MANAGE_MEMBER_GROUPS,
-  UPDATE
+  UPDATE,
+  EDIT_CHANNEL
 }
 
 export enum Groups {

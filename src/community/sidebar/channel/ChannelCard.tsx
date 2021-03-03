@@ -1,10 +1,4 @@
-import {
-  faBell,
-  faBellSlash,
-  faCopy,
-  faHashtag,
-  faTrashAlt
-} from '@fortawesome/pro-solid-svg-icons'
+import { faHashtag } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { memo, Suspense, useCallback, useMemo } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
@@ -29,6 +23,14 @@ import {
   DraggableProvided,
   DraggableStateSnapshot
 } from '@react-forked/dnd'
+import {
+  faPen,
+  faCopy,
+  faTrashAlt,
+  faBell,
+  faBellSlash
+} from '@fortawesome/pro-duotone-svg-icons'
+import { ConfirmationType } from '../../../components/Confirmation'
 
 const ChannelCardDraggable = memo(
   ({ id, index }: { id: string; index: number }) => {
@@ -99,38 +101,52 @@ const ChannelCardView = ({
         })
       ).data
   )
-  const getItems = useCallback(
-    (channelID: string) => {
-      const items = [
+  const menuItems = useMemo(() => {
+    const items = [
+      {
+        text: mutedChannels?.includes(id) ? 'Unmute Channel' : 'Mute Channel',
+        icon: mutedChannels?.includes(id) ? faBellSlash : faBell,
+        danger: false,
+        onClick: () => {
+          if (!id) return
+          if (mutedChannels?.includes(id))
+            setMutedChannels(
+              mutedChannels.filter((channels) => channels !== id)
+            )
+          else setMutedChannels([...(mutedChannels || []), id])
+        }
+      },
+      {
+        text: 'Copy ID',
+        icon: faCopy,
+        danger: false,
+        onClick: async () => {
+          await Clipboard.write({
+            string: id
+          })
+        }
+      }
+    ]
+
+    if (hasPermissions([Permissions.MANAGE_CHANNELS])) {
+      items.push(
         {
-          text: mutedChannels?.includes(channelID)
-            ? 'Unmute Channel'
-            : 'Mute Channel',
-          icon: mutedChannels?.includes(channelID) ? faBellSlash : faBell,
+          text: 'Edit Channel',
+          icon: faPen,
           danger: false,
-          onClick: () => {
-            if (!channelID) return
-            if (mutedChannels?.includes(channelID))
-              setMutedChannels(
-                mutedChannels.filter((channels) => channels !== channelID)
-              )
-            else setMutedChannels([...(mutedChannels || []), channelID])
-          }
+          onClick: () =>
+            ui.setModal({
+              name: ModalTypes.EDIT_CHANNEL,
+              props: {
+                id,
+                onConfirm: async () => {
+                  await deleteChannel()
+                  ui.clearModal()
+                }
+              }
+            })
         },
         {
-          text: 'Copy ID',
-          icon: faCopy,
-          danger: false,
-          onClick: async () => {
-            await Clipboard.write({
-              string: channelID
-            })
-          }
-        }
-      ]
-
-      if (hasPermissions([Permissions.MANAGE_CHANNELS])) {
-        items.push({
           text: 'Delete Channel',
           icon: faTrashAlt,
           danger: true,
@@ -138,19 +154,18 @@ const ChannelCardView = ({
             ui.setModal({
               name: ModalTypes.DELETE_CHANNEL,
               props: {
-                type: 'channel',
+                type: ConfirmationType.TEXT,
                 onConfirm: async () => {
                   await deleteChannel()
                   ui.clearModal()
                 }
               }
             })
-        })
-      }
-      return items
-    },
-    [mutedChannels, setMutedChannels, deleteChannel, ui, hasPermissions]
-  )
+        }
+      )
+    }
+    return items
+  }, [mutedChannels, setMutedChannels, deleteChannel, ui, hasPermissions, id])
   const unreads = useQuery(['unreads', auth.id, auth.token], getUnreads)
   const mentions = useQuery(['mentions', auth.id, auth.token], getMentions)
 
@@ -168,7 +183,7 @@ const ChannelCardView = ({
       title={community?.name ?? ''}
       message={`#${channel.name}`}
       key={channel.id}
-      items={getItems(channel.id)}
+      items={menuItems}
     >
       <div
         className={

@@ -18,6 +18,7 @@ import { getUser } from '../user/remote'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import Input from './Input'
 import { BarLoader } from 'react-spinners'
+import * as Yup from 'yup'
 
 const updateStatus = async (id: string, state: State, token: string) => {
   await clientGateway.patch(
@@ -31,6 +32,12 @@ const updateStatus = async (id: string, state: State, token: string) => {
   )
   await queryCache.invalidateQueries(['users', id])
 }
+
+const StatusSchema = Yup.object().shape({
+  status: Yup.string()
+    .min(2, 'Too short, must be at least 2 characters.')
+    .max(140, 'Too long, must be less then 140 characters.')
+})
 
 const Status = () => {
   const { id, token } = Auth.useContainer()
@@ -75,17 +82,11 @@ const Status = () => {
         </Button>
       </div>
       <div>
-        {/* save once its not erroring */}
         <Formik
           initialValues={{
             status: user.data?.status ?? ''
           }}
-          validate={({ status }) => {
-            const errors: { status?: string } = {}
-            if (status.length >= 140)
-              errors.status = 'A valid status is required'
-            return errors
-          }}
+          validationSchema={StatusSchema}
           onSubmit={async ({ status }, { setSubmitting }) => {
             try {
               await clientGateway.patch(

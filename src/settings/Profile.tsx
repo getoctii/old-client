@@ -2,7 +2,6 @@ import React from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
-import { isUsername } from '../utils/validations'
 import { queryCache } from 'react-query'
 import { Auth } from '../authentication/state'
 import { clientGateway } from '../utils/constants'
@@ -14,15 +13,14 @@ import { useMedia } from 'react-use'
 import { useHistory } from 'react-router-dom'
 import IconPicker from '../components/IconPicker'
 import { useUser } from '../user/state'
-type profileFormData = { username: string; avatar: string; status: string }
+import * as Yup from 'yup'
 
-const validateProfile = (values: profileFormData) => {
-  const errors: { username?: string; avatar?: string; status?: string } = {}
-  if (!isUsername(values.username))
-    errors.username = 'A valid username is required'
-  if (values.status.length >= 140) errors.status = 'A valid status is required'
-  return errors
-}
+const ProfileSchema = Yup.object().shape({
+  username: Yup.string()
+    .min(2, 'Too short, must be at least 2 characters.')
+    .max(16, 'Too long, must be less then 16 characters.'),
+  avatar: Yup.string().url()
+})
 
 const Profile = () => {
   const { token, id } = Auth.useContainer()
@@ -48,14 +46,10 @@ const Profile = () => {
       <Formik
         initialValues={{
           username: user?.username || '',
-          avatar: user?.avatar || '',
-          status: user?.status || ''
+          avatar: user?.avatar || ''
         }}
-        validate={validateProfile}
-        onSubmit={async (
-          values,
-          { setSubmitting, setErrors, setFieldError }
-        ) => {
+        validationSchema={ProfileSchema}
+        onSubmit={async (values, { setSubmitting, setFieldError }) => {
           if (!values.username) return setFieldError('username', 'Required')
           try {
             await clientGateway.patch(
@@ -64,8 +58,7 @@ const Profile = () => {
                 ...(values.username !== user?.username && {
                   username: values.username
                 }),
-                avatar: values.avatar,
-                status: values.status
+                avatar: values.avatar
               },
               {
                 headers: {
@@ -101,10 +94,14 @@ const Profile = () => {
               </label>
 
               <Field component={Input} name='username' />
-              <ErrorMessage component='p' name='username' />
+              <ErrorMessage
+                component='p'
+                name='username'
+                className={styles.error}
+              />
             </div>
             <div className={styles.discriminator}>
-              <ErrorMessage component='p' name='status' />
+              <ErrorMessage component='p' name='discriminator' />
 
               <label htmlFor='tag' className={styles.inputName}>
                 Discriminator
@@ -120,7 +117,11 @@ const Profile = () => {
                 }
                 disabled
               />
-              <ErrorMessage component='p' name='discriminator' />
+              <ErrorMessage
+                component='p'
+                name='discriminator'
+                className={styles.error}
+              />
             </div>
             <div className={styles.discriminator}>
               <ErrorMessage component='p' name='status' />
@@ -135,7 +136,11 @@ const Profile = () => {
                 value={user?.email}
                 disabled
               />
-              <ErrorMessage component='p' name='email' />
+              <ErrorMessage
+                component='p'
+                name='email'
+                className={styles.error}
+              />
             </div>
             <Button
               disabled={isSubmitting}

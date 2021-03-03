@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import Input from '../components/Input'
 import styles from './Home.module.scss'
-import { Formik, Form, Field, FormikHelpers } from 'formik'
+import { Formik, Form, Field } from 'formik'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faArrowDown,
@@ -16,33 +16,16 @@ import Button from '../components/Button'
 import { faMegaphone } from '@fortawesome/pro-solid-svg-icons'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import * as Yup from 'yup'
 
-type formData = { email: string }
-
-const validate = () => {
-  const errors: { email?: string } = {}
-  return errors
-}
+const NewsletterSchema = Yup.object().shape({
+  email: Yup.string().email()
+})
 
 const Home = () => {
   const prefersDarkMode = useMedia('(prefers-color-scheme: dark)')
   const [submitted, setSubmitted] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const submit = async (
-    values: formData,
-    { setSubmitting, setFieldError }: FormikHelpers<formData>
-  ) => {
-    if (!values?.email || !isEmail(values?.email)) {
-      setFieldError('email', 'Invalid Email')
-      return
-    }
-    try {
-      await clientGateway.post('/users/newsletter', values)
-      setSubmitted(true)
-    } finally {
-      setSubmitting(false)
-    }
-  }
 
   return (
     <div className={styles.home}>
@@ -61,8 +44,19 @@ const Home = () => {
           </p>
           <Formik
             initialValues={{ email: '' }}
-            validate={validate}
-            onSubmit={submit}
+            validationSchema={NewsletterSchema}
+            onSubmit={async (values, { setSubmitting, setFieldError }) => {
+              if (!values?.email || !isEmail(values?.email)) {
+                setFieldError('email', 'Invalid Email')
+                return
+              }
+              try {
+                await clientGateway.post('/users/newsletter', values)
+                setSubmitted(true)
+              } finally {
+                setSubmitting(false)
+              }
+            }}
           >
             {({ values, submitForm, isSubmitting, errors }) => (
               <Form className={styles.form}>

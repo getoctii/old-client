@@ -12,23 +12,13 @@ import { UI } from '../state/ui'
 import { useQuery } from 'react-query'
 import { faTimes } from '@fortawesome/pro-solid-svg-icons'
 import React from 'react'
+import * as Yup from 'yup'
 
-type formData = { name: string; type: ChannelTypes }
-
-const validate = (values: formData) => {
-  const errors: { name?: string; type?: string } = {}
-  const name = values.name
-    .toString()
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '')
-    .replace(/--+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '')
-  if (!(name.length <= 30 && name.length >= 2)) errors.name = 'Invalid Name'
-  if (!values.type) errors.type = 'Invalid Type'
-  return errors
-}
+const ChannelSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, 'Too short, must be at least 2 characters.')
+    .max(30, 'Too long, must be less then 30 characters.')
+})
 
 export const NewChannel = () => {
   const history = useHistory()
@@ -52,7 +42,7 @@ export const NewChannel = () => {
   return (
     <Formik
       initialValues={{ name: '', type: ChannelTypes.TEXT }}
-      validate={validate}
+      validationSchema={ChannelSchema}
       onSubmit={async (values, { setSubmitting, setFieldError, setErrors }) => {
         try {
           if (!values.name) return setFieldError('name', 'Required')
