@@ -12,6 +12,11 @@
   h2 {
     margin-bottom: 1rem;
   }
+  .error {
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+    color: var(--neko-text-danger);
+  }
   form {
     background: var(--neko-settings-card);
     padding: 2rem;

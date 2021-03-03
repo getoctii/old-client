@@ -10,7 +10,6 @@ import { NewCommunity } from '../sidebar/NewCommunity'
 import NewConversation from '../conversation/NewConversation'
 import { NewGroup } from '../community/settings/groups/NewGroup'
 import Image from '../chat/embeds/Image'
-import Status from './Status'
 import { NewChannel } from '../community/NewChannel'
 import NewInvite from '../community/NewInvite'
 import ManageGroups from '../community/ManageGroups'
@@ -18,6 +17,7 @@ import { UI } from '../state/ui'
 import { Permission } from '../utils/permissions'
 import { Update } from './Update'
 import { EditChannel } from '../community/EditChannel'
+import Status from './Status'
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
   const isMobile = useMedia('(max-width: 740px)')
@@ -36,8 +36,6 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <NewGroup />
     case ModalTypes.PREVIEW_IMAGE:
       return <Image.Preview {...props} />
-    case ModalTypes.STATUS:
-      return <Status />
     case ModalTypes.NEW_CHANNEL:
       return <NewChannel />
     case ModalTypes.NEW_INVITE:
@@ -62,10 +60,11 @@ const Modal = () => {
     // @ts-ignore
     window.setModal = uiStore.setModal
   }, [uiStore])
+  if (!uiStore.modal) return <></>
   return (
     <Permission.Provider>
       <AnimatePresence exitBeforeEnter>
-        {uiStore.modal &&
+        {uiStore.modal.name !== ModalTypes.STATUS ? (
           (!isMobile || uiStore.modal.name !== ModalTypes.INCOMING_CALL) && (
             <motion.div
               className={`${styles.modal} ${
@@ -140,7 +139,12 @@ const Modal = () => {
                 <ResolveModal {...uiStore.modal} />
               </motion.div>
             </motion.div>
-          )}
+          )
+        ) : uiStore.modal.name === ModalTypes.STATUS ? (
+          <Status />
+        ) : (
+          <></>
+        )}
       </AnimatePresence>
     </Permission.Provider>
   )

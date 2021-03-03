@@ -13,7 +13,6 @@ import {
 } from '../../../utils/constants'
 import styles from './NewGroup.module.scss'
 import { UI } from '../../../state/ui'
-import { isUsername } from '../../../utils/validations'
 import { Auth } from '../../../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -25,25 +24,13 @@ import { useRouteMatch } from 'react-router-dom'
 import { faToggleOff, faToggleOn } from '@fortawesome/pro-duotone-svg-icons'
 import { useSet } from 'react-use'
 import { Permission } from '../../../utils/permissions'
+import * as Yup from 'yup'
 
-type createPermissionData = { name: string; permissions?: Permissions[] }
-
-const validatePermission = (values: createPermissionData) => {
-  const errors: { name?: string } = {}
-  if (!isUsername(values.name)) errors.name = 'A valid name is required'
-  return errors
-}
-
-const createPermission = async (
-  token: string,
-  id: string,
-  values: createPermissionData
-) =>
-  (
-    await clientGateway.post(`/communities/${id}/groups`, values, {
-      headers: { Authorization: token }
-    })
-  ).data
+const GroupSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, 'Too short, must be at least 2 characters.')
+    .max(30, 'Too long, must be less then 30 characters.')
+})
 
 export const PermissionToggle = ({
   name,
@@ -93,14 +80,20 @@ export const NewPermissionStandalone = () => {
   return (
     <Formik
       initialValues={{ name: '' }}
-      validate={validatePermission}
+      validationSchema={GroupSchema}
       onSubmit={async (values, { setSubmitting, setErrors, setFieldError }) => {
         if (!values?.name) return setFieldError('name', 'Required')
         try {
-          await createPermission(auth.token!, match?.params.id!, {
-            name: values.name,
-            permissions: Array.from(set) || []
-          })
+          await clientGateway.post(
+            `/communities/${match?.params.id}/groups`,
+            {
+              values: values.name,
+              permissions: Array.from(set) || []
+            },
+            {
+              headers: { Authorization: auth.token }
+            }
+          )
           ui.clearModal()
         } catch (e) {
           if (e.response.data.errors.includes('GroupNameInvalid'))

@@ -66,7 +66,11 @@ const InviteEmbed = ({ url }: { url: string }) => {
         type='button'
         onClick={async () => {
           const { data } = await clientGateway.post<{ community_id: string }>(
-            `/invites/${match?.params.code}/use`,
+            `/invites/${
+              match?.params.invite === 'invite'
+                ? match?.params.code
+                : match?.params.invite
+            }/use`,
             {},
             { headers: { Authorization: token } }
           )

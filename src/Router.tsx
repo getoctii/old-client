@@ -152,7 +152,6 @@ const AppRouter = () => {
   const isMobile = useMedia('(max-width: 740px)')
   const isPWA = useMedia('(display-mode: standalone)')
   const call = Call.useContainer()
-
   useEffect(() => {
     if (auth.authenticated && isPlatform('capacitor')) {
       PushNotifications.addListener('registration', async (token) => {
