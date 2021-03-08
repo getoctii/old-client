@@ -1,0 +1,305 @@
+
+.textarea {
+  border: 0;
+  border-radius: 11px;
+
+  outline: none;
+
+  margin: 0;
+  padding: 0.9rem 1.2rem;
+
+  transition: ease-in-out box-shadow 0.15s;
+
+  font-weight: 500;
+  font-size: 1rem;
+
+  background: var(--neko-settings-background);
+  color: var(--neko-text);
+  max-height: 300px;
+  max-width: 100%;
+}
+
+.popover {
+  position: absolute;
+  left: 55px;
+  top: 0;
+
+  background: var(--neko-context-background);
+  padding: 0.5rem;
+  border-radius: 10px;
+  backdrop-filter: blur(35px);
+
+  @-moz-document url-prefix() {
+    // NOTE: Fireshit disables blur by default
+    background: var(--neko-channels-background);
+  }
+
+  .group {
+    margin-top: 0;
+    margin-right: 0 !important;
+    border-radius: 5px;
+    padding: 0.7rem;
+    background: var(--neko-settings-card) !important;
+
+    svg {
+      margin-left: auto;
+    }
+  }
+}
+.error {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  font-size: 0.9rem;
+  color: var(--neko-text-danger);
+}
+
+.switch {
+  margin-bottom: 0;
+  list-style: none;
+  margin-left: 0;
+  background: var(--neko-settings-background) !important;
+  border-radius: 11px;
+  padding: 0.7rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+
+  .groupedIcons {
+    margin-left: auto;
+    display: flex;
+    .icon {
+      padding: 0.25rem;
+      height: 2rem;
+      width: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .icon:nth-child(1) {
+      border-top-left-radius: 9px;
+      border-bottom-left-radius: 9px;
+      background: var(--neko-settings-card);
+      color: var(--neko-text-danger);
+
+      &.selected {
+        background: var(--neko-colors-danger);
+        color: var(--neko-text-inverse);
+      }
+    }
+
+    .icon:nth-child(2) {
+      color: var(--neko-text-secondary);
+      background: var(--neko-settings-card);
+
+      &.selected {
+        background: var(--neko-colors-secondary);
+        color: var(--neko-text-inverse);
+      }
+    }
+
+    .icon:nth-child(3) {
+      color: var(--neko-text-href);
+      background: var(--neko-settings-card);
+      border-top-right-radius: 9px;
+      border-bottom-right-radius: 9px;
+
+      &.selected {
+        background: var(--neko-colors-primary);
+        color: var(--neko-text-inverse);
+      }
+    }
+  }
+}
+
+.editChannel {
+  overflow-y: scroll;
+  height: 100%;
+  width: 100%;
+  padding: 2rem 2rem 0 2rem;
+  background-color: var(--neko-settings-background);
+
+  .emptyOverrides {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding: 4rem 2rem;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    background: var(--neko-settings-card);
+    flex-direction: column;
+    justify-content: space-between;
+
+    h2 {
+      margin: 1rem 0 0;
+    }
+
+    h3 {
+      margin: 0;
+    }
+
+    .createGroups {
+      display: flex;
+
+      .group {
+        background: var(--neko-settings-background);
+        margin-right: 0.8rem;
+      }
+    }
+
+    p {
+      text-align: center;
+      max-width: 410px;
+      margin: 0 0 1rem;
+    }
+    button {
+      background: var(--neko-colors-primary);
+      width: auto;
+      svg {
+        margin-left: 0.5rem;
+        font-size: 1.2rem;
+      }
+    }
+    @media (max-width: 740px) {
+      width: auto;
+      margin-top: 4rem;
+      padding: 2rem;
+    }
+  }
+  .overrides {
+    height: auto;
+    margin-top: 1rem;
+    background: var(--neko-settings-card);
+    padding: 2rem;
+    display: flex;
+    border-radius: 11px;
+    flex-direction: column;
+
+    h4 {
+      margin: 0;
+    }
+
+    .permissions {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 10px;
+
+      .toggle {
+        margin-bottom: 0;
+        list-style: none;
+        margin-left: 0;
+        background: var(--neko-settings-background) !important;
+      }
+    }
+    .buttons {
+      display: flex;
+      button {
+        margin-right: 0.5rem;
+      }
+      .danger {
+        background: var(--neko-colors-danger);
+        margin-right: 0;
+        margin-left: auto;
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    .groups {
+      display: flex;
+      .add {
+        height: 48px;
+        width: 48px;
+        position: relative;
+        &.empty {
+          width: 200px;
+
+          svg {
+            margin-left: auto;
+          }
+        }
+      }
+
+      .close {
+        @extend .add;
+        margin-right: 0.5rem;
+        background: var(--neko-colors-secondary);
+      }
+      .group {
+        margin-right: 0.5rem;
+        width: 100px;
+        background: var(--neko-settings-background);
+
+        &.selected {
+          background: var(--neko-colors-primary);
+        }
+      }
+
+
+    }
+  }
+  .display {
+    height: auto;
+    margin-top: 1rem;
+    background: var(--neko-settings-card);
+    padding: 2rem;
+    display: flex;
+    border-radius: 11px;
+    flex-direction: column;
+
+    .blockPicker {
+      min-width: 200px;
+      background-color: transparent !important;
+      background: var(--neko-settings-background) !important;
+      border-radius: 11px !important;
+      input {
+        border: 0 !important;
+        box-shadow: none !important;
+        background: var(--neko-settings-card);
+        height: 40px !important;
+
+        color: var(--neko-text-normal) !important;
+      }
+    }
+
+    .inputName {
+      margin-top: 1rem;
+      margin-bottom: 0.3rem;
+    }
+    .info {
+      display: flex;
+
+      .text {
+        width: 100%;
+        margin-left: 1rem;
+        display: flex;
+        flex-direction: column;
+
+        .inputName {
+          &:first-child {
+
+            margin-top: 0rem;
+          }
+        }
+
+      }
+    }
+
+    h4 {
+      margin: 0;
+    }
+
+
+    input {
+      background: var(--neko-settings-background);
+    }
+  }
+
+  button {
+    margin-top: 1rem;
+    width: 100%;
+    background: var(--neko-colors-primary);
+  }
+}

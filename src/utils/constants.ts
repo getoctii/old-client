@@ -24,8 +24,7 @@ export enum ModalTypes {
   PREVIEW_IMAGE,
   STATUS,
   MANAGE_MEMBER_GROUPS,
-  UPDATE,
-  EDIT_CHANNEL
+  UPDATE
 }
 
 export enum Groups {
@@ -53,6 +52,39 @@ export enum Permissions {
   ADMINISTRATOR = 16,
   OWNER = 17
 }
+
+export enum ChannelPermissions {
+  READ_MESSAGES = 1,
+  SEND_MESSAGES = 2,
+  EMBED_LINKS = 3,
+  MENTION_MEMBERS = 4,
+  MENTION_GROUPS = 5,
+  MENTION_EVERYONE = 6,
+  MENTION_SOMEONE = 7,
+  MANAGE_MESSAGES = 15
+}
+
+export const overrides = [
+  ChannelPermissions.READ_MESSAGES,
+  ChannelPermissions.SEND_MESSAGES,
+  ChannelPermissions.EMBED_LINKS,
+  ChannelPermissions.MENTION_MEMBERS,
+  ChannelPermissions.MENTION_GROUPS,
+  ChannelPermissions.MENTION_SOMEONE,
+  ChannelPermissions.MENTION_EVERYONE,
+  ChannelPermissions.MANAGE_MESSAGES
+]
+
+export const supportedChannelPermissions = [
+  Permissions.READ_MESSAGES,
+  Permissions.SEND_MESSAGES,
+  Permissions.EMBED_LINKS,
+  Permissions.MENTION_MEMBERS,
+  Permissions.MENTION_GROUPS,
+  Permissions.MENTION_SOMEONE,
+  Permissions.MENTION_EVERYONE,
+  Permissions.MANAGE_MESSAGES
+]
 
 export const PermissionsGroups: { [key in Groups]: Permissions[] } = {
   [Groups.BASIC]: [

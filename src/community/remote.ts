@@ -1,4 +1,9 @@
-import { ChannelTypes, clientGateway, Permissions } from '../utils/constants'
+import {
+  ChannelPermissions,
+  ChannelTypes,
+  clientGateway,
+  Permissions
+} from '../utils/constants'
 import { queryCache } from 'react-query'
 
 export const fetchManyGroups = (_: string, ids: string[], token: string) => {

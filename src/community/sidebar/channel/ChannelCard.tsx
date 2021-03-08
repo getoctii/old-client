@@ -31,6 +31,7 @@ import {
   faBellSlash
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ConfirmationType } from '../../../components/Confirmation'
+import { ErrorBoundary } from 'react-error-boundary'
 
 const ChannelCardDraggable = memo(
   ({ id, index }: { id: string; index: number }) => {
@@ -47,13 +48,15 @@ const ChannelCardDraggable = memo(
             {...provided.dragHandleProps}
             style={provided.draggableProps.style}
           >
-            <Suspense fallback={<ChannelCardPlaceholder />}>
-              <ChannelCardView
-                id={id}
-                index={index}
-                dragging={!!snapshot.isDragging}
-              />
-            </Suspense>
+            <ErrorBoundary fallbackRender={() => <ChannelCardPlaceholder />}>
+              <Suspense fallback={<ChannelCardPlaceholder />}>
+                <ChannelCardView
+                  id={id}
+                  index={index}
+                  dragging={!!snapshot.isDragging}
+                />
+              </Suspense>
+            </ErrorBoundary>
           </div>
         </div>
       ),
@@ -135,16 +138,9 @@ const ChannelCardView = ({
           icon: faPen,
           danger: false,
           onClick: () =>
-            ui.setModal({
-              name: ModalTypes.EDIT_CHANNEL,
-              props: {
-                id,
-                onConfirm: async () => {
-                  await deleteChannel()
-                  ui.clearModal()
-                }
-              }
-            })
+            history.push(
+              `/communities/${community?.id}/channels/${id}/settings`
+            )
         },
         {
           text: 'Delete Channel',
@@ -165,7 +161,16 @@ const ChannelCardView = ({
       )
     }
     return items
-  }, [mutedChannels, setMutedChannels, deleteChannel, ui, hasPermissions, id])
+  }, [
+    mutedChannels,
+    setMutedChannels,
+    deleteChannel,
+    ui,
+    hasPermissions,
+    id,
+    community?.id,
+    history
+  ])
   const unreads = useQuery(['unreads', auth.id, auth.token], getUnreads)
   const mentions = useQuery(['mentions', auth.id, auth.token], getMentions)
 

@@ -1,0 +1,43 @@
+.header {
+  display: flex;
+  align-items: center;
+  small {
+    padding: 0;
+    margin: 0;
+  }
+  h2 {
+    padding: 0;
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  .icon {
+
+    margin-right: 0.7rem;
+    padding: 0.5rem;
+    height: 2.65rem;
+    width: 2.65rem;
+
+    border-radius: 12px;
+    font-size: 1.25rem;
+    color: var(--neko-text-inverse);
+
+    svg {
+      align-self: center;
+    }
+    display: flex;
+    vertical-align: middle;
+    justify-content: center;
+
+    &.secondary {
+      background: var(--neko-colors-secondary);
+    }
+
+    &.primary {
+      background: var(--neko-colors-primary);
+    }
+
+    &.clickable {
+      cursor: pointer;
+    }
+  }
+}

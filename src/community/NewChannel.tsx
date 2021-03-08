@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ErrorMessage, Field, Formik, Form } from 'formik'
+import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import Input from '../components/Input'
@@ -7,18 +7,44 @@ import { ChannelTypes, clientGateway } from '../utils/constants'
 import { BarLoader } from 'react-spinners'
 import styles from './NewChannel.module.scss'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { getChannels, getCommunity } from './remote'
+import { getChannels, getCommunity, getGroup, getGroups } from './remote'
 import { UI } from '../state/ui'
 import { useQuery } from 'react-query'
-import { faTimes } from '@fortawesome/pro-solid-svg-icons'
-import React from 'react'
+import { faChevronLeft, faTimes } from '@fortawesome/pro-solid-svg-icons'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
+import { faMinusCircle, faPlusCircle } from '@fortawesome/pro-duotone-svg-icons'
+import Header from '../components/Header'
 
 const ChannelSchema = Yup.object().shape({
   name: Yup.string()
     .min(2, 'Too short, must be at least 2 characters.')
     .max(30, 'Too long, must be less then 30 characters.')
 })
+
+const Group = ({
+  id,
+  onClick,
+  remove
+}: {
+  id: string
+  onClick: () => void
+  remove: boolean
+}) => {
+  const { token } = Auth.useContainer()
+  const { data: group } = useQuery(['group', id, token], getGroup)
+  return (
+    <>
+      <div
+        className={`${styles.group} ${remove ? styles.remove : ''}`}
+        onClick={() => onClick()}
+      >
+        {group?.name}{' '}
+        <FontAwesomeIcon icon={remove ? faMinusCircle : faPlusCircle} />
+      </div>
+    </>
+  )
+}
 
 export const NewChannel = () => {
   const history = useHistory()
@@ -39,6 +65,14 @@ export const NewChannel = () => {
     getChannels
   )
 
+  const { data: groupIDs } = useQuery(
+    ['groups', match?.params.id, token],
+    getGroups
+  )
+
+  const [editOverrides, setEditOverrides] = useState(false)
+  const [overrides, setOverrides] = useState<string[]>([])
+  const [isPrivate, setIsPrivate] = useState(false)
   return (
     <Formik
       initialValues={{ name: '', type: ChannelTypes.TEXT }}
@@ -59,16 +93,27 @@ export const NewChannel = () => {
                   .replace(/-+$/, '')
               : values.name
 
-          const channel = await clientGateway.post(
+          const { data: channel } = await clientGateway.post(
             `/communities/${match?.params.id}/channels`,
             { name, type: values.type ?? ChannelTypes.TEXT },
             {
               headers: { Authorization: token }
             }
           )
-          if (channel?.data?.id && values.type === ChannelTypes.TEXT)
+          if (!channel) return
+          if (isPrivate) {
+            await clientGateway.post(
+              `/channels/${channel.id}/overrides`,
+              {},
+              {
+                headers: { Authorization: token }
+              }
+            )
+          }
+
+          if (channel.id && values.type === ChannelTypes.TEXT)
             history.push(
-              `/communities/${match?.params.id}/channels/${channel.data.id}`
+              `/communities/${match?.params.id}/channels/${channel.id}`
             )
           ui.clearModal()
         } catch (e) {
@@ -86,62 +131,119 @@ export const NewChannel = () => {
       {({ isSubmitting, values, setFieldValue }) => (
         <Form className={styles.newChannel}>
           <div className={styles.body}>
-            <div className={styles.header}>
-              <div className={styles.icon} onClick={() => ui.clearModal()}>
-                <FontAwesomeIcon className={styles.backButton} icon={faTimes} />
-              </div>
-              <div className={styles.title}>
-                <small>{community?.name}</small>
-                <h2>New Channel</h2>
-              </div>
-            </div>
+            {!editOverrides ? (
+              <>
+                <Header
+                  icon={faTimes}
+                  subheading={`#${community?.name}`}
+                  heading='New Channel'
+                  onClick={() => ui.clearModal()}
+                />
+                <label htmlFor='type' className={styles.inputName}>
+                  Type
+                </label>
+                <div className={styles.type}>
+                  <Button
+                    type={'button'}
+                    className={`${
+                      values.type === ChannelTypes.TEXT ? styles.selected : ''
+                    }`}
+                    onClick={() => setFieldValue('type', ChannelTypes.TEXT)}
+                  >
+                    Text Channel
+                  </Button>
+                  {(channels ?? []).filter(
+                    (c) => c.type !== ChannelTypes.CATEGORY
+                  ).length > 0 && (
+                    <Button
+                      type={'button'}
+                      className={`${
+                        values.type === ChannelTypes.CATEGORY
+                          ? styles.selected
+                          : ''
+                      }`}
+                      onClick={() =>
+                        setFieldValue('type', ChannelTypes.CATEGORY)
+                      }
+                    >
+                      Category
+                    </Button>
+                  )}
+                </div>
+                <label htmlFor='name' className={styles.inputName}>
+                  Name
+                </label>
+                <Field
+                  component={Input}
+                  id='name'
+                  name='name'
+                  type='name'
+                  enterkeyhint='next'
+                />
+                <ErrorMessage
+                  component='p'
+                  className={styles.error}
+                  name='name'
+                />
+                <ul>
+                  <li>
+                    Only contain letters, numbers, dashes, and underscores
+                  </li>
+                  <li>Between 2-30 characters long</li>
+                </ul>
 
-            <label htmlFor='type' className={styles.inputName}>
-              Type
-            </label>
-            <div className={styles.type}>
+                {(groupIDs?.length ?? 0) > 0 && (
+                  <Button
+                    type={'button'}
+                    onClick={() => setEditOverrides(true)}
+                    className={styles.editOverrides}
+                  >
+                    Overrides
+                  </Button>
+                )}
+              </>
+            ) : (
+              <>
+                <Header
+                  icon={faChevronLeft}
+                  subheading={`New Channel`}
+                  heading='Overrides'
+                  onClick={() => setEditOverrides(false)}
+                />
+                <div className={styles.groups}>
+                  {groupIDs?.map((groupID) => (
+                    <Group
+                      id={groupID}
+                      remove={!!overrides.includes(groupID)}
+                      onClick={() => {
+                        if (!overrides.includes(groupID))
+                          setOverrides([...overrides, groupID])
+                        else
+                          setOverrides(overrides.filter((id) => id !== groupID))
+                      }}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className={styles.bottom}>
+            {!editOverrides ? (
+              <Button disabled={isSubmitting} type='submit'>
+                {isSubmitting ? <BarLoader color='#ffffff' /> : 'New Channel'}
+              </Button>
+            ) : (
               <Button
                 type={'button'}
-                className={`${
-                  values.type === ChannelTypes.TEXT ? styles.selected : ''
-                }`}
-                onClick={() => setFieldValue('type', ChannelTypes.TEXT)}
+                onClick={() => {
+                  setIsPrivate(true)
+                  setEditOverrides(false)
+                }}
               >
-                Text Channel
+                Save Overrides
               </Button>
-              {(channels ?? []).filter((c) => c.type !== ChannelTypes.CATEGORY)
-                .length > 0 && (
-                <Button
-                  type={'button'}
-                  className={`${
-                    values.type === ChannelTypes.CATEGORY ? styles.selected : ''
-                  }`}
-                  onClick={() => setFieldValue('type', ChannelTypes.CATEGORY)}
-                >
-                  Category
-                </Button>
-              )}
-            </div>
-            <label htmlFor='name' className={styles.inputName}>
-              Name
-            </label>
-            <Field
-              component={Input}
-              id='name'
-              name='name'
-              type='name'
-              enterkeyhint='next'
-            />
-            <ErrorMessage component='p' className={styles.error} name='name' />
-            <ul>
-              <li>Only contain letters, numbers, dashes, and underscores</li>
-              <li>Between 2-30 characters long</li>
-            </ul>
-          </div>
-          <div className={styles.bottom}>
-            <Button disabled={isSubmitting} type='submit'>
-              {isSubmitting ? <BarLoader color='#ffffff' /> : 'New Channel'}
-            </Button>
+            )}
           </div>
         </Form>
       )}

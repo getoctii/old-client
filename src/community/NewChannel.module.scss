@@ -1,5 +1,6 @@
 .newChannel {
   max-width: 380px;
+  width: 380px;
   display: flex;
   flex-direction: column;
 
@@ -70,6 +71,53 @@
     }
   }
 
+  .editOverrides {
+    margin-top: 1rem;
+    background: var(--neko-colors-warning);
+  }
+
+  .groups {
+    max-height: 50%;
+    .group {
+      margin-top: 1rem;
+      padding: 0.9rem 1.2rem;
+      background: var(--neko-channels-background);
+      border-radius: 13px;
+      font-size: 1rem;
+
+      svg {
+        float: right;
+        font-size: 1.25rem;
+        color: var(--neko-text-href);
+      }
+
+      &.remove {
+        svg {
+          color: var(--neko-text-danger);
+        }
+      }
+    }
+
+    .permissions {
+      margin-top: 1rem;
+      li {
+        margin-bottom: 0.5rem;
+        border-radius: 11px;
+        padding: 0.7rem;
+        background: var(--neko-channels-background);
+        list-style: none;
+        width: 100%;
+        display: flex;
+        align-items: center;
+
+        svg {
+          font-size: 1.8rem;
+          margin-left: auto;
+        }
+      }
+    }
+  }
+
   ul {
     margin-bottom: 0;
   }
@@ -88,6 +136,7 @@
   }
 
   @media (max-width: 740px) {
+    width: 100%;
     max-width: 100%;
     display: flex;
     flex-direction: column;
