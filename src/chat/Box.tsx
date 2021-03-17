@@ -90,7 +90,7 @@ const BoxView = ({
           </div>
         )}
 
-        {!!hasPermission ? (
+        {hasPermission ? (
           <Editor
             id={'sendMessage'}
             editor={editor}

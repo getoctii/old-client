@@ -1,7 +1,7 @@
 import React, { Suspense, useMemo, useState } from 'react'
 import styles from './Channel.module.scss'
 import { useQuery } from 'react-query'
-import { InternalChannelTypes, Permissions } from '../utils/constants'
+import { ChannelPermissions, InternalChannelTypes } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { useDropArea, useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -134,8 +134,8 @@ const ChannelView = ({
   const isMobile = useMedia('(max-width: 740px)')
   const history = useHistory()
 
-  const channel = useQuery(['channel', channelID, token], getChannel)
-  const { hasPermissions } = Permission.useContainer()
+  const { data: channel } = useQuery(['channel', channelID, token], getChannel)
+  const { hasChannelPermissions } = Permission.useContainer()
   const [bond] = useDropArea({
     onFiles: (files) => {
       if (supportedFiles.has(files[0].type))
@@ -156,7 +156,7 @@ const ChannelView = ({
               onClick={() => {
                 if (isMobile) {
                   if (type === InternalChannelTypes.CommunityChannel) {
-                    history.push(`/communities/${channel.data?.community_id}`)
+                    history.push(`/communities/${channel?.community_id}`)
                   } else {
                     history.push('/')
                   }
@@ -174,11 +174,7 @@ const ChannelView = ({
             </div>
           )}
           <Suspense fallback={<></>}>
-            <Header
-              type={type}
-              participants={participants}
-              channel={channel.data}
-            />
+            <Header type={type} participants={participants} channel={channel} />
           </Suspense>
           <div className={styles.buttonGroup}>
             {type === InternalChannelTypes.PrivateChannel ||
@@ -229,8 +225,8 @@ const ChannelView = ({
           <div className={styles.bg} />
         </div>
         <Suspense fallback={<Messages.Placeholder />}>
-          {channel.data ? (
-            <Messages.View channel={channel.data} />
+          {channel ? (
+            <Messages.View channel={channel} />
           ) : (
             <Messages.Placeholder />
           )}
@@ -238,8 +234,11 @@ const ChannelView = ({
         <Box.View
           {...{
             hasPermission:
-              type === InternalChannelTypes.CommunityChannel
-                ? hasPermissions([Permissions.SEND_MESSAGES])
+              type === InternalChannelTypes.CommunityChannel && channel
+                ? hasChannelPermissions(
+                    [ChannelPermissions.SEND_MESSAGES],
+                    channel
+                  )
                 : true,
             participants,
             channelID,

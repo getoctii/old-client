@@ -32,6 +32,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BlockPicker } from 'react-color'
 import { useSet } from 'react-use'
 import { faCheck, faMinus, faTimes } from '@fortawesome/pro-solid-svg-icons'
+import { Permission } from '../utils/permissions'
 
 const ChannelSchema = Yup.object().shape({
   name: Yup.string()
@@ -89,12 +90,14 @@ const EmptyOverrides = () => {
   const auth = Auth.useContainer()
   const ui = UI.useContainer()
   const { id, channelID } = useParams<{ id: string; channelID: string }>()
+  const { protectedGroups } = Permission.useContainer()
   const [createOverrides, setCreateOverrides] = useState(false)
   const { data: community } = useQuery(
     ['community', id, auth.token],
     getCommunity
   )
   const { data: groups } = useQuery(['groups', id, auth.token], getGroups)
+
   return (
     <>
       {!createOverrides ? (
@@ -123,28 +126,30 @@ const EmptyOverrides = () => {
         <div className={styles.emptyOverrides}>
           <h3>Which groups would you like to add overrides for?</h3>
           <div className={styles.createGroups}>
-            {groups?.map((groupID) => (
-              <Group
-                key={groupID}
-                id={groupID}
-                plus
-                onClick={async () => {
-                  await clientGateway.post(
-                    `/channels/${channelID}/overrides/${groupID}`,
-                    {
-                      allow:
-                        community?.base_permissions?.filter((permission) =>
-                          supportedChannelPermissions.includes(permission)
-                        ) ?? [],
-                      deny: []
-                    },
-                    {
-                      headers: { Authorization: auth.token }
-                    }
-                  )
-                }}
-              />
-            ))}
+            {groups
+              ?.filter((groupID) => !protectedGroups.includes(groupID))
+              ?.map((groupID) => (
+                <Group
+                  key={groupID}
+                  id={groupID}
+                  plus
+                  onClick={async () => {
+                    await clientGateway.post(
+                      `/channels/${channelID}/overrides/${groupID}`,
+                      {
+                        allow:
+                          community?.base_permissions?.filter((permission) =>
+                            supportedChannelPermissions.includes(permission)
+                          ) ?? [],
+                        deny: []
+                      },
+                      {
+                        headers: { Authorization: auth.token }
+                      }
+                    )
+                  }}
+                />
+              ))}
           </div>
         </div>
       )}
@@ -328,6 +333,7 @@ const Overrides = ({ overrides: overrideObj }: ChannelResponse) => {
       ? Object.keys(overrideObj ?? [])[0]
       : undefined
   )
+  const { protectedGroups } = Permission.useContainer()
   const { data: community } = useQuery(
     ['community', id, auth.token],
     getCommunity
@@ -337,15 +343,23 @@ const Overrides = ({ overrides: overrideObj }: ChannelResponse) => {
   const [addOverride, setAddOverride] = useState(false)
   const unusedGroups = useMemo(() => {
     return (groups ?? []).filter(
-      (groupID) => !Object.keys(overrideObj ?? {}).includes(groupID)
+      (groupID) =>
+        !Object.keys(overrideObj ?? {}).includes(groupID) &&
+        !protectedGroups.includes(groupID)
     )
-  }, [])
+  }, [overrideObj, groups, protectedGroups])
+  const usedGroups = useMemo(() => {
+    return Object.keys(overrideObj ?? {}).filter(
+      (groupID) => !protectedGroups.includes(groupID)
+    )
+  }, [protectedGroups, overrideObj])
   return (
     <>
       <div className={styles.groups}>
         {!addOverride &&
-          Object.keys(overrideObj ?? {}).map((groupID) => (
+          usedGroups.map((groupID) => (
             <Group
+              key={groupID}
               id={groupID}
               onClick={() => {
                 setOverrideSelected(groupID)
@@ -370,6 +384,7 @@ const Overrides = ({ overrides: overrideObj }: ChannelResponse) => {
         {addOverride &&
           unusedGroups.map((groupID) => (
             <Group
+              key={groupID}
               id={groupID}
               onClick={async () => {
                 await clientGateway.post(
@@ -403,6 +418,7 @@ const Overrides = ({ overrides: overrideObj }: ChannelResponse) => {
 export const EditChannel = () => {
   const { channelID } = useParams<{ id: string; channelID: string }>()
   const { token } = Auth.useContainer()
+  const { protectedGroups } = Permission.useContainer()
   const ui = UI.useContainer()
   const { data: channel } = useQuery(['channel', channelID, token], getChannel)
   console.log(channel)
@@ -501,7 +517,9 @@ export const EditChannel = () => {
         )}
       </Formik>
 
-      {Object.keys(channel?.overrides ?? {}).length <= 0 ? (
+      {Object.keys(channel?.overrides ?? {}).filter(
+        (groupID) => !protectedGroups.includes(groupID)
+      ).length <= 0 ? (
         <EmptyOverrides />
       ) : (
         <div className={styles.overrides}>

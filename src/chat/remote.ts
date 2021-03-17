@@ -20,6 +20,8 @@ export interface ChannelResponse {
   order: number
   category_id?: string
   community_id?: string
+  base_allow?: ChannelPermissions[]
+  base_deny?: ChannelPermissions[]
   overrides?: {
     [groupID: string]: Override
   }
