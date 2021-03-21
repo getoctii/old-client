@@ -13,6 +13,7 @@
 
 .imagePreview {
   max-height: 70vh;
+  min-width: 300px;
   overflow: hidden;
   .image {
     img {
@@ -25,7 +26,8 @@
   .header {
     display: flex;
     justify-content: space-between;
-    margin: 0 0 1rem;
+    margin: 0;
+    padding: 2rem;
 
     h5 {
       margin: 0;

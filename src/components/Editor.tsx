@@ -20,6 +20,7 @@ import { useRouteMatch } from 'react-router-dom'
 import Mention from '../chat/Mention'
 import { ChannelResponse } from '../community/remote'
 import { isPlatform } from '@ionic/react'
+import styles from './Editor.module.scss'
 
 const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   return leaf.underline ? (
@@ -112,7 +113,7 @@ const EditorView = ({
   typingClassName?: string
   inputClassName: string
   emptyEditor: Node[]
-  placeholder?: any
+  placeholder?: string
   children?: any
   newLines: boolean
   onEnter: (content: string) => void
@@ -338,7 +339,21 @@ const EditorView = ({
           </Suspense>
         </div>
       )}
-      <div className={`${className} ${typingIndicator ? typingClassName : ''}`}>
+      <div
+        className={`${styles.editor} ${className} ${
+          typingIndicator ? typingClassName : ''
+        }`}
+      >
+        {serialize(value) === '' && placeholder ? (
+          <div
+            className={styles.placeholder}
+            onClick={() => ReactEditor.focus(editor)}
+          >
+            {placeholder}
+          </div>
+        ) : (
+          <></>
+        )}
         <Slate
           editor={editor}
           value={value}
@@ -393,11 +408,9 @@ const EditorView = ({
         >
           <Editable
             autoFocus={!isMobile && !isPlatform('ipad')}
-            className={inputClassName}
+            className={`${styles.input} ${inputClassName}`}
             autoCapitalize={isMobile ? 'true' : 'false'}
             spellCheck
-            // @ts-ignore
-            placeholder={placeholder}
             renderLeaf={renderLeaf}
             renderElement={renderElement}
             id={id}

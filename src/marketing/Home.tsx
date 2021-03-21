@@ -95,7 +95,6 @@ const Home = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 2 }}
           onClick={() => {
-            console.log(ref.current)
             ref.current?.scrollIntoView({ behavior: 'smooth' })
           }}
         >
