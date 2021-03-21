@@ -16,7 +16,6 @@ import ManageGroups from '../community/ManageGroups'
 import { UI } from '../state/ui'
 import { Permission } from '../utils/permissions'
 import { Update } from './Update'
-import { EditChannel } from '../community/EditChannel'
 import Status from './Status'
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
@@ -46,8 +45,6 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <ManageGroups {...props} />
     case ModalTypes.UPDATE:
       return <Update />
-    case ModalTypes.EDIT_CHANNEL:
-      return <EditChannel {...props} />
     default:
       return <></>
   }

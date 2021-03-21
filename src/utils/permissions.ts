@@ -7,10 +7,11 @@ import {
 } from '../community/remote'
 import { Auth } from '../authentication/state'
 import { useCallback, useMemo } from 'react'
-import { Permissions } from './constants'
+import { ChannelPermissions, Permissions } from './constants'
 import { createContainer } from 'unstated-next'
 import { useRouteMatch } from 'react-router-dom'
 import { getCommunities } from '../user/remote'
+import { ChannelResponse } from '../chat/remote'
 
 export const getHighestOrder = (groups: GroupResponse[]) => {
   const groupOrders = groups.map((group) => group?.order)
@@ -74,6 +75,58 @@ export const useHasPermission = () => {
     [community, auth.id, member?.permissions]
   )
 
+  const hasChannelPermissions = useCallback(
+    (permissions: ChannelPermissions[], channel: ChannelResponse) => {
+      if (
+        member?.permissions?.includes(Permissions.ADMINISTRATOR) ||
+        member?.permissions?.includes(Permissions.OWNER) ||
+        community?.owner_id === auth.id
+      )
+        return true
+      const overrideGroup = Object.entries(
+        channel?.overrides ?? {}
+      ).find(([groupID]) => member?.groups?.includes(groupID))
+      if (overrideGroup) {
+        if (
+          (overrideGroup[1].allow ?? []).some((permission) =>
+            permissions.includes(permission)
+          )
+        )
+          return true
+
+        if (
+          (overrideGroup[1].deny ?? []).some((permission) =>
+            permissions.includes(permission)
+          )
+        )
+          return false
+      }
+
+      if (
+        (channel?.base_allow ?? []).some((permission) =>
+          permissions.includes(permission)
+        )
+      )
+        return true
+      if (
+        (channel?.base_deny ?? []).some((permission) =>
+          permissions.includes(permission)
+        )
+      )
+        return false
+
+      // @ts-ignore
+      return hasPermissions(permissions)
+    },
+    [
+      member?.groups,
+      hasPermissions,
+      member?.permissions,
+      community?.owner_id,
+      auth.id
+    ]
+  )
+
   const protectedGroups = useMemo(() => {
     return community?.owner_id !== auth.id
       ? (groupIDs ?? []).filter((group, index) => {
@@ -82,7 +135,13 @@ export const useHasPermission = () => {
         })
       : []
   }, [groupIDs, member?.highest_order, auth.id, community?.owner_id])
-  return { community, hasPermissions, groupIDs, protectedGroups }
+  return {
+    community,
+    hasChannelPermissions,
+    hasPermissions,
+    groupIDs,
+    protectedGroups
+  }
 }
 
 export const Permission = createContainer(useHasPermission)

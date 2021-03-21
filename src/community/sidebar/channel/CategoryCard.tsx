@@ -22,6 +22,7 @@ import { UI } from '../../../state/ui'
 import { useMutation } from 'react-query'
 import { Auth } from '../../../authentication/state'
 import { ConfirmationType } from '../../../components/Confirmation'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 
 export const CategoryChannelsDraggable = ({
   id,
@@ -69,9 +70,14 @@ export const CategoryCardView = ({
   items: string[]
   index: number
 }) => {
+  const matchTab = useRouteMatch<{ id: string; channelID: string }>(
+    '/communities/:id/channels/:channelID'
+  )
+  const history = useHistory()
   const auth = Auth.useContainer()
   const ui = UI.useContainer()
   const { hasPermissions } = Permission.useContainer()
+
   const [deleteChannel] = useMutation(
     async () =>
       (
@@ -99,7 +105,10 @@ export const CategoryCardView = ({
           text: 'Edit Channel',
           icon: faPen,
           danger: false,
-          onClick: async () => {}
+          onClick: async () =>
+            history.push(
+              `/communities/${matchTab?.params.id}/channels/${id}/settings`
+            )
         },
         {
           text: 'Delete Channel',
@@ -120,7 +129,7 @@ export const CategoryCardView = ({
       )
     }
     return items
-  }, [hasPermissions, id, deleteChannel, ui])
+  }, [hasPermissions, id, deleteChannel, ui, history, matchTab?.params.id])
 
   const DraggableComponent = useCallback(
     (provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (

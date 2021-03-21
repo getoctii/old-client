@@ -25,6 +25,10 @@ import useReorderedChannels from './reorderedChannels'
 import useNewRelationship from './newRelationship'
 import useDeletedRelationship from './deletedRelationship'
 import useReorderedChildren from './reorderedChildren'
+import useUpdatedChannel from './updatedChannel'
+import useUpdatedOverride from './updatedOverride'
+import useNewOverride from './newOverride'
+import useDeletedOverride from './deletedOverride'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
@@ -36,6 +40,7 @@ const EventSource = () => {
   useDeletedGroupMember(eventSource)
   useDeletedMember(eventSource)
   useDeletedMessage(eventSource)
+  useDeletedOverride(eventSource)
   useDeletedParticipant(eventSource)
   useDeletedRelationship(eventSource)
   useNewChannel(eventSource)
@@ -44,6 +49,7 @@ const EventSource = () => {
   useNewMember(eventSource)
   useNewMention(eventSource)
   useNewMessage(eventSource)
+  useNewOverride(eventSource)
   useNewParticipant(eventSource)
   useNewRelationship(eventSource)
   useNewVoiceSession(eventSource)
@@ -51,10 +57,12 @@ const EventSource = () => {
   useReorderedChildren(eventSource)
   useReorderedGroups(eventSource)
   useTyping(eventSource)
+  useUpdatedChannel(eventSource)
   useUpdatedConversation(eventSource)
   useUpdatedGroup(eventSource)
   useUpdatedMessage(eventSource)
   useUpdatedCommunity(eventSource)
+  useUpdatedOverride(eventSource)
   return <></>
 }
 

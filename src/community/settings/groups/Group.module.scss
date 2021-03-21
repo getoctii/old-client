@@ -27,6 +27,10 @@
   }
 }
 
+.buttons {
+  display: flex;
+}
+
 .groupPlaceholder {
   background-color: var(--neko-settings-card);
   padding: 1rem;

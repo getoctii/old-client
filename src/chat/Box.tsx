@@ -90,7 +90,7 @@ const BoxView = ({
           </div>
         )}
 
-        {!!hasPermission ? (
+        {hasPermission ? (
           <Editor
             id={'sendMessage'}
             editor={editor}
@@ -176,7 +176,7 @@ const BoxView = ({
           </Editor>
         ) : (
           <div className={styles.boxNoSend}>
-            Sending Messages is disabled for this community!
+            Sending Messages is disabled for this channel!
           </div>
         )}
       </Suspense>

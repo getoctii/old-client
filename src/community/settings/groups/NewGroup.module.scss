@@ -1,3 +1,18 @@
+.permissionsToggle {
+  margin-bottom: 0.5rem;
+  border-radius: 11px;
+  padding: 0.7rem;
+  background: var(--neko-channels-background);
+  list-style: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  svg {
+    font-size: 1.8rem;
+    margin-left: auto;
+  }
+}
+
 .newGroup {
   max-width: 380px;
   overflow-y: scroll;
