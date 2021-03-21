@@ -57,10 +57,10 @@ export const Authenticate = () => {
             Beta 1 <div className={styles.circle} />
           </div>
           <div>
-            Beta 2 <div className={`${styles.circle} ${styles.current}`} />
+            Beta 2 <div className={styles.circle} />
           </div>
           <div>
-            Beta 3 <div className={`${styles.circle} ${styles.next}`} />
+            Beta 3 <div className={`${styles.circle} ${styles.current}`} />
           </div>
           <div>
             Open Beta <div className={`${styles.circle} ${styles.next}`} />

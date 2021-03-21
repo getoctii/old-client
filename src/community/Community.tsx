@@ -19,6 +19,7 @@ import { faLock } from '@fortawesome/pro-duotone-svg-icons'
 import EmptyCommunity from './EmptyCommunity'
 import { Permission } from '../utils/permissions'
 import { useMemo } from 'react'
+import { EditChannel } from './EditChannel'
 
 const NoPermission = ({ name }: CommunityResponse) => (
   <div className={styles.noPermission}>
@@ -104,11 +105,13 @@ const CommunityChannelFallback = () => {
       .sort((a, b) => b.order - a.order)
   }, [channels])
 
-  return (
+  return textChannels.length > 0 ? (
     <Redirect
       path='*'
       to={`/communities/${match?.params.id}/channels/${textChannels[0].id}`}
     />
+  ) : (
+    <></>
   )
 }
 
@@ -180,6 +183,11 @@ const CommunityView = () => {
               <PrivateRoute
                 path={`${path}/channels/:channelID`}
                 component={Channel}
+                exact
+              />
+              <PrivateRoute
+                path={`${path}/channels/:channelID/settings`}
+                component={EditChannel}
                 exact
               />
               {!isMobile && (

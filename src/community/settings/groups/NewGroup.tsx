@@ -36,25 +36,27 @@ export const PermissionToggle = ({
   name,
   type,
   toggled,
-  onToggle
+  onToggle,
+  className
 }: {
   name: string
   type: Groups
   toggled?: boolean
   onToggle?: (value: boolean) => void
+  className?: string
 }) => {
   return (
     <li
       onClick={() => {
         if (onToggle) onToggle(!toggled)
       }}
-      className={
+      className={`${styles.permissionsToggle} ${
         type === Groups.BASIC
           ? styles.basic
           : type === Groups.MOD
           ? styles.mod
           : styles.admin
-      }
+      } ${className ? className : ''}`}
     >
       {name} <FontAwesomeIcon icon={toggled ? faToggleOn : faToggleOff} />
     </li>
@@ -62,7 +64,7 @@ export const PermissionToggle = ({
 }
 
 export const NewPermissionStandalone = () => {
-  const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
+  const match = useRouteMatch<{ id: string }>('/communities/:id')
   const auth = Auth.useContainer()
   const { hasPermissions, community } = Permission.useContainer()
   const ui = UI.useContainer()
@@ -87,7 +89,7 @@ export const NewPermissionStandalone = () => {
           await clientGateway.post(
             `/communities/${match?.params.id}/groups`,
             {
-              values: values.name,
+              name: values.name,
               permissions: Array.from(set) || []
             },
             {
@@ -97,7 +99,7 @@ export const NewPermissionStandalone = () => {
           ui.clearModal()
         } catch (e) {
           if (e.response.data.errors.includes('GroupNameInvalid'))
-            setErrors({ name: 'Invaild Group Name' })
+            setErrors({ name: 'Invalid Group Name' })
         } finally {
           setSubmitting(false)
         }

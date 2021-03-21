@@ -1,5 +1,15 @@
 import axios from 'axios'
-import { ChannelTypes, clientGateway, MessageTypes } from '../utils/constants'
+import {
+  ChannelPermissions,
+  ChannelTypes,
+  clientGateway,
+  MessageTypes
+} from '../utils/constants'
+
+export interface Override {
+  allow: ChannelPermissions[]
+  deny: ChannelPermissions[]
+}
 
 export interface ChannelResponse {
   id: string
@@ -10,6 +20,11 @@ export interface ChannelResponse {
   order: number
   category_id?: string
   community_id?: string
+  base_allow?: ChannelPermissions[]
+  base_deny?: ChannelPermissions[]
+  overrides?: {
+    [groupID: string]: Override
+  }
 }
 
 export interface MessageResponse {
