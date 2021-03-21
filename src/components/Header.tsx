@@ -1,7 +1,9 @@
 import styles from './Header.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
-import { IconProp } from '@fortawesome/fontawesome-svg-core'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+import { useMedia } from 'react-use'
+import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 
 const Header = ({
   subheading,
@@ -14,8 +16,9 @@ const Header = ({
   heading: string
   onClick?: () => void
   color?: 'primary' | 'secondary'
-  icon: IconProp
+  icon: IconDefinition
 }) => {
+  const isMobile = useMedia('(max-width: 740px)')
   return (
     <div className={styles.header}>
       <div
@@ -24,7 +27,10 @@ const Header = ({
         } ${onClick ? styles.clickable : ''}`}
         onClick={() => onClick && onClick()}
       >
-        <FontAwesomeIcon className={styles.backButton} icon={icon} />
+        <FontAwesomeIcon
+          className={styles.backButton}
+          icon={isMobile ? faChevronLeft : icon}
+        />
       </div>
       <div className={styles.title}>
         {subheading && <small>{subheading}</small>}

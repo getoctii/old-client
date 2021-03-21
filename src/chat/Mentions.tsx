@@ -7,6 +7,7 @@ import { clientGateway } from '../utils/constants'
 import { useDebounce, useMedia } from 'react-use'
 import { ChannelResponse, getChannels, getMembers } from '../community/remote'
 import { useParams, useRouteMatch } from 'react-router-dom'
+import { ErrorBoundary } from 'react-error-boundary'
 
 type onMention = (id: string, type: 'user' | 'channel') => void
 
@@ -123,13 +124,17 @@ const Conversation = ({
   )
   if (!conversation) return <></>
   return (
-    <MentionsPopup
-      usersIDs={conversation.conversation.participants?.filter((p) => p !== id)}
-      selected={selected}
-      search={search}
-      onMention={onMention}
-      onFiltered={onFiltered}
-    />
+    <ErrorBoundary fallback={<></>}>
+      <MentionsPopup
+        usersIDs={conversation.conversation.participants?.filter(
+          (p) => p !== id
+        )}
+        selected={selected}
+        search={search}
+        onMention={onMention}
+        onFiltered={onFiltered}
+      />
+    </ErrorBoundary>
   )
 }
 

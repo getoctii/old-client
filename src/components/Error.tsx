@@ -8,9 +8,11 @@ import { Plugins } from '@capacitor/core'
 import { queryCache } from 'react-query'
 
 const Error = ({
+  className,
   resetErrorBoundary,
   error
 }: {
+  className?: string
   resetErrorBoundary: () => void
   error: AxiosError
 }) => {
@@ -20,7 +22,7 @@ const Error = ({
     error.response?.data.errors?.includes('InvalidAuthorization')
   if (isInvalidAuth) {
     return (
-      <div className={styles.error}>
+      <div className={`${styles.error} ${className ? className : ''}`}>
         <FontAwesomeIcon icon={faLock} size='4x' />
         <h1>Whoops, looks like this is an invalid login.</h1>
         <p>You can simply click, logout to go back the sign up page!</p>

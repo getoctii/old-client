@@ -20,6 +20,7 @@ import EmptyCommunity from './EmptyCommunity'
 import { Permission } from '../utils/permissions'
 import { useMemo } from 'react'
 import { EditChannel } from './EditChannel'
+import Error from '../components/Error'
 
 const NoPermission = ({ name }: CommunityResponse) => (
   <div className={styles.noPermission}>
@@ -225,10 +226,13 @@ const Router = () => {
     <>
       {isMobile && !matchTab && <Sidebar />}
       <ErrorBoundary
-        fallbackRender={({ error }) => {
-          console.log(error)
-          return <></>
-        }}
+        fallbackRender={({ error, resetErrorBoundary }) => (
+          <Error
+            resetErrorBoundary={resetErrorBoundary}
+            error={error as any}
+            className={styles.communityError}
+          />
+        )}
       >
         <Suspense fallback={<CommunityPlaceholder />}>
           <CommunityProviders />

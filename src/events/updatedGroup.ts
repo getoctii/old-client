@@ -27,7 +27,6 @@ const useUpdatedGroup = (eventSource: EventSourcePolyfill | null) => {
         event.id,
         token
       ])
-      console.log(event.permissions)
       if (initial) {
         queryCache.setQueryData(['group', event.id, token], {
           ...event,

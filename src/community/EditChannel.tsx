@@ -18,7 +18,7 @@ import { queryCache, useQuery } from 'react-query'
 import React, { useMemo, useState } from 'react'
 import { ChannelResponse, getChannel, Override } from '../chat/remote'
 import * as Yup from 'yup'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import Header from '../components/Header'
 import {
   faCogs,
@@ -30,7 +30,7 @@ import {
 import { getCommunity, getGroup, getGroups } from './remote'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BlockPicker } from 'react-color'
-import { useSet } from 'react-use'
+import { useMedia, useSet } from 'react-use'
 import { faCheck, faMinus, faTimes } from '@fortawesome/pro-solid-svg-icons'
 import { Permission } from '../utils/permissions'
 
@@ -226,7 +226,6 @@ const PermissionOverrides = ({
     [allow, allowed, deny, denied]
   )
 
-  console.log(showSave)
   return (
     <>
       <div className={styles.permissions}>
@@ -389,7 +388,7 @@ const Overrides = ({ overrides: overrideObj }: ChannelResponse) => {
     getCommunity
   )
   const { data: groups } = useQuery(['groups', id, auth.token], getGroups)
-  console.log(overrideObj)
+
   const [addOverride, setAddOverride] = useState(false)
   const unusedGroups = useMemo(() => {
     return (groups ?? []).filter(
@@ -467,18 +466,22 @@ const Overrides = ({ overrides: overrideObj }: ChannelResponse) => {
 }
 
 export const EditChannel = () => {
-  const { channelID } = useParams<{ id: string; channelID: string }>()
+  const { id, channelID } = useParams<{ id: string; channelID: string }>()
   const { token } = Auth.useContainer()
   const { protectedGroups } = Permission.useContainer()
   const ui = UI.useContainer()
   const { data: channel } = useQuery(['channel', channelID, token], getChannel)
-
+  const isMobile = useMedia('(max-width: 740px)')
+  const history = useHistory()
   return (
     <div className={styles.editChannel}>
       <Header
         icon={faCogs}
         subheading={`#${channel?.name}`}
         heading='Edit Channel'
+        onClick={() => {
+          if (isMobile) history.push(`/communities/${id}`)
+        }}
       />
       <Formik
         initialValues={{

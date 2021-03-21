@@ -327,13 +327,38 @@
         }
       }
     }
-
     h4 {
       margin: 0;
     }
 
     input {
       background: var(--neko-settings-background);
+    }
+    @media (max-width: 1024px) {
+      background: transparent;
+      padding: 0;
+
+      input,
+      textarea {
+        background: var(--neko-settings-card);
+      }
+      .blockPicker {
+        width: 100% !important;
+        max-width: 100%;
+        background: var(--neko-settings-card) !important;
+        margin-bottom: 1rem;
+
+        input {
+          background: var(--neko-settings-background);
+        }
+      }
+      .info {
+        .text {
+          margin-left: 0;
+        }
+        margin-bottom: 1rem;
+        display: block;
+      }
     }
   }
 

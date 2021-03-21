@@ -17,7 +17,6 @@ const useNewRelationship = (eventSource: EventSourcePolyfill | null) => {
         type: RelationshipTypes
       }
       log('Events', 'purple', 'NEW_RELATIONSHIP')
-      console.log(event)
       if (event.type === RelationshipTypes.FRIEND) {
         queryCache.setQueryData<RelationshipResponse[]>(
           ['relationships', id, token],

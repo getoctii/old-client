@@ -100,11 +100,7 @@ const BoxView = ({
             mentionsClassName={styles.mentionsWrapper}
             inputClassName={styles.input}
             typingClassName={styles.typingIndicator}
-            placeholder={
-              <span id='placeholder' className={styles.ph}>
-                Say something{adjective}...
-              </span>
-            }
+            placeholder={`Say something ${adjective}...`}
             userMentions
             onTyping={async () => {
               if (!token) return
