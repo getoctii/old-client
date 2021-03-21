@@ -197,8 +197,8 @@ const AppRouter = () => {
       <EventSource />
       <Suspense fallback={<></>}>
         <AnimatePresence>
-          <Modal />
-          <ContextMenuHandler />
+          <Modal key='modals' />
+          <ContextMenuHandler key='contextmenu' />
         </AnimatePresence>
       </Suspense>
       <Suspense fallback={<></>}>

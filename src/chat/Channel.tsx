@@ -153,6 +153,15 @@ const ChannelView = ({
           {isMobile ? (
             <div
               className={styles.icon}
+              style={
+                channel?.color !== '#0081FF'
+                  ? {
+                      backgroundColor: channel?.color
+                    }
+                  : {
+                      background: 'var(--neko-colors-primary)'
+                    }
+              }
               onClick={() => {
                 if (isMobile) {
                   if (type === InternalChannelTypes.CommunityChannel) {
@@ -169,7 +178,18 @@ const ChannelView = ({
               />
             </div>
           ) : (
-            <div className={styles.icon}>
+            <div
+              className={styles.icon}
+              style={
+                channel?.color !== '#0081FF'
+                  ? {
+                      backgroundColor: channel?.color
+                    }
+                  : {
+                      background: 'var(--neko-colors-primary)'
+                    }
+              }
+            >
               <FontAwesomeIcon icon={faHashtag} />
             </div>
           )}

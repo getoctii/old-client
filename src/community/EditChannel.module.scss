@@ -1,4 +1,3 @@
-
 .textarea {
   border: 0;
   border-radius: 11px;
@@ -108,6 +107,48 @@
         background: var(--neko-colors-primary);
         color: var(--neko-text-inverse);
       }
+    }
+  }
+}
+
+.defaultOverrides {
+  height: auto;
+  margin-top: 1rem;
+  background: var(--neko-settings-card);
+  padding: 2rem;
+  display: flex;
+  border-radius: 11px;
+  flex-direction: column;
+  margin-bottom: 2rem;
+  h4 {
+    margin: 0;
+  }
+
+  .permissions {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+
+    .toggle {
+      margin-bottom: 0;
+      list-style: none;
+      margin-left: 0;
+      background: var(--neko-settings-background) !important;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    button {
+      margin-right: 0.5rem;
+    }
+    .danger {
+      background: var(--neko-colors-danger);
+      margin-right: 0;
+      margin-left: auto;
+      width: 48px;
+      height: 48px;
     }
   }
 }
@@ -236,8 +277,6 @@
           background: var(--neko-colors-primary);
         }
       }
-
-
     }
   }
   .display {
@@ -279,18 +318,19 @@
 
         .inputName {
           &:first-child {
-
             margin-top: 0rem;
           }
         }
 
+        &.category {
+          margin-left: 0;
+        }
       }
     }
 
     h4 {
       margin: 0;
     }
-
 
     input {
       background: var(--neko-settings-background);

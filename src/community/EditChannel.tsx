@@ -201,8 +201,9 @@ const Switch = ({
 const PermissionOverrides = ({
   allow,
   deny,
-  groupID
-}: Override & { groupID: string }) => {
+  groupID,
+  type
+}: Override & { groupID?: string; type: 'channel' | 'group' }) => {
   const auth = Auth.useContainer()
   const { channelID } = useParams<{ id: string; channelID: string }>()
   const [
@@ -261,67 +262,116 @@ const PermissionOverrides = ({
           <Button
             type={'button'}
             onClick={async () => {
-              await clientGateway.patch(
-                `/channels/${channelID}/overrides/${groupID}`,
-                {
-                  allow: Array.from(allowed),
-                  deny: Array.from(denied)
-                },
-                {
-                  headers: { Authorization: auth.token }
-                }
-              )
-              queryCache.setQueryData<ChannelResponse>(
-                ['channel', channelID, auth.token],
-                (initial) => {
-                  if (initial) {
-                    return {
-                      ...initial,
-                      overrides: {
-                        ...initial.overrides,
-                        [groupID]: {
-                          allow: Array.from(allowed),
-                          deny: Array.from(denied)
+              if (type === 'group' && groupID) {
+                await clientGateway.patch(
+                  `/channels/${channelID}/overrides/${groupID}`,
+                  {
+                    allow: Array.from(allowed),
+                    deny: Array.from(denied)
+                  },
+                  {
+                    headers: { Authorization: auth.token }
+                  }
+                )
+                queryCache.setQueryData<ChannelResponse>(
+                  ['channel', channelID, auth.token],
+                  (initial) => {
+                    if (initial) {
+                      return {
+                        ...initial,
+                        overrides: {
+                          ...initial.overrides,
+                          [groupID]: {
+                            allow: Array.from(allowed),
+                            deny: Array.from(denied)
+                          }
                         }
                       }
-                    }
-                  } else {
-                    return {
-                      id: channelID,
-                      name: 'unknown',
-                      type: ChannelTypes.TEXT,
-                      order: 0,
-                      overrides: {
-                        [groupID]: {
-                          allow: Array.from(allowed),
-                          deny: Array.from(denied)
+                    } else {
+                      return {
+                        id: channelID,
+                        name: 'unknown',
+                        type: ChannelTypes.TEXT,
+                        order: 0,
+                        overrides: {
+                          [groupID]: {
+                            allow: Array.from(allowed),
+                            deny: Array.from(denied)
+                          }
                         }
                       }
                     }
                   }
-                }
-              )
+                )
+              } else {
+                await clientGateway.patch(
+                  `/channels/${channelID}`,
+                  {
+                    base_allow: Array.from(allowed),
+                    base_deny: Array.from(denied)
+                  },
+                  {
+                    headers: { Authorization: auth.token }
+                  }
+                )
+                queryCache.setQueryData<ChannelResponse>(
+                  ['channel', channelID, auth.token],
+                  (initial) => {
+                    if (initial) {
+                      return {
+                        ...initial,
+                        base_allow: Array.from(allowed),
+                        base_deny: Array.from(denied)
+                      }
+                    } else {
+                      return {
+                        id: channelID,
+                        name: 'unknown',
+                        type: ChannelTypes.TEXT,
+                        order: 0,
+                        base_allow: Array.from(allowed),
+                        base_deny: Array.from(denied)
+                      }
+                    }
+                  }
+                )
+              }
             }}
           >
             Save Override
           </Button>
         )}
-        <Button
-          type={'button'}
-          className={styles.danger}
-          onClick={async () => {
-            await clientGateway.delete(
-              `/channels/${channelID}/overrides/${groupID}`,
-              {
-                headers: { Authorization: auth.token }
-              }
-            )
-          }}
-        >
-          <FontAwesomeIcon icon={faTrash} />
-        </Button>
+        {type === 'group' && (
+          <Button
+            type={'button'}
+            className={styles.danger}
+            onClick={async () => {
+              await clientGateway.delete(
+                `/channels/${channelID}/overrides/${groupID}`,
+                {
+                  headers: { Authorization: auth.token }
+                }
+              )
+            }}
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </Button>
+        )}
       </div>
     </>
+  )
+}
+
+const DefaultOverrides = ({ base_allow, base_deny }: ChannelResponse) => {
+  return (
+    <div className={styles.defaultOverrides}>
+      <h4>Default Overrides</h4>
+      <PermissionOverrides
+        allow={base_allow ?? []}
+        deny={base_deny ?? []}
+        type='channel'
+      />
+    </div>
   )
 }
 
@@ -409,6 +459,7 @@ const Overrides = ({ overrides: overrideObj }: ChannelResponse) => {
           key={overrideSelected}
           {...overrideObj[overrideSelected]}
           groupID={overrideSelected}
+          type='group'
         />
       )}
     </>
@@ -421,7 +472,7 @@ export const EditChannel = () => {
   const { protectedGroups } = Permission.useContainer()
   const ui = UI.useContainer()
   const { data: channel } = useQuery(['channel', channelID, token], getChannel)
-  console.log(channel)
+
   return (
     <div className={styles.editChannel}>
       <Header
@@ -452,7 +503,7 @@ export const EditChannel = () => {
               .replace(/-+$/, '')
             await clientGateway.patch(
               `/channels/${channelID}`,
-              { name, description: values.description },
+              { name, description: values.description, color: values.color },
               {
                 headers: { Authorization: token }
               }
@@ -473,12 +524,30 @@ export const EditChannel = () => {
         {({ isSubmitting, values, setFieldValue }) => (
           <Form className={styles.display}>
             <div className={styles.info}>
-              <BlockPicker
-                triangle={'hide'}
-                className={styles.blockPicker}
-                color={channel?.color}
-              />
-              <div className={styles.text}>
+              {channel?.type !== ChannelTypes.CATEGORY && (
+                <BlockPicker
+                  colors={[
+                    '#0081FF',
+                    '#F47373',
+                    '#37D67A',
+                    '#2CCCE4',
+                    '#dce775',
+                    '#ff8a65',
+                    '#ba68c8'
+                  ]}
+                  triangle={'hide'}
+                  className={styles.blockPicker}
+                  color={values.color}
+                  onChangeComplete={(c) => {
+                    setFieldValue('color', c.hex)
+                  }}
+                />
+              )}
+              <div
+                className={`${styles.text} ${
+                  channel?.type === ChannelTypes.CATEGORY ? styles.category : ''
+                }`}
+              >
                 <h4>Display</h4>
                 <label htmlFor='name' className={styles.inputName}>
                   Name
@@ -508,7 +577,8 @@ export const EditChannel = () => {
               </div>
             </div>
             {(values.name !== channel?.name ||
-              values.description !== channel?.description) && (
+              values.description !== channel?.description ||
+              values.color !== channel?.color) && (
               <Button disabled={isSubmitting} type='submit'>
                 {isSubmitting ? <BarLoader color='#ffffff' /> : 'Edit Channel'}
               </Button>
@@ -527,6 +597,8 @@ export const EditChannel = () => {
           {channel && <Overrides {...channel} />}
         </div>
       )}
+
+      {channel && <DefaultOverrides {...channel} />}
     </div>
   )
 }
