@@ -205,50 +205,43 @@ const AppRouter = () => {
         {showOnBoarding ? (
           <OnBoarding />
         ) : (
-          <Switch>
-            <PrivateRoute
-              path='/settings'
-              sidebar
-              component={() => (
-                <>
-                  {isMobile && <Sidebar />}
-                  <Suspense fallback={<Loader />}>
-                    <Settings />
+          <>
+            {!isMobile && auth.authenticated && <Sidebar />}
+            <Switch>
+              <PrivateRoute
+                path='/settings'
+                component={() => (
+                  <>
+                    {isMobile && <Sidebar />}
+                    <Suspense fallback={<Loader />}>
+                      <Settings />
+                    </Suspense>
+                  </>
+                )}
+              />
+              <PrivateRoute path={'/admin'} component={Admin} />
+              <PrivateRoute path='/communities/:id' component={Community} />
+              <PrivateRoute
+                path='/friends'
+                component={() => (
+                  <Suspense fallback={<></>}>
+                    <Friends />
                   </Suspense>
-                </>
-              )}
-            />
-            <PrivateRoute path={'/admin'} sidebar component={Admin} />
-            <PrivateRoute
-              path='/communities/:id'
-              sidebar
-              component={Community}
-            />
-            <PrivateRoute
-              sidebar
-              path='/friends'
-              component={() => (
-                <Suspense fallback={<></>}>
-                  <Friends />
-                </Suspense>
-              )}
-              exact
-            />
-            <PrivateRoute
-              sidebar
-              path={'/conversations/:id?'}
-              component={() => (
-                <Suspense fallback={<></>}>
-                  <Conversation />
-                </Suspense>
-              )}
-              redirect={
-                isPlatform('mobile') || isPWA ? '/authenticate/login' : '/home'
-              }
-              exact
-            />
-            <Redirect path={'/'} to={'/conversations'} exact />
-          </Switch>
+                )}
+                exact
+              />
+              <PrivateRoute
+                path={'/conversations'}
+                component={Conversation}
+                redirect={
+                  isPlatform('mobile') || isPWA
+                    ? '/authenticate/login'
+                    : '/home'
+                }
+              />
+              <Redirect path={'/'} to={'/conversations'} exact />
+            </Switch>
+          </>
         )}
       </Suspense>
       {!isMobile && (

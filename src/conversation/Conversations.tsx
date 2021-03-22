@@ -1,20 +1,53 @@
-import React, { Suspense, useMemo } from 'react'
+import React, {
+  memo,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef
+} from 'react'
 import styles from './Conversations.module.scss'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import ConversationCard from './ConversationCard'
 import { useRouteMatch } from 'react-router-dom'
-import { useMedia } from 'react-use'
+import { useMedia, useScroll } from 'react-use'
 import NewConversation from './NewConversation'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import { getParticipants, Participant } from '../user/remote'
+import { ScrollPosition } from '../state/scroll'
 
 dayjs.extend(dayjsUTC)
 
-const ConversationList = () => {
-  const auth = Auth.useContainer()
+const ConversationCardWrapper = ({
+  id,
+  last_message_id,
+  channel_id,
+  people,
+  index
+}: Participant['conversation'] & { index: number; people: string[] }) => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
+  return (
+    <div key={id}>
+      {index !== 0 && (
+        <hr className={match?.params.id === id ? styles.hidden : ''} />
+      )}
+      <Suspense fallback={<ConversationCard.Placeholder />}>
+        <ConversationCard.View
+          people={people}
+          conversationID={id}
+          lastMessageID={last_message_id}
+          channelID={channel_id}
+        />
+      </Suspense>
+    </div>
+  )
+}
+
+const ConversationList = memo(() => {
+  const auth = Auth.useContainer()
+
   const participants = useQuery(
     ['participants', auth.id, auth.token],
     getParticipants
@@ -56,25 +89,11 @@ const ConversationList = () => {
               return <></>
             } else {
               return (
-                <div key={conversation.id}>
-                  {index !== 0 && (
-                    <hr
-                      className={
-                        match?.params.id === conversation.id
-                          ? styles.hidden
-                          : ''
-                      }
-                    />
-                  )}
-                  <Suspense fallback={<ConversationCard.Placeholder />}>
-                    <ConversationCard.View
-                      people={people}
-                      conversationID={conversation.id}
-                      lastMessageID={conversation.last_message_id}
-                      channelID={conversation.channel_id}
-                    />
-                  </Suspense>
-                </div>
+                <ConversationCardWrapper
+                  {...conversation}
+                  index={index}
+                  people={people ?? []}
+                />
               )
             }
           })
@@ -86,7 +105,7 @@ const ConversationList = () => {
       )}
     </>
   )
-}
+})
 
 const ConversationsPlaceholder = () => {
   const length = useMemo(() => Math.floor(Math.random() * 10) + 1, [])
@@ -104,9 +123,25 @@ const ConversationsPlaceholder = () => {
 
 export const Conversations = () => {
   const isMobile = useMedia('(max-width: 740px)')
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const currentScrollPosition = useScroll(scrollRef)
+  const {
+    conversation: [scrollPosition, setScrollPosition]
+  } = ScrollPosition.useContainer()
+
+  useLayoutEffect(() => {
+    if (scrollRef.current)
+      scrollRef.current.scrollTo(scrollPosition.x, scrollPosition.y)
+    // eslint-disable-next-line
+  }, [])
+
+  useEffect(() => {
+    setScrollPosition(currentScrollPosition)
+  }, [currentScrollPosition, setScrollPosition])
+
   return (
     <div className={styles.sidebarWrapper}>
-      <div className={styles.sidebar}>
+      <div className={styles.sidebar} ref={scrollRef}>
         {isMobile && <div className={styles.statusBar} />}
         <h3>Messages</h3>
         <NewConversation />

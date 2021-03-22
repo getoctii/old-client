@@ -219,7 +219,9 @@ const Sidebar = () => {
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const currentScrollPosition = useScroll(scrollRef)
-  const [scrollPosition, setScrollPosition] = ScrollPosition.useContainer()
+  const {
+    sidebar: [scrollPosition, setScrollPosition]
+  } = ScrollPosition.useContainer()
   const unreads = useQuery(['unreads', auth.id, auth.token], getUnreads)
   const mentions = useQuery(['mentions', auth.id, auth.token], getMentions)
 
@@ -242,15 +244,15 @@ const Sidebar = () => {
     [participants, mentions]
   )
 
-  useEffect(() => {
-    setScrollPosition(currentScrollPosition)
-  }, [currentScrollPosition, setScrollPosition])
-
   useLayoutEffect(() => {
     if (scrollRef.current)
       scrollRef.current.scrollTo(scrollPosition.x, scrollPosition.y)
     // eslint-disable-next-line
   }, [])
+
+  useEffect(() => {
+    setScrollPosition(currentScrollPosition)
+  }, [currentScrollPosition, setScrollPosition])
   return (
     <div className={styles.sidebar}>
       <div className={styles.scrollable} ref={scrollRef}>

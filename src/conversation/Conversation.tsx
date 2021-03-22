@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useMemo } from 'react'
 import styles from './Conversation.module.scss'
 import Chat from '../chat/Channel'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { Redirect, Switch, useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { InternalChannelTypes } from '../utils/constants'
@@ -14,6 +14,7 @@ import dayjs from 'dayjs'
 import { useSuspenseStorageItem } from '../utils/storage'
 import { Helmet } from 'react-helmet-async'
 import { Permission } from '../utils/permissions'
+import { PrivateRoute } from '../authentication/PrivateRoute'
 
 const ConversationView = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
@@ -144,16 +145,17 @@ const ConversationProvider = () => {
 
 const ConversationRouter = () => {
   const { id, token } = Auth.useContainer()
+  const { path } = useRouteMatch()
   const { data: participants } = useQuery(
     ['participants', id, token],
     getParticipants
   )
+
   const filteredParticipants = useMemo(
     () =>
       participants?.filter((part) => part.conversation.participants.length > 1),
     [participants]
   )
-
   const isMobile = useMedia('(max-width: 740px)')
   return (
     <>
@@ -161,7 +163,19 @@ const ConversationRouter = () => {
         <>
           {!isMobile && <Conversations />}
           <Suspense fallback={<Chat.Placeholder />}>
-            <ConversationProvider />
+            <Switch>
+              <PrivateRoute
+                path={`${path}/:id`}
+                component={ConversationProvider}
+                exact
+              />
+              {!isMobile && (
+                <Redirect
+                  path={'*'}
+                  to={`${path}/${filteredParticipants?.[0].conversation.id}`}
+                />
+              )}
+            </Switch>
           </Suspense>
         </>
       ) : (filteredParticipants?.length ?? 0) < 1 ? (
