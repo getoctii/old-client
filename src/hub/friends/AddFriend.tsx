@@ -1,14 +1,17 @@
 import React from 'react'
 import styles from './AddFriend.module.scss'
-import Input from '../components/Input'
-import Button from '../components/Button'
+import Input from '../../components/Input'
+import Button from '../../components/Button'
 import { Field, Form, Formik } from 'formik'
-import { clientGateway } from '../utils/constants'
-import { Auth } from '../authentication/state'
-import { isTag } from '../utils/validations'
-import { findUser } from '../conversation/remote'
+import { clientGateway } from '../../utils/constants'
+import { Auth } from '../../authentication/state'
+import { isTag } from '../../utils/validations'
+import { findUser } from '../../conversation/remote'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExclamationCircle, faSearch } from '@fortawesome/pro-solid-svg-icons'
+import { UI } from '../../state/ui'
+import { faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
+import Modal from '../../components/Modal'
 
 type formData = { tag: string }
 
@@ -20,9 +23,14 @@ const validate = (values: formData) => {
 }
 
 const AddFriend = () => {
+  const ui = UI.useContainer()
   const { token, id } = Auth.useContainer()
   return (
-    <div className={styles.addFriend}>
+    <Modal
+      onDismiss={() => ui.clearModal()}
+      title={'Add Friend'}
+      icon={faTimesCircle}
+    >
       <Formik
         initialValues={{ tag: '' }}
         initialErrors={{ tag: 'No input' }}
@@ -61,7 +69,7 @@ const AddFriend = () => {
         }}
       >
         {({ isSubmitting, isValid, errors }) => (
-          <Form>
+          <Form className={styles.addFriend}>
             <Field
               placeholder={!isSubmitting ? 'Add a new friend' : 'Finding...'}
               component={Input}
@@ -93,7 +101,7 @@ const AddFriend = () => {
           </Form>
         )}
       </Formik>
-    </div>
+    </Modal>
   )
 }
 

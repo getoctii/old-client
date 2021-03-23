@@ -1,4 +1,4 @@
-import { clientGateway } from '../utils/constants'
+import { clientGateway } from '../../utils/constants'
 
 export enum RelationshipTypes {
   OUTGOING_FRIEND_REQUEST = 1,

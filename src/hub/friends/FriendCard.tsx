@@ -1,12 +1,12 @@
 import React from 'react'
 import styles from './FriendCard.module.scss'
-import { Auth } from '../authentication/state'
+import { Auth } from '../../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserTimes, faUserCheck } from '@fortawesome/pro-duotone-svg-icons'
-import Icon from '../user/Icon'
+import Icon from '../../user/Icon'
 import { RelationshipResponse, RelationshipTypes } from './remote'
-import { clientGateway } from '../utils/constants'
-import { useUser } from '../user/state'
+import { clientGateway } from '../../utils/constants'
+import { useUser } from '../../user/state'
 
 const FriendCardView = ({
   user_id,
@@ -19,6 +19,7 @@ const FriendCardView = ({
   return (
     <div className={styles.card}>
       <Icon
+        className={styles.icon}
         avatar={id === user_id ? recipient?.avatar : user?.avatar}
         state={id === user_id ? recipient?.state : user?.state}
       />
@@ -32,7 +33,7 @@ const FriendCardView = ({
           ? 'inn'
           : user?.discriminator.toString().padStart(4, '0')}
       </h4>
-      <div className={styles.buttons}>
+      <div className={styles.details}>
         {type === RelationshipTypes.INCOMING_FRIEND_REQUEST ? (
           <>
             <FontAwesomeIcon

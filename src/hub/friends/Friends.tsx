@@ -4,14 +4,17 @@ import FriendCard from './FriendCard'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserClock } from '@fortawesome/pro-duotone-svg-icons'
 import { useQuery } from 'react-query'
-import { Auth } from '../authentication/state'
+import { Auth } from '../../authentication/state'
 import { RelationshipTypes, getRelationships } from './remote'
 import EmptyFriends from './EmptyFriends'
-import AddFriend from './AddFriend'
 import { useMedia } from 'react-use'
-import Sidebar from '../sidebar/Sidebar'
+import Sidebar from '../../sidebar/Sidebar'
+import { faPlus } from '@fortawesome/pro-solid-svg-icons'
+import { UI } from '../../state/ui'
+import { ModalTypes } from '../../utils/constants'
 
 const Friends = () => {
+  const ui = UI.useContainer()
   const { id, token } = Auth.useContainer()
   const { data: relationships } = useQuery(
     ['relationships', id, token],
@@ -48,61 +51,18 @@ const Friends = () => {
     <>
       {isMobile && <Sidebar />}
       <div className={styles.friends}>
-        {(friends?.length ?? 0) > 0 && (
-          <>
-            <h1>Friends</h1>
-            <AddFriend />
-          </>
-        )}
-        {(incoming?.length ?? 0) > 0 && (
-          <div className={styles.incoming}>
-            <div
-              className={styles.dropdown}
-              onClick={() => setShowIncoming(!showIncoming)}
-            >
-              <FontAwesomeIcon icon={faUserClock} /> Incoming{' '}
-              <span>{incoming?.length}</span>
-            </div>
-            <div className={styles.cards}>
-              {showIncoming &&
-                incoming?.map((friend) => (
-                  <Suspense
-                    key={
-                      friend.recipient_id === id
-                        ? friend.user_id
-                        : friend.recipient_id
-                    }
-                    fallback={<FriendCard.Placeholder />}
-                  >
-                    <FriendCard.View {...friend} />
-                  </Suspense>
-                ))}
-            </div>
-            <br />
-          </div>
-        )}
-        <div className={styles.list}>
-          {(friends?.length ?? 0) > 0 ? (
-            friends?.map((friend) => (
-              <Suspense
-                key={
-                  friend.recipient_id === id
-                    ? friend.user_id
-                    : friend.recipient_id
-                }
-                fallback={<FriendCard.Placeholder />}
-              >
-                <FriendCard.View {...friend} />
-              </Suspense>
-            ))
-          ) : (
-            <EmptyFriends />
-          )}
-        </div>
-        <br />
+        <h4>
+          Friends{' '}
+          <span>
+            <FontAwesomeIcon
+              className={styles.add}
+              icon={faPlus}
+              onClick={() => ui.setModal({ name: ModalTypes.ADD_FRIEND })}
+            />
+          </span>
+        </h4>
         {(outgoing?.length ?? 0) > 0 && (
           <div className={styles.incoming}>
-            <br />
             <div
               className={styles.dropdown}
               onClick={() => setShowOutgoing(!showOutgoing)}
@@ -125,8 +85,58 @@ const Friends = () => {
                   </Suspense>
                 ))}
             </div>
+            <br />
           </div>
         )}
+        {(incoming?.length ?? 0) > 0 && (
+          <div className={styles.incoming}>
+            <div
+              className={styles.dropdown}
+              onClick={() => setShowIncoming(!showIncoming)}
+            >
+              <FontAwesomeIcon icon={faUserClock} /> Incoming{' '}
+              <span>{incoming?.length}</span>
+            </div>
+            {showIncoming && (
+              <div className={styles.cards}>
+                {incoming?.map((friend) => (
+                  <Suspense
+                    key={
+                      friend.recipient_id === id
+                        ? friend.user_id
+                        : friend.recipient_id
+                    }
+                    fallback={<FriendCard.Placeholder />}
+                  >
+                    <FriendCard.View {...friend} />
+                  </Suspense>
+                ))}
+              </div>
+            )}
+            <br />
+          </div>
+        )}
+        <div className={styles.list}>
+          {(friends?.length ?? 0) > 0 ? (
+            friends?.map((friend, index) => (
+              <>
+                {index !== 0 && <hr />}
+                <Suspense
+                  key={
+                    friend.recipient_id === id
+                      ? friend.user_id
+                      : friend.recipient_id
+                  }
+                  fallback={<FriendCard.Placeholder />}
+                >
+                  <FriendCard.View {...friend} />
+                </Suspense>
+              </>
+            ))
+          ) : (
+            <EmptyFriends />
+          )}
+        </div>
       </div>
     </>
   )

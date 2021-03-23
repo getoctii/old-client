@@ -1,15 +1,11 @@
 .emptyFriends {
-  display: flex;
-  flex-direction: column;
   height: 100%;
   width: 100%;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
   background: var(--neko-channels-background);
 
   .container {
     max-width: 300px;
+    margin-top: 0.5rem;
     margin-bottom: 1rem;
     h1 {
       margin-bottom: 0.8rem;
@@ -22,6 +18,11 @@
       font-size: 1rem;
       font-weight: 300;
       margin-bottom: 0.8rem;
+    }
+
+    button {
+      width: 100%;
+      background: var(--neko-colors-primary);
     }
   }
 

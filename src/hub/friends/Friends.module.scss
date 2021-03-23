@@ -1,38 +1,35 @@
 .friends {
-  padding: 2rem;
-  overflow-y: scroll;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  background: var(--neko-channels-background);
-
   h3 {
     margin-top: 0;
-    margin-bottom: 0.5rem;
   }
 
   h4 {
-    margin: 0;
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0.7rem 0 0.3rem;
+    span {
+      float: right;
+    }
+
+    .add {
+      cursor: pointer;
+    }
   }
 
   .incoming {
-    margin-top: 1rem;
+    width: 100%;
     .cards {
       margin-top: 0.4rem;
     }
   }
 
   .list {
-    margin-top: 1rem;
-    max-width: 300px;
+    margin-top: 0.15rem;
     width: 100%;
   }
 
   .dropdown {
-    min-width: 300px;
+    width: 100%;
     padding: 1rem;
     background: var(--neko-sidebar-background);
     border-radius: 12px;
