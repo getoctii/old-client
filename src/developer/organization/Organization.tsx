@@ -7,6 +7,8 @@ import { useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Navbar from './Navbar'
 import Products from './Products'
+import Settings from "./Settings";
+import Product from "./product/Product";
 
 const Organization = () => {
   const { path } = useRouteMatch()
@@ -43,10 +45,20 @@ const Organization = () => {
         <Switch>
           {!isMobile && <Redirect path={path} to={`${path}/products`} exact />}
           <PrivateRoute path={`${path}/products`} component={Products} exact />
+          <PrivateRoute component={Settings} path={`${path}/settings`} exact />
         </Switch>
       </Suspense>
     </div>
   )
 }
 
-export default Organization
+const Router = () => {
+  const { path } = useRouteMatch()
+
+  return <Switch>
+    <PrivateRoute component={Product} path={`${path}/products/:id`} />
+    <PrivateRoute component={Organization} path={`${path}`}/>
+  </Switch>
+}
+
+export default Router

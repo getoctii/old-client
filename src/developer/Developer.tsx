@@ -11,6 +11,7 @@ import Sideview from '../components/Sideview'
 import { faStreetView } from '@fortawesome/pro-duotone-svg-icons'
 import Organizations from './organization/Organizations'
 import Organization from './organization/Organization'
+import Product from "./organization/product/Product";
 
 const Developer = () => {
   const isMobile = useMedia('(max-width: 740px)')
@@ -19,24 +20,24 @@ const Developer = () => {
   const auth = Auth.useContainer()
   const { data: user } = useQuery(['users', auth.id, auth.token], getUser)
 
-  const tabs = useMemo(() => {
-    const items = [
-      {
-        name: 'Overview',
-        icon: faStreetView,
-        color: 'primary',
-        link: '/developer/overview'
-      }
-    ]
-    return items
-  }, [])
+  // const tabs = useMemo(() => {
+  //   const items = [
+  //     {
+  //       name: 'Overview',
+  //       icon: faStreetView,
+  //       color: 'primary',
+  //       link: '/developer/overview'
+  //     }
+  //   ]
+  //   return items
+  // }, [])
 
   return user?.developer ? (
     <>
       {isMobile && !match && <Sidebar />}
       <div className={styles.developer}>
         {((!match && isMobile) || !isMobile) && (
-          <Sideview name={'Developer'} tabs={tabs}>
+          <Sideview name={'Developer'} tabs={[]}>
             <Organizations />
           </Sideview>
         )}
@@ -46,11 +47,6 @@ const Developer = () => {
               {!isMobile && (
                 <Redirect path={path} to={`${path}/lookup`} exact />
               )}
-              <PrivateRoute
-                path={`${path}/overview`}
-                component={() => <></>}
-                exact
-              />
               <PrivateRoute
                 path={`${path}/organization/:id`}
                 component={Organization}

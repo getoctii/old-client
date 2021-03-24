@@ -1,7 +1,9 @@
-import { faBoxOpen } from '@fortawesome/pro-solid-svg-icons'
+import { faBoxOpen, faCogs } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { memo, Suspense } from 'react'
 import styles from './Products.module.scss'
+import Button from "../../components/Button";
+import { useHistory } from "react-router-dom";
 
 const products = [
   {
@@ -17,11 +19,17 @@ const products = [
 ]
 
 const ProductCard = memo(() => {
+  const history = useHistory()
+
   return (
     <div className={styles.product}>
       <div className={styles.info}>
+        <img src='https://file.coffee/u/fGpSBEutgA.png' alt={'sex'} />
         <h4>sex</h4>
       </div>
+      <Button type={'button'} onClick={() => {
+        history.push(`/developer/organization/shit/products/sex`)
+      }}><FontAwesomeIcon icon={faCogs} /></Button>
     </div>
   )
 })

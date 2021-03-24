@@ -156,10 +156,24 @@
           }
         }
         .info {
+          display: flex;
+          align-items: center;
           width: 180px;
+
           svg {
             margin-left: 0.25rem;
             color: var(--neko-text-href);
+          }
+
+          img {
+            object-fit: cover;
+            height: 45px;
+            width: 45px;
+            border-radius: 10px;
+          }
+
+          h4 {
+            margin-left: 1rem;
           }
         }
 
@@ -184,6 +198,13 @@
         &:last-of-type {
           border-bottom-left-radius: 14px;
           border-bottom-right-radius: 14px;
+        }
+
+        button {
+          background: var(--neko-colors-primary);
+          margin-left: auto;
+          height: 45px;
+          width: 45px;
         }
       }
     }
