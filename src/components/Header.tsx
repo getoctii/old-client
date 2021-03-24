@@ -6,12 +6,14 @@ import { useMedia } from 'react-use'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 
 const Header = ({
+  className,
   subheading,
   heading,
   onClick,
   color,
   icon
 }: {
+  className?: string
   subheading: string
   heading: string
   onClick?: () => void
@@ -20,7 +22,7 @@ const Header = ({
 }) => {
   const isMobile = useMedia('(max-width: 740px)')
   return (
-    <div className={styles.header}>
+    <div className={`${styles.header} ${className ? className : ''}`}>
       <div
         className={`${styles.icon} ${
           color === 'secondary' ? styles.secondary : styles.primary

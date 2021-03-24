@@ -6,12 +6,8 @@ const Store = () => {
   return (
     <div className={styles.store}>
       <StoreHeader />
-      {/* <Featured /> */}
-      <div className={styles.owo}>
-        <div className={styles.uwu}>
-          <div></div>
-        </div>
-      </div>
+
+      <Featured />
     </div>
   )
 }

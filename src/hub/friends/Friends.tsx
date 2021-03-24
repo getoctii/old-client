@@ -7,8 +7,6 @@ import { useQuery } from 'react-query'
 import { Auth } from '../../authentication/state'
 import { RelationshipTypes, getRelationships } from './remote'
 import EmptyFriends from './EmptyFriends'
-import { useMedia } from 'react-use'
-import Sidebar from '../../sidebar/Sidebar'
 import { faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { UI } from '../../state/ui'
 import { ModalTypes } from '../../utils/constants'
@@ -20,7 +18,6 @@ const Friends = () => {
     ['relationships', id, token],
     getRelationships
   )
-  const isMobile = useMedia('(max-width: 740px)')
   const incoming = useMemo(
     () =>
       relationships?.filter(
@@ -49,7 +46,6 @@ const Friends = () => {
 
   return (
     <>
-      {isMobile && <Sidebar />}
       <div className={styles.friends}>
         <h4>
           Friends{' '}

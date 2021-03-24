@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import { queryCache } from 'react-query'
 import { Auth } from '../authentication/state'
-import { clientGateway } from '../utils/constants'
+import { clientGateway, ModalTypes } from '../utils/constants'
 import Button from '../components/Button'
 import { BarLoader } from 'react-spinners'
 import styles from './Profile.module.scss'
@@ -14,15 +14,18 @@ import { useHistory } from 'react-router-dom'
 import IconPicker from '../components/IconPicker'
 import { useUser } from '../user/state'
 import * as Yup from 'yup'
+import { UI } from '../state/ui'
 
 const ProfileSchema = Yup.object().shape({
   username: Yup.string()
     .min(2, 'Too short, must be at least 2 characters.')
     .max(16, 'Too long, must be less then 16 characters.'),
-  avatar: Yup.string().url()
+  avatar: Yup.string().url(),
+  developer: Yup.boolean().optional()
 })
 
 const Profile = () => {
+  const uiStore = UI.useContainer()
   const { token, id } = Auth.useContainer()
   const user = useUser(id ?? undefined)
   const isMobile = useMedia('(max-width: 740px)')
@@ -46,7 +49,8 @@ const Profile = () => {
       <Formik
         initialValues={{
           username: user?.username || '',
-          avatar: user?.avatar || ''
+          avatar: user?.avatar || '',
+          developer: user?.developer || false
         }}
         validationSchema={ProfileSchema}
         onSubmit={async (values, { setSubmitting, setFieldError }) => {
@@ -58,7 +62,10 @@ const Profile = () => {
                 ...(values.username !== user?.username && {
                   username: values.username
                 }),
-                avatar: values.avatar
+                avatar: values.avatar,
+                ...(values.developer && {
+                  developer: values.developer
+                })
               },
               {
                 headers: {
@@ -66,7 +73,7 @@ const Profile = () => {
                 }
               }
             )
-            await queryCache.invalidateQueries(['users', id])
+            await queryCache.invalidateQueries(['users', id, token])
           } finally {
             setSubmitting(false)
           }
@@ -142,6 +149,26 @@ const Profile = () => {
                 className={styles.error}
               />
             </div>
+            {!user?.developer && (
+              <p
+                className={styles.devmode}
+                onClick={() => {
+                  uiStore.setModal({
+                    name: ModalTypes.DEVELOPER_MODE,
+                    props: {
+                      type: 'developer',
+                      onConfirm: async () => {
+                        setFieldValue('developer', true)
+                        uiStore.clearModal()
+                      },
+                      onDismiss: () => uiStore.clearModal()
+                    }
+                  })
+                }}
+              >
+                Enable Developer Mode
+              </p>
+            )}
             <Button
               disabled={isSubmitting}
               type='submit'

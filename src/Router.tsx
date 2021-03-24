@@ -37,6 +37,7 @@ import { useSuspenseStorageItem } from './utils/storage'
 import Modal from './components/Modals'
 import { Permission } from './utils/permissions'
 import Hub from './hub/Hub'
+import Developer from './developer/Developer'
 const { PushNotifications } = Plugins
 
 const ContextMenuHandler = () => {
@@ -220,6 +221,7 @@ const AppRouter = () => {
                 )}
               />
               <PrivateRoute path={'/admin'} component={Admin} />
+              <PrivateRoute path={'/developer'} component={Developer} />
               <PrivateRoute path='/communities/:id' component={Community} />
               <PrivateRoute
                 path={'/conversations'}
@@ -230,7 +232,17 @@ const AppRouter = () => {
                     : '/home'
                 }
               />
-              <PrivateRoute path={'/hub'} component={Hub} />
+              <PrivateRoute
+                path={'/hub'}
+                component={() => (
+                  <>
+                    {isMobile && <Sidebar />}
+                    <Suspense fallback={<Loader />}>
+                      <Hub />
+                    </Suspense>
+                  </>
+                )}
+              />
               <Redirect path={'/'} to={'/conversations'} exact />
             </Switch>
           </>

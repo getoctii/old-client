@@ -26,6 +26,8 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <AddParticipant {...props} />
     case ModalTypes.DELETE_MESSAGE:
       return <Confirmation {...props} />
+    case ModalTypes.DEVELOPER_MODE:
+      return <Confirmation {...props} />
     case ModalTypes.INCOMING_CALL:
       return !isMobile ? <Incoming {...props} /> : <></>
     case ModalTypes.NEW_COMMUNITY:

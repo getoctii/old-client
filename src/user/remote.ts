@@ -35,6 +35,7 @@ export type UserResponse = {
   state: State
   status: string
   email?: string
+  developer?: boolean
   disabled?: boolean
 }
 

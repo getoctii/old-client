@@ -1,0 +1,79 @@
+.product {
+  width: 100%;
+  position: relative;
+
+  .backHeader {
+    top: 2rem;
+    left: 2rem;
+    position: absolute;
+  }
+
+  .banner {
+    max-height: 300px;
+    width: 100%;
+    object-fit: cover;
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: row;
+  padding: 2rem;
+
+  @media (max-width: 740px) {
+    display: block;
+  }
+}
+
+.card {
+  max-width: 25rem;
+  background: var(--neko-settings-card);
+  border-radius: 16px;
+  padding: 1rem;
+  align-self: flex-start;
+
+  @media (max-width: 740px) {
+    max-width: none;
+    padding: 0;
+  }
+
+  p {
+    font-size: 0.75rem;
+    margin-bottom: 0;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+  }
+
+  button {
+    width: 100%;
+    background: var(--neko-colors-primary);
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.info {
+  flex: 1;
+  margin-right: 5rem;
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin: 0;
+    margin-bottom: 0.75rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .badge {
+    margin-left: 0.5rem;
+    color: var(--neko-text-href);
+  }
+}

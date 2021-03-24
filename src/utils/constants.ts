@@ -25,7 +25,8 @@ export enum ModalTypes {
   STATUS,
   MANAGE_MEMBER_GROUPS,
   UPDATE,
-  ADD_FRIEND
+  ADD_FRIEND,
+  DEVELOPER_MODE
 }
 
 export enum Groups {
