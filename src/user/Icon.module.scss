@@ -5,7 +5,9 @@
   min-height: 45px;
   border-radius: 10px;
   position: relative;
-  background-size: contain;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   margin-right: 0.5rem;
   background-color: var(--neko-sidebar-background);
   .badge {

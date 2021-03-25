@@ -1,16 +1,11 @@
-import { faBoxOpen, faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { AnimatePresence, motion } from 'framer-motion'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import dayjsCalendar from 'dayjs/plugin/calendar'
-import React, { memo, Suspense, useMemo, useRef, useState } from 'react'
+import React, { memo, useMemo, useRef, useState } from 'react'
 import { queryCache, useInfiniteQuery, useMutation } from 'react-query'
-import { useHistory } from 'react-router-dom'
-import { useMedia } from 'react-use'
 import { Waypoint } from 'react-waypoint'
 import { Auth } from '../authentication/state'
-import Loader from '../components/Loader'
 import styles from './Codes.module.scss'
 import { clientGateway } from '../utils/constants'
 import {
@@ -22,6 +17,8 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import Button from '../components/Button'
 import { Plugins } from '@capacitor/core'
+import Header from '../components/Header'
+import List from '../components/List'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
@@ -50,31 +47,19 @@ const Code = memo(({ id, used, created_at }: CodeResponse) => {
       }
     }
   )
-  const isMobile = useMedia('(max-width: 740px)')
   return (
-    <motion.div
-      className={styles.code}
-      initial={{
-        opacity: 0
-      }}
-      animate={{
-        opacity: 1,
-        transition: { y: { stiffness: 1000, velocity: -100 } }
-      }}
-      exit={{
-        opacity: 0
-      }}
-    >
-      <div className={`${styles.icon} ${used ? styles.used : ''}`}>
-        <FontAwesomeIcon icon={used ? faUserCheck : faUserClock} />
-      </div>
-      <div className={styles.info}>
-        <h4>{id}</h4>
-        <time>{dayjs.utc(created_at).local().calendar()}</time>
-      </div>
-      {!isMobile && (
-        <div className={styles.actions}>
+    <List.Card
+      title={id}
+      subtitle={dayjs.utc(created_at).local().calendar()}
+      icon={
+        <div className={`${styles.icon} ${used ? styles.used : ''}`}>
+          <FontAwesomeIcon icon={used ? faUserCheck : faUserClock} />
+        </div>
+      }
+      actions={
+        <>
           <Button
+            className={styles.copyButton}
             type='button'
             onClick={async () => {
               await Plugins.Clipboard.write({
@@ -86,22 +71,21 @@ const Code = memo(({ id, used, created_at }: CodeResponse) => {
             Copy
           </Button>
           <Button
+            className={styles.deleteButton}
             type='button'
-            className={styles.delete}
             onClick={async () => {
               await deleteCode()
             }}
           >
             <FontAwesomeIcon icon={faTrashAlt} />
           </Button>
-        </div>
-      )}
-    </motion.div>
+        </>
+      }
+    />
   )
 })
 
 export const Codes = () => {
-  const history = useHistory()
   const { token } = Auth.useContainer()
   const { data, canFetchMore, fetchMore } = useInfiniteQuery<
     CodeResponse[],
@@ -146,84 +130,65 @@ export const Codes = () => {
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
 
-  const isMobile = useMedia('(max-width: 740px)')
   return (
-    <Suspense fallback={<Loader />}>
-      <div className={styles.wrapper}>
-        <div className={styles.codes}>
-          {codes.length > 0 ? (
-            <>
-              <div className={styles.header}>
-                {isMobile ? (
-                  <div
-                    className={styles.icon}
-                    onClick={() => isMobile && history.push(`/admin`)}
-                  >
-                    <FontAwesomeIcon
-                      className={styles.backButton}
-                      icon={faChevronLeft}
-                    />
-                  </div>
-                ) : (
-                  <div className={styles.icon}>
-                    <FontAwesomeIcon icon={faClipboardList} />
-                  </div>
-                )}
-                <div className={styles.title}>
-                  <small>Admin</small>
-                  <h2>Beta Codes</h2>
-                </div>
-                <Button type={'button'} onClick={() => createCode()}>
-                  New Code
-                </Button>
+    <div className={styles.codes}>
+      <Header
+        heading={'Beta Codes'}
+        subheading={'Admin'}
+        icon={faClipboardList}
+        color='secondary'
+        action={
+          <Button
+            className={styles.action}
+            type={'button'}
+            onClick={() => createCode()}
+          >
+            New Code
+          </Button>
+        }
+      />
+      <br />
+      <List.View>
+        {codes.length > 0 ? (
+          <div ref={ref}>
+            {codes.map((code) =>
+              code ? <Code key={code.id} {...code} /> : <></>
+            )}
+            {!loading && canFetchMore ? (
+              <Waypoint
+                bottomOffset={20}
+                onEnter={async () => {
+                  try {
+                    const current = ref.current
+                    if (!current || !current.scrollHeight) return
+                    setLoading(true)
+                    const oldHeight = current.scrollHeight
+                    const oldTop = current.scrollTop
+                    await fetchMore()
+                    current.scrollTop = current.scrollHeight
+                      ? current.scrollHeight - oldHeight + oldTop
+                      : 0
+                  } finally {
+                    setLoading(false)
+                  }
+                }}
+              />
+            ) : !!loading && canFetchMore ? (
+              <div key='loader' className={styles.loader}>
+                <h5>Loading more...</h5>
               </div>
-              <div className={styles.body} ref={ref}>
-                <AnimatePresence>
-                  {codes.map((code) =>
-                    code ? <Code key={code.id} {...code} /> : <></>
-                  )}
-                </AnimatePresence>
-                {!loading && canFetchMore ? (
-                  <Waypoint
-                    bottomOffset={20}
-                    onEnter={async () => {
-                      try {
-                        const current = ref.current
-                        if (!current || !current.scrollHeight) return
-                        setLoading(true)
-                        const oldHeight = current.scrollHeight
-                        const oldTop = current.scrollTop
-                        await fetchMore()
-                        current.scrollTop = current.scrollHeight
-                          ? current.scrollHeight - oldHeight + oldTop
-                          : 0
-                      } finally {
-                        setLoading(false)
-                      }
-                    }}
-                  />
-                ) : !!loading && canFetchMore ? (
-                  <div key='loader' className={styles.loader}>
-                    <h5>Loading more...</h5>
-                  </div>
-                ) : (
-                  <></>
-                )}
-              </div>
-            </>
-          ) : (
-            <>
-              <div className={styles.codesEmpty}>
-                <FontAwesomeIcon size={'5x'} icon={faBoxOpen} />
-                <br />
-                <h2>No beta codes found!</h2>
-                <br />
-                <br />
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    </Suspense>
+            ) : (
+              <></>
+            )}
+          </div>
+        ) : (
+          <List.Empty
+            title={'No beta codes found'}
+            description={'Generate a beta code!'}
+            icon={faClipboardList}
+          />
+        )}
+      </List.View>
+    </div>
   )
 }

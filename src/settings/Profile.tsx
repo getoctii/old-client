@@ -62,7 +62,10 @@ const Profile = () => {
                 ...(values.username !== user?.username && {
                   username: values.username
                 }),
-                avatar: values.avatar,
+                ...(values.avatar &&
+                  values.avatar !== user?.avatar && {
+                    avatar: values.avatar
+                  }),
                 ...(values.developer && {
                   developer: values.developer
                 })

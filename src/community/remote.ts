@@ -26,6 +26,7 @@ export interface CommunityResponse {
   channels: string[]
   system_channel_id?: string
   base_permissions?: Permissions[]
+  organization?: boolean
 }
 
 export interface ChannelResponse {
@@ -53,6 +54,13 @@ export interface GroupResponse {
   color: string
   order?: number
   permissions: Permissions[]
+}
+
+export interface ProductResponse {
+  id: string
+  name: string
+  icon: string
+  description: string
 }
 
 export const getCommunity = async (
@@ -158,4 +166,25 @@ export const getMembers = async (
         params: { last_member_id: lastMemberID }
       }
     )
+  ).data
+
+export const getProducts = async (
+  _: string,
+  communityID: string,
+  token: string
+) =>
+  (
+    await clientGateway.get<ProductResponse[]>(
+      `/communities/${communityID}/products`,
+      {
+        headers: { Authorization: token }
+      }
+    )
+  ).data
+
+export const getProduct = async (_: string, productID: string, token: string) =>
+  (
+    await clientGateway.get<ProductResponse>(`/products/${productID}`, {
+      headers: { Authorization: token }
+    })
   ).data

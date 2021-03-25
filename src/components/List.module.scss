@@ -1,0 +1,149 @@
+.card {
+  overflow: hidden;
+  width: 100%;
+  background-color: var(--neko-settings-card);
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+
+  .actions {
+    display: flex;
+    margin-left: auto;
+
+    height: 46px;
+    button {
+      background: var(--neko-colors-secondary);
+    }
+  }
+  .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 180px;
+    text-align: left;
+    svg {
+      margin-left: 0.25rem;
+      color: var(--neko-text-href);
+    }
+
+    img {
+      object-fit: cover;
+      height: 45px;
+      width: 45px;
+      border-radius: 10px;
+    }
+  }
+
+  h4 {
+    margin: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  time {
+    font-size: 0.8rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  &:first-child {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+  }
+
+  &:last-of-type {
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+  }
+
+  button {
+    background: var(--neko-colors-secondary);
+    margin-left: auto;
+    height: 45px;
+    width: 45px;
+  }
+
+  .groups {
+    display: flex;
+    max-width: 100%;
+
+    @media (max-width: 1280px) {
+      display: none;
+    }
+  }
+}
+
+.cardPlaceholder {
+  background-color: var(--neko-settings-card);
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 2.4rem;
+    .title {
+      background: var(--neko-settings-background);
+      border-radius: 5px;
+      height: 1.25rem;
+    }
+  }
+
+  .icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    min-height: 45px;
+    border-radius: 10px;
+    position: relative;
+    margin-right: 0.5rem;
+    background: var(--neko-settings-background);
+  }
+
+  &:first-child {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+  }
+
+  &:last-of-type {
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+  }
+}
+
+.empty {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding: 4rem 2rem;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  background: var(--neko-settings-card);
+  flex-direction: column;
+  justify-content: space-between;
+
+  h2 {
+    margin: 1rem 0 0;
+  }
+  p {
+    text-align: center;
+    max-width: 410px;
+    margin: 0 0 1rem;
+  }
+  button {
+    background: var(--neko-colors-primary);
+    svg {
+      margin-left: 0.5rem;
+      font-size: 1.2rem;
+    }
+  }
+  @media (max-width: 740px) {
+    width: auto;
+    margin-top: 4rem;
+    padding: 2rem;
+  }
+}

@@ -18,6 +18,7 @@ import { Permission } from '../utils/permissions'
 import { Update } from './Update'
 import Status from './Status'
 import AddFriend from '../hub/friends/AddFriend'
+import NewProduct from '../community/integrations/NewProduct'
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
   const isMobile = useMedia('(max-width: 740px)')
@@ -42,6 +43,8 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <NewChannel />
     case ModalTypes.NEW_INVITE:
       return <NewInvite />
+    case ModalTypes.NEW_PRODUCT:
+      return <NewProduct />
     case ModalTypes.DELETE_CHANNEL:
       return <Confirmation {...props} />
     case ModalTypes.MANAGE_MEMBER_GROUPS:

@@ -1,4 +1,4 @@
-import { ErrorMessage, Field, Form, Formik, useField } from 'formik'
+import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import Input from '../components/Input'
@@ -33,6 +33,7 @@ import { BlockPicker } from 'react-color'
 import { useMedia, useSet } from 'react-use'
 import { faCheck, faMinus, faTimes } from '@fortawesome/pro-solid-svg-icons'
 import { Permission } from '../utils/permissions'
+import TextArea from '../components/TextArea'
 
 const ChannelSchema = Yup.object().shape({
   name: Yup.string()
@@ -67,22 +68,6 @@ const Group = ({
         {plus && <FontAwesomeIcon icon={faPlusCircle} />}
       </Button>
     </>
-  )
-}
-
-const DescriptionField = ({ name }: { name: string }) => {
-  const [field, meta] = useField(name)
-
-  return (
-    <textarea
-      id={name}
-      name={name}
-      className={styles.textarea}
-      value={meta.value}
-      onChange={field.onChange}
-      onBlur={field.onBlur}
-      rows={3}
-    />
   )
 }
 
@@ -571,7 +556,7 @@ export const EditChannel = () => {
                 <label htmlFor='description' className={styles.inputName}>
                   Description
                 </label>
-                <DescriptionField name={'description'} />
+                <TextArea name={'description'} />
                 <ErrorMessage
                   component='p'
                   className={styles.error}

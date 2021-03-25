@@ -1,0 +1,21 @@
+.cards {
+  margin-top: 1rem;
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  .card {
+    border-radius: 10px;
+    background: var(--neko-settings-card);
+    padding: 1rem;
+
+    h1 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    h2 {
+      font-size: 1.1rem;
+
+      font-weight: 400;
+    }
+  }
+}

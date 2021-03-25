@@ -1,12 +1,7 @@
-.newsletters {
-  background: var(--neko-settings-background);
-  overflow-y: scroll;
-  height: 100%;
-  width: 100%;
-  padding: 2rem;
+.resources {
+  margin-top: 1rem;
 
   .icon {
-    background: var(--neko-colors-warning);
     width: 45px;
     height: 45px;
     min-width: 45px;
@@ -19,9 +14,17 @@
     align-items: center;
     margin-right: 0.5rem;
     color: var(--neko-text-inverse);
-  }
 
-  h4 {
-    overflow: visible !important;
+    &.primary {
+      background: var(--neko-colors-primary);
+    }
+
+    &.secondary {
+      background: var(--neko-colors-secondary);
+    }
+
+    &.warning {
+      background: var(--neko-colors-warning);
+    }
   }
 }

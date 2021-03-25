@@ -1,27 +1,31 @@
-import { faBoxOpen } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import dayjsCalendar from 'dayjs/plugin/calendar'
-import React, { memo, Suspense, useMemo } from 'react'
+import React, { memo, Suspense } from 'react'
 import { queryCache, useMutation, useQuery } from 'react-query'
 import { useRouteMatch } from 'react-router-dom'
-import { useMedia } from 'react-use'
 import { Auth } from '../../authentication/state'
 import Button from '../../components/Button'
 import { getUser } from '../../user/remote'
 import styles from './Invites.module.scss'
 import { getInvites, InviteResponse } from '../remote'
-import { faCopy, faTrashAlt } from '@fortawesome/pro-duotone-svg-icons'
-import { clientGateway } from '../../utils/constants'
+import {
+  faCopy,
+  faPlusCircle,
+  faTrashAlt,
+  faUsers
+} from '@fortawesome/pro-duotone-svg-icons'
+import { clientGateway, ModalTypes } from '../../utils/constants'
 import { Plugins } from '@capacitor/core'
+import List from '../../components/List'
+import { UI } from '../../state/ui'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
 
 const InviteCard = memo((invite: InviteResponse) => {
   const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
-  const isMobile = useMedia('(max-width: 960px)')
   const { token } = Auth.useContainer()
   const user = useQuery(['users', invite.author_id, token], getUser)
   const [deleteInvite] = useMutation(
@@ -38,20 +42,21 @@ const InviteCard = memo((invite: InviteResponse) => {
     }
   )
   return (
-    <div className={styles.invite}>
-      <div className={styles.icon}>{invite.uses}</div>
-      <div className={styles.info}>
-        <h4>
+    <List.Card
+      icon={<div className={styles.icon}>{invite.uses}</div>}
+      title={
+        <>
           {user.data?.username}#
           {user.data?.discriminator === 0
             ? 'inn'
             : user.data?.discriminator.toString().padStart(4, '0')}
-        </h4>
-        <time>{invite.code}</time>
-      </div>
-      {!isMobile && (
-        <div className={styles.actions}>
+        </>
+      }
+      subtitle={invite.code}
+      actions={
+        <>
           <Button
+            className={styles.copyButton}
             type='button'
             onClick={async () => {
               await Plugins.Clipboard.write({
@@ -64,84 +69,57 @@ const InviteCard = memo((invite: InviteResponse) => {
           </Button>
           <Button
             type='button'
+            className={styles.deleteButton}
             onClick={async () => await deleteInvite()}
-            className={styles.delete}
           >
             <FontAwesomeIcon icon={faTrashAlt} />
           </Button>
-        </div>
-      )}
-    </div>
+        </>
+      }
+    />
   )
 })
 
-const InvitePlaceholder = ({ className }: { className?: string }) => {
-  const name = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
-  const code = useMemo(() => Math.floor(Math.random() * 15) + 3, [])
-  return (
-    <div
-      className={`${styles.invitePlaceholder} ${className ? className : ''}`}
-    >
-      <div className={styles.icon} />
-      <div className={styles.info}>
-        <div className={styles.user} style={{ width: `${name}rem` }} />
-        <div className={styles.code} style={{ width: `${code}rem` }} />
-      </div>
-    </div>
-  )
-}
-
 const InvitesView = () => {
+  const ui = UI.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
   const { token } = Auth.useContainer()
   const invites = useQuery(['invites', match?.params.id, token], getInvites)
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.invites}>
+    <div className={styles.invites}>
+      <List.View>
         {invites.data && invites.data.length > 0 ? (
-          <>
-            <div className={styles.body}>
-              {invites.data.map(
-                (invite) =>
-                  invite && (
-                    <Suspense fallback={<InvitePlaceholder />}>
-                      <InviteCard key={invite.id} {...invite} />
-                    </Suspense>
-                  )
-              )}
-            </div>
-          </>
+          invites.data.map(
+            (invite) =>
+              invite && (
+                <Suspense key={invite.id} fallback={<List.CardPlaceholder />}>
+                  <InviteCard {...invite} />
+                </Suspense>
+              )
+          )
         ) : (
-          <>
-            <div className={styles.invitesEmpty}>
-              <FontAwesomeIcon size={'5x'} icon={faBoxOpen} />
-              <br />
-              <h2>No invites in this community!</h2>
-              <br />
-              <br />
-            </div>
-          </>
+          <List.Empty
+            title={'Get started with invites!'}
+            description={`An empty community is pretty boring. Invite friends so you can chat around and even invite random people from the internet with invites!`}
+            icon={faUsers}
+            action={
+              <Button
+                type='button'
+                onClick={() => ui.setModal({ name: ModalTypes.NEW_INVITE })}
+              >
+                Create Invite <FontAwesomeIcon icon={faPlusCircle} />
+              </Button>
+            }
+          />
         )}
-      </div>
-    </div>
-  )
-}
-
-const InvitesPlaceholder = () => {
-  const length = useMemo(() => Math.floor(Math.random() * 4) + 1, [])
-  return (
-    <div className={styles.invitesPlaceholder}>
-      {Array.from(Array(length).keys()).map((_, index) => (
-        <InvitePlaceholder key={index} className={styles.cardPlaceholder} />
-      ))}
+      </List.View>
     </div>
   )
 }
 
 const Invites = {
   View: InvitesView,
-  Card: InviteCard,
-  Placeholder: InvitesPlaceholder
+  Card: InviteCard
 }
 
 export default Invites

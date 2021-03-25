@@ -2,140 +2,20 @@ import { Formik, Form, ErrorMessage, Field } from 'formik'
 import React, { useState } from 'react'
 import { queryCache, useQuery } from 'react-query'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { Auth } from '../../authentication/state'
-import Button from '../../components/Button'
-import Input from '../../components/Input'
-import { clientGateway } from '../../utils/constants'
-import { isUsername } from '../../utils/validations'
-import styles from './General.module.scss'
-import { CommunityResponse, getChannels, getCommunity } from '../remote'
-import IconPicker from '../../components/IconPicker'
+import { Auth } from '../../../../authentication/state'
+import Button from '../../../../components/Button'
+import Input from '../../../../components/Input'
+import { clientGateway } from '../../../../utils/constants'
+import { isUsername } from '../../../../utils/validations'
+import styles from './Settings.module.scss'
+import { CommunityResponse, getCommunity } from '../../../remote'
+import { isTag } from '../../../../utils/validations'
+import IconPicker from '../../../../components/IconPicker'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faChevronCircleDown,
-  faSave,
-  faTimesCircle
-} from '@fortawesome/pro-duotone-svg-icons'
-import { useUser } from '../../user/state'
-import * as Yup from 'yup'
+import { faSave } from '@fortawesome/pro-duotone-svg-icons'
+import { useUser } from '../../../../user/state'
 
-const TransferSchema = Yup.object().shape({
-  username: Yup.string()
-    .min(2, 'Too short, must be at least 2 characters.')
-    .max(16, 'Too long, must be less then 16 characters.')
-    .optional()
-})
-
-const DeleteSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(2, 'Too short, must be at least 2 characters.')
-    .max(16, 'Too long, must be less then 16 characters.')
-    .optional()
-})
-
-const saveSettings = async (
-  communityID: string,
-  values: {
-    name?: string
-    icon?: string
-    system_channel_id?: string | null
-  },
-  token: string
-) => {
-  if (!values.name && !values.icon && values.system_channel_id === undefined)
-    return
-  await clientGateway.patch(`/communities/${communityID}`, values, {
-    headers: {
-      authorization: token
-    }
-  })
-  await queryCache.invalidateQueries(['community', communityID])
-}
-
-const SystemChannel = ({ community }: { community: CommunityResponse }) => {
-  const auth = Auth.useContainer()
-  const { data: channels } = useQuery(
-    ['channels', community.id, auth.token],
-    getChannels
-  )
-
-  const [dropdownToggled, setDropdownToggled] = useState(false)
-  return (
-    <div className={styles.card}>
-      <h5>System Messages</h5>
-      <div className={styles.systemChannel}>
-        <div className={styles.channel}>
-          <label htmlFor='channel' className={styles.inputName}>
-            Welcome Room
-          </label>
-          <p>Sends a message when someone joins to the selected room.</p>
-          <div className={styles.select}>
-            <div
-              className={styles.selected}
-              onClick={() => setDropdownToggled(!dropdownToggled)}
-            >
-              <span>
-                {community.system_channel_id
-                  ? `#${
-                      channels?.find(
-                        (c) => c.id === community.system_channel_id
-                      )?.name
-                    }`
-                  : 'Select a Room'}
-              </span>
-              <FontAwesomeIcon
-                icon={dropdownToggled ? faTimesCircle : faChevronCircleDown}
-              />
-            </div>
-            {dropdownToggled && (
-              <div className={styles.items}>
-                <div
-                  className={`${styles.item} ${styles.none}`}
-                  onClick={async () => {
-                    if (!auth.token) return
-                    await saveSettings(
-                      community.id,
-                      {
-                        system_channel_id: null
-                      },
-                      auth.token
-                    )
-                    setDropdownToggled(false)
-                  }}
-                >
-                  None
-                </div>
-                {channels?.map((channel) => (
-                  <div
-                    onClick={async () => {
-                      if (!auth.token) return
-                      await saveSettings(
-                        community.id,
-                        {
-                          system_channel_id: channel.id
-                        },
-                        auth.token
-                      )
-                      setDropdownToggled(false)
-                    }}
-                    className={`${styles.item} ${
-                      channel.id === community.system_channel_id
-                        ? styles.primary
-                        : ''
-                    }`}
-                  >
-                    #{channel.name}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-const Personalization = ({ community }: { community: CommunityResponse }) => {
+const Personalization = () => {
   const auth = Auth.useContainer()
   const [saveName, setSaveName] = useState<string | undefined>(undefined)
   return (
@@ -147,17 +27,9 @@ const Personalization = ({ community }: { community: CommunityResponse }) => {
             Icon
           </label>
           <IconPicker
-            alt={community.name || 'unknown'}
-            defaultIcon={community.icon}
+            alt={'unknown'}
             onUpload={async (url) => {
               if (!auth.token) return
-              await saveSettings(
-                community.id,
-                {
-                  icon: url
-                },
-                auth.token
-              )
             }}
           />
         </div>
@@ -167,7 +39,6 @@ const Personalization = ({ community }: { community: CommunityResponse }) => {
           </label>
           <div className={styles.nameInput}>
             <Input
-              defaultValue={community.name}
               onChange={(event) => {
                 if (event.target.value !== '') {
                   setSaveName(event.target.value)
@@ -181,16 +52,11 @@ const Personalization = ({ community }: { community: CommunityResponse }) => {
                   auth.token &&
                   isUsername(saveName)
                 ) {
-                  await saveSettings(
-                    community.id,
-                    { name: saveName },
-                    auth.token
-                  )
                   setSaveName(undefined)
                 }
               }}
             />
-            {saveName && community.name !== saveName && (
+            {saveName && (
               <Button
                 type='button'
                 onClick={async () => {
@@ -201,11 +67,6 @@ const Personalization = ({ community }: { community: CommunityResponse }) => {
                     !isUsername(saveName)
                   )
                     return
-                  await saveSettings(
-                    community.id,
-                    { name: saveName },
-                    auth.token
-                  )
                   setSaveName(undefined)
                 }}
               >
@@ -221,6 +82,28 @@ const Personalization = ({ community }: { community: CommunityResponse }) => {
       </div>
     </div>
   )
+}
+
+type transferFormData = {
+  username: string
+}
+
+const validateTransfer = (values: transferFormData) => {
+  const errors: { username?: string } = {}
+  if (!isTag(values.username)) errors.username = 'A valid username is required'
+  return errors
+}
+
+type deleteFormData = {
+  name: string
+  actualName: string
+}
+
+const validateDelete = (values: deleteFormData) => {
+  const errors: { name?: string } = {}
+  if (values.name !== values.actualName)
+    errors.name = 'The name must be the same as the current community'
+  return errors
 }
 
 type FindResponse = {
@@ -249,8 +132,11 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
               name: '',
               actualName: community.name
             }}
-            validationSchema={TransferSchema}
-            onSubmit={async (values, { setSubmitting, setFieldError }) => {
+            validate={validateDelete}
+            onSubmit={async (
+              values,
+              { setSubmitting, setErrors, setFieldError }
+            ) => {
               if (!values?.name) return setFieldError('name', 'Required')
               try {
                 await clientGateway.patch(
@@ -304,7 +190,7 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
           initialValues={{
             username: ''
           }}
-          validationSchema={TransferSchema}
+          validate={validateTransfer}
           onSubmit={async (
             values,
             { setSubmitting, setErrors, setFieldError }
@@ -374,7 +260,7 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
             name: '',
             actualName: community.name
           }}
-          validationSchema={DeleteSchema}
+          validate={validateDelete}
           onSubmit={async (values, { setSubmitting }) => {
             try {
               await clientGateway.delete(`/communities/${community.id}`, {
@@ -414,19 +300,17 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
   )
 }
 
-export const General = () => {
+export const Settings = () => {
   const auth = Auth.useContainer()
-  const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
+  const match = useRouteMatch<{ id: string }>('/communities/:id/products')
   const { data: community } = useQuery(
     ['community', match?.params.id, auth.token],
     getCommunity
   )
-  if (!community) return <></>
   return (
     <div className={styles.general}>
       <div className={styles.basics}>
-        <Personalization community={community} />
-        <SystemChannel community={community} />
+        <Personalization />
       </div>
       {community?.owner_id === auth.id && <DangerZone community={community} />}
     </div>
