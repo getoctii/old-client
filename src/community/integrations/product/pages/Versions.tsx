@@ -1,22 +1,39 @@
 import { faCodeCommit } from '@fortawesome/pro-duotone-svg-icons'
-import React from 'react'
+import React, { Suspense } from 'react'
+import { useQuery } from 'react-query'
+import { useParams } from 'react-router-dom'
+import { Auth } from '../../../../authentication/state'
 import List from '../../../../components/List'
+import { getVersion, getVersions } from '../../../remote'
 import styles from './Versions.module.scss'
 
-const versions = [
-  {
-    id: 'ur mom',
-    version: '6.9.420'
-  }
-]
+const VersionCard = ({ id }: { id: number }) => {
+  const { productID } = useParams<{ productID: string }>()
+  const auth = Auth.useContainer()
+  const { data: version } = useQuery(
+    ['version', productID, id, auth.token],
+    getVersion
+  )
+  return (
+    <List.Card title={version?.name} subtitle={`Build: ${version?.number}`} />
+  )
+}
 
 const Versions = () => {
+  const auth = Auth.useContainer()
+  const { productID } = useParams<{ productID: string }>()
+  const { data: versions } = useQuery(
+    ['versions', productID, auth.token],
+    getVersions
+  )
   return (
     <div className={styles.versions}>
       <List.View>
-        {versions.length > 0 ? (
-          versions.map((version) => (
-            <List.Card key={version.id} title={version.version} />
+        {(versions?.length ?? 0) > 0 ? (
+          versions?.map((version) => (
+            <Suspense key={version} fallback={<List.CardPlaceholder />}>
+              <VersionCard id={version} />
+            </Suspense>
           ))
         ) : (
           <List.Empty

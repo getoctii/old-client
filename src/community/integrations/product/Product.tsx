@@ -15,8 +15,11 @@ import Header from '../../../components/Header'
 import { useQuery } from 'react-query'
 import { Auth } from '../../../authentication/state'
 import { getProduct } from '../../remote'
+import { UI } from '../../../state/ui'
+import { ModalTypes } from '../../../utils/constants'
 
 const Product = () => {
+  const ui = UI.useContainer()
   const auth = Auth.useContainer()
   const { path } = useRouteMatch()
   const match = useRouteMatch<{
@@ -40,10 +43,28 @@ const Product = () => {
           image={product?.icon}
         />
 
-        {match?.params.tab === 'versions' && (
-          <Button className={styles.newButton} type='button'>
+        {match?.params.tab === 'versions' ? (
+          <Button
+            className={styles.newButton}
+            type='button'
+            onClick={() => ui.setModal({ name: ModalTypes.NEW_VERSION })}
+          >
             {isMobile ? <FontAwesomeIcon icon={faPlusCircle} /> : 'New Version'}
           </Button>
+        ) : match?.params.tab === 'resources' ? (
+          <Button
+            className={styles.newButton}
+            type='button'
+            onClick={() => ui.setModal({ name: ModalTypes.NEW_RESOURCE })}
+          >
+            {isMobile ? (
+              <FontAwesomeIcon icon={faPlusCircle} />
+            ) : (
+              'New Resource'
+            )}
+          </Button>
+        ) : (
+          <></>
         )}
       </div>
       <Navbar.View />

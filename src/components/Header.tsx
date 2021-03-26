@@ -22,6 +22,7 @@ const Header = ({
   subheading,
   heading,
   onClick,
+  onBack,
   color,
   icon,
   image,
@@ -31,6 +32,7 @@ const Header = ({
   subheading: string
   heading: string
   onClick?: () => void
+  onBack?: () => void
   color?: 'primary' | 'secondary'
   icon?: IconDefinition
   image?: string
@@ -48,8 +50,8 @@ const Header = ({
             : isMobile
             ? styles.primary
             : ''
-        } ${onClick ? styles.clickable : ''}`}
-        onClick={() => onClick && onClick()}
+        } ${onClick || (onBack && isMobile) ? styles.clickable : ''}`}
+        onClick={() => (onBack && isMobile ? onBack() : onClick && onClick())}
         style={
           image && !icon && !isMobile
             ? {

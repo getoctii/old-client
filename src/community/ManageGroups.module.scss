@@ -24,7 +24,7 @@
       }
       &.add {
         svg {
-          color: var(--neko-text-href);
+          color: var(--neko-text-primary);
         }
       }
     }
@@ -89,6 +89,4 @@
     width: 100%;
     background: var(--neko-colors-primary);
   }
-
-
 }

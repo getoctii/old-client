@@ -14,6 +14,7 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import Header from '../components/Header'
 import List from '../components/List'
+import { useHistory } from 'react-router-dom'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
@@ -23,8 +24,9 @@ interface SubResponse {
   created_at: number
   updated_at: number
 }
-export const Newsletters = () => {
+const Newsletters = () => {
   const { token } = Auth.useContainer()
+  const history = useHistory()
   const { data, canFetchMore, fetchMore } = useInfiniteQuery<
     SubResponse[],
     any
@@ -55,6 +57,7 @@ export const Newsletters = () => {
         subheading={'Admin'}
         icon={faClipboardList}
         color='secondary'
+        onBack={() => history.push(`/admin`)}
       />
       <br />
       <List.View>
@@ -115,3 +118,5 @@ export const Newsletters = () => {
     </div>
   )
 }
+
+export default Newsletters

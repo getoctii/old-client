@@ -22,7 +22,7 @@
     }
 
     a {
-      color: var(--neko-text-href);
+      color: var(--neko-text-primary);
       text-decoration: none;
     }
   }
@@ -48,7 +48,6 @@
   input {
     display: none;
   }
-
 
   @media (max-width: 800px) {
     display: flex;

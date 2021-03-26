@@ -1,23 +1,34 @@
 import { Formik, Form, ErrorMessage, Field } from 'formik'
 import React, { useState } from 'react'
-import { queryCache, useQuery } from 'react-query'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useQuery } from 'react-query'
+import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../../../authentication/state'
 import Button from '../../../../components/Button'
 import Input from '../../../../components/Input'
 import { clientGateway } from '../../../../utils/constants'
 import { isUsername } from '../../../../utils/validations'
 import styles from './Settings.module.scss'
-import { CommunityResponse, getCommunity } from '../../../remote'
-import { isTag } from '../../../../utils/validations'
+import { CommunityResponse, getCommunity, getProduct } from '../../../remote'
 import IconPicker from '../../../../components/IconPicker'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from '@fortawesome/pro-duotone-svg-icons'
-import { useUser } from '../../../../user/state'
+import * as Yup from 'yup'
+
+const DeleteSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, 'Too short, must be at least 2 characters.')
+    .max(16, 'Too long, must be less then 16 characters.')
+    .optional()
+})
 
 const Personalization = () => {
+  const { productID } = useParams<{ productID: string }>()
   const auth = Auth.useContainer()
   const [saveName, setSaveName] = useState<string | undefined>(undefined)
+  const { data: product } = useQuery(
+    ['product', productID, auth.token],
+    getProduct
+  )
   return (
     <div className={styles.card}>
       <h5>Personalization</h5>
@@ -27,9 +38,21 @@ const Personalization = () => {
             Icon
           </label>
           <IconPicker
-            alt={'unknown'}
+            alt={product?.name || 'unknown'}
+            defaultIcon={product?.icon}
             onUpload={async (url) => {
               if (!auth.token) return
+              await clientGateway.patch(
+                `/products/${productID}`,
+                {
+                  icon: url
+                },
+                {
+                  headers: {
+                    Authorization: auth.token
+                  }
+                }
+              )
             }}
           />
         </div>
@@ -44,6 +67,7 @@ const Personalization = () => {
                   setSaveName(event.target.value)
                 }
               }}
+              defaultValue={product?.name}
               onKeyDown={async (event) => {
                 if (
                   event.key === 'Enter' &&
@@ -52,6 +76,17 @@ const Personalization = () => {
                   auth.token &&
                   isUsername(saveName)
                 ) {
+                  await clientGateway.patch(
+                    `/products/${productID}`,
+                    {
+                      name: saveName
+                    },
+                    {
+                      headers: {
+                        Authorization: auth.token
+                      }
+                    }
+                  )
                   setSaveName(undefined)
                 }
               }}
@@ -67,6 +102,17 @@ const Personalization = () => {
                     !isUsername(saveName)
                   )
                     return
+                  await clientGateway.patch(
+                    `/products/${productID}`,
+                    {
+                      name: saveName
+                    },
+                    {
+                      headers: {
+                        Authorization: auth.token
+                      }
+                    }
+                  )
                   setSaveName(undefined)
                 }}
               >
@@ -84,183 +130,25 @@ const Personalization = () => {
   )
 }
 
-type transferFormData = {
-  username: string
-}
-
-const validateTransfer = (values: transferFormData) => {
-  const errors: { username?: string } = {}
-  if (!isTag(values.username)) errors.username = 'A valid username is required'
-  return errors
-}
-
-type deleteFormData = {
-  name: string
-  actualName: string
-}
-
-const validateDelete = (values: deleteFormData) => {
-  const errors: { name?: string } = {}
-  if (values.name !== values.actualName)
-    errors.name = 'The name must be the same as the current community'
-  return errors
-}
-
-type FindResponse = {
-  id: string
-  avatar: string
-  username: string
-  discriminator: number
-}
-
 const DangerZone = ({ community }: { community: CommunityResponse }) => {
   const auth = Auth.useContainer()
   const history = useHistory()
-  const user = useUser(auth?.id ?? undefined)
   return (
     <div className={styles.dangerZone}>
-      {!community.organization && user?.developer && (
-        <div className={styles.organization}>
-          <h5>Danger Zone</h5>
-          <h4>Enable Organization</h4>
-          <p>
-            This will allow you to distrbute products connected to this
-            community. YOU CANNOT UNDO THIS SO BEWARE!
-          </p>
-          <Formik
-            initialValues={{
-              name: '',
-              actualName: community.name
-            }}
-            validate={validateDelete}
-            onSubmit={async (
-              values,
-              { setSubmitting, setErrors, setFieldError }
-            ) => {
-              if (!values?.name) return setFieldError('name', 'Required')
-              try {
-                await clientGateway.patch(
-                  `/communities/${community.id}`,
-                  {
-                    organization: true
-                  },
-                  { headers: { Authorization: auth.token } }
-                )
-                await queryCache.invalidateQueries(['community', community.id])
-                history.push(`/communities/${community.id}`)
-              } finally {
-                setSubmitting(false)
-              }
-            }}
-          >
-            {({ isSubmitting }) => (
-              <Form>
-                <label htmlFor='name'>Name</label>
-                <div className={styles.dangerWrapper}>
-                  <div className={styles.dangerInput}>
-                    <Field component={Input} name='name' />
-                    <ErrorMessage
-                      className={styles.error}
-                      component='p'
-                      name='name'
-                    />
-                  </div>
-                  <Button
-                    className={styles.button}
-                    disabled={isSubmitting}
-                    type='submit'
-                  >
-                    Enable Organization
-                  </Button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </div>
-      )}
-      <div className={styles.transfer}>
-        <h4>Transfer Ownership</h4>
-        <p>
-          Transferring ownership will give the specified person full control of
-          this community. You will lose the ability to manage the server and
-          won’t be able to regain control unless you ask the specified person to
-          transfer the community back.{' '}
-        </p>
-        <Formik
-          initialValues={{
-            username: ''
-          }}
-          validate={validateTransfer}
-          onSubmit={async (
-            values,
-            { setSubmitting, setErrors, setFieldError }
-          ) => {
-            if (!values?.username) return setFieldError('username', 'Required')
-            try {
-              const [username, discriminator] = values.username.split('#')
-              const user = (
-                await clientGateway.get<FindResponse>('/users/find', {
-                  headers: { Authorization: auth.token },
-                  params: {
-                    username,
-                    discriminator:
-                      discriminator[1] === 'inn' ? 0 : Number(discriminator[1])
-                  }
-                })
-              ).data
-              await clientGateway.patch(
-                `/communities/${community.id}`,
-                new URLSearchParams({ owner_id: user.id }),
-                { headers: { Authorization: auth.token } }
-              )
-              await queryCache.invalidateQueries(['community', community.id])
-              history.push(`/communities/${community.id}`)
-            } catch (e) {
-              if (e.response.data.errors.includes('UserNotFound'))
-                setErrors({ username: 'User not found' })
-              // TODO: Add message if you try to add yourself...
-            } finally {
-              setSubmitting(false)
-            }
-          }}
-        >
-          {({ isSubmitting, setFieldValue }) => (
-            <Form>
-              <label htmlFor='username'>Username</label>
-              <div className={styles.dangerWrapper}>
-                <div className={styles.dangerInput}>
-                  <Field component={Input} name='username' />
-                  <ErrorMessage
-                    className={styles.error}
-                    component='p'
-                    name='username'
-                  />
-                </div>
-                <Button
-                  className={styles.button}
-                  disabled={isSubmitting}
-                  type='submit'
-                >
-                  Transfer Ownership
-                </Button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
       <div className={styles.delete}>
-        <h4>Delete Community</h4>
+        <h4>Delete Product</h4>
         <p>
-          Deleting a community will wipe it from the face of this planet. Do not
-          do this as you will not be able to recover the community or any of
-          it’s data including, channels, messages, users, and settings.{' '}
+          Deleting a product will wipe it from the face of this planet. Do not
+          do this as you will not be able to recover the product or any of it’s
+          data including, communities it's in, store listing, users, and
+          settings.{' '}
         </p>
         <Formik
           initialValues={{
             name: '',
             actualName: community.name
           }}
-          validate={validateDelete}
+          validationSchema={DeleteSchema}
           onSubmit={async (values, { setSubmitting }) => {
             try {
               await clientGateway.delete(`/communities/${community.id}`, {

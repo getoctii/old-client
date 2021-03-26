@@ -4,7 +4,7 @@ import styles from './Products.module.scss'
 import Button from '../../components/Button'
 import { useHistory, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
-import { getCommunity, getProducts } from '../remote'
+import { getCommunity, getProduct, getProducts } from '../remote'
 import { Auth } from '../../authentication/state'
 import Header from '../../components/Header'
 import List from '../../components/List'
@@ -13,19 +13,30 @@ import { faPlusCircle, faCubes } from '@fortawesome/pro-duotone-svg-icons'
 import { useMedia } from 'react-use'
 import { UI } from '../../state/ui'
 import { ModalTypes } from '../../utils/constants'
+import { Suspense } from 'react'
 
-// const products = [
-//   {
-//     id: 'points',
-//     name: 'Points',
-//     icon: 'https://file.coffee/u/fGpSBEutgA.png'
-//   },
-//   {
-//     id: 'booooot',
-//     name: 'innnnnbot',
-//     icon: 'https://file.coffee/u/fGpSBEutgA.png'
-//   }
-// ]
+export const ProductCard = ({ id }: { id: string }) => {
+  const { id: communityID } = useParams<{ id: string }>()
+  const auth = Auth.useContainer()
+  const history = useHistory()
+  const { data: product } = useQuery(['product', id, auth.token], getProduct)
+  return (
+    <List.Card
+      title={product?.name}
+      icon={<Icon avatar={product?.icon} />}
+      actions={
+        <Button
+          type={'button'}
+          onClick={() => {
+            history.push(`/communities/${communityID}/products/${id}`)
+          }}
+        >
+          <FontAwesomeIcon icon={faCogs} />
+        </Button>
+      }
+    />
+  )
+}
 
 const Products = () => {
   const ui = UI.useContainer()
@@ -35,7 +46,6 @@ const Products = () => {
   const { data: community } = useQuery(['community', id, token], getCommunity)
   const { data: products } = useQuery(['products', id, token], getProducts)
   const isMobile = useMedia('(max-width: 740px)')
-
   return (
     <div className={styles.products}>
       <div className={styles.header}>
@@ -43,6 +53,7 @@ const Products = () => {
           heading={'Products'}
           subheading={community?.name ?? ''}
           image={community?.icon}
+          onBack={() => history.push(`/communities/${id}`)}
         />
         {(products?.length ?? 0) > 0 && (
           <Button className={styles.newButton} type='button'>
@@ -60,21 +71,9 @@ const Products = () => {
           products?.map(
             (product) =>
               product && (
-                <List.Card
-                  key={product.id}
-                  title={product.name}
-                  icon={<Icon avatar={product.icon} />}
-                  actions={
-                    <Button
-                      type={'button'}
-                      onClick={() => {
-                        history.push(`/communities/${id}/products/sex`)
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faCogs} />
-                    </Button>
-                  }
-                />
+                <Suspense key={product} fallback={<List.CardPlaceholder />}>
+                  <ProductCard id={product} />
+                </Suspense>
               )
           )
         ) : (

@@ -19,6 +19,8 @@ import { Update } from './Update'
 import Status from './Status'
 import AddFriend from '../hub/friends/AddFriend'
 import NewProduct from '../community/integrations/NewProduct'
+import NewResource from '../community/integrations/product/pages/NewResource'
+import NewVersion from '../community/integrations/product/pages/NewVersion'
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
   const isMobile = useMedia('(max-width: 740px)')
@@ -53,6 +55,10 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <Update />
     case ModalTypes.ADD_FRIEND:
       return <AddFriend />
+    case ModalTypes.NEW_RESOURCE:
+      return <NewResource />
+    case ModalTypes.NEW_VERSION:
+      return <NewVersion />
     default:
       return <></>
   }

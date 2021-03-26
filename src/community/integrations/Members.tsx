@@ -157,6 +157,7 @@ const Members = () => {
       return last.length < 25 ? undefined : last[last.length - 1]?.id
     }
   })
+  const history = useHistory()
   const members = useMemo(() => data?.flat() || [], [data])
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
@@ -166,6 +167,7 @@ const Members = () => {
         heading={'Members'}
         subheading={community?.name ?? ''}
         image={community?.icon}
+        onBack={() => history.push(`/communities/${id}`)}
       />
       <br />
       <List.View>

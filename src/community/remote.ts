@@ -63,6 +63,24 @@ export interface ProductResponse {
   description: string
 }
 
+export enum ResourceTypes {
+  THEME = 1,
+  CLIENT_INTEGRATION = 2,
+  SERVER_INTEGRATION = 3
+}
+
+export interface ResourceResponse {
+  id: string
+  name: string
+  type: ResourceTypes
+}
+
+export interface VersionResponse {
+  name: string
+  description: string
+  number: number
+}
+
 export const getCommunity = async (
   _: string,
   communityID: string,
@@ -174,12 +192,9 @@ export const getProducts = async (
   token: string
 ) =>
   (
-    await clientGateway.get<ProductResponse[]>(
-      `/communities/${communityID}/products`,
-      {
-        headers: { Authorization: token }
-      }
-    )
+    await clientGateway.get<string[]>(`/communities/${communityID}/products`, {
+      headers: { Authorization: token }
+    })
   ).data
 
 export const getProduct = async (_: string, productID: string, token: string) =>
@@ -187,4 +202,56 @@ export const getProduct = async (_: string, productID: string, token: string) =>
     await clientGateway.get<ProductResponse>(`/products/${productID}`, {
       headers: { Authorization: token }
     })
+  ).data
+
+export const getResources = async (
+  _: string,
+  productID: string,
+  token: string
+) =>
+  (
+    await clientGateway.get<string[]>(`/products/${productID}/resources`, {
+      headers: { Authorization: token }
+    })
+  ).data
+
+export const getResource = async (
+  _string: string,
+  productID: string,
+  resourceID: string,
+  token: string
+) =>
+  (
+    await clientGateway.get<ResourceResponse>(
+      `/products/${productID}/resources/${resourceID}`,
+      {
+        headers: { Authorization: token }
+      }
+    )
+  ).data
+
+export const getVersions = async (
+  _: string,
+  productID: string,
+  token: string
+) =>
+  (
+    await clientGateway.get<number[]>(`/products/${productID}/versions`, {
+      headers: { Authorization: token }
+    })
+  ).data
+
+export const getVersion = async (
+  _string: string,
+  productID: string,
+  versionID: number,
+  token: string
+) =>
+  (
+    await clientGateway.get<VersionResponse>(
+      `/products/${productID}/versions/${versionID}`,
+      {
+        headers: { Authorization: token }
+      }
+    )
   ).data

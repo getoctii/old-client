@@ -6,15 +6,25 @@ import {
   faChevronCircleLeft
 } from '@fortawesome/pro-duotone-svg-icons'
 import Header from '../../components/Header'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
+import { useQuery } from 'react-query'
+import { Auth } from '../../authentication/state'
+import { getProduct } from '../../community/remote'
+import { clientGateway } from '../../utils/constants'
 
 const Product = () => {
+  const auth = Auth.useContainer()
   const history = useHistory()
+  const { productID } = useParams<{ productID: string }>()
+  const { data: product } = useQuery(
+    ['product', productID, auth.token],
+    getProduct
+  )
   return (
     <div className={styles.product}>
       <Header
         icon={faChevronCircleLeft}
-        heading={'Points'}
+        heading={product?.name ?? ''}
         subheading={'Store'}
         className={styles.backHeader}
         color={'secondary'}
@@ -23,32 +33,36 @@ const Product = () => {
       <img
         className={styles.banner}
         src='https://file.coffee/u/DlX3tED6S3.png'
-        alt='Points'
+        alt={product?.name}
       />
       <div className={styles.main}>
         <div className={styles.info}>
           <h1>
-            Points
-            <FontAwesomeIcon className={styles.badge} icon={faBadgeCheck} />
+            {product?.name}
+            {/* <FontAwesomeIcon className={styles.badge} icon={faBadgeCheck} /> */}
           </h1>
-          <h2>A simple & clean economy bot</h2>
-          <p>
-            Reward members for being active and participating in your server
-            through message points. Host your own economy through our banking
-            system. Try your luck with dice and coin flip commands. Give out
-            cool rewards with the shop. And so much more.
-          </p>
+          <h2>Tagline</h2>
+          <p>{product?.description}</p>
         </div>
         <div className={styles.card}>
           <h1>Purchase</h1>
-          <Button type='button'>Limited: Free</Button>
-          <Button type='button'>Basic: $2.99</Button>
-          <Button type='button'>Plus: $5.99</Button>
-          <Button type='button'>Ultra: $9.99</Button>
-          <p>
-            By purchasing this product, you agree to the Octii store TOS. Octii
-            takes a 15% cut of all revenue to this developer.
-          </p>
+          <Button
+            type='button'
+            onClick={async () => {
+              await clientGateway.post(
+                `/products/${productID}/purchase`,
+                {},
+                {
+                  headers: {
+                    Authorization: auth.token
+                  }
+                }
+              )
+            }}
+          >
+            Get
+          </Button>
+          <p>By purchasing this product, you agree to the Octii store TOS.</p>
         </div>
       </div>
     </div>

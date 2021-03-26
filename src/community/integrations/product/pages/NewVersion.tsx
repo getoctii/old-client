@@ -1,73 +1,72 @@
 import { ErrorMessage, Field, Form, Formik } from 'formik'
-import { Auth } from '../../authentication/state'
-import Button from '../../components/Button'
-import Input from '../../components/Input'
-import { clientGateway } from '../../utils/constants'
+import { Auth } from '../../../../authentication/state'
+import Button from '../../../../components/Button'
+import Input from '../../../../components/Input'
+import { clientGateway } from '../../../../utils/constants'
 import { BarLoader } from 'react-spinners'
-import styles from './NewProduct.module.scss'
+import styles from './NewVersion.module.scss'
 import { useRouteMatch } from 'react-router-dom'
-import { getCommunity } from '../remote'
-import { UI } from '../../state/ui'
+import { getProduct } from '../../../remote'
+import { UI } from '../../../../state/ui'
 import { queryCache, useQuery } from 'react-query'
 import { faTimes } from '@fortawesome/pro-solid-svg-icons'
 import * as Yup from 'yup'
-import Modal from '../../components/Modal'
+import Modal from '../../../../components/Modal'
 import React from 'react'
-import IconPicker from '../../components/IconPicker'
-import TextArea from '../../components/TextArea'
+import TextArea from '../../../../components/TextArea'
 
-const ProductSchema = Yup.object().shape({
+const VersionSchema = Yup.object().shape({
   name: Yup.string()
     .min(2, 'Too short, must be at least 2 characters.')
     .max(30, 'Too long, must be less then 30 characters.'),
-  icon: Yup.string().url()
+  description: Yup.string()
+    .min(2, 'Too short, must be at least 2 characters.')
+    .max(140, 'Too long, must be less then 140 characters.')
 })
 
-const NewProduct = () => {
+const NewVersion = () => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
-  const match = useRouteMatch<{ id: string }>('/communities/:id')
-
-  const { data: community } = useQuery(
-    ['community', match?.params.id, token],
-    getCommunity,
-    {
-      enabled: !!match?.params.id && !!token
-    }
+  const match = useRouteMatch<{ productID: string }>(
+    '/communities/:id/products/:productID'
   )
-
+  const { data: product } = useQuery(
+    ['product', match?.params?.productID, token],
+    getProduct
+  )
   return (
     <Formik
-      initialValues={{ name: '', description: '', icon: '' }}
-      validationSchema={ProductSchema}
+      initialValues={{ name: '', description: '' }}
+      validationSchema={VersionSchema}
       onSubmit={async (values, { setSubmitting, setFieldError, setErrors }) => {
         try {
           if (!values.name) return setFieldError('name', 'Required')
-          const { data: product } = await clientGateway.post<{ id: string }>(
-            `/communities/${match?.params.id}/products`,
+          const { data: version } = await clientGateway.post<{
+            number: number
+          }>(
+            `/products/${match?.params?.productID}/versions`,
             {
               name: values.name,
-              icon: values.icon,
               description: values.description
             },
             {
               headers: { Authorization: token }
             }
           )
-          if (!product) return
-          queryCache.setQueryData<string[]>(
-            ['products', match?.params?.id, token],
+          if (!version) return
+          queryCache.setQueryData<number[]>(
+            ['versions', match?.params?.productID, token],
             (initial) => {
-              if (initial) return [...initial, product.id]
-              else return [product.id]
+              if (initial) return [...initial, version.number]
+              else return [version.number]
             }
           )
           ui.clearModal()
         } catch (e) {
           const errors = e.response.data.errors
           const userErrors: { name?: string } = {}
-          if (errors.includes('ChannelNameInvalid'))
-            userErrors.name = 'Invalid Channel Name'
+          if (errors.includes('VersionNameInvalid'))
+            userErrors.name = 'Invalid Version Name'
           setErrors(userErrors)
           ui.clearModal()
         } finally {
@@ -75,13 +74,13 @@ const NewProduct = () => {
         }
       }}
     >
-      {({ isSubmitting, setFieldValue }) => (
+      {({ isSubmitting }) => (
         <Form>
-          <div className={styles.newProduct}>
+          <div className={styles.newVersion}>
             <Modal
               onDismiss={() => ui.clearModal()}
-              title={'New Product'}
-              subtitle={`${community?.name}`}
+              title={'New Version'}
+              subtitle={`${product?.name}`}
               icon={faTimes}
               bottom={
                 <Button
@@ -89,27 +88,14 @@ const NewProduct = () => {
                   type='submit'
                   className={styles.createButton}
                 >
-                  {isSubmitting ? <BarLoader color='#ffffff' /> : 'New Product'}
+                  {isSubmitting ? (
+                    <BarLoader color='#ffffff' />
+                  ) : (
+                    'New Resource'
+                  )}
                 </Button>
               }
             >
-              <div>
-                <IconPicker
-                  className={styles.iconPicker}
-                  forcedSmall
-                  alt={'product'}
-                  onUpload={(url: string) => {
-                    setFieldValue('icon', url)
-                  }}
-                />
-
-                <ErrorMessage
-                  className={styles.error}
-                  component='p'
-                  name='icon'
-                />
-              </div>
-
               <label htmlFor='name' className={styles.inputName}>
                 Name
               </label>
@@ -118,7 +104,7 @@ const NewProduct = () => {
                 id='name'
                 name='name'
                 type='name'
-                enterkeyhint='next'
+                enterKeyHint='next'
               />
               <ErrorMessage
                 component='p'
@@ -129,9 +115,8 @@ const NewProduct = () => {
                 <li>Only contain letters, numbers, dashes, and underscores</li>
                 <li>Between 2-30 characters long</li>
               </ul>
-
               <label htmlFor='description' className={styles.inputName}>
-                Description
+                Change Log
               </label>
               <TextArea name={'description'} />
               <ErrorMessage
@@ -147,4 +132,4 @@ const NewProduct = () => {
   )
 }
 
-export default NewProduct
+export default NewVersion

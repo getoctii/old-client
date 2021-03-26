@@ -134,7 +134,7 @@
 
   .selected {
     box-shadow: 0 0 0 2px var(--neko-sidebar-background),
-      0 0 0 4px var(--neko-text-href);
+      0 0 0 4px var(--neko-text-primary);
   }
 
   .messages {
@@ -276,7 +276,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--neko-text-href);
+  background-color: var(--neko-text-primary);
   width: 23px;
   height: 23px;
   border-radius: 50%;

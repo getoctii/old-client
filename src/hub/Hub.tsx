@@ -6,7 +6,7 @@ import { PrivateRoute } from '../authentication/PrivateRoute'
 import Store from './store/Store'
 import Product from './store/Product'
 import Sideview from '../components/Sideview'
-import { faAddressBook, faStoreAlt } from '@fortawesome/pro-duotone-svg-icons'
+import { faStoreAlt } from '@fortawesome/pro-duotone-svg-icons'
 import Friends from './friends/Friends'
 
 const Hub = () => {
@@ -24,12 +24,6 @@ const Hub = () => {
           name={'Hub'}
           tabs={[
             {
-              name: 'innpages',
-              icon: faAddressBook,
-              color: 'warning',
-              link: '/hub/innpages'
-            },
-            {
               name: 'Store',
               icon: faStoreAlt,
               color: 'primary',
@@ -43,7 +37,11 @@ const Hub = () => {
         <Switch>
           {!isMobile && <Redirect path={path} to={`${path}/store`} exact />}
           <PrivateRoute path={`${path}/store`} component={Store} exact />
-          <PrivateRoute path={`${path}/store/:id`} component={Product} exact />
+          <PrivateRoute
+            path={`${path}/store/:productID`}
+            component={Product}
+            exact
+          />
         </Switch>
       </div>
     </div>

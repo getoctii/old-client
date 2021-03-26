@@ -75,6 +75,15 @@ export const getUser = async (_: string, userID: string, token: string) =>
     })
   ).data
 
+export const getPurchases = async (_: string, userID: string, token: string) =>
+  (
+    await clientGateway.get<string[]>(`/users/${userID}/purchases`, {
+      headers: {
+        Authorization: token
+      }
+    })
+  ).data
+
 export const getCommunities = async (
   _: string,
   userID: string,

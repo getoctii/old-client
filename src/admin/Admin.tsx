@@ -7,8 +7,8 @@ import styles from './Admin.module.scss'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { getUser } from '../user/remote'
-import { Codes } from './Codes'
-import { Newsletters } from './Newsletters'
+import Codes from './Codes'
+import Newsletters from './Newsletters'
 import Sidebar from '../sidebar/Sidebar'
 import Sideview from '../components/Sideview'
 import {
@@ -18,6 +18,7 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import GitInfo from 'react-git-info/macro'
 import dayjs from 'dayjs'
+import Queue from './store/Queue'
 
 const gitInfo = GitInfo()
 
@@ -47,6 +48,12 @@ const Admin = () => {
         icon: faNewspaper,
         color: 'warning',
         link: '/admin/newsletters'
+      },
+      {
+        name: 'Queue',
+        icon: faClipboardList,
+        color: 'danger',
+        link: '/admin/queue'
       }
     ]
     return items
@@ -86,6 +93,7 @@ const Admin = () => {
                 component={Newsletters}
                 exact
               />
+              <PrivateRoute path={`${path}/queue`} component={Queue} exact />
             </Switch>
           </Suspense>
         </div>

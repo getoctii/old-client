@@ -19,6 +19,7 @@ import Button from '../components/Button'
 import { Plugins } from '@capacitor/core'
 import Header from '../components/Header'
 import List from '../components/List'
+import { useHistory } from 'react-router-dom'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
@@ -85,7 +86,7 @@ const Code = memo(({ id, used, created_at }: CodeResponse) => {
   )
 })
 
-export const Codes = () => {
+const Codes = () => {
   const { token } = Auth.useContainer()
   const { data, canFetchMore, fetchMore } = useInfiniteQuery<
     CodeResponse[],
@@ -129,7 +130,7 @@ export const Codes = () => {
   const codes = useMemo(() => data?.flat() || [], [data])
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
-
+  const history = useHistory()
   return (
     <div className={styles.codes}>
       <Header
@@ -137,6 +138,7 @@ export const Codes = () => {
         subheading={'Admin'}
         icon={faClipboardList}
         color='secondary'
+        onBack={() => history.push(`/admin`)}
         action={
           <Button
             className={styles.action}
@@ -192,3 +194,5 @@ export const Codes = () => {
     </div>
   )
 }
+
+export default Codes

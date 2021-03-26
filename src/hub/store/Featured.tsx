@@ -22,8 +22,8 @@ const Featured = () => {
     <div className={styles.featured}>
       <h2>Featured</h2>
       <div className={styles.row}>
-        {cards.map(() => (
-          <Card />
+        {cards.map((_, index) => (
+          <Card key={index} />
         ))}
       </div>
     </div>
