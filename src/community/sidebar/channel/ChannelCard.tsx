@@ -256,7 +256,7 @@ const ChannelCardView = ({
                           color: channel.color
                         }
                       : {
-                          color: 'var(--neko-text-href)'
+                          color: 'var(--neko-text-primary)'
                         }
                     : {}
                 }

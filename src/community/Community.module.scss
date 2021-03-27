@@ -16,6 +16,11 @@
   background: var(--neko-channels-background);
 }
 
+.listPlaceholder {
+  padding: 2rem;
+  width: 100%;
+}
+
 .noPermission {
   display: flex;
   justify-content: center;

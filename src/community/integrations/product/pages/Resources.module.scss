@@ -1,0 +1,30 @@
+.resources {
+  margin-top: 1rem;
+
+  .icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    min-height: 45px;
+    border-radius: 10px;
+    position: relative;
+    background-size: contain;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 0.5rem;
+    color: var(--neko-text-inverse);
+
+    &.primary {
+      background: var(--neko-colors-primary);
+    }
+
+    &.secondary {
+      background: var(--neko-colors-secondary);
+    }
+
+    &.warning {
+      background: var(--neko-colors-warning);
+    }
+  }
+}

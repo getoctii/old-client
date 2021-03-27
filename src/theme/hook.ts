@@ -14,24 +14,20 @@ import {
   StatusBarStyle
 } from '@capacitor/core'
 import { useSuspenseStorageItem } from '../utils/storage'
+import Integrations from '../integrations/state'
 const { Keyboard, StatusBar } = Plugins
 const isThemeBundle = (theme: Theme | ThemeBundle): theme is ThemeBundle => {
   return (theme as ThemeBundle).dark !== undefined
 }
 
-interface ThemeBundle {
+export interface ThemeBundle {
   id: string
   name: string
-  version?: string
   dark: Theme
   light: Theme
 }
 
-interface Theme {
-  id?: string
-  name?: string
-  version?: string
-
+export interface Theme {
   colors: {
     primary: string
     secondary: string
@@ -45,9 +41,13 @@ interface Theme {
   text: {
     normal: string
     inverse: string
-    href: string
+    primary: string
     danger: string
     warning: string
+    secondary: string
+  }
+  backgrounds: {
+    primary: string
     secondary: string
   }
   settings: {
@@ -72,7 +72,6 @@ interface Theme {
     background: string
     hover: string
   }
-
   status: {
     selected: string
     online: string
@@ -85,27 +84,22 @@ interface Theme {
     date: string
     message: string
   }
-
   mention: {
     me: string
     other: string
   }
-
   input: {
     background: string
     text: string
   }
-
   modal: {
     background: string
     foreground: string
   }
-
   emojis: {
     background: string
     input: string
   }
-
   global?: string
 }
 
@@ -116,6 +110,7 @@ document.head.appendChild(globalStyle)
 export const themes = [octii, innlove, octiiHub, ayu, eyestrain]
 
 const useTheme = () => {
+  const integerations = Integrations.useContainer()
   const [themeID, setThemeID] = useSuspenseStorageItem<string>(
     'theme-id',
     octii.id
@@ -123,10 +118,24 @@ const useTheme = () => {
   const [variations, setVariations] = useSuspenseStorageItem<
     'light' | 'dark' | 'system'
   >('theme-variations', 'system')
-  const theme = useMemo<Theme | ThemeBundle>(
-    () => themes.find((t) => t.id === themeID) || octii,
-    [themeID]
+
+  console.log(integerations.payloads)
+  console.log(
+    integerations.payloads?.flatMap((payload) => payload.themes ?? [])
   )
+
+  console.log(themeID)
+
+  const theme = useMemo<Theme | ThemeBundle>(
+    () =>
+      themes.find((t) => t.id === themeID) ||
+      integerations.payloads
+        ?.flatMap((payload) => payload.themes ?? [])
+        .find((theme) => theme.id === themeID) ||
+      octii,
+    [themeID, integerations.payloads]
+  )
+
   const prefersDarkMode = useMedia('(prefers-color-scheme: dark)')
   useEffect(() => {
     const documentStyle = document.documentElement.style
@@ -140,8 +149,6 @@ const useTheme = () => {
         ? theme.light
         : theme.dark
       : theme
-
-    if (!theme.version) return
 
     if (isPlatform('capacitor')) {
       StatusBar.setOverlaysWebView({ overlay: true })
@@ -166,10 +173,12 @@ const useTheme = () => {
       '--neko-colors-info': currentTheme.colors.info,
       '--neko-text-normal': currentTheme.text.normal,
       '--neko-text-inverse': currentTheme.text.inverse,
-      '--neko-text-href': currentTheme.text.href,
+      '--neko-text-primary': currentTheme.text.primary,
       '--neko-text-danger': currentTheme.text.danger,
       '--neko-text-warning': currentTheme.text.warning,
       '--neko-text-secondary': currentTheme.text.secondary,
+      '--neko-backgrounds-primary': currentTheme.backgrounds.primary,
+      '--neko-backgrounds-secondary': currentTheme.backgrounds.secondary,
       '--neko-status-selected': currentTheme.status.selected,
       '--neko-status-online': currentTheme.status.online,
       '--neko-status-offline': currentTheme.status.offline,

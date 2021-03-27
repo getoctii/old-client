@@ -1,0 +1,12 @@
+.purchases {
+  padding: 2rem;
+  overflow-y: scroll;
+  height: 100%;
+  width: 100%;
+  background-color: var(--neko-settings-background);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+}

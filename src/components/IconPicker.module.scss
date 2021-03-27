@@ -5,7 +5,6 @@
   background: var(--neko-settings-background);
 
   .details {
-    margin-left: 1rem;
     margin-right: 1rem;
     display: flex;
     flex-direction: column;
@@ -22,12 +21,13 @@
     }
 
     a {
-      color: var(--neko-text-href);
+      color: var(--neko-text-primary);
       text-decoration: none;
     }
   }
 
   img {
+    margin-right: 1rem;
     object-fit: cover;
   }
   img,
@@ -48,7 +48,6 @@
   input {
     display: none;
   }
-
 
   @media (max-width: 800px) {
     display: flex;

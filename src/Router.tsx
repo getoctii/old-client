@@ -34,9 +34,9 @@ import { useQuery } from 'react-query'
 import { getCommunities, getParticipants } from './user/remote'
 import OnBoarding from './marketing/OnBoarding'
 import { useSuspenseStorageItem } from './utils/storage'
-import Friends from './friends/Friends'
-import Modal from './components/Modal'
+import Modal from './components/Modals'
 import { Permission } from './utils/permissions'
+import Hub from './hub/Hub'
 const { PushNotifications } = Plugins
 
 const ContextMenuHandler = () => {
@@ -205,50 +205,45 @@ const AppRouter = () => {
         {showOnBoarding ? (
           <OnBoarding />
         ) : (
-          <Switch>
-            <PrivateRoute
-              path='/settings'
-              sidebar
-              component={() => (
-                <>
-                  {isMobile && <Sidebar />}
-                  <Suspense fallback={<Loader />}>
-                    <Settings />
-                  </Suspense>
-                </>
-              )}
-            />
-            <PrivateRoute path={'/admin'} sidebar component={Admin} />
-            <PrivateRoute
-              path='/communities/:id'
-              sidebar
-              component={Community}
-            />
-            <PrivateRoute
-              sidebar
-              path='/friends'
-              component={() => (
-                <Suspense fallback={<></>}>
-                  <Friends />
-                </Suspense>
-              )}
-              exact
-            />
-            <PrivateRoute
-              sidebar
-              path={'/conversations/:id?'}
-              component={() => (
-                <Suspense fallback={<></>}>
-                  <Conversation />
-                </Suspense>
-              )}
-              redirect={
-                isPlatform('mobile') || isPWA ? '/authenticate/login' : '/home'
-              }
-              exact
-            />
-            <Redirect path={'/'} to={'/conversations'} exact />
-          </Switch>
+          <>
+            {!isMobile && auth.authenticated && <Sidebar />}
+            <Switch>
+              <PrivateRoute
+                path='/settings'
+                component={() => (
+                  <>
+                    {isMobile && <Sidebar />}
+                    <Suspense fallback={<Loader />}>
+                      <Settings />
+                    </Suspense>
+                  </>
+                )}
+              />
+              <PrivateRoute path={'/admin'} component={Admin} />
+              <PrivateRoute path='/communities/:id' component={Community} />
+              <PrivateRoute
+                path={'/conversations'}
+                component={Conversation}
+                redirect={
+                  isPlatform('mobile') || isPWA
+                    ? '/authenticate/login'
+                    : '/home'
+                }
+              />
+              <PrivateRoute
+                path={'/hub'}
+                component={() => (
+                  <>
+                    {isMobile && <Sidebar />}
+                    <Suspense fallback={<Loader />}>
+                      <Hub />
+                    </Suspense>
+                  </>
+                )}
+              />
+              <Redirect path={'/'} to={'/conversations'} exact />
+            </Switch>
+          </>
         )}
       </Suspense>
       {!isMobile && (

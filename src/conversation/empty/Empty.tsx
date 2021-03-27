@@ -8,7 +8,7 @@ import {
   getRelationships,
   RelationshipResponse,
   RelationshipTypes
-} from '../../friends/remote'
+} from '../../hub/friends/remote'
 import Icon from '../../user/Icon'
 import { getUser } from '../../user/remote'
 import NewConversation from '../NewConversation'

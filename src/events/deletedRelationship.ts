@@ -4,7 +4,7 @@ import { queryCache } from 'react-query'
 import { Events } from '../utils/constants'
 import { log } from '../utils/logging'
 import { Auth } from '../authentication/state'
-import { RelationshipResponse } from '../friends/remote'
+import { RelationshipResponse } from '../hub/friends/remote'
 
 const useDeletedRelationship = (eventSource: EventSourcePolyfill | null) => {
   const { id, token } = Auth.useContainer()

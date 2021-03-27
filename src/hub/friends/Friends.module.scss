@@ -1,0 +1,53 @@
+.friends {
+  h3 {
+    margin-top: 0;
+  }
+
+  h4 {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0.7rem 0 0.3rem;
+    span {
+      float: right;
+    }
+
+    .add {
+      cursor: pointer;
+    }
+  }
+
+  .incoming {
+    width: 100%;
+    .cards {
+      margin-top: 0.4rem;
+    }
+  }
+
+  .list {
+    margin-top: 0.15rem;
+    width: 100%;
+  }
+
+  .dropdown {
+    width: 100%;
+    padding: 1rem;
+    background: var(--neko-sidebar-background);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin-right: 0.5rem;
+    }
+    span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 1.5rem;
+      width: 1.5rem;
+      background: var(--neko-colors-primary);
+      border-radius: 50%;
+      margin-left: auto;
+    }
+  }
+}

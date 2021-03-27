@@ -5,72 +5,36 @@
     margin: 0;
   }
 
-  .header {
-    display: flex;
-    align-items: center;
-    h2 {
-      font-size: 1.2rem;
-    }
-    .icon {
-      background: var(--neko-colors-secondary);
-      margin-right: 0.7rem;
-      padding: 0.5rem;
-      height: 2.65rem;
-      width: 2.65rem;
-
-      border-radius: 12px;
-      font-size: 1.25rem;
-      color: var(--neko-text-inverse);
-      cursor: pointer;
-      svg {
-        align-self: center;
-      }
-      display: flex;
-      vertical-align: middle;
-      justify-content: center;
-    }
-  }
   button {
     background: var(--neko-colors-primary);
   }
-  .body {
-    padding: 2rem 2rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    .inputName {
-      margin-top: 1rem;
-      margin-bottom: 0.3rem;
-    }
 
-    .iconPicker {
-      margin-top: 1rem;
-      background: var(--neko-input-background);
-      max-width: 100%;
-      width: 100%;
-    }
-
-    .error {
-      color: var(--neko-text-danger);
-    }
-
-    .joinButton {
-      margin-top: 0.7rem;
-    }
-
+  .inputName {
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
   }
 
-  .bottom {
-    background: var(--neko-channels-background);
-    padding: 1.25rem 2rem 2rem;
-    button {
-      width: 100%;
-    }
-    @media (max-width: 740px) {
-      padding-top: 2rem;
-    }
-    .createButton {
-      background: var(--neko-colors-secondary);
-    }
+  .iconPicker {
+    margin-top: 1rem;
+    background: var(--neko-input-background);
+    max-width: 100%;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .error {
+    color: var(--neko-text-danger);
+  }
+
+  .createButton {
+    background: var(--neko-colors-primary);
+  }
+  .joinButton {
+    margin-top: 0.7rem;
+  }
+
+  input {
+    width: 100%;
   }
 
   @media (max-width: 740px) {
@@ -91,8 +55,4 @@
       padding: 1.25rem 2rem calc(env(safe-area-inset-bottom) + 2rem);
     }
   }
-}
-
-form {
-  height: 100%;
 }

@@ -2,7 +2,6 @@
   outline: none;
 }
 
-
 .category {
   .channel {
     .icon {
@@ -43,7 +42,7 @@
     display: flex;
     margin-left: auto;
     .unread {
-      background-color: var(--neko-text-href);
+      background-color: var(--neko-text-primary);
       width: 16px;
       height: 16px;
       border-radius: 50%;
@@ -52,7 +51,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: var(--neko-text-href);
+      background-color: var(--neko-text-primary);
       width: 20px;
       height: 20px;
       border-radius: 50%;

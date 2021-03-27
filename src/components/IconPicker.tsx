@@ -12,13 +12,15 @@ const IconPicker = ({
   defaultIcon,
   onUpload,
   className,
-  forcedSmall
+  forcedSmall,
+  recommendedIcon
 }: {
   alt: string
   defaultIcon?: string
   onUpload: (url: string) => Promise<void> | void
   className?: string
   forcedSmall?: boolean
+  recommendedIcon?: string
 }) => {
   const input = useRef<HTMLInputElement | null>(null)
   const [icon, setIcon] = useState<string | undefined>(defaultIcon || undefined)
@@ -32,7 +34,11 @@ const IconPicker = ({
     >
       {icon && <img src={icon} alt={alt} />}
       <div className={styles.details}>
-        <p>Recommended icon size is 100x100</p>
+        <p>
+          {recommendedIcon
+            ? recommendedIcon
+            : 'Recommended icon size is 100x100'}
+        </p>
         <h6>
           Powered by <a href='https://file.coffee'>file.coffee</a>
         </h6>

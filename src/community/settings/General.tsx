@@ -9,7 +9,6 @@ import { clientGateway } from '../../utils/constants'
 import { isUsername } from '../../utils/validations'
 import styles from './General.module.scss'
 import { CommunityResponse, getChannels, getCommunity } from '../remote'
-import { isTag } from '../../utils/validations'
 import IconPicker from '../../components/IconPicker'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -17,6 +16,22 @@ import {
   faSave,
   faTimesCircle
 } from '@fortawesome/pro-duotone-svg-icons'
+import { useUser } from '../../user/state'
+import * as Yup from 'yup'
+
+const TransferSchema = Yup.object().shape({
+  username: Yup.string()
+    .min(2, 'Too short, must be at least 2 characters.')
+    .max(16, 'Too long, must be less then 16 characters.')
+    .optional()
+})
+
+const DeleteSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, 'Too short, must be at least 2 characters.')
+    .max(16, 'Too long, must be less then 16 characters.')
+    .optional()
+})
 
 const saveSettings = async (
   communityID: string,
@@ -208,28 +223,6 @@ const Personalization = ({ community }: { community: CommunityResponse }) => {
   )
 }
 
-type transferFormData = {
-  username: string
-}
-
-const validateTransfer = (values: transferFormData) => {
-  const errors: { username?: string } = {}
-  if (!isTag(values.username)) errors.username = 'A valid username is required'
-  return errors
-}
-
-type deleteFormData = {
-  name: string
-  actualName: string
-}
-
-const validateDelete = (values: deleteFormData) => {
-  const errors: { name?: string } = {}
-  if (values.name !== values.actualName)
-    errors.name = 'The name must be the same as the current community'
-  return errors
-}
-
 type FindResponse = {
   id: string
   avatar: string
@@ -240,10 +233,66 @@ type FindResponse = {
 const DangerZone = ({ community }: { community: CommunityResponse }) => {
   const auth = Auth.useContainer()
   const history = useHistory()
+  const user = useUser(auth?.id ?? undefined)
   return (
     <div className={styles.dangerZone}>
+      {!community.organization && user?.developer && (
+        <div className={styles.organization}>
+          <h5>Danger Zone</h5>
+          <h4>Enable Organization</h4>
+          <p>
+            This will allow you to distrbute products connected to this
+            community. YOU CANNOT UNDO THIS SO BEWARE!
+          </p>
+          <Formik
+            initialValues={{
+              name: '',
+              actualName: community.name
+            }}
+            validationSchema={TransferSchema}
+            onSubmit={async (values, { setSubmitting, setFieldError }) => {
+              if (!values?.name) return setFieldError('name', 'Required')
+              try {
+                await clientGateway.patch(
+                  `/communities/${community.id}`,
+                  {
+                    organization: true
+                  },
+                  { headers: { Authorization: auth.token } }
+                )
+                await queryCache.invalidateQueries(['community', community.id])
+                history.push(`/communities/${community.id}`)
+              } finally {
+                setSubmitting(false)
+              }
+            }}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <label htmlFor='name'>Name</label>
+                <div className={styles.dangerWrapper}>
+                  <div className={styles.dangerInput}>
+                    <Field component={Input} name='name' />
+                    <ErrorMessage
+                      className={styles.error}
+                      component='p'
+                      name='name'
+                    />
+                  </div>
+                  <Button
+                    className={styles.button}
+                    disabled={isSubmitting}
+                    type='submit'
+                  >
+                    Enable Organization
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      )}
       <div className={styles.transfer}>
-        <h5>Danger Zone</h5>
         <h4>Transfer Ownership</h4>
         <p>
           Transferring ownership will give the specified person full control of
@@ -255,7 +304,7 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
           initialValues={{
             username: ''
           }}
-          validate={validateTransfer}
+          validationSchema={TransferSchema}
           onSubmit={async (
             values,
             { setSubmitting, setErrors, setFieldError }
@@ -325,7 +374,7 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
             name: '',
             actualName: community.name
           }}
-          validate={validateDelete}
+          validationSchema={DeleteSchema}
           onSubmit={async (values, { setSubmitting }) => {
             try {
               await clientGateway.delete(`/communities/${community.id}`, {

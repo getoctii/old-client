@@ -14,7 +14,7 @@ import { faChevronLeft, faTimes } from '@fortawesome/pro-solid-svg-icons'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 import { faMinusCircle, faPlusCircle } from '@fortawesome/pro-duotone-svg-icons'
-import Header from '../components/Header'
+import Modal from '../components/Modal'
 
 const ChannelSchema = Yup.object().shape({
   name: Yup.string()
@@ -129,87 +129,110 @@ export const NewChannel = () => {
       }}
     >
       {({ isSubmitting, values, setFieldValue }) => (
-        <Form className={styles.newChannel}>
-          <div className={styles.body}>
-            {!editOverrides ? (
-              <>
-                <Header
-                  icon={faTimes}
-                  subheading={`#${community?.name}`}
-                  heading='New Channel'
-                  onClick={() => ui.clearModal()}
-                />
-                <label htmlFor='type' className={styles.inputName}>
-                  Type
-                </label>
-                <div className={styles.type}>
-                  <Button
-                    type={'button'}
-                    className={`${
-                      values.type === ChannelTypes.TEXT ? styles.selected : ''
-                    }`}
-                    onClick={() => setFieldValue('type', ChannelTypes.TEXT)}
-                  >
-                    Text Channel
-                  </Button>
-                  {(channels ?? []).filter(
-                    (c) => c.type !== ChannelTypes.CATEGORY
-                  ).length > 0 && (
+        <Form>
+          <div className={styles.newChannel}>
+            <Modal
+              onDismiss={() =>
+                editOverrides ? setEditOverrides(false) : ui.clearModal()
+              }
+              title={editOverrides ? 'Overrides' : 'New Channel'}
+              subtitle={editOverrides ? 'New Channel' : `#${community?.name}`}
+              icon={editOverrides ? faChevronLeft : faTimes}
+              bottom={
+                <>
+                  {!editOverrides ? (
+                    <Button
+                      disabled={isSubmitting}
+                      type='submit'
+                      className={styles.createButton}
+                    >
+                      {isSubmitting ? (
+                        <BarLoader color='#ffffff' />
+                      ) : (
+                        'New Channel'
+                      )}
+                    </Button>
+                  ) : (
+                    <Button
+                      className={styles.createButton}
+                      type={'button'}
+                      onClick={() => {
+                        setIsPrivate(true)
+                        setEditOverrides(false)
+                      }}
+                    >
+                      Save Overrides
+                    </Button>
+                  )}
+                </>
+              }
+            >
+              {!editOverrides ? (
+                <>
+                  <label htmlFor='type' className={styles.inputName}>
+                    Type
+                  </label>
+                  <div className={styles.type}>
                     <Button
                       type={'button'}
                       className={`${
-                        values.type === ChannelTypes.CATEGORY
-                          ? styles.selected
-                          : ''
+                        values.type === ChannelTypes.TEXT ? styles.selected : ''
                       }`}
-                      onClick={() =>
-                        setFieldValue('type', ChannelTypes.CATEGORY)
-                      }
+                      onClick={() => setFieldValue('type', ChannelTypes.TEXT)}
                     >
-                      Category
+                      Text Channel
+                    </Button>
+                    {(channels ?? []).filter(
+                      (c) => c.type !== ChannelTypes.CATEGORY
+                    ).length > 0 && (
+                      <Button
+                        type={'button'}
+                        className={`${
+                          values.type === ChannelTypes.CATEGORY
+                            ? styles.selected
+                            : ''
+                        }`}
+                        onClick={() =>
+                          setFieldValue('type', ChannelTypes.CATEGORY)
+                        }
+                      >
+                        Category
+                      </Button>
+                    )}
+                  </div>
+                  <label htmlFor='name' className={styles.inputName}>
+                    Name
+                  </label>
+                  <Field
+                    component={Input}
+                    id='name'
+                    name='name'
+                    type='name'
+                    enterkeyhint='next'
+                  />
+                  <ErrorMessage
+                    component='p'
+                    className={styles.error}
+                    name='name'
+                  />
+                  <ul>
+                    <li>
+                      Only contain letters, numbers, dashes, and underscores
+                    </li>
+                    <li>Between 2-30 characters long</li>
+                  </ul>
+
+                  {(groupIDs?.length ?? 0) > 0 && (
+                    <Button
+                      type={'button'}
+                      onClick={() => setEditOverrides(true)}
+                      className={styles.editOverrides}
+                    >
+                      Overrides
                     </Button>
                   )}
-                </div>
-                <label htmlFor='name' className={styles.inputName}>
-                  Name
-                </label>
-                <Field
-                  component={Input}
-                  id='name'
-                  name='name'
-                  type='name'
-                  enterkeyhint='next'
-                />
-                <ErrorMessage
-                  component='p'
-                  className={styles.error}
-                  name='name'
-                />
-                <ul>
-                  <li>
-                    Only contain letters, numbers, dashes, and underscores
-                  </li>
-                  <li>Between 2-30 characters long</li>
-                </ul>
-
-                {(groupIDs?.length ?? 0) > 0 && (
-                  <Button
-                    type={'button'}
-                    onClick={() => setEditOverrides(true)}
-                    className={styles.editOverrides}
-                  >
-                    Overrides
-                  </Button>
-                )}
-              </>
-            ) : (
-              <>
-                <Header
-                  icon={faChevronLeft}
-                  subheading={`New Channel`}
-                  heading='Overrides'
-                  onClick={() => setEditOverrides(false)}
-                />
+                </>
+              ) : (
                 <div className={styles.groups}>
                   {groupIDs?.map((groupID) => (
                     <Group
@@ -224,26 +247,8 @@ export const NewChannel = () => {
                     />
                   ))}
                 </div>
-              </>
-            )}
-          </div>
-
-          <div className={styles.bottom}>
-            {!editOverrides ? (
-              <Button disabled={isSubmitting} type='submit'>
-                {isSubmitting ? <BarLoader color='#ffffff' /> : 'New Channel'}
-              </Button>
-            ) : (
-              <Button
-                type={'button'}
-                onClick={() => {
-                  setIsPrivate(true)
-                  setEditOverrides(false)
-                }}
-              >
-                Save Overrides
-              </Button>
-            )}
+              )}
+            </Modal>
           </div>
         </Form>
       )}

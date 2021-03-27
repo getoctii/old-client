@@ -52,7 +52,7 @@ const Downloads = () => {
               type='button'
               onClick={() =>
                 (window.location.href =
-                  'http://cdn.innatical.com/neko/octii.zip')
+                  'http://cdn.innatical.com/neko/octii.exe')
               }
             >
               Download for Windows

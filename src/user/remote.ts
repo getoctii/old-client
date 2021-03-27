@@ -25,6 +25,14 @@ export type Participant = {
   }
 }
 
+interface PurchaseResponse {
+  id: string
+  name: string
+  icon: string
+  description: string
+  latest_version?: number
+}
+
 export type ParticipantsResponse = Participant[]
 
 export type UserResponse = {
@@ -35,6 +43,7 @@ export type UserResponse = {
   state: State
   status: string
   email?: string
+  developer?: boolean
   disabled?: boolean
 }
 
@@ -68,6 +77,15 @@ export type MembersResponse = Member[]
 export const getUser = async (_: string, userID: string, token: string) =>
   (
     await clientGateway.get<UserResponse>(`/users/${userID}`, {
+      headers: {
+        Authorization: token
+      }
+    })
+  ).data
+
+export const getPurchases = async (_: string, userID: string, token: string) =>
+  (
+    await clientGateway.get<PurchaseResponse[]>(`/users/${userID}/purchases`, {
       headers: {
         Authorization: token
       }

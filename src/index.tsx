@@ -26,7 +26,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import smoothscroll from 'smoothscroll-polyfill'
 import { isPlatform } from '@ionic/react'
 import { ModalTypes } from './utils/constants'
-
+import Integration from './integrations/state'
 smoothscroll.polyfill()
 
 if (process.env.NODE_ENV === 'production') {
@@ -90,11 +90,13 @@ ReactDOM.render(
                 <Typing.Provider>
                   <Call.Provider>
                     <Chat.Provider>
-                      <Theme.Provider>
-                        <ScrollPosition.Provider>
-                          <Router />
-                        </ScrollPosition.Provider>
-                      </Theme.Provider>
+                      <Integration.Provider>
+                        <Theme.Provider>
+                          <ScrollPosition.Provider>
+                            <Router />
+                          </ScrollPosition.Provider>
+                        </Theme.Provider>
+                      </Integration.Provider>
                     </Chat.Provider>
                   </Call.Provider>
                 </Typing.Provider>

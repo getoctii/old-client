@@ -1,7 +1,6 @@
 {
   "id": "cf77270c-9522-413f-8319-3c8d13091a62",
   "name": "Eyestrain",
-  "version": "0.0.1",
   "dark": {
     "colors": {
       "primary": "linear-gradient(224deg, #75C8FF 0%, #007FFF 100%)",
@@ -16,7 +15,7 @@
     "text": {
       "normal": "#FFFFFF",
       "inverse": "#FEFEFE",
-      "href": "#1089FF",
+      "primary": "#1089FF",
       "danger": "#F86464",
       "warning": "#FF7D0E",
       "secondary": "#646464"
@@ -25,6 +24,10 @@
       "background": "#000000",
       "seperator": "#383838",
       "shadow": "0 -9px 10px 0 rgba(0, 0, 0, 0.42)"
+    },
+    "backgrounds": {
+      "primary": "#000000",
+      "secondary": "#000000"
     },
     "settings": {
       "background": "#000000",
@@ -86,7 +89,7 @@
     "text": {
       "normal": "#000000",
       "inverse": "#FFFFFF",
-      "href": "#1089FF",
+      "primary": "#1089FF",
       "danger": "#F86464",
       "warning": "#FF7D0E",
       "secondary": "#646464"
@@ -94,6 +97,10 @@
     "mention": {
       "me": "#1089FF",
       "other": "#8BA0D8"
+    },
+    "backgrounds": {
+      "primary": "#FFFFFF",
+      "secondary": "#FFFFFF"
     },
     "sidebar": {
       "background": "#FFFFFF",

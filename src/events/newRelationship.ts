@@ -4,7 +4,7 @@ import { queryCache } from 'react-query'
 import { Events } from '../utils/constants'
 import { log } from '../utils/logging'
 import { Auth } from '../authentication/state'
-import { RelationshipResponse, RelationshipTypes } from '../friends/remote'
+import { RelationshipResponse, RelationshipTypes } from '../hub/friends/remote'
 
 const useNewRelationship = (eventSource: EventSourcePolyfill | null) => {
   const { id, token } = Auth.useContainer()

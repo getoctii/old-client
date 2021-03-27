@@ -72,6 +72,20 @@
     }
   }
 
+  .products {
+    @extend .integration;
+    .icon {
+      background: var(--neko-colors-danger);
+    }
+
+    &.selected {
+      background: var(--neko-colors-danger);
+      .icon {
+        color: var(--neko-text-danger);
+      }
+    }
+  }
+
   .members {
     @extend .integration;
 
@@ -81,7 +95,7 @@
     &.selected {
       background: var(--neko-colors-primary);
       .icon {
-        color: var(--neko-text-href);
+        color: var(--neko-text-primary);
       }
     }
   }
