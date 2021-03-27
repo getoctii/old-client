@@ -28,6 +28,7 @@ import { useUser } from '../../user/state'
 import List from '../../components/List'
 import Header from '../../components/Header'
 import Icon from '../../user/Icon'
+import StatusBar from '../../components/StatusBar'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
@@ -47,7 +48,7 @@ const Group = ({ id }: { id: string }) => {
 
 const MemberCard = memo(({ memberObj }: { memberObj: MemberResponse }) => {
   const { id } = useParams<{ id: string }>()
-  const isMobile = useMedia('(max-width: 740px)')
+  const isMobile = useMedia('(max-width: 873px)')
   const auth = Auth.useContainer()
   const history = useHistory()
   const ui = UI.useContainer()
@@ -162,61 +163,66 @@ const Members = () => {
   const ref = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
   return (
-    <div className={styles.members}>
-      <Header
-        heading={'Members'}
-        subheading={community?.name ?? ''}
-        image={community?.icon}
-        onBack={() => history.push(`/communities/${id}`)}
-      />
-      <br />
-      <List.View>
-        {members.length > 0 ? (
-          <>
-            {members.map(
-              (member) =>
-                member && (
-                  <Suspense key={member.id} fallback={<List.CardPlaceholder />}>
-                    <MemberCard memberObj={member} />
-                  </Suspense>
-                )
-            )}
-            {!loading && canFetchMore ? (
-              <Waypoint
-                bottomOffset={20}
-                onEnter={async () => {
-                  try {
-                    const current = ref.current
-                    if (!current || !current.scrollHeight) return
-                    setLoading(true)
-                    const oldHeight = current.scrollHeight
-                    const oldTop = current.scrollTop
-                    await fetchMore()
-                    current.scrollTop = current.scrollHeight
-                      ? current.scrollHeight - oldHeight + oldTop
-                      : 0
-                  } finally {
-                    setLoading(false)
-                  }
-                }}
-              />
-            ) : !!loading && canFetchMore ? (
-              <div key='loader' className={styles.loader}>
-                <h5>Loading more...</h5>
-              </div>
-            ) : (
-              <></>
-            )}
-          </>
-        ) : (
-          <List.Empty
-            title={'Get started with invites!'}
-            description={`An empty community is pretty boring. Invite friends so you can chat around and even invite random people from the internet with invites!`}
-            icon={faUsers}
-          />
-        )}
-      </List.View>
-    </div>
+    <StatusBar>
+      <div className={styles.members}>
+        <Header
+          heading={'Members'}
+          subheading={community?.name ?? ''}
+          image={community?.icon}
+          onBack={() => history.push(`/communities/${id}`)}
+        />
+        <br />
+        <List.View>
+          {members.length > 0 ? (
+            <>
+              {members.map(
+                (member) =>
+                  member && (
+                    <Suspense
+                      key={member.id}
+                      fallback={<List.CardPlaceholder />}
+                    >
+                      <MemberCard memberObj={member} />
+                    </Suspense>
+                  )
+              )}
+              {!loading && canFetchMore ? (
+                <Waypoint
+                  bottomOffset={20}
+                  onEnter={async () => {
+                    try {
+                      const current = ref.current
+                      if (!current || !current.scrollHeight) return
+                      setLoading(true)
+                      const oldHeight = current.scrollHeight
+                      const oldTop = current.scrollTop
+                      await fetchMore()
+                      current.scrollTop = current.scrollHeight
+                        ? current.scrollHeight - oldHeight + oldTop
+                        : 0
+                    } finally {
+                      setLoading(false)
+                    }
+                  }}
+                />
+              ) : !!loading && canFetchMore ? (
+                <div key='loader' className={styles.loader}>
+                  <h5>Loading more...</h5>
+                </div>
+              ) : (
+                <></>
+              )}
+            </>
+          ) : (
+            <List.Empty
+              title={'Get started with invites!'}
+              description={`An empty community is pretty boring. Invite friends so you can chat around and even invite random people from the internet with invites!`}
+              icon={faUsers}
+            />
+          )}
+        </List.View>
+      </div>
+    </StatusBar>
   )
 }
 

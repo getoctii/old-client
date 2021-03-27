@@ -1,95 +1,86 @@
-.sidebarWrapper {
+.sidebar {
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  padding: 1.5rem;
+  overflow-y: scroll;
+  flex: 1;
+  height: 100%;
   background: var(--neko-channels-background);
   min-width: 18rem;
   min-height: 5rem;
   max-width: 18rem;
-  padding-top: calc(env(safe-area-inset-top));
+  hr {
+    margin: 0 0 0 3.5rem;
+    border-color: var(--neko-channels-seperator);
+    opacity: 0.5;
+    border-style: solid;
+  }
 
-  .sidebar {
-    padding: 1.5rem;
-    overflow-y: scroll;
-    flex: 1;
+  .hidden {
+    border-color: var(--neko-channels-background);
+  }
+  h1 {
+    margin: 0;
 
-    hr {
-      margin: 0 0 0 3.5rem;
-      border-color: var(--neko-channels-seperator);
-      opacity: 0.5;
-      border-style: solid;
+    span {
+      color: var(--neko-colors-primary);
+      float: right;
+    }
+  }
+
+  .list {
+    margin-top: 0.5rem;
+  }
+
+  h3 {
+    margin-top: 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    span {
+      float: right;
+    }
+  }
+
+  .profile {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    min-height: 2.5rem;
+
+    h4 {
+      margin: 0 auto 0 0.75rem;
+      font-weight: 500;
     }
 
-    .hidden {
-      border-color: var(--neko-channels-background);
+    img {
+      border-radius: 25px;
+      object-fit: cover;
+      height: 2.5rem;
+      width: 2.5rem;
     }
-    h1 {
-      margin: 0;
+  }
 
-      span {
-        color: var(--neko-colors-primary);
-        float: right;
-      }
+  h3 {
+    margin-bottom: 0;
+  }
+
+  .alert {
+    background: var(--neko-background);
+    margin-bottom: 0.25rem;
+    border-radius: 8px;
+    h4 {
+      margin: 0.5rem 0 0;
     }
-
-    .list {
-      margin-top: 0.5rem;
-    }
-
-    h3 {
-      margin-top: 0;
-      font-size: 1.35rem;
-      font-weight: 800;
-      span {
-        float: right;
-      }
-    }
-
-    .profile {
-      display: flex;
-      align-items: center;
-      margin-bottom: 0.25rem;
-      min-height: 2.5rem;
-
-      h4 {
-        margin: 0 auto 0 0.75rem;
-        font-weight: 500;
-      }
-
-      img {
-        border-radius: 25px;
-        object-fit: cover;
-        height: 2.5rem;
-        width: 2.5rem;
-      }
-    }
-
-    h3 {
-      margin-bottom: 0;
-    }
-
-    .alert {
-      background: var(--neko-background);
-      margin-bottom: 0.25rem;
-      border-radius: 8px;
-      h4 {
-        margin: 0.5rem 0 0;
-      }
-      button {
-        width: 100%;
-        background: var(--neko-colors-primary);
-      }
+    button {
+      width: 100%;
+      background: var(--neko-colors-primary);
     }
   }
 
   @media (max-width: 740px) {
-    min-width: 1rem;
-    width: 100%;
     max-width: 100%;
-    .sidebar {
-      h3 {
-        font-size: 2rem;
-      }
+    width: 100%;
+    h3 {
+      font-size: 2rem;
     }
 
     body {

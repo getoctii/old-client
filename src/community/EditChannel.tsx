@@ -34,6 +34,7 @@ import { useMedia, useSet } from 'react-use'
 import { faCheck, faMinus, faTimes } from '@fortawesome/pro-solid-svg-icons'
 import { Permission } from '../utils/permissions'
 import TextArea from '../components/TextArea'
+import StatusBar from '../components/StatusBar'
 
 const ChannelSchema = Yup.object().shape({
   name: Yup.string()
@@ -459,134 +460,142 @@ export const EditChannel = () => {
   const isMobile = useMedia('(max-width: 740px)')
   const history = useHistory()
   return (
-    <div className={styles.editChannel}>
-      <Header
-        icon={faCogs}
-        subheading={`#${channel?.name}`}
-        heading='Edit Channel'
-        onClick={() => {
-          if (isMobile) history.push(`/communities/${id}`)
-        }}
-      />
-      <Formik
-        initialValues={{
-          name: channel?.name ?? '',
-          description: channel?.description,
-          color: channel?.color
-        }}
-        validationSchema={ChannelSchema}
-        onSubmit={async (
-          values,
-          { setSubmitting, setFieldError, setErrors }
-        ) => {
-          try {
-            if (!values.name) return setFieldError('name', 'Required')
-            const name = values.name
-              .toString()
-              .toLowerCase()
-              .replace(/\s+/g, '-')
-              .replace(/[^\w-]+/g, '')
-              .replace(/--+/g, '-')
-              .replace(/^-+/, '')
-              .replace(/-+$/, '')
-            await clientGateway.patch(
-              `/channels/${channelID}`,
-              { name, description: values.description, color: values.color },
-              {
-                headers: { Authorization: token }
-              }
-            )
-            ui.clearModal()
-          } catch (e) {
-            const errors = e.response.data.errors
-            const userErrors: { name?: string } = {}
-            if (errors.includes('ChannelNameInvalid'))
-              userErrors.name = 'Invalid Channel Name'
-            setErrors(userErrors)
-            ui.clearModal()
-          } finally {
-            setSubmitting(false)
-          }
-        }}
-      >
-        {({ isSubmitting, values, setFieldValue }) => (
-          <Form className={styles.display}>
-            <div className={styles.info}>
-              {channel?.type !== ChannelTypes.CATEGORY && (
-                <BlockPicker
-                  colors={[
-                    '#0081FF',
-                    '#F47373',
-                    '#37D67A',
-                    '#2CCCE4',
-                    '#dce775',
-                    '#ff8a65',
-                    '#ba68c8'
-                  ]}
-                  triangle={'hide'}
-                  className={styles.blockPicker}
-                  color={values.color}
-                  onChangeComplete={(c) => {
-                    setFieldValue('color', c.hex)
-                  }}
-                />
-              )}
-              <div
-                className={`${styles.text} ${
-                  channel?.type === ChannelTypes.CATEGORY ? styles.category : ''
-                }`}
-              >
-                <h4>Display</h4>
-                <label htmlFor='name' className={styles.inputName}>
-                  Name
-                </label>
-                <Field
-                  component={Input}
-                  id='name'
-                  name='name'
-                  type='name'
-                  enterKeyHint='next'
-                />
-                <ErrorMessage
-                  component='p'
-                  className={styles.error}
-                  name='name'
-                />
+    <StatusBar>
+      <div className={styles.editChannel}>
+        <Header
+          icon={faCogs}
+          subheading={`#${channel?.name}`}
+          heading='Edit Channel'
+          onClick={() => {
+            if (isMobile) history.push(`/communities/${id}`)
+          }}
+        />
+        <Formik
+          initialValues={{
+            name: channel?.name ?? '',
+            description: channel?.description,
+            color: channel?.color
+          }}
+          validationSchema={ChannelSchema}
+          onSubmit={async (
+            values,
+            { setSubmitting, setFieldError, setErrors }
+          ) => {
+            try {
+              if (!values.name) return setFieldError('name', 'Required')
+              const name = values.name
+                .toString()
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^\w-]+/g, '')
+                .replace(/--+/g, '-')
+                .replace(/^-+/, '')
+                .replace(/-+$/, '')
+              await clientGateway.patch(
+                `/channels/${channelID}`,
+                { name, description: values.description, color: values.color },
+                {
+                  headers: { Authorization: token }
+                }
+              )
+              ui.clearModal()
+            } catch (e) {
+              const errors = e.response.data.errors
+              const userErrors: { name?: string } = {}
+              if (errors.includes('ChannelNameInvalid'))
+                userErrors.name = 'Invalid Channel Name'
+              setErrors(userErrors)
+              ui.clearModal()
+            } finally {
+              setSubmitting(false)
+            }
+          }}
+        >
+          {({ isSubmitting, values, setFieldValue }) => (
+            <Form className={styles.display}>
+              <div className={styles.info}>
+                {channel?.type !== ChannelTypes.CATEGORY && (
+                  <BlockPicker
+                    colors={[
+                      '#0081FF',
+                      '#F47373',
+                      '#37D67A',
+                      '#2CCCE4',
+                      '#dce775',
+                      '#ff8a65',
+                      '#ba68c8'
+                    ]}
+                    triangle={'hide'}
+                    className={styles.blockPicker}
+                    color={values.color}
+                    onChangeComplete={(c) => {
+                      setFieldValue('color', c.hex)
+                    }}
+                  />
+                )}
+                <div
+                  className={`${styles.text} ${
+                    channel?.type === ChannelTypes.CATEGORY
+                      ? styles.category
+                      : ''
+                  }`}
+                >
+                  <h4>Display</h4>
+                  <label htmlFor='name' className={styles.inputName}>
+                    Name
+                  </label>
+                  <Field
+                    component={Input}
+                    id='name'
+                    name='name'
+                    type='name'
+                    enterKeyHint='next'
+                  />
+                  <ErrorMessage
+                    component='p'
+                    className={styles.error}
+                    name='name'
+                  />
 
-                <label htmlFor='description' className={styles.inputName}>
-                  Description
-                </label>
-                <TextArea name={'description'} />
-                <ErrorMessage
-                  component='p'
-                  className={styles.error}
-                  name='description'
-                />
+                  <label htmlFor='description' className={styles.inputName}>
+                    Description
+                  </label>
+                  <TextArea name={'description'} />
+                  <ErrorMessage
+                    component='p'
+                    className={styles.error}
+                    name='description'
+                  />
+                </div>
               </div>
-            </div>
-            {(values.name !== channel?.name ||
-              values.description !== channel?.description ||
-              values.color !== channel?.color) && (
-              <Button disabled={isSubmitting} type='submit'>
-                {isSubmitting ? <BarLoader color='#ffffff' /> : 'Edit Channel'}
-              </Button>
-            )}
-          </Form>
+              {(values.name !== channel?.name ||
+                values.description !== channel?.description ||
+                values.color !== channel?.color) && (
+                <Button disabled={isSubmitting} type='submit'>
+                  {isSubmitting ? (
+                    <BarLoader color='#ffffff' />
+                  ) : (
+                    'Edit Channel'
+                  )}
+                </Button>
+              )}
+            </Form>
+          )}
+        </Formik>
+
+        {Object.keys(channel?.overrides ?? {}).filter(
+          (groupID) => !protectedGroups.includes(groupID)
+        ).length <= 0 ? (
+          <EmptyOverrides />
+        ) : (
+          <div className={styles.overrides}>
+            <h4>Overrides</h4>
+            {channel && <Overrides {...channel} />}
+          </div>
         )}
-      </Formik>
 
-      {Object.keys(channel?.overrides ?? {}).filter(
-        (groupID) => !protectedGroups.includes(groupID)
-      ).length <= 0 ? (
-        <EmptyOverrides />
-      ) : (
-        <div className={styles.overrides}>
-          <h4>Overrides</h4>
-          {channel && <Overrides {...channel} />}
-        </div>
-      )}
-
-      {channel && <DefaultOverrides {...channel} />}
-    </div>
+        {channel && <DefaultOverrides {...channel} />}
+      </div>
+    </StatusBar>
   )
 }

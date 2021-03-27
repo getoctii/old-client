@@ -22,6 +22,7 @@ const ListCard = ({
   icon,
   groups,
   actions,
+  className,
   onClick
 }: {
   title: ReactNode
@@ -29,12 +30,16 @@ const ListCard = ({
   icon?: ReactNode
   groups?: ReactNode
   actions?: ReactNode
+  className?: string
   onClick?: () => void
 }) => {
   const isMobile = useMedia('(max-width: 740px)')
   return (
     <Suspense fallback={<ListCardPlaceholder />}>
-      <div className={styles.card} onClick={() => onClick && onClick()}>
+      <div
+        className={`${styles.card} ${className ? className : ''}`}
+        onClick={() => onClick && onClick()}
+      >
         {icon}
         <div className={styles.info}>
           {title && <h4>{title}</h4>}

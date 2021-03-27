@@ -4,7 +4,6 @@ import Invites from './Invites'
 import Navbar from './Navbar'
 import { useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import {
   Redirect,
   Switch,
@@ -21,6 +20,8 @@ import Groups from './groups/Groups'
 import { UI } from '../../state/ui'
 import { Permission } from '../../utils/permissions'
 import List from '../../components/List'
+import StatusBar from '../../components/StatusBar'
+import Header from '../../components/Header'
 
 const SettingsPlaceholder = () => {
   const match = useRouteMatch<{ tab?: string; id: string }>(
@@ -50,7 +51,7 @@ const SettingsPlaceholder = () => {
 }
 
 const SettingsView = memo(() => {
-  const isMobile = useMedia('(max-width: 740px)')
+  const isMobile = useMedia('(max-width: 873px)')
   const { id } = useParams<{ id: string }>()
   const { community, hasPermissions } = Permission.useContainer()
   const { path } = useRouteMatch()
@@ -69,60 +70,50 @@ const SettingsView = memo(() => {
       ]) ? (
         <Redirect to={`/communities/${id}`} />
       ) : (
-        <div className={styles.wrapper}>
+        <StatusBar>
           <div className={styles.settings}>
-            <div className={styles.header}>
-              {isMobile ? (
-                <div
-                  className={styles.icon}
-                  onClick={() => isMobile && history.push(`/communities/${id}`)}
-                >
-                  <FontAwesomeIcon
-                    className={styles.backButton}
-                    icon={faChevronLeft}
-                  />
-                </div>
-              ) : (
-                <div
-                  className={styles.icon}
-                  style={{ backgroundImage: `url('${community?.icon}')` }}
-                />
-              )}
-              <div className={styles.title}>
-                <small>{community?.name}</small>
-                <h2>Settings</h2>
-              </div>
-              {match?.params.tab === 'invites' ? (
-                <Button
-                  className={styles.newButton}
-                  type='button'
-                  onClick={() => ui.setModal({ name: ModalTypes.NEW_INVITE })}
-                >
-                  {isMobile ? (
-                    <FontAwesomeIcon icon={faPlusCircle} />
+            <Header
+              heading={'Settings'}
+              subheading={community?.name ?? ''}
+              image={community?.icon}
+              color='primary'
+              onBack={() => history.push(`/communities/${id}`)}
+              action={
+                <>
+                  {match?.params.tab === 'invites' ? (
+                    <Button
+                      className={styles.newButton}
+                      type='button'
+                      onClick={() =>
+                        ui.setModal({ name: ModalTypes.NEW_INVITE })
+                      }
+                    >
+                      {isMobile ? (
+                        <FontAwesomeIcon icon={faPlusCircle} />
+                      ) : (
+                        'New Invite'
+                      )}
+                    </Button>
+                  ) : match?.params.tab === 'groups' ? (
+                    <Button
+                      className={styles.newButton}
+                      type='button'
+                      onClick={() =>
+                        ui.setModal({ name: ModalTypes.NEW_PERMISSION })
+                      }
+                    >
+                      {isMobile ? (
+                        <FontAwesomeIcon icon={faPlusCircle} />
+                      ) : (
+                        'New Group'
+                      )}
+                    </Button>
                   ) : (
-                    'New Invite'
+                    <></>
                   )}
-                </Button>
-              ) : match?.params.tab === 'groups' ? (
-                <Button
-                  className={styles.newButton}
-                  type='button'
-                  onClick={() =>
-                    ui.setModal({ name: ModalTypes.NEW_PERMISSION })
-                  }
-                >
-                  {isMobile ? (
-                    <FontAwesomeIcon icon={faPlusCircle} />
-                  ) : (
-                    'New Group'
-                  )}
-                </Button>
-              ) : (
-                <></>
-              )}
-            </div>
-
+                </>
+              }
+            />
             <Navbar.View />
             <Switch>
               {hasPermissions([Permissions.MANAGE_INVITES]) && (
@@ -160,7 +151,7 @@ const SettingsView = memo(() => {
               />
             </Switch>
           </div>
-        </div>
+        </StatusBar>
       )}
     </>
   )

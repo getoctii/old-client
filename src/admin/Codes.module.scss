@@ -9,6 +9,10 @@
     height: 2.65rem;
     margin-left: auto;
     background: var(--neko-colors-primary);
+
+    @media (max-width: 740px) {
+      width: 2.65rem;
+    }
   }
 
   .icon {

@@ -20,6 +20,7 @@ import { clientGateway, ModalTypes } from '../../utils/constants'
 import { Plugins } from '@capacitor/core'
 import List from '../../components/List'
 import { UI } from '../../state/ui'
+import { useMedia } from 'react-use'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
@@ -28,6 +29,7 @@ const InviteCard = memo((invite: InviteResponse) => {
   const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
   const { token } = Auth.useContainer()
   const user = useQuery(['users', invite.author_id, token], getUser)
+  const isMobile = useMedia('(max-width: 873px)')
   const [deleteInvite] = useMutation(
     async () =>
       (
@@ -65,15 +67,17 @@ const InviteCard = memo((invite: InviteResponse) => {
             }}
           >
             <FontAwesomeIcon icon={faCopy} />
-            Copy
+            {!isMobile && 'Copy'}
           </Button>
-          <Button
-            type='button'
-            className={styles.deleteButton}
-            onClick={async () => await deleteInvite()}
-          >
-            <FontAwesomeIcon icon={faTrashAlt} />
-          </Button>
+          {!isMobile && (
+            <Button
+              type='button'
+              className={styles.deleteButton}
+              onClick={async () => await deleteInvite()}
+            >
+              <FontAwesomeIcon icon={faTrashAlt} />
+            </Button>
+          )}
         </>
       }
     />

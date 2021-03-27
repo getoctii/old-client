@@ -17,6 +17,7 @@ import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import { getParticipants, Participant } from '../user/remote'
 import { ScrollPosition } from '../state/scroll'
+import StatusBar from '../components/StatusBar'
 
 dayjs.extend(dayjsUTC)
 
@@ -140,7 +141,7 @@ export const Conversations = () => {
   }, [currentScrollPosition, setScrollPosition])
 
   return (
-    <div className={styles.sidebarWrapper}>
+    <StatusBar sidebar>
       <div className={styles.sidebar} ref={scrollRef}>
         {isMobile && <div className={styles.statusBar} />}
         <h3>Messages</h3>
@@ -151,6 +152,6 @@ export const Conversations = () => {
           </React.Suspense>
         </div>
       </div>
-    </div>
+    </StatusBar>
   )
 }

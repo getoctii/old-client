@@ -6,6 +6,10 @@
     top: 2rem;
     left: 2rem;
     position: absolute;
+
+    @media (max-width: 740px) {
+      top: calc(env(safe-area-inset-top));
+    }
   }
 
   .banner {
@@ -14,6 +18,11 @@
     width: 100%;
     background: var(--neko-colors-primary);
     object-fit: cover;
+
+    @media (max-width: 740px) {
+      max-height: 400px;
+      height: 300px;
+    }
   }
 }
 

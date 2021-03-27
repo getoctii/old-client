@@ -13,13 +13,15 @@ import {
   faUserClock,
   faClipboardList,
   faCopy,
-  faTrashAlt
+  faTrashAlt,
+  faPlusCircle
 } from '@fortawesome/pro-duotone-svg-icons'
 import Button from '../components/Button'
 import { Plugins } from '@capacitor/core'
 import Header from '../components/Header'
 import List from '../components/List'
 import { useHistory } from 'react-router-dom'
+import { useMedia } from 'react-use'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
@@ -87,6 +89,7 @@ const Code = memo(({ id, used, created_at }: CodeResponse) => {
 })
 
 const Codes = () => {
+  const isMobile = useMedia('(max-width: 740px)')
   const { token } = Auth.useContainer()
   const { data, canFetchMore, fetchMore } = useInfiniteQuery<
     CodeResponse[],
@@ -134,7 +137,7 @@ const Codes = () => {
   return (
     <div className={styles.codes}>
       <Header
-        heading={'Beta Codes'}
+        heading={'Codes'}
         subheading={'Admin'}
         icon={faClipboardList}
         color='secondary'
@@ -145,7 +148,7 @@ const Codes = () => {
             type={'button'}
             onClick={() => createCode()}
           >
-            New Code
+            {isMobile ? <FontAwesomeIcon icon={faPlusCircle} /> : 'New Code'}
           </Button>
         }
       />
