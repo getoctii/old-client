@@ -150,7 +150,6 @@ const ConversationRouter = () => {
     ['participants', id, token],
     getParticipants
   )
-
   const filteredParticipants = useMemo(
     () =>
       participants?.filter((part) => part.conversation.participants.length > 1),
@@ -164,6 +163,18 @@ const ConversationRouter = () => {
           {!isMobile && <Conversations />}
           <Suspense fallback={<Chat.Placeholder />}>
             <Switch>
+              {isMobile && (
+                <PrivateRoute
+                  path={path}
+                  exact
+                  component={() => (
+                    <>
+                      <Sidebar />
+                      <Conversations />
+                    </>
+                  )}
+                />
+              )}
               <PrivateRoute
                 path={`${path}/:id`}
                 component={ConversationProvider}

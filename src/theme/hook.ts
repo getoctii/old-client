@@ -119,13 +119,6 @@ const useTheme = () => {
     'light' | 'dark' | 'system'
   >('theme-variations', 'system')
 
-  console.log(integerations.payloads)
-  console.log(
-    integerations.payloads?.flatMap((payload) => payload.themes ?? [])
-  )
-
-  console.log(themeID)
-
   const theme = useMemo<Theme | ThemeBundle>(
     () =>
       themes.find((t) => t.id === themeID) ||
