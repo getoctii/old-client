@@ -42,7 +42,8 @@ const getPayloads = async (
           (
             await Filesystem.readFile({
               path: `payloads/${key[0]}/${key[1]}.json`,
-              directory: FilesystemDirectory.Data
+              directory: FilesystemDirectory.Data,
+              encoding: FilesystemEncoding.UTF8
             })
           ).data
         )
@@ -56,7 +57,6 @@ const getPayloads = async (
             Authorization: token
           }
         })
-        console.log(data)
         await Filesystem.writeFile({
           path: `payloads/${key[0]}/${key[1]}.json`,
           directory: FilesystemDirectory.Data,
