@@ -144,7 +144,9 @@ const useTheme = () => {
       : theme
 
     if (isPlatform('capacitor')) {
-      StatusBar.setOverlaysWebView({ overlay: true })
+      if (isPlatform('android')) {
+        StatusBar.setOverlaysWebView({ overlay: true })
+      }
       Keyboard.setResizeMode({ mode: KeyboardResize.Native })
       const isDark =
         (variations === 'system' && prefersDarkMode) || variations === 'dark'

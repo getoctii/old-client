@@ -26,6 +26,15 @@
       margin-right: 0.5rem;
     }
     background: var(--neko-colors-primary) !important;
+
+    @media (max-width: 873px) {
+      width: 46px;
+      height: 46px;
+
+      svg {
+        margin-right: 0;
+      }
+    }
   }
 
   .deleteButton {

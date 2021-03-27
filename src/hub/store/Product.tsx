@@ -34,7 +34,7 @@ const Product = () => {
       {product?.banner ? (
         <img
           className={styles.banner}
-          src='https://file.coffee/u/DlX3tED6S3.png'
+          src={product?.banner}
           alt={product?.banner}
         />
       ) : (

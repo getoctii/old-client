@@ -22,37 +22,35 @@ const Sideview = ({
   const match = useRouteMatch<{ page: string }>('/:tab/:page')
 
   return (
-    <div className={styles.sidebarWrapper}>
-      <div className={styles.sidebar}>
-        <h2>{name}</h2>
-        <div className={styles.list}>
-          {tabs.map((tab) => (
-            <div
-              key={tab.name}
-              className={`${styles.tab} ${
-                tab.color === 'primary'
-                  ? styles.primary
-                  : tab.color === 'secondary'
-                  ? styles.secondary
-                  : tab.color === 'danger'
-                  ? styles.danger
-                  : styles.warning
-              } ${
-                match?.params.page === tab.name.toLowerCase()
-                  ? styles.selected
-                  : ''
-              }`}
-              onClick={() => history.push(tab.link)}
-            >
-              <div className={styles.icon}>
-                <FontAwesomeIcon icon={tab.icon} fixedWidth />
-              </div>
-              {tab.name}
+    <div className={styles.sideview}>
+      <h2>{name}</h2>
+      <div className={styles.list}>
+        {tabs.map((tab) => (
+          <div
+            key={tab.name}
+            className={`${styles.tab} ${
+              tab.color === 'primary'
+                ? styles.primary
+                : tab.color === 'secondary'
+                ? styles.secondary
+                : tab.color === 'danger'
+                ? styles.danger
+                : styles.warning
+            } ${
+              match?.params.page === tab.name.toLowerCase()
+                ? styles.selected
+                : ''
+            }`}
+            onClick={() => history.push(tab.link)}
+          >
+            <div className={styles.icon}>
+              <FontAwesomeIcon icon={tab.icon} fixedWidth />
             </div>
-          ))}
-        </div>
-        {children}
+            {tab.name}
+          </div>
+        ))}
       </div>
+      {children}
     </div>
   )
 }

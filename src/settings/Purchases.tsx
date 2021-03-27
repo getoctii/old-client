@@ -30,6 +30,7 @@ const Purchases = () => {
         {(purchases?.length ?? 0) > 0 ? (
           purchases?.map((purchase) => (
             <List.Card
+              className={styles.card}
               title={purchase.name}
               icon={<Icon avatar={purchase.icon} />}
               subtitle={`Build ${purchase.latest_version ?? 0}`}

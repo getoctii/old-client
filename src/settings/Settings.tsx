@@ -22,6 +22,7 @@ import GitInfo from 'react-git-info/macro'
 import { queryCache } from 'react-query'
 import { Plugins } from '@capacitor/core'
 import Purchases from './Purchases'
+import StatusBar from '../components/StatusBar'
 
 const gitInfo = GitInfo()
 
@@ -29,7 +30,6 @@ const Settings = () => {
   const auth = Auth.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
   const { path } = useRouteMatch()
-  const match = useRouteMatch('/settings/:page')
   const user = useUser(auth.id ?? undefined)
   const history = useHistory()
   const tabs = useMemo(() => {
@@ -70,45 +70,80 @@ const Settings = () => {
   }, [user?.discriminator])
 
   return (
-    <div className={styles.settings}>
-      <Helmet>
-        <title>Octii - Settings</title>
-      </Helmet>
-      {((!match && isMobile) || !isMobile) && (
-        <Sideview name={'Settings'} tabs={tabs}>
-          <div className={styles.info}>
-            <p className={styles.buildInfo}>
-              {isPlatform('ios') ? 'iOS' : gitInfo.branch || 'stable'}{' '}
-              <kbd>{gitInfo.commit.shortHash}</kbd>
-            </p>
-            <div
-              className={styles.logout}
-              onClick={async () => {
-                auth.setToken(null)
-                await queryCache.invalidateQueries()
-                await Plugins.Storage.clear()
-                history.push('/authenticate/login')
-              }}
-            >
-              Logout
+    <StatusBar>
+      <div className={styles.settings}>
+        <Helmet>
+          <title>Octii - Settings</title>
+        </Helmet>
+        {!isMobile && (
+          <Sideview name={'Settings'} tabs={tabs}>
+            <div className={styles.info}>
+              <p className={styles.buildInfo}>
+                {isPlatform('ios') ? 'iOS' : gitInfo.branch || 'stable'}{' '}
+                <kbd>{gitInfo.commit.shortHash}</kbd>
+              </p>
+              <div
+                className={styles.logout}
+                onClick={async () => {
+                  auth.setToken(null)
+                  await queryCache.invalidateQueries()
+                  await Plugins.Storage.clear()
+                  history.push('/authenticate/login')
+                }}
+              >
+                Logout
+              </div>
             </div>
-          </div>
-        </Sideview>
-      )}
-      <div className={styles.pages}>
-        <Switch>
-          {!isMobile && <Redirect path={path} to={`${path}/profile`} exact />}
-          <PrivateRoute path={`${path}/profile`} component={Profile} exact />
-          <PrivateRoute path={`${path}/security`} component={Security} exact />
-          <PrivateRoute path={`${path}/themes`} component={Themes} exact />
-          <PrivateRoute
-            path={`${path}/purchases`}
-            component={Purchases}
-            exact
-          />
-        </Switch>
+          </Sideview>
+        )}
+        <div className={styles.pages}>
+          <Switch>
+            {!isMobile ? (
+              <Redirect path={path} to={`${path}/profile`} exact />
+            ) : (
+              <PrivateRoute
+                path={path}
+                exact
+                component={() => (
+                  <Sideview name={'Settings'} tabs={tabs}>
+                    <div className={styles.info}>
+                      <p className={styles.buildInfo}>
+                        {isPlatform('ios') ? 'iOS' : gitInfo.branch || 'stable'}{' '}
+                        <kbd>{gitInfo.commit.shortHash}</kbd>
+                      </p>
+                      <div
+                        className={styles.logout}
+                        onClick={async () => {
+                          auth.setToken(null)
+                          await queryCache.invalidateQueries()
+                          await Plugins.Storage.clear()
+                          history.push('/authenticate/login')
+                        }}
+                      >
+                        Logout
+                      </div>
+                    </div>
+                  </Sideview>
+                )}
+              />
+            )}
+
+            <PrivateRoute path={`${path}/profile`} component={Profile} exact />
+            <PrivateRoute
+              path={`${path}/security`}
+              component={Security}
+              exact
+            />
+            <PrivateRoute path={`${path}/themes`} component={Themes} exact />
+            <PrivateRoute
+              path={`${path}/purchases`}
+              component={Purchases}
+              exact
+            />
+          </Switch>
+        </div>
       </div>
-    </div>
+    </StatusBar>
   )
 }
 

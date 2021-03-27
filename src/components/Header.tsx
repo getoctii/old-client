@@ -55,7 +55,9 @@ const Header = ({
         style={
           image && !icon && !isMobile
             ? {
-                backgroundImage: `url('${image}')`
+                backgroundImage: `url('${image}')`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat'
               }
             : {}
         }

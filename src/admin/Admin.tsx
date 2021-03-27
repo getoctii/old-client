@@ -19,6 +19,7 @@ import {
 import GitInfo from 'react-git-info/macro'
 import dayjs from 'dayjs'
 import Queue from './store/Queue'
+import StatusBar from '../components/StatusBar'
 
 const gitInfo = GitInfo()
 
@@ -63,41 +64,69 @@ const Admin = () => {
   return user?.discriminator === 0 ? (
     <>
       {isMobile && !match && <Sidebar />}
-      <div className={styles.admin}>
-        {((!match && isMobile) || !isMobile) && (
-          <Sideview name={'Admin'} tabs={tabs}>
-            <p className={styles.buildInfo}>
-              <strong>Branch:</strong> <kbd>{gitInfo.branch}</kbd>
-              <br />
-              <strong>Hash:</strong> <kbd>{gitInfo.commit.shortHash}</kbd>
-              <br />
-              <strong>Date:</strong>{' '}
-              <kbd>{dayjs(gitInfo.commit.date).calendar()}</kbd>
-              <br />
-              <strong>Message:</strong>
-              <br />
-              <kbd>{gitInfo.commit.message}</kbd>
-            </p>
-          </Sideview>
-        )}
-        <div className={styles.pages}>
-          <Suspense fallback={<></>}>
-            <Switch>
-              {!isMobile && (
-                <Redirect path={path} to={`${path}/lookup`} exact />
-              )}
-              <PrivateRoute path={`${path}/lookup`} component={Lookup} exact />
-              <PrivateRoute path={`${path}/codes`} component={Codes} exact />
-              <PrivateRoute
-                path={`${path}/newsletters`}
-                component={Newsletters}
-                exact
-              />
-              <PrivateRoute path={`${path}/queue`} component={Queue} exact />
-            </Switch>
-          </Suspense>
+      <StatusBar sidebar={!match}>
+        <div className={styles.admin}>
+          {!isMobile && (
+            <Sideview name={'Admin'} tabs={tabs}>
+              <p className={styles.buildInfo}>
+                <strong>Branch:</strong> <kbd>{gitInfo.branch}</kbd>
+                <br />
+                <strong>Hash:</strong> <kbd>{gitInfo.commit.shortHash}</kbd>
+                <br />
+                <strong>Date:</strong>{' '}
+                <kbd>{dayjs(gitInfo.commit.date).calendar()}</kbd>
+                <br />
+                <strong>Message:</strong>
+                <br />
+                <kbd>{gitInfo.commit.message}</kbd>
+              </p>
+            </Sideview>
+          )}
+          <div className={styles.pages}>
+            <Suspense fallback={<></>}>
+              <Switch>
+                {!isMobile ? (
+                  <Redirect path={path} to={`${path}/lookup`} exact />
+                ) : (
+                  <PrivateRoute
+                    path={path}
+                    exact
+                    component={() => (
+                      <Sideview name={'Admin'} tabs={tabs}>
+                        <p className={styles.buildInfo}>
+                          <strong>Branch:</strong> <kbd>{gitInfo.branch}</kbd>
+                          <br />
+                          <strong>Hash:</strong>{' '}
+                          <kbd>{gitInfo.commit.shortHash}</kbd>
+                          <br />
+                          <strong>Date:</strong>{' '}
+                          <kbd>{dayjs(gitInfo.commit.date).calendar()}</kbd>
+                          <br />
+                          <strong>Message:</strong>
+                          <br />
+                          <kbd>{gitInfo.commit.message}</kbd>
+                        </p>
+                      </Sideview>
+                    )}
+                  />
+                )}
+                <PrivateRoute
+                  path={`${path}/lookup`}
+                  component={Lookup}
+                  exact
+                />
+                <PrivateRoute path={`${path}/codes`} component={Codes} exact />
+                <PrivateRoute
+                  path={`${path}/newsletters`}
+                  component={Newsletters}
+                  exact
+                />
+                <PrivateRoute path={`${path}/queue`} component={Queue} exact />
+              </Switch>
+            </Suspense>
+          </div>
         </div>
-      </div>
+      </StatusBar>
     </>
   ) : (
     <></>

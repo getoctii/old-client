@@ -11,6 +11,13 @@
     font-size: 1.2rem;
   }
   .icon {
+    &.secondary {
+      background: var(--neko-colors-secondary);
+    }
+
+    &.primary {
+      background: var(--neko-colors-primary);
+    }
     background-size: cover;
     background-repeat: no-repeat;
     margin-right: 0.7rem;
@@ -29,14 +36,6 @@
     display: flex;
     vertical-align: middle;
     justify-content: center;
-
-    &.secondary {
-      background: var(--neko-colors-secondary);
-    }
-
-    &.primary {
-      background: var(--neko-colors-primary);
-    }
 
     &.clickable {
       cursor: pointer;

@@ -104,7 +104,7 @@
       background: var(--neko-colors-danger);
     }
 
-    @media (max-width: 740px) {
+    @media (max-width: 873px) {
       flex-direction: column;
 
       button {
@@ -287,7 +287,7 @@
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     column-gap: 0.8rem;
 
-    @media (max-width: 740px) {
+    @media (max-width: 873px) {
       display: block;
     }
   }

@@ -22,6 +22,7 @@
       background: var(--neko-settings-card);
       border-radius: 10px;
       width: 100%;
+
       img {
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
@@ -44,6 +45,10 @@
         p {
           margin: 0;
         }
+      }
+
+      @media (max-width: 740px) {
+        background: var(--neko-settings-background);
       }
     }
   }
