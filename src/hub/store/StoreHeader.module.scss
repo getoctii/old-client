@@ -39,6 +39,27 @@
     }
   }
 
+  .productCardPlaceholder {
+    display: flex;
+    align-items: center;
+    .name {
+      height: 1rem;
+      width: 4rem;
+      background: var(--neko-text-secondary);
+      opacity: 0.2;
+      border-radius: 4px;
+    }
+
+    .icon {
+      width: 45px;
+      height: 45px;
+      background: var(--neko-text-secondary);
+      opacity: 0.2;
+      margin-right: 0.5rem;
+      border-radius: 10px;
+    }
+  }
+
   .results {
     top: 250px;
     position: absolute;
@@ -48,6 +69,15 @@
     border-radius: 14px;
     background: var(--neko-text-inverse);
     color: var(--neko-text-secondary);
+
+    .noResults {
+      h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+    }
+
     .productCard {
       display: flex;
       align-items: center;

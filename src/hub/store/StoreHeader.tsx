@@ -31,7 +31,7 @@ const SearchCard = ({ search }: { search: string }) => {
   const auth = Auth.useContainer()
   const [debouncedSearch, setDebouncedSearch] = useState(search)
   useDebounce(() => setDebouncedSearch(search), 300, [search])
-  const { data: products } = useQuery<string[]>(
+  const { data: products, isLoading } = useQuery<string[]>(
     ['productSearch', debouncedSearch, auth.token],
     async () =>
       (
@@ -48,11 +48,26 @@ const SearchCard = ({ search }: { search: string }) => {
 
   return (
     <div className={styles.results}>
-      {products?.map((product) => (
-        <Suspense fallback={<></>}>
-          <ProductCard id={product} />
-        </Suspense>
-      ))}
+      {isLoading ? (
+        'Loading'
+      ) : (products?.length ?? 0) > 0 ? (
+        products?.map((product) => (
+          <Suspense
+            fallback={
+              <div className={styles.productCardPlaceholder}>
+                <div className={styles.icon} />
+                <div className={styles.name} />
+              </div>
+            }
+          >
+            <ProductCard id={product} />
+          </Suspense>
+        ))
+      ) : (
+        <div className={styles.noResults}>
+          <h3>Couldn't find anything containing "{debouncedSearch}"</h3>
+        </div>
+      )}
     </div>
   )
 }
@@ -67,7 +82,7 @@ const StoreHeader = () => {
         placeholder='Find integrations and themes...'
         onChange={(event) => setSearchQuery(event.target.value)}
       />
-      <Suspense fallback={<div></div>}>
+      <Suspense fallback={<div className={styles.results}>Loading...</div>}>
         {searchQuery && searchQuery !== '' && (
           <SearchCard search={searchQuery} />
         )}

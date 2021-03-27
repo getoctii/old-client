@@ -61,6 +61,9 @@ export interface ProductResponse {
   name: string
   icon: string
   description: string
+  banner?: string
+  tagline: string
+  purchases: number
 }
 
 export enum ResourceTypes {

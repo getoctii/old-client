@@ -1,16 +1,13 @@
 import Button from '../../components/Button'
 import styles from './Product.module.scss'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faBadgeCheck,
-  faChevronCircleLeft
-} from '@fortawesome/pro-duotone-svg-icons'
+import { faChevronCircleLeft } from '@fortawesome/pro-duotone-svg-icons'
 import Header from '../../components/Header'
 import { useHistory, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { Auth } from '../../authentication/state'
 import { getProduct } from '../../community/remote'
 import { clientGateway } from '../../utils/constants'
+import { getPurchases } from '../../user/remote'
 
 const Product = () => {
   const auth = Auth.useContainer()
@@ -19,6 +16,10 @@ const Product = () => {
   const { data: product } = useQuery(
     ['product', productID, auth.token],
     getProduct
+  )
+  const { data: purchases } = useQuery(
+    ['purchases', auth.id, auth.token],
+    getPurchases
   )
   return (
     <div className={styles.product}>
@@ -30,24 +31,26 @@ const Product = () => {
         color={'secondary'}
         onClick={() => history.push('/hub/store')}
       />
-      <img
-        className={styles.banner}
-        src='https://file.coffee/u/DlX3tED6S3.png'
-        alt={product?.name}
-      />
+      {product?.banner ? (
+        <img
+          className={styles.banner}
+          src='https://file.coffee/u/DlX3tED6S3.png'
+          alt={product?.banner}
+        />
+      ) : (
+        <div className={styles.banner}></div>
+      )}
       <div className={styles.main}>
         <div className={styles.info}>
-          <h1>
-            {product?.name}
-            {/* <FontAwesomeIcon className={styles.badge} icon={faBadgeCheck} /> */}
-          </h1>
-          <h2>Tagline</h2>
+          <h1>{product?.name}</h1>
+          <h2>{product?.tagline}</h2>
           <p>{product?.description}</p>
         </div>
         <div className={styles.card}>
           <h1>Purchase</h1>
           <Button
             type='button'
+            disabled={!!purchases?.find((p) => p.id === productID)}
             onClick={async () => {
               await clientGateway.post(
                 `/products/${productID}/purchase`,
@@ -60,7 +63,7 @@ const Product = () => {
               )
             }}
           >
-            Get
+            {purchases?.find((p) => p.id === productID) ? 'Owned' : 'Get'}
           </Button>
           <p>By purchasing this product, you agree to the Octii store TOS.</p>
         </div>

@@ -198,6 +198,8 @@
   .inputName {
     margin-bottom: 0.5rem;
     display: block;
+    font-size: 1rem;
+    font-weight: 400;
     margin-top: 0;
   }
 
@@ -238,6 +240,64 @@
         max-height: 2rem;
         max-width: 2rem;
       }
+    }
+  }
+}
+
+.images {
+  display: flex;
+  .icon,
+  .banner {
+    width: 100%;
+  }
+
+  .icon {
+    margin-right: 0.5rem;
+  }
+
+  .banner {
+    margin-left: 0.5rem;
+  }
+
+  @media (max-width: 1200px) {
+    display: block;
+    .icon,
+    .banner {
+      margin-right: 0;
+      margin-left: 0;
+    }
+  }
+}
+.description {
+  margin-top: 1rem;
+  .descriptionInput {
+    width: 100%;
+    position: relative;
+    textarea {
+      width: 100%;
+      background: var(--neko-backgrounds-primary);
+      border: none;
+      border-radius: 14px;
+      font-size: 1rem;
+      color: var(--neko-text-normal);
+      padding: 0.9rem 1.2rem !important;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    button {
+      position: absolute;
+      background: var(--neko-colors-primary);
+      border-radius: 100%;
+      right: 0.5rem;
+      top: 0.5rem;
+      height: 2rem;
+      padding: 0.5rem;
+      width: 2rem;
+      min-height: 2rem;
+      min-width: 2rem;
+      max-height: 2rem;
+      max-width: 2rem;
     }
   }
 }

@@ -56,7 +56,11 @@ const Products = () => {
           onBack={() => history.push(`/communities/${id}`)}
         />
         {(products?.length ?? 0) > 0 && (
-          <Button className={styles.newButton} type='button'>
+          <Button
+            className={styles.newButton}
+            type='button'
+            onClick={() => ui.setModal({ name: ModalTypes.NEW_PRODUCT })}
+          >
             {isMobile ? (
               <FontAwesomeIcon icon={faPlusCircle} />
             ) : (

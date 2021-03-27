@@ -14,22 +14,20 @@ import {
   StatusBarStyle
 } from '@capacitor/core'
 import { useSuspenseStorageItem } from '../utils/storage'
-import { useQuery } from 'react-query'
-import { Auth } from '../authentication/state'
-import { getPurchases } from '../user/remote'
+import Integrations from '../integrations/state'
 const { Keyboard, StatusBar } = Plugins
 const isThemeBundle = (theme: Theme | ThemeBundle): theme is ThemeBundle => {
   return (theme as ThemeBundle).dark !== undefined
 }
 
-interface ThemeBundle {
+export interface ThemeBundle {
   id: string
   name: string
   dark: Theme
   light: Theme
 }
 
-interface Theme {
+export interface Theme {
   colors: {
     primary: string
     secondary: string
@@ -112,11 +110,7 @@ document.head.appendChild(globalStyle)
 export const themes = [octii, innlove, octiiHub, ayu, eyestrain]
 
 const useTheme = () => {
-  const auth = Auth.useContainer()
-  const { data: purchases } = useQuery(
-    ['purchases', auth.id, auth.token],
-    getPurchases
-  )
+  const integerations = Integrations.useContainer()
   const [themeID, setThemeID] = useSuspenseStorageItem<string>(
     'theme-id',
     octii.id
@@ -125,14 +119,23 @@ const useTheme = () => {
     'light' | 'dark' | 'system'
   >('theme-variations', 'system')
 
-  const isDefaultTheme = useMemo(() => {
-    return !themeID ? true : !!themes.find((t) => t.id === themeID)
-  }, [themeID, themes])
+  console.log(integerations.payloads)
+  console.log(
+    integerations.payloads?.flatMap((payload) => payload.themes ?? [])
+  )
+
+  console.log(themeID)
 
   const theme = useMemo<Theme | ThemeBundle>(
-    () => themes.find((t) => t.id === themeID) || octii,
-    [themeID]
+    () =>
+      themes.find((t) => t.id === themeID) ||
+      integerations.payloads
+        ?.flatMap((payload) => payload.themes ?? [])
+        .find((theme) => theme.id === themeID) ||
+      octii,
+    [themeID, integerations.payloads]
   )
+
   const prefersDarkMode = useMedia('(prefers-color-scheme: dark)')
   useEffect(() => {
     const documentStyle = document.documentElement.style

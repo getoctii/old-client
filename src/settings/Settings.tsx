@@ -11,6 +11,7 @@ import { Auth } from '../authentication/state'
 import { useUser } from '../user/state'
 import {
   faPaintBrush,
+  faReceipt,
   faShield,
   faUser,
   faUserShield
@@ -20,6 +21,7 @@ import { isPlatform } from '@ionic/react'
 import GitInfo from 'react-git-info/macro'
 import { queryCache } from 'react-query'
 import { Plugins } from '@capacitor/core'
+import Purchases from './Purchases'
 
 const gitInfo = GitInfo()
 
@@ -41,7 +43,7 @@ const Settings = () => {
       {
         name: 'Security',
         icon: faShield,
-        color: 'secondary',
+        color: 'danger',
         link: '/settings/security'
       },
       {
@@ -49,6 +51,12 @@ const Settings = () => {
         icon: faPaintBrush,
         color: 'warning',
         link: '/settings/themes'
+      },
+      {
+        name: 'Purchases',
+        icon: faReceipt,
+        color: 'secondary',
+        link: '/settings/purchases'
       }
     ]
     if (user?.discriminator === 0)
@@ -93,6 +101,11 @@ const Settings = () => {
           <PrivateRoute path={`${path}/profile`} component={Profile} exact />
           <PrivateRoute path={`${path}/security`} component={Security} exact />
           <PrivateRoute path={`${path}/themes`} component={Themes} exact />
+          <PrivateRoute
+            path={`${path}/purchases`}
+            component={Purchases}
+            exact
+          />
         </Switch>
       </div>
     </div>

@@ -24,7 +24,11 @@ const DeleteSchema = Yup.object().shape({
 const Personalization = () => {
   const { productID } = useParams<{ productID: string }>()
   const auth = Auth.useContainer()
+  const [saveTagline, setSaveTagline] = useState<string | undefined>(undefined)
   const [saveName, setSaveName] = useState<string | undefined>(undefined)
+  const [saveDescription, setSaveDescription] = useState<string | undefined>(
+    undefined
+  )
   const { data: product } = useQuery(
     ['product', productID, auth.token],
     getProduct
@@ -33,28 +37,54 @@ const Personalization = () => {
     <div className={styles.card}>
       <h5>Personalization</h5>
       <div className={styles.personalization}>
-        <div className={styles.icon}>
-          <label htmlFor='icon' className={styles.inputName}>
-            Icon
-          </label>
-          <IconPicker
-            alt={product?.name || 'unknown'}
-            defaultIcon={product?.icon}
-            onUpload={async (url) => {
-              if (!auth.token) return
-              await clientGateway.patch(
-                `/products/${productID}`,
-                {
-                  icon: url
-                },
-                {
-                  headers: {
-                    Authorization: auth.token
+        <div className={styles.images}>
+          <div className={styles.icon}>
+            <label htmlFor='icon' className={styles.inputName}>
+              Icon
+            </label>
+            <IconPicker
+              alt={product?.name || 'unknown'}
+              defaultIcon={product?.icon}
+              onUpload={async (url) => {
+                if (!auth.token) return
+                await clientGateway.patch(
+                  `/products/${productID}`,
+                  {
+                    icon: url
+                  },
+                  {
+                    headers: {
+                      Authorization: auth.token
+                    }
                   }
-                }
-              )
-            }}
-          />
+                )
+              }}
+            />
+          </div>
+          <div className={styles.banner}>
+            <label htmlFor='banner' className={styles.inputName}>
+              Banner
+            </label>
+            <IconPicker
+              alt={product?.banner || 'unknown'}
+              defaultIcon={product?.banner}
+              recommendedIcon={'Recommanded banner size is 1280x960'}
+              onUpload={async (url) => {
+                if (!auth.token) return
+                await clientGateway.patch(
+                  `/products/${productID}`,
+                  {
+                    banner: url
+                  },
+                  {
+                    headers: {
+                      Authorization: auth.token
+                    }
+                  }
+                )
+              }}
+            />
+          </div>
         </div>
         <div className={styles.name}>
           <label htmlFor='name' className={styles.inputName}>
@@ -67,6 +97,7 @@ const Personalization = () => {
                   setSaveName(event.target.value)
                 }
               }}
+              value={saveName}
               defaultValue={product?.name}
               onKeyDown={async (event) => {
                 if (
@@ -125,6 +156,113 @@ const Personalization = () => {
           <li>- Must be 2-16 long</li>
           <li>- Can only be letters, numbers, dashes, and underscores.</li>
         </ul>
+        <br />
+        <div className={styles.name}>
+          <label htmlFor='tagline' className={styles.inputName}>
+            Tagline
+          </label>
+          <div className={styles.nameInput}>
+            <Input
+              onChange={(event) => {
+                if (event.target.value !== '') {
+                  setSaveTagline(event.target.value)
+                }
+              }}
+              defaultValue={product?.tagline}
+              value={saveTagline}
+              onKeyDown={async (event) => {
+                if (
+                  event.key === 'Enter' &&
+                  saveTagline &&
+                  saveTagline !== '' &&
+                  auth.token &&
+                  isUsername(saveTagline)
+                ) {
+                  await clientGateway.patch(
+                    `/products/${productID}`,
+                    {
+                      tagline: saveTagline
+                    },
+                    {
+                      headers: {
+                        Authorization: auth.token
+                      }
+                    }
+                  )
+                  setSaveTagline(undefined)
+                }
+              }}
+            />
+            {saveTagline && (
+              <Button
+                type='button'
+                onClick={async () => {
+                  if (
+                    !saveTagline ||
+                    saveTagline === '' ||
+                    !auth.token ||
+                    !isUsername(saveTagline)
+                  )
+                    return
+                  await clientGateway.patch(
+                    `/products/${productID}`,
+                    {
+                      tagline: saveTagline
+                    },
+                    {
+                      headers: {
+                        Authorization: auth.token
+                      }
+                    }
+                  )
+                  setSaveTagline(undefined)
+                }}
+              >
+                <FontAwesomeIcon icon={faSave} />
+              </Button>
+            )}
+          </div>
+        </div>
+        <div className={styles.description}>
+          <label htmlFor='description' className={styles.inputName}>
+            Description
+          </label>
+          <div className={styles.descriptionInput}>
+            <textarea
+              rows={5}
+              onChange={(event) => {
+                if (event.target.value !== '') {
+                  setSaveDescription(event.target.value)
+                }
+              }}
+              value={saveDescription}
+              defaultValue={product?.description}
+            />
+            {saveDescription && (
+              <Button
+                type='button'
+                onClick={async () => {
+                  if (!saveDescription || saveDescription === '' || !auth.token)
+                    return
+                  await clientGateway.patch(
+                    `/products/${productID}`,
+                    {
+                      description: saveDescription
+                    },
+                    {
+                      headers: {
+                        Authorization: auth.token
+                      }
+                    }
+                  )
+                  setSaveDescription(undefined)
+                }}
+              >
+                <FontAwesomeIcon icon={faSave} />
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -38,16 +38,21 @@ const NewProduct = () => {
 
   return (
     <Formik
-      initialValues={{ name: '', description: '', icon: '' }}
+      initialValues={{ name: '', description: '', icon: '', tagline: '' }}
       validationSchema={ProductSchema}
       onSubmit={async (values, { setSubmitting, setFieldError, setErrors }) => {
         try {
           if (!values.name) return setFieldError('name', 'Required')
+          if (!values.icon) return setFieldError('icon', 'Required')
+          if (!values.tagline) return setFieldError('tagline', 'Required')
+          if (!values.description)
+            return setFieldError('description', 'Required')
           const { data: product } = await clientGateway.post<{ id: string }>(
             `/communities/${match?.params.id}/products`,
             {
               name: values.name,
               icon: values.icon,
+              tagline: values.tagline,
               description: values.description
             },
             {
@@ -129,6 +134,22 @@ const NewProduct = () => {
                 <li>Only contain letters, numbers, dashes, and underscores</li>
                 <li>Between 2-30 characters long</li>
               </ul>
+
+              <label htmlFor='tagline' className={styles.inputName}>
+                Tagline
+              </label>
+              <Field
+                component={Input}
+                id='tagline'
+                name='tagline'
+                type='name'
+                enterkeyhint='next'
+              />
+              <ErrorMessage
+                component='p'
+                className={styles.error}
+                name='tagline'
+              />
 
               <label htmlFor='description' className={styles.inputName}>
                 Description

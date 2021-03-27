@@ -25,6 +25,11 @@ html {
     scrollbar-color: var(--neko-text-normal) rgba(0, 0, 0, 0);
     scrollbar-width: thin;
   }
+
+  --neko-backgrounds-primary: #ffffff;
+  --neko-text-normal: #000000;
+  --neko-colors-primary: linear-gradient(224deg, #75c8ff 0%, #007fff 100%);
+  --neko-text-primary: #1089ff;
 }
 
 body {
@@ -60,12 +65,19 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
+  html {
+    --neko-backgrounds-primary: #040a0f;
+    --neko-text-normal: #ffffff;
+    --neko-colors-primary: linear-gradient(224deg, #75c8ff 0%, #007fff 100%);
+    --neko-text-primary: #1089ff;
+  }
   body {
     --neko-default-gradient-background: linear-gradient(
       180deg,
       #000000 0%,
       #1a1f2c 100%
     );
+
     --neko-default-background: #040a0f;
     --neko-default-foreground: #1a1f2c;
     --neko-default-text-inline: #ececec;
