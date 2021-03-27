@@ -12,6 +12,7 @@ export enum ChannelTypes {
 }
 
 export enum ModalTypes {
+  UPDATE,
   ADD_PARTICIPANT,
   DELETE_CHANNEL,
   DELETE_MESSAGE,
@@ -21,10 +22,14 @@ export enum ModalTypes {
   NEW_CONVERSATION,
   NEW_INVITE,
   NEW_PERMISSION,
+  NEW_PRODUCT,
+  NEW_RESOURCE,
+  NEW_VERSION,
   PREVIEW_IMAGE,
   STATUS,
   MANAGE_MEMBER_GROUPS,
-  UPDATE
+  ADD_FRIEND,
+  DEVELOPER_MODE
 }
 
 export enum Groups {

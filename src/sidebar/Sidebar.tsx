@@ -12,7 +12,7 @@ import { UI } from '../state/ui'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInbox, faPlus } from '@fortawesome/pro-solid-svg-icons'
+import { faInbox, faPlus, faTh } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Button from '../components/Button'
 import { DragDropContext, Droppable, Draggable } from '@react-forked/dnd'
@@ -30,7 +30,6 @@ import { ScrollPosition } from '../state/scroll'
 import { getCommunity } from '../community/remote'
 import { ModalTypes } from '../utils/constants'
 import { useSuspenseStorageItem } from '../utils/storage'
-import { faUsers } from '@fortawesome/pro-duotone-svg-icons'
 import { useUser } from '../user/state'
 
 const reorder = (
@@ -304,15 +303,15 @@ const Sidebar = () => {
           </>
         )}
         <Button
-          className={`${styles.friends} ${
-            matchTab?.params.tab === 'friends' ? styles.selected : ''
+          className={`${styles.hub} ${
+            matchTab?.params.tab === 'hub' ? styles.selected : ''
           }`}
           type='button'
           onClick={() => {
-            history.push('/friends')
+            history.push('/hub')
           }}
         >
-          <FontAwesomeIcon className={styles.symbol} icon={faUsers} size='2x' />
+          <FontAwesomeIcon className={styles.symbol} icon={faTh} size='2x' />
         </Button>
         <Button
           className={`${styles.messages} ${

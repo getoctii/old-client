@@ -3,10 +3,18 @@ import React from 'react'
 import styles from './Icon.module.scss'
 import { State } from './remote'
 
-const Icon = ({ avatar, state }: { avatar?: string; state?: State }) => {
+const Icon = ({
+  className,
+  avatar,
+  state
+}: {
+  className?: string
+  avatar?: string
+  state?: State
+}) => {
   return (
     <motion.div
-      className={styles.icon}
+      className={`${styles.icon} ${className}`}
       initial={{
         opacity: 0
       }}

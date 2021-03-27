@@ -5,6 +5,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom'
 import styles from './Integrations.module.scss'
 import { Permission } from '../../utils/permissions'
 import { Permissions } from '../../utils/constants'
+import { faWarehouseAlt } from '@fortawesome/pro-duotone-svg-icons'
 
 const IntegrationsView = () => {
   const history = useHistory()
@@ -35,6 +36,33 @@ const IntegrationsView = () => {
           Members
         </h4>
       </div>
+      {community?.organization && hasPermissions([Permissions.ADMINISTRATOR]) && (
+        <div>
+          <hr
+            className={matchTab?.params.tab === 'products' ? styles.hidden : ''}
+          />
+          <div
+            key='products'
+            className={
+              matchTab?.params.tab === 'products'
+                ? `${styles.products} ${styles.selected}`
+                : styles.products
+            }
+            onClick={() => {
+              if (matchTab?.params.tab === 'products') return
+              if (community)
+                history.push(`/communities/${community.id}/products`)
+            }}
+          >
+            <h4>
+              <div className={styles.icon}>
+                <FontAwesomeIcon icon={faWarehouseAlt} fixedWidth={true} />
+              </div>
+              Products
+            </h4>
+          </div>
+        </div>
+      )}
       {hasPermissions([
         Permissions.MANAGE_GROUPS,
         Permissions.MANAGE_COMMUNITY,

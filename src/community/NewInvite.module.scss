@@ -1,0 +1,14 @@
+.newInvite {
+  height: 100%;
+  input {
+    width: 100%;
+  }
+
+  .copyInvite {
+    background: var(--neko-colors-primary);
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+}

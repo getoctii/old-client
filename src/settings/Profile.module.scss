@@ -40,6 +40,12 @@
       }
     }
 
+    .devmode {
+      color: var(--neko-text-danger);
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      cursor: pointer;
+    }
     .save {
       margin-top: 1rem;
       background: var(--neko-colors-primary);
@@ -49,7 +55,7 @@
     padding-top: 2.5rem;
   }
 
-  @media (max-width: 990px) and (min-width: 741px)  {
+  @media (max-width: 990px) and (min-width: 741px) {
     padding-left: 2rem;
     padding-right: 2rem;
     padding-top: 2rem;
@@ -66,7 +72,8 @@
           background: var(--neko-colors-primary);
         }
       }
-      .username, .discriminator {
+      .username,
+      .discriminator {
         input {
           background: var(--neko-settings-card);
         }

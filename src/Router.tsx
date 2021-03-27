@@ -34,9 +34,9 @@ import { useQuery } from 'react-query'
 import { getCommunities, getParticipants } from './user/remote'
 import OnBoarding from './marketing/OnBoarding'
 import { useSuspenseStorageItem } from './utils/storage'
-import Friends from './friends/Friends'
-import Modal from './components/Modal'
+import Modal from './components/Modals'
 import { Permission } from './utils/permissions'
+import Hub from './hub/Hub'
 const { PushNotifications } = Plugins
 
 const ContextMenuHandler = () => {
@@ -222,15 +222,6 @@ const AppRouter = () => {
               <PrivateRoute path={'/admin'} component={Admin} />
               <PrivateRoute path='/communities/:id' component={Community} />
               <PrivateRoute
-                path='/friends'
-                component={() => (
-                  <Suspense fallback={<></>}>
-                    <Friends />
-                  </Suspense>
-                )}
-                exact
-              />
-              <PrivateRoute
                 path={'/conversations'}
                 component={Conversation}
                 redirect={
@@ -238,6 +229,17 @@ const AppRouter = () => {
                     ? '/authenticate/login'
                     : '/home'
                 }
+              />
+              <PrivateRoute
+                path={'/hub'}
+                component={() => (
+                  <>
+                    {isMobile && <Sidebar />}
+                    <Suspense fallback={<Loader />}>
+                      <Hub />
+                    </Suspense>
+                  </>
+                )}
               />
               <Redirect path={'/'} to={'/conversations'} exact />
             </Switch>

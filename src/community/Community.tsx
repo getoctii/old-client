@@ -11,7 +11,7 @@ import { CommunityResponse, getChannels, getCommunity } from './remote'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 import { useMedia } from 'react-use'
 import Sidebar from '../sidebar/Sidebar'
-import Members from './Members'
+import Members from './integrations/Members'
 import { ChannelTypes, Permissions } from '../utils/constants'
 import { Helmet } from 'react-helmet-async'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -21,6 +21,10 @@ import { Permission } from '../utils/permissions'
 import { useMemo } from 'react'
 import { EditChannel } from './EditChannel'
 import Error from '../components/Error'
+import Products from './integrations/Products'
+import Product from './integrations/product/Product'
+import List from '../components/List'
+import { Placeholder } from '../components/Header'
 
 const NoPermission = ({ name }: CommunityResponse) => (
   <div className={styles.noPermission}>
@@ -48,6 +52,15 @@ const Channel = () => {
   return <Chat.Community key={channel.id} />
 }
 
+const ListPlaceholder = () => {
+  return (
+    <div className={styles.listPlaceholder}>
+      <Placeholder />
+      <List.Placeholder />
+    </div>
+  )
+}
+
 const CommunityPlaceholder = () => {
   const isMobile = useMedia('(max-width: 740px)')
   const matchTab = useRouteMatch<{ id: string; tab: string }>(
@@ -59,8 +72,9 @@ const CommunityPlaceholder = () => {
       {!isMobile &&
         (matchTab?.params.tab === 'settings' ? (
           <Settings.Placeholder />
-        ) : matchTab?.params.tab === 'members' ? (
-          <Members.Placeholder />
+        ) : matchTab?.params.tab === 'members' ||
+          matchTab?.params.tab === 'products' ? (
+          <ListPlaceholder />
         ) : (
           <Chat.Placeholder />
         ))}
@@ -141,7 +155,6 @@ const CommunityView = () => {
   if (!hasPermissions([Permissions.READ_MESSAGES])) {
     return <NoPermission {...community} />
   }
-
   return (
     <>
       <EmptyCommunityHandler emptyStateChange={emptyHandler} />
@@ -163,8 +176,9 @@ const CommunityView = () => {
             fallback={
               matchTab?.params.tab === 'settings' ? (
                 <Settings.Placeholder />
-              ) : matchTab?.params.tab === 'members' ? (
-                <Members.Placeholder />
+              ) : matchTab?.params.tab === 'members' ||
+                matchTab?.params.tab === 'products' ? (
+                <ListPlaceholder />
               ) : (
                 <Chat.Placeholder />
               )
@@ -172,13 +186,23 @@ const CommunityView = () => {
           >
             <Switch>
               <PrivateRoute
+                path={`${path}/products/:productID`}
+                component={Product}
+              />
+              <PrivateRoute
+                path={`${path}/products`}
+                component={Products}
+                exact
+              />
+
+              <PrivateRoute
                 path={`${path}/settings/:tab?`}
                 component={Settings.Router}
                 exact
               />
               <PrivateRoute
                 path={`${path}/members`}
-                component={Members.View}
+                component={Members}
                 exact
               />
               <PrivateRoute

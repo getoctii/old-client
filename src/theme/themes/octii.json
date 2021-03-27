@@ -1,7 +1,6 @@
 {
   "id": "ffc21e1c-6a00-4682-9981-bcd12860c138",
   "name": "Octii",
-  "version": "0.0.1",
   "dark": {
     "colors": {
       "primary": "linear-gradient(224deg, #75C8FF 0%, #007FFF 100%)",
@@ -16,7 +15,7 @@
     "text": {
       "normal": "#FEFEFE",
       "inverse": "#FEFEFE",
-      "href": "#1089FF",
+      "primary": "#1089FF",
       "danger": "#F86464",
       "warning": "#FF7D0E",
       "secondary": "#646464"
@@ -29,6 +28,10 @@
       "background": "#040a0f",
       "seperator": "#383838",
       "shadow": " 0 -9px 10px 0 rgba(0, 0, 0, 0.42)"
+    },
+    "backgrounds": {
+      "primary": "#040a0f",
+      "secondary": "#1A1F2C"
     },
     "settings": {
       "background": "#040a0f",
@@ -86,7 +89,7 @@
     "text": {
       "normal": "#000000",
       "inverse": "#FEFEFE",
-      "href": "#1089FF",
+      "primary": "#1089FF",
       "danger": "#F86464",
       "warning": "#FF7D0E",
       "secondary": "#646464"
@@ -100,6 +103,10 @@
       "background": "#EEF7FF",
       "card": "#FFFFFF",
       "input": "#EEF7FF"
+    },
+    "backgrounds": {
+      "primary": "#FFFFFF",
+      "secondary": "#EEF7FF"
     },
     "channels": {
       "background": "#FFFFFF",

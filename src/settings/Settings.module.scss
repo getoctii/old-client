@@ -12,4 +12,21 @@
   @media (max-width: 740px) {
     display: block;
   }
+
+  .info {
+    margin-top: auto;
+
+    .buildInfo {
+      margin-top: auto;
+    }
+    .logout {
+      text-align: center;
+      background: var(--neko-colors-danger);
+      border-radius: 10px;
+      color: var(--neko-text-inverse);
+      padding: 0.75rem;
+      width: 100%;
+      cursor: pointer;
+    }
+  }
 }

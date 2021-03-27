@@ -104,7 +104,7 @@
     }
 
     a {
-      color: var(--neko-text-href);
+      color: var(--neko-text-primary);
       text-decoration: none;
     }
 
@@ -124,7 +124,8 @@
     margin-left: 0.5rem;
   }
 
-  &.joined, &.left {
+  &.joined,
+  &.left {
     padding: 0.25rem 2rem;
     .content {
       border-radius: 15px;
@@ -136,7 +137,7 @@
     }
 
     @media (max-width: 740px) {
-     width: 100%;
+      width: 100%;
     }
   }
 

@@ -1,245 +1,53 @@
-.codesEmpty {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  align-items: center;
-  padding: 2rem;
-  border-radius: 10px;
-  margin-top: 1rem;
-  background: var(--neko-settings-card);
-  flex-direction: column;
-
-  @media (max-width: 740px) {
-    width: auto;
-    margin-top: 4rem;
-    padding: 2rem;
-  }
-}
-
-.wrapper {
+.codes {
+  overflow-y: scroll;
   height: 100%;
   width: 100%;
+  padding: 2rem;
   background: var(--neko-settings-background);
-  .codes {
-    overflow-y: scroll;
-    height: 100vh;
-    width: 100%;
-    padding: 2rem 2rem 0 2rem;
 
-    .body {
-      margin-top: 1rem;
-      margin-bottom: 2rem;
-      .code {
-        background: var(--neko-settings-card);
-        padding: 1rem;
-        margin-bottom: 0.25rem;
-        display: flex;
-        align-items: center;
+  .action {
+    height: 2.65rem;
+    margin-left: auto;
+    background: var(--neko-colors-primary);
+  }
 
-        .actions {
-          display: flex;
-          margin-left: auto;
+  .icon {
+    background: var(--neko-colors-warning);
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    min-height: 45px;
+    border-radius: 10px;
+    position: relative;
+    background-size: contain;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 0.5rem;
+    color: var(--neko-text-inverse);
 
-          height: 46px;
-          button {
-            svg {
-              margin-right: 0.5rem;
-            }
-            background: var(--neko-colors-secondary);
-
-            &.delete {
-              margin-left: 0.6rem;
-              width: 46px;
-              background: var(--neko-colors-danger);
-              svg {
-                margin-right: auto;
-              }
-            }
-          }
-        }
-        .info {
-          svg {
-            margin-left: 0.25rem;
-            color: var(--neko-text-href);
-          }
-          overflow: hidden;
-        }
-        .icon {
-          width: 45px;
-          height: 45px;
-          min-width: 45px;
-          min-height: 45px;
-          border-radius: 10px;
-          position: relative;
-          background-size: contain;
-          margin-right: 0.5rem;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          color: var(--neko-text-inverse);
-          background: var(--neko-colors-warning);
-          &.used {
-            background: var(--neko-colors-primary);
-          }
-        }
-        h4 {
-          overflow: hidden;
-          margin: 0;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-        }
-
-        time {
-          font-size: 0.8rem;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
-        }
-        &:first-child {
-          border-top-left-radius: 14px;
-          border-top-right-radius: 14px;
-        }
-
-        &:last-of-type {
-          border-bottom-left-radius: 14px;
-          border-bottom-right-radius: 14px;
-        }
-      }
-    }
-    .header {
-      display: flex;
-      align-items: center;
-      height: 2.65rem;
-      h2 {
-        font-size: 1.3125rem;
-      }
-      small {
-        font-size: 0.9rem;
-        font-weight: 400;
-      }
-      .title {
-        height: 2.65rem;
-      }
-      .icon {
-        margin-right: 0.8rem;
-        height: 2.65rem;
-        width: 2.65rem;
-        min-height: 2.65rem;
-        min-width: 2.65rem;
-        background-color: var(--neko-settings-card);
-        background-size: contain;
-        border-radius: 12px;
-        color: var(--neko-text-inverse);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: var(--neko-colors-secondary);
-      }
-
-      button {
-        height: 2.65rem;
-        margin-left: auto;
-        background: var(--neko-colors-primary);
-      }
-    }
-    h2 {
-      margin: 0;
-    }
-
-    h3 {
-      margin-bottom: 0.3rem;
-      span {
-        float: right;
-      }
-    }
-
-    i table {
-      @media (max-width: 740px) {
-        display: block;
-        overflow-x: scroll;
-        white-space: nowrap;
-      }
-      width: 100%;
-      margin-top: 0;
-      thead {
-        padding: 30px;
-        th {
-          padding: 0;
-          font-weight: 500;
-          font-size: 1.1rem;
-          text-align: left;
-        }
-      }
-
-      tr:first-child {
-        td:first-child {
-          border-top-left-radius: 10px;
-        }
-        td:last-child {
-          border-top-right-radius: 10px;
-        }
-      }
-
-      tr:last-child {
-        td:first-child {
-          border-bottom-left-radius: 10px;
-        }
-        td:last-child {
-          border-bottom-right-radius: 10px;
-        }
-      }
-
-      tbody {
-        tr {
-          padding: 30px;
-          height: 30px;
-          background-color: var(--neko-settings-card);
-          td {
-            text-align: left;
-            font-weight: 400;
-            padding: 15px;
-            font-size: 1rem;
-            white-space: nowrap;
-          }
-
-          .copyAction {
-            width: 49px;
-            background-color: var(--neko-colors-primary);
-            text-align: center;
-            color: var(--neko-text);
-          }
-
-          .deleteAction {
-            width: 49px;
-            background-color: var(--neko-colors-danger);
-            text-align: center;
-          }
-        }
-      }
+    &.used {
+      background: var(--neko-colors-primary);
     }
   }
-  @media (max-width: 740px) {
-    .codes {
-      margin-top: env(safe-area-inset-top);
-      padding-bottom: calc(env(safe-area-inset-bottom) + 5rem);
-      .icon {
-        background: var(--neko-colors-primary);
-        margin-right: 0.7rem;
-        padding: 0.5rem;
-        height: 2.65rem;
-        width: 2.65rem;
+  h4 {
+    overflow: visible !important;
+  }
+  .copyButton {
+    width: auto;
+    svg {
+      margin-right: 0.5rem;
+    }
+    background: var(--neko-colors-primary) !important;
+  }
 
-        border-radius: 12px;
-        font-size: 1.5rem;
-        color: var(--neko-text-inverse);
-        cursor: pointer;
-        svg {
-          align-self: center;
-        }
-        display: flex;
-        vertical-align: middle;
-        justify-content: center;
-      }
+  .deleteButton {
+    margin-left: 0.6rem;
+    width: 46px;
+
+    background: var(--neko-colors-danger) !important;
+    svg {
+      margin-right: auto;
     }
   }
 }

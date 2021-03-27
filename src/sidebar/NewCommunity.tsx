@@ -7,11 +7,12 @@ import { clientGateway } from '../utils/constants'
 import styles from './NewCommunity.module.scss'
 import { UI } from '../state/ui'
 import { Auth } from '../authentication/state'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft, faTimes } from '@fortawesome/pro-solid-svg-icons'
+import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory } from 'react-router-dom'
 import IconPicker from '../components/IconPicker'
 import * as Yup from 'yup'
+import Modal from '../components/Modal'
+import { faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
 
 const CommunitySchema = Yup.object().shape({
   name: Yup.string()
@@ -64,20 +65,26 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
       }}
     >
       {({ isSubmitting, setFieldValue }) => (
-        <Form>
-          <div className={styles.invite}>
-            <div className={styles.body}>
-              <div className={styles.header}>
-                <div className={styles.icon} onClick={() => dismiss()}>
-                  <FontAwesomeIcon
-                    className={styles.backButton}
-                    icon={faChevronLeft}
-                  />
-                </div>
-                <div className={styles.title}>
-                  <h2>New Community</h2>
-                </div>
-              </div>
+        <div className={styles.invite}>
+          <Form>
+            <Modal
+              title={'New Community'}
+              icon={faChevronLeft}
+              onDismiss={() => dismiss()}
+              bottom={
+                <Button
+                  disabled={isSubmitting}
+                  type='submit'
+                  className={styles.createButton}
+                >
+                  {isSubmitting ? (
+                    <BarLoader color='#ffffff' />
+                  ) : (
+                    'Create Community'
+                  )}
+                </Button>
+              }
+            >
               <div>
                 <IconPicker
                   className={styles.iconPicker}
@@ -104,18 +111,9 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
                 component='p'
                 name='name'
               />
-            </div>
-            <div className={styles.bottom}>
-              <Button disabled={isSubmitting} type='submit'>
-                {isSubmitting ? (
-                  <BarLoader color='#ffffff' />
-                ) : (
-                  'Create Community'
-                )}
-              </Button>
-            </div>
-          </div>
-        </Form>
+            </Modal>
+          </Form>
+        </div>
       )}
     </Formik>
   )
@@ -142,44 +140,49 @@ export const NewCommunity = () => {
         <CreateCommunity dismiss={setCreateCommunityMenu} />
       ) : (
         <div className={styles.invite}>
-          <div className={styles.body}>
-            <div className={styles.header}>
-              <div className={styles.icon} onClick={() => ui.clearModal()}>
-                <FontAwesomeIcon className={styles.backButton} icon={faTimes} />
-              </div>
-              <div className={styles.title}>
-                <h2>New Community</h2>
-              </div>
-            </div>
-            <Formik
-              initialValues={{ invite: '' }}
-              validationSchema={InviteSchema}
-              onSubmit={async (
-                values,
-                { setSubmitting, setErrors, setFieldError }
-              ) => {
-                if (!token) return
-                if (!values?.invite) return setFieldError('invite', 'Required')
-                try {
-                  const id = (await joinCommunity(values.invite, token))
-                    .community_id
-                  history.push(`/communities/${id}`)
-                  ui.clearModal()
-                } catch (e) {
-                  if (e.response.data.errors.includes('InvalidCode'))
-                    setErrors({ invite: 'Invalid Invite' })
-                  if (e.response.data.errors.includes('InviteNotFound'))
-                    setErrors({ invite: 'Invite not found' })
-                  if (e.response.data.errors.includes('AlreadyInCommunity'))
-                    setErrors({
-                      invite: 'You are already in this community'
-                    })
-                } finally {
-                  setSubmitting(false)
+          <Formik
+            initialValues={{ invite: '' }}
+            validationSchema={InviteSchema}
+            onSubmit={async (
+              values,
+              { setSubmitting, setErrors, setFieldError }
+            ) => {
+              if (!token) return
+              if (!values?.invite) return setFieldError('invite', 'Required')
+              try {
+                const id = (await joinCommunity(values.invite, token))
+                  .community_id
+                history.push(`/communities/${id}`)
+                ui.clearModal()
+              } catch (e) {
+                if (e.response.data.errors.includes('InvalidCode'))
+                  setErrors({ invite: 'Invalid Invite' })
+                if (e.response.data.errors.includes('InviteNotFound'))
+                  setErrors({ invite: 'Invite not found' })
+                if (e.response.data.errors.includes('AlreadyInCommunity'))
+                  setErrors({
+                    invite: 'You are already in this community'
+                  })
+              } finally {
+                setSubmitting(false)
+              }
+            }}
+          >
+            {({ isSubmitting }) => (
+              <Modal
+                onDismiss={() => ui.clearModal()}
+                title={'New Community'}
+                icon={faTimesCircle}
+                bottom={
+                  <Button
+                    type='button'
+                    className={styles.createButton}
+                    onClick={() => setCreateCommunityMenu(true)}
+                  >
+                    Or Create a Community
+                  </Button>
                 }
-              }}
-            >
-              {({ isSubmitting }) => (
+              >
                 <Form>
                   <label htmlFor='tag' className={styles.inputName}>
                     Invite
@@ -202,18 +205,9 @@ export const NewCommunity = () => {
                     )}
                   </Button>
                 </Form>
-              )}
-            </Formik>
-          </div>
-          <div className={styles.bottom}>
-            <Button
-              type='button'
-              className={styles.createButton}
-              onClick={() => setCreateCommunityMenu(true)}
-            >
-              Or Create a Community
-            </Button>
-          </div>
+              </Modal>
+            )}
+          </Formik>
         </div>
       )}
     </>

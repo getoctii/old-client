@@ -52,6 +52,9 @@
     }
   }
 
+  .customColors {
+    margin-top: 1rem;
+  }
   .colors {
     hr {
       margin: 0;
@@ -93,8 +96,6 @@
     }
     .variations {
       background: var(--neko-settings-card);
-    }
-    .colors {
     }
     form {
       padding: 0;

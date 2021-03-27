@@ -77,6 +77,10 @@
     margin-bottom: 0.8rem;
   }
 
+  .organization {
+    margin-bottom: 0.8rem;
+  }
+
   h5 {
     color: var(--neko-text-danger);
   }
@@ -185,7 +189,7 @@
         svg {
           font-size: 1.7rem;
           margin-left: auto;
-          color: var(--neko-text-href);
+          color: var(--neko-text-primary);
         }
       }
     }

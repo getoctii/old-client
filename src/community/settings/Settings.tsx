@@ -20,6 +20,7 @@ import { PrivateRoute } from '../../authentication/PrivateRoute'
 import Groups from './groups/Groups'
 import { UI } from '../../state/ui'
 import { Permission } from '../../utils/permissions'
+import List from '../../components/List'
 
 const SettingsPlaceholder = () => {
   const match = useRouteMatch<{ tab?: string; id: string }>(
@@ -39,7 +40,7 @@ const SettingsPlaceholder = () => {
         {match?.params.tab === 'groups' ? (
           <Groups.Placeholder />
         ) : match?.params.tab === 'invites' ? (
-          <Invites.Placeholder />
+          <List.Placeholder />
         ) : (
           <></>
         )}

@@ -1,0 +1,18 @@
+.products {
+  padding: 2rem;
+  overflow-y: scroll;
+  height: 100%;
+  width: 100%;
+  background-color: var(--neko-settings-background);
+}
+
+.newButton {
+  height: 2.65rem;
+  margin-left: auto;
+  background: var(--neko-colors-primary);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+}
