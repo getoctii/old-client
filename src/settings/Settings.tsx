@@ -70,7 +70,7 @@ const Settings = () => {
   }, [user?.discriminator])
 
   return (
-    <StatusBar>
+    <StatusBar sidebar={isMobile}>
       <div className={styles.settings}>
         <Helmet>
           <title>Octii - Settings</title>

@@ -16,7 +16,7 @@ const Hub = () => {
   const match = useRouteMatch('/hub/:page')
 
   return (
-    <StatusBar sidebar>
+    <StatusBar sidebar={isMobile}>
       <div className={styles.hub}>
         <Helmet>
           <title>Octii - Hub</title>
