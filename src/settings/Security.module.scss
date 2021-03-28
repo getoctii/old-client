@@ -78,7 +78,7 @@
   }
 
   @media (max-width: 740px) {
-    padding-top: calc(env(safe-area-inset-top) + 2rem);
+    padding-top: 2rem;
     margin-top: 0;
     .icon {
       background: var(--neko-colors-primary);
