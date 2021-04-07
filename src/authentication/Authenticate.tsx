@@ -14,6 +14,9 @@ export const Authenticate = () => {
   return (
     <div className={styles.wrapper}>
       <main className={styles.card}>
+        <picture>
+          <img alt='Octii' src='/logo.svg' />
+        </picture>
         <h1>{match?.params.page === 'register' ? 'Register' : 'Login'}</h1>
         <Switch>
           <Route name='Login' path={'/authenticate/login'} component={Login} />
