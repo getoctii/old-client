@@ -3,11 +3,13 @@ import styles from './Product.module.scss'
 import { faChevronCircleLeft } from '@fortawesome/pro-duotone-svg-icons'
 import Header from '../../components/Header'
 import { useHistory, useParams } from 'react-router-dom'
-import { useQuery } from 'react-query'
+import { queryCache, useQuery } from "react-query";
 import { Auth } from '../../authentication/state'
 import { getProduct } from '../../community/remote'
 import { clientGateway } from '../../utils/constants'
 import { getPurchases } from '../../user/remote'
+import { BarLoader } from "react-spinners";
+import { useState } from "react";
 
 const Product = () => {
   const auth = Auth.useContainer()
@@ -21,6 +23,8 @@ const Product = () => {
     ['purchases', auth.id, auth.token],
     getPurchases
   )
+
+  const [loading, setLoading] = useState(false)
   return (
     <div className={styles.product}>
       <Header
@@ -38,7 +42,7 @@ const Product = () => {
           alt={product?.banner}
         />
       ) : (
-        <div className={styles.banner}></div>
+        <div className={styles.banner}/>
       )}
       <div className={styles.main}>
         <div className={styles.info}>
@@ -50,20 +54,26 @@ const Product = () => {
           <h1>Purchase</h1>
           <Button
             type='button'
-            disabled={!!purchases?.find((p) => p.id === productID)}
+            disabled={loading || !!purchases?.find((p) => p.id === productID)}
             onClick={async () => {
-              await clientGateway.post(
-                `/products/${productID}/purchase`,
-                {},
-                {
-                  headers: {
-                    Authorization: auth.token
+              try {
+                setLoading(true)
+                await clientGateway.post(
+                  `/products/${productID}/purchase`,
+                  {},
+                  {
+                    headers: {
+                      Authorization: auth.token
+                    }
                   }
-                }
-              )
+                )
+                await queryCache.refetchQueries(['purchases', auth.id, auth.token])
+              } finally {
+                setLoading(false)
+              }
             }}
           >
-            {purchases?.find((p) => p.id === productID) ? 'Owned' : 'Get'}
+            { loading ? <BarLoader color='#ffffff' /> : purchases?.find((p) => p.id === productID) ? 'Owned' : 'Get'}
           </Button>
           <p>By purchasing this product, you agree to the Octii store TOS.</p>
         </div>
