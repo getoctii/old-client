@@ -71,10 +71,10 @@ export const uploadFile = async (file: File) => {
   const formData = new FormData()
   formData.append('file', file)
   const response = await axios.post(
-    'https://innstor.innatical.com',
+    'https://covfefe.innatical.com/api/v1/upload',
     formData
   )
-  return `https://innstor.innatical.com/${response.data.file}`
+  return response.data.url
 }
 
 export const patchMessage = async (

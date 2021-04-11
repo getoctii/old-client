@@ -20,8 +20,8 @@ import {
 } from '../utils/constants'
 import { Measure } from './embeds/Measure'
 import Context from '../components/Context'
-// import Audio from './embeds/Audio'
-// import Image from './embeds/Image'
+import Audio from './embeds/Audio'
+import Image from './embeds/Image'
 import useMarkdown from '@innatical/markdown'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -40,7 +40,7 @@ import { withHistory } from 'slate-history'
 import { withReact } from 'slate-react'
 import { withMentions } from '../utils/slate'
 import { createEditor } from 'slate'
-// import Invite from './embeds/Invite'
+import Invite from './embeds/Invite'
 import Mention from './Mention'
 import { Permission } from '../utils/permissions'
 import { useUser } from '../user/state'
@@ -218,32 +218,32 @@ const MessageView = memo(
             {str}
           </a>
         )
-        // if (Invite.isInvite(str)) {
-        //   return {
-        //     link: <></>,
-        //     embed: (
-        //       <span key={key}>
-        //         <ErrorBoundary fallbackRender={() => <Invite.ErrorEmbed />}>
-        //           <Suspense fallback={<Invite.Placeholder />}>
-        //             <Invite.Embed url={str} />
-        //           </Suspense>
-        //         </ErrorBoundary>
-        //       </span>
-        //     )
-        //   }
-        // } else if (Image.isCovfefe(str)) {
-        //   return {
-        //     link,
-        //     embed: <Image.Embed key={key} url={str} />
-        //   }
-        // } else if (Audio.isCovfefe(str)) {
-        //   return {
-        //     link,
-        //     embed: <Audio.Embed key={key} url={str} />
-        //   }
-        // } else {
+        if (Invite.isInvite(str)) {
+          return {
+            link: <></>,
+            embed: (
+              <span key={key}>
+                <ErrorBoundary fallbackRender={() => <Invite.ErrorEmbed />}>
+                  <Suspense fallback={<Invite.Placeholder />}>
+                    <Invite.Embed url={str} />
+                  </Suspense>
+                </ErrorBoundary>
+              </span>
+            )
+          }
+        } else if (Image.isCovfefe(str)) {
+          return {
+            link,
+            embed: <Image.Embed key={key} url={str} />
+          }
+        } else if (Audio.isCovfefe(str)) {
+          return {
+            link,
+            embed: <Audio.Embed key={key} url={str} />
+          }
+        } else {
           return link
-        // }
+        }
       },
       codeblock: (str, key) => <code key={key}>{str}</code>,
       custom: [
