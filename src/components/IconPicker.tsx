@@ -74,12 +74,12 @@ const IconPicker = ({
           formData.append('file', image)
           try {
             const response = await axios.post(
-              'https://innstor.innatical.com',
+              'https://covfefe.innatical.com/api/v1/upload',
               formData
             )
             setIsUploading(false)
-            setIcon(`https://innstor.innatical.com/${response.data.file}`)
-            await onUpload(`https://innstor.innatical.com/${response.data.file}`)
+            setIcon(response.data?.url)
+            await onUpload(response.data.url)
           } catch (error) {
             setError(true)
           }
