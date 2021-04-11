@@ -76,7 +76,7 @@ const Profile = () => {
                 }
               }
             )
-            await queryCache.invalidateQueries(['users', id, token])
+            await queryCache.refetchQueries(['users', id])
           } finally {
             setSubmitting(false)
           }
