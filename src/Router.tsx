@@ -6,7 +6,7 @@ import React, {
   useState,
   useCallback
 } from 'react'
-import { useMedia } from 'react-use'
+import { useLocation, useMedia } from "react-use";
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { Authenticate } from './authentication/Authenticate'
 import { PrivateRoute } from './authentication/PrivateRoute'
@@ -190,6 +190,10 @@ const AppRouter = () => {
   const onboardingHandler = useCallback((state: boolean) => {
     setShowOnBoarding(state)
   }, [])
+
+  const location = useLocation()
+
+  if (location.pathname === '/home' || location.pathname === '/downloads') return <></>
 
   return (
     <>
