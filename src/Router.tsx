@@ -193,7 +193,7 @@ const AppRouter = () => {
 
   const location = useLocation()
 
-  if (location.pathname === '/home' || location.pathname === '/downloads') return <></>
+  if (location.pathname === '/home' || location.pathname === '/downloads' || location.pathname?.startsWith('/invite')) return <></>
 
   return (
     <>
