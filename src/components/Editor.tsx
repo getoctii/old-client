@@ -21,6 +21,7 @@ import Mention from '../chat/Mention'
 import { ChannelResponse } from '../community/remote'
 import { isPlatform } from '@ionic/react'
 import styles from './Editor.module.scss'
+import { text } from "@fortawesome/fontawesome-svg-core";
 
 const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   return leaf.underline ? (
@@ -247,6 +248,7 @@ const EditorView = ({
   const onMention = useCallback(
     (id: string, type: 'user' | 'channel') => {
       if (!target) return
+      Transforms.delete(editor, {at: target.range.anchor, unit: "word"})
       Transforms.select(editor, target.range)
       Transforms.insertNodes(editor, {
         type: type,
@@ -284,11 +286,7 @@ const EditorView = ({
         !isMobile &&
         !isPlatform('ipad') &&
         (event.target as any)?.type !== 'text' &&
-        (!(event.target as any)?.id || (event.target as any)?.id === id) &&
-        !!allowedKeys.has(event.code) &&
-        !event.ctrlKey &&
-        !event.altKey &&
-        !event.metaKey &&
+        (!(event.target as any)?.id || (event.target as any)?.id === id) && allowedKeys.has(event.code) && !event.ctrlKey && !event.altKey && !event.metaKey &&
         !event.shiftKey
       ) {
         ReactEditor.focus(editor)
@@ -398,6 +396,7 @@ const EditorView = ({
                     type: mentionType === '@' ? 'user' : 'channel'
                   })
                 }
+
                 setSearch(beforeMatch[1])
                 return
               }
@@ -451,7 +450,8 @@ const EditorView = ({
                 }
                 case 'Tab': {
                   event.preventDefault()
-                  if (!userMentions || !channelMentions || !target) return
+                  if (!target) return
+                  if (!userMentions && !channelMentions) return
                   if (event.shiftKey) {
                     if (target.type === 'user')
                       setSelected(
@@ -468,14 +468,14 @@ const EditorView = ({
                   } else {
                     if (target.type === 'user')
                       setSelected(
-                        selected + 1 < 0
-                          ? usersFiltered.length - 1
+                        selected + 1 > usersFiltered.length - 1
+                          ? 0
                           : selected + 1
                       )
                     else if (target.type === 'channel')
                       setSelected(
-                        selected + 1 < 0
-                          ? channelsFiltered.length - 1
+                        selected + 1 > channelsFiltered.length - 1
+                          ? 0
                           : selected + 1
                       )
                   }
