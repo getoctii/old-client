@@ -5,9 +5,9 @@ import { Redirect, Switch, useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { InternalChannelTypes } from '../utils/constants'
-import { getParticipants } from '../user/remote'
+import { getParticipants, Participant } from '../user/remote'
 import { Conversations } from './Conversations'
-import { useMedia } from 'react-use'
+import { useLocation, useMedia } from 'react-use'
 import Empty from './empty/Empty'
 import Sidebar from '../sidebar/Sidebar'
 import dayjs from 'dayjs'
@@ -143,7 +143,7 @@ const ConversationProvider = () => {
   )
 }
 
-const ConversationRouter = () => {
+const Redirects = () => {
   const { id, token } = Auth.useContainer()
   const { path } = useRouteMatch()
   const { data: participants } = useQuery(
@@ -152,51 +152,97 @@ const ConversationRouter = () => {
   )
   const filteredParticipants = useMemo(
     () =>
-      participants?.filter((part) => part.conversation.participants.length > 1),
-    [participants]
+      participants
+        ?.filter(({ conversation }: Participant) => {
+          const people = conversation.participants.filter(
+            (userID: string) => userID !== id
+          )
+          return people.length !== 0
+        })
+        .sort((a, b) => {
+          const firstMessage = dayjs
+            .utc(a.conversation.last_message_date ?? 0)
+            .unix()
+          const lastMessage = dayjs
+            .utc(b.conversation.last_message_date ?? 0)
+            .unix()
+          if (lastMessage > firstMessage) return 1
+          else if (lastMessage < firstMessage) return -1
+          else return 0
+        }),
+    [participants, id]
   )
+
+  const isMobile = useMedia('(max-width: 740px)')
+
+  const location = useLocation()
+
+  if (!filteredParticipants) return <></>
+
+  if (filteredParticipants.length === 0)
+    return <Redirect to={`${path}/empty`} />
+
+  if (
+    filteredParticipants.length > 0 &&
+    !isMobile &&
+    (location.pathname === path || location.pathname === `${path}/empty`)
+  )
+    return (
+      <Redirect to={`${path}/${filteredParticipants?.[0].conversation.id}`} />
+    )
+  return <></>
+}
+
+const Nested = () => {
+  const { path } = useRouteMatch()
   const isMobile = useMedia('(max-width: 740px)')
   return (
     <>
-      {(filteredParticipants?.length ?? 0) > 0 ? (
-        <>
-          {!isMobile && <Conversations />}
-          <Suspense fallback={<Chat.Placeholder />}>
-            <Switch>
-              {isMobile && (
-                <PrivateRoute
-                  path={path}
-                  exact
-                  component={() => (
-                    <>
-                      <Sidebar />
-                      <Conversations />
-                    </>
-                  )}
-                />
+      {!isMobile && <Conversations />}
+      <Suspense fallback={<Chat.Placeholder />}>
+        <Switch>
+          <PrivateRoute
+            path={`${path}/:id`}
+            component={ConversationProvider}
+            exact
+          />
+          {isMobile && (
+            <PrivateRoute
+              path={path}
+              exact
+              component={() => (
+                <>
+                  <Sidebar />
+                  <Conversations />
+                </>
               )}
-              <PrivateRoute
-                path={`${path}/:id`}
-                component={ConversationProvider}
-                exact
-              />
-              {!isMobile && (
-                <Redirect
-                  path={'*'}
-                  to={`${path}/${filteredParticipants?.[0].conversation.id}`}
-                />
-              )}
-            </Switch>
-          </Suspense>
-        </>
-      ) : (filteredParticipants?.length ?? 0) < 1 ? (
-        <>
-          {isMobile && <Sidebar />}
-          <Empty />
-        </>
-      ) : (
-        <></>
-      )}
+            />
+          )}
+        </Switch>
+      </Suspense>
+    </>
+  )
+}
+
+const ConversationRouter = () => {
+  const { path } = useRouteMatch()
+  const isMobile = useMedia('(max-width: 740px)')
+
+  return (
+    <>
+      <Redirects />
+      <Switch>
+        <PrivateRoute
+          component={() => (
+            <>
+              {isMobile && <Sidebar />}
+              <Empty />
+            </>
+          )}
+          path={`${path}/empty`}
+        />
+        <Nested />
+      </Switch>
     </>
   )
 }
