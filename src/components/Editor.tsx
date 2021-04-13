@@ -21,7 +21,6 @@ import Mention from '../chat/Mention'
 import { ChannelResponse } from '../community/remote'
 import { isPlatform } from '@ionic/react'
 import styles from './Editor.module.scss'
-import { text } from "@fortawesome/fontawesome-svg-core";
 
 const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   return leaf.underline ? (
