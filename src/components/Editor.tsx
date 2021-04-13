@@ -219,19 +219,23 @@ const EditorView = ({
     switch (props.element.type) {
       case 'user':
         return (
-          <Mention.User
-            attributes={props.attributes}
-            children={props.children}
-            userID={props.element.mentionID}
-          />
+          <Suspense fallback={'@someone'}>
+            <Mention.User
+              attributes={props.attributes}
+              children={props.children}
+              userID={props.element.mentionID}
+            />
+          </Suspense>
         )
       case 'channel':
         return (
-          <Mention.Channel
-            attributes={props.attributes}
-            children={props.children}
-            channelID={props.element.mentionID}
-          />
+          <Suspense fallback={'#something'}>
+            <Mention.Channel
+              attributes={props.attributes}
+              children={props.children}
+              channelID={props.element.mentionID}
+            />
+          </Suspense>
         )
       default:
         return <span {...props.attributes}>{props.children}</span>
