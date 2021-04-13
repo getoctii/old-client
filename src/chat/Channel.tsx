@@ -118,6 +118,7 @@ const ChannelView = ({
   channelID: string
   participants?: string[]
   communityID?: string
+  // eslint-disable-next-line
   conversationID?: string
 }) => {
   const { setUploadDetails } = Chat.useContainer()
