@@ -179,7 +179,10 @@ const Redirects = () => {
 
   if (!filteredParticipants) return <></>
 
-  if (filteredParticipants.length === 0)
+  if (
+    filteredParticipants.length === 0 &&
+    location.pathname !== `${path}/empty`
+  )
     return <Redirect to={`${path}/empty`} />
 
   if (
