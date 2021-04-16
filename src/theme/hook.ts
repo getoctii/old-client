@@ -1,5 +1,5 @@
 import { createContainer } from 'unstated-next'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useMedia } from 'react-use'
 import octii from './themes/octii.json'
 import octiiHub from './themes/octii-hub.json'
@@ -15,93 +15,101 @@ import {
 } from '@capacitor/core'
 import { useSuspenseStorageItem } from '../utils/storage'
 import Integrations from '../integrations/state'
+import * as z from 'zod'
 const { Keyboard, StatusBar } = Plugins
 const isThemeBundle = (theme: Theme | ThemeBundle): theme is ThemeBundle => {
   return (theme as ThemeBundle).dark !== undefined
 }
 
-export interface ThemeBundle {
-  id: string
-  name: string
-  dark: Theme
-  light: Theme
-}
+export const themeSchema = z.object({
+  colors: z.object({
+    primary: z.string(),
+    secondary: z.string(),
+    success: z.string(),
+    info: z.string(),
+    danger: z.string(),
+    warning: z.string(),
+    light: z.string(),
+    dark: z.string()
+  }),
+  text: z.object({
+    normal: z.string(),
+    inverse: z.string(),
+    primary: z.string(),
+    danger: z.string(),
+    warning: z.string(),
+    secondary: z.string()
+  }),
+  backgrounds: z.object({
+    primary: z.string(),
+    secondary: z.string()
+  }),
+  settings: z.object({
+    background: z.string(),
+    card: z.string(),
+    input: z.string()
+  }),
+  sidebar: z.object({
+    background: z.string(),
+    seperator: z.string(),
+    shadow: z.string()
+  }),
+  context: z.object({
+    background: z.string(),
+    seperator: z.string()
+  }),
+  channels: z.object({
+    background: z.string(),
+    seperator: z.string()
+  }),
+  chat: z.object({
+    background: z.string(),
+    hover: z.string()
+  }),
+  status: z.object({
+    selected: z.string(),
+    online: z.string(),
+    idle: z.string(),
+    dnd: z.string(),
+    offline: z.string()
+  }),
+  message: z.object({
+    author: z.string(),
+    date: z.string(),
+    message: z.string()
+  }),
+  mention: z.object({
+    me: z.string(),
+    other: z.string()
+  }),
+  input: z.object({
+    background: z.string(),
+    text: z.string()
+  }),
+  modal: z.object({
+    background: z.string(),
+    foreground: z.string()
+  }),
+  emojis: z.object({
+    background: z.string(),
+    input: z.string()
+  }),
+  global: z.string().optional()
+})
 
-export interface Theme {
-  colors: {
-    primary: string
-    secondary: string
-    success: string
-    info: string
-    danger: string
-    warning: string
-    light: string
-    dark: string
-  }
-  text: {
-    normal: string
-    inverse: string
-    primary: string
-    danger: string
-    warning: string
-    secondary: string
-  }
-  backgrounds: {
-    primary: string
-    secondary: string
-  }
-  settings: {
-    background: string
-    card: string
-    input: string
-  }
-  sidebar: {
-    background: string
-    seperator: string
-    shadow: string
-  }
-  context: {
-    background: string
-    seperator: string
-  }
-  channels: {
-    background: string
-    seperator: string
-  }
-  chat: {
-    background: string
-    hover: string
-  }
-  status: {
-    selected: string
-    online: string
-    idle: string
-    dnd: string
-    offline: string
-  }
-  message: {
-    author: string
-    date: string
-    message: string
-  }
-  mention: {
-    me: string
-    other: string
-  }
-  input: {
-    background: string
-    text: string
-  }
-  modal: {
-    background: string
-    foreground: string
-  }
-  emojis: {
-    background: string
-    input: string
-  }
-  global?: string
-}
+export const devThemeBundleSchema = z.object({
+  name: z.string(),
+  dark: themeSchema,
+  light: themeSchema
+})
+
+export const themeBundleSchema = devThemeBundleSchema.extend({
+  id: z.string()
+})
+
+export type Theme = z.infer<typeof themeSchema>
+export type DevThemeBundle = z.infer<typeof devThemeBundleSchema>
+export type ThemeBundle = z.infer<typeof themeBundleSchema>
 
 const globalStyle = document.createElement('style')
 globalStyle.type = 'text/css'
@@ -119,14 +127,18 @@ const useTheme = () => {
     'light' | 'dark' | 'system'
   >('theme-variations', 'system')
 
+  const [devTheme, setDevTheme] = useState<ThemeBundle | null>(null)
+
   const theme = useMemo<Theme | ThemeBundle>(
     () =>
-      themes.find((t) => t.id === themeID) ||
-      integerations.payloads
-        ?.flatMap((payload) => payload.themes ?? [])
-        .find((theme) => theme.id === themeID) ||
-      octii,
-    [themeID, integerations.payloads]
+      themeID === 'dev' && devTheme
+        ? devTheme
+        : themes.find((t) => t.id === themeID) ||
+          integerations.payloads
+            ?.flatMap((payload) => payload.themes ?? [])
+            .find((theme) => theme.id === themeID) ||
+          octii,
+    [themeID, integerations.payloads, devTheme]
   )
 
   const prefersDarkMode = useMedia('(prefers-color-scheme: dark)')
@@ -203,7 +215,15 @@ const useTheme = () => {
     if (currentTheme.global) globalStyle.textContent = currentTheme.global
     else globalStyle.textContent = ''
   }, [theme, prefersDarkMode, variations, setThemeID])
-  return { theme, themeID, setThemeID, setVariations, variations }
+  return {
+    theme,
+    themeID,
+    setThemeID,
+    setVariations,
+    variations,
+    setDevTheme,
+    bundle: isThemeBundle(theme) ? theme : undefined
+  }
 }
 
 export default createContainer(useTheme)

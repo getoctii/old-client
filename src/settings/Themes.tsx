@@ -1,5 +1,5 @@
 import styles from './Themes.module.scss'
-import Theme, { themes } from '../theme/hook'
+import Theme, { devThemeBundleSchema, ThemeBundle, themes } from '../theme/hook'
 import Button from '../components/Button'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 import { useMedia } from 'react-use'
@@ -7,6 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useHistory } from 'react-router-dom'
 import { Fragment, Suspense } from 'react'
 import Integerations from '../integrations/state'
+import { useDropArea } from 'react-use'
+import { Auth } from '../authentication/state'
+import { useUser } from '../user/state'
 
 const CustomTheme = ({ id, name }: { id: string; name: string }) => {
   const { themeID, setThemeID } = Theme.useContainer()
@@ -25,14 +28,31 @@ const Themes = () => {
     themeID,
     setThemeID,
     setVariations,
-    variations
+    variations,
+    setDevTheme,
+    bundle
   } = Theme.useContainer()
+  const { id } = Auth.useContainer()
+  const user = useUser(id ?? undefined)
   const isMobile = useMedia('(max-width: 740px)')
   const history = useHistory()
   const integerations = Integerations.useContainer()
+  const [bond] = useDropArea({
+    onFiles: async (files) => {
+      if (!user?.developer) return
+      const content = await files[0].text()
+      try {
+        const parsed = devThemeBundleSchema.parse(JSON.parse(content))
+        setDevTheme({ ...parsed, id: 'dev' } as ThemeBundle)
+        setThemeID('dev')
+      } catch {
+        console.error('Failed to load custom theme')
+      }
+    }
+  })
 
   return (
-    <div className={styles.themes}>
+    <div className={styles.themes} {...bond}>
       <h2>
         {isMobile && (
           <div
@@ -102,6 +122,13 @@ const Themes = () => {
               </Fragment>
             ))}
         </div>
+        {themeID === 'dev' ? (
+          <h4 className={styles.customColors}>
+            Loaded dev theme: {bundle?.name}
+          </h4>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   )
