@@ -42,7 +42,7 @@ const FileEmbed = ({ url }: { url: string }) => {
       ).data
     },
     {
-      enabled: !!isFile(url)
+      enabled: isFile(url)
     }
   )
   const ui = UI.useContainer()

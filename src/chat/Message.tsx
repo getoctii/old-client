@@ -18,7 +18,6 @@ import {
   ModalTypes,
   Permissions
 } from '../utils/constants'
-import { Measure } from './embeds/Measure'
 import Context from '../components/Context'
 import useMarkdown from '@innatical/markdown'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -106,8 +105,7 @@ const MessageView = memo(
     createdAt,
     primary,
     content,
-    type,
-    onResize
+    type
   }: {
     id: string
     authorID: string
@@ -116,7 +114,6 @@ const MessageView = memo(
     content: string
     type: MessageTypes
     primary: boolean
-    onResize: () => void
   }) => {
     const uiStore = UI.useContainer()
     const { editingMessageID, setEditingMessageID } = Chat.useContainer()
