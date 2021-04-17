@@ -9,7 +9,7 @@ import Incoming from '../call/Incoming'
 import { NewCommunity } from '../sidebar/NewCommunity'
 import NewConversation from '../conversation/NewConversation'
 import { NewGroup } from '../community/settings/groups/NewGroup'
-import Image from '../chat/embeds/Image'
+import File from '../chat/embeds/File'
 import { NewChannel } from '../community/NewChannel'
 import NewInvite from '../community/NewInvite'
 import ManageGroups from '../community/ManageGroups'
@@ -40,7 +40,7 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
     case ModalTypes.NEW_PERMISSION:
       return <NewGroup />
     case ModalTypes.PREVIEW_IMAGE:
-      return <Image.Preview {...props} />
+      return <File.Preview {...props} />
     case ModalTypes.NEW_CHANNEL:
       return <NewChannel />
     case ModalTypes.NEW_INVITE:

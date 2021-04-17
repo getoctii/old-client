@@ -39,9 +39,7 @@ const IconPicker = ({
             ? recommendedIcon
             : 'Recommended icon size is 100x100'}
         </p>
-        <h6>
-          Powered by <a href='https://file.coffee'>file.coffee</a>
-        </h6>
+        <h6>Max image size is 50mb</h6>
       </div>
       <Button
         type='button'
@@ -73,13 +71,15 @@ const IconPicker = ({
           const formData = new FormData()
           formData.append('file', image)
           try {
-            const response = await axios.post(
-              'https://covfefe.innatical.com/api/v1/upload',
+            const response = await axios.post<{ file: string }>(
+              'https://innstor.innatical.com',
               formData
             )
             setIsUploading(false)
-            setIcon(response.data?.url)
-            await onUpload(response.data.url)
+            setIcon(`https://innstor.innatical.com/${response.data?.file}`)
+            await onUpload(
+              `https://innstor.innatical.com/${response.data?.file}`
+            )
           } catch (error) {
             setError(true)
           }

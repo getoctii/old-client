@@ -66,7 +66,7 @@ const BoxView = ({
                   file
                 })
                 const url = await uploadFile(file)
-                await sendMessage(url)
+                await sendMessage(`https://innstor.innatical.com/${url}`)
                 setUploadDetails(null)
               }}
             />
@@ -113,11 +113,14 @@ const BoxView = ({
                     status: 'uploading',
                     file: uploadDetails.file
                   })
-                  const url = await uploadFile(uploadDetails.file)
+                  const file = await uploadFile(uploadDetails.file)
+                  console.log(file)
                   if (content !== '') {
-                    await sendMessage(`${content}\n${url}`)
+                    await sendMessage(
+                      `${content}\nhttps://innstor.innatical.com/${file}`
+                    )
                   } else {
-                    await sendMessage(url)
+                    await sendMessage(`https://innstor.innatical.com/${file}`)
                   }
                   setUploadDetails(null)
                 } else {
