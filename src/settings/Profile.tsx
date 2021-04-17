@@ -1,4 +1,3 @@
-import React from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
@@ -15,6 +14,7 @@ import IconPicker from '../components/IconPicker'
 import { useUser } from '../user/state'
 import * as Yup from 'yup'
 import { UI } from '../state/ui'
+import { State, UserResponse } from '../user/remote'
 
 const ProfileSchema = Yup.object().shape({
   username: Yup.string()
@@ -66,9 +66,10 @@ const Profile = () => {
                   values.avatar !== user?.avatar && {
                     avatar: values.avatar
                   }),
-                ...(values.developer && {
-                  developer: values.developer
-                })
+                ...(values.developer &&
+                  values.developer !== user?.developer && {
+                    developer: values.developer
+                  })
               },
               {
                 headers: {
@@ -76,7 +77,29 @@ const Profile = () => {
                 }
               }
             )
-            await queryCache.refetchQueries(['users', id, token])
+            queryCache.setQueryData<UserResponse>(
+              ['user', id, token],
+              (initial) => {
+                if (initial) {
+                  return {
+                    ...initial,
+                    username: values.username,
+                    avatar: values.avatar,
+                    developer: values.developer
+                  }
+                } else {
+                  return {
+                    id: id ?? '',
+                    username: values.username,
+                    discriminator: user?.discriminator ?? 1,
+                    state: user?.state ?? State.offline,
+                    status: user?.status ?? '',
+                    avatar: values.avatar,
+                    developer: values.developer
+                  }
+                }
+              }
+            )
           } finally {
             setSubmitting(false)
           }

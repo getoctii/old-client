@@ -20,8 +20,6 @@ import {
 } from '../utils/constants'
 import { Measure } from './embeds/Measure'
 import Context from '../components/Context'
-import Audio from './embeds/Audio'
-import Image from './embeds/Image'
 import useMarkdown from '@innatical/markdown'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -44,6 +42,7 @@ import Invite from './embeds/Invite'
 import Mention from './Mention'
 import { Permission } from '../utils/permissions'
 import { useUser } from '../user/state'
+import File from './embeds/File'
 
 const { Clipboard } = Plugins
 dayjs.extend(dayjsUTC)
@@ -231,15 +230,11 @@ const MessageView = memo(
               </span>
             )
           }
-        } else if (Image.isCovfefe(str)) {
+        } else if (File.isFile(str)) {
+          console.log(str)
           return {
-            link,
-            embed: <Image.Embed key={key} url={str} />
-          }
-        } else if (Audio.isCovfefe(str)) {
-          return {
-            link,
-            embed: <Audio.Embed key={key} url={str} />
+            link: <></>,
+            embed: <File.Embed key={key} url={str} />
           }
         } else {
           return link
@@ -356,11 +351,7 @@ const MessageView = memo(
             ) : (
               <p key={id}>{main}</p>
             )}
-            {embeds.length > 0 ? (
-              <Measure onResize={onResize}>{embeds}</Measure>
-            ) : (
-              <></>
-            )}
+            {embeds.length > 0 ? embeds : <></>}
           </div>
         </div>
       </Context.Wrapper>
