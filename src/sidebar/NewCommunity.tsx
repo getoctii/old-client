@@ -34,7 +34,8 @@ const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
       initialValues={{ name: '', icon: '' }}
       validationSchema={CommunitySchema}
       onSubmit={async (values, { setSubmitting, setErrors, setFieldError }) => {
-        if (!values?.name) return setFieldError('invite', 'Required')
+        if (!values?.name) return setFieldError('name', 'Required')
+        if (!values?.icon) return setFieldError('icon', 'Required')
         try {
           const { data: community } = await clientGateway.post<{
             id: string
