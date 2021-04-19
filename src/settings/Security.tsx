@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { Auth } from '../authentication/state'
 import { clientGateway } from '../utils/constants'
@@ -21,7 +21,7 @@ const PasswordSchema = Yup.object().shape({
     .max(140, 'Too long, password must be under 140 characters.')
 })
 
-const Security = () => {
+const Security: FC = () => {
   const { token, id } = Auth.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
   const history = useHistory()

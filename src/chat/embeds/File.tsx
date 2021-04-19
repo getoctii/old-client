@@ -1,6 +1,7 @@
 import { faFileAlt, faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
+import { FC } from 'react'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
 import Button from '../../components/Button'
@@ -12,7 +13,7 @@ import styles from './File.module.scss'
 const isFile = (url: string) =>
   /^https:\/\/innstor\.innatical\.com\/[A-Za-z0-9_-]+/g.test(url)
 
-const FilePreview = ({ url }: { url: string }) => {
+const FilePreview: FC<{ url: string }> = ({ url }) => {
   const ui = UI.useContainer()
   return (
     <div className={styles.imagePreview}>
@@ -29,7 +30,7 @@ const FilePreview = ({ url }: { url: string }) => {
   )
 }
 
-const FileEmbed = ({ url }: { url: string }) => {
+const FileEmbed: FC<{ url: string }> = ({ url }: { url: string }) => {
   const { data: image } = useQuery(
     ['image', url],
     async () => {

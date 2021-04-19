@@ -12,7 +12,7 @@ import { queryCache, useQuery } from 'react-query'
 import { faTimes } from '@fortawesome/pro-solid-svg-icons'
 import * as Yup from 'yup'
 import Modal from '../../../../components/Modal'
-import React from 'react'
+import { FC } from 'react'
 import TextArea from '../../../../components/TextArea'
 
 const VersionSchema = Yup.object().shape({
@@ -24,7 +24,7 @@ const VersionSchema = Yup.object().shape({
     .max(140, 'Too long, must be less then 140 characters.')
 })
 
-const NewVersion = () => {
+const NewVersion: FC = () => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
   const match = useRouteMatch<{ productID: string }>(

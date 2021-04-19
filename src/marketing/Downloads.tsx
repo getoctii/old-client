@@ -1,10 +1,10 @@
-import React from 'react'
+import { FC } from 'react'
 import Navbar from './Navbar'
 import styles from './Downloads.module.scss'
 import Button from '../components/Button'
 import Footer from './Footer'
 
-const Downloads = () => {
+const Downloads: FC = () => {
   return (
     <div className={styles.downloads}>
       <div className={styles.hero}>

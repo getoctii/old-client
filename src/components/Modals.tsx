@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import styles from './Modals.module.scss'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMedia } from 'react-use'
@@ -10,12 +10,12 @@ import { NewCommunity } from '../sidebar/NewCommunity'
 import NewConversation from '../conversation/NewConversation'
 import { NewGroup } from '../community/settings/groups/NewGroup'
 import File from '../chat/embeds/File'
-import { NewChannel } from '../community/NewChannel'
+import NewChannel from '../community/NewChannel'
 import NewInvite from '../community/NewInvite'
 import ManageGroups from '../community/ManageGroups'
 import { UI } from '../state/ui'
 import { Permission } from '../utils/permissions'
-import { Update } from './Update'
+import Update from './Update'
 import Status from './Status'
 import AddFriend from '../hub/friends/AddFriend'
 import NewProduct from '../community/integrations/NewProduct'
@@ -64,7 +64,7 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
   }
 }
 
-const Modals = () => {
+const Modals: FC = () => {
   const uiStore = UI.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
   useEffect(() => {

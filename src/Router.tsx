@@ -1,4 +1,5 @@
-import React, {
+import {
+  FC,
   memo,
   Suspense,
   useEffect,
@@ -6,7 +7,7 @@ import React, {
   useState,
   useCallback
 } from 'react'
-import { useLocation, useMedia } from "react-use";
+import { useLocation, useMedia } from 'react-use'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { Authenticate } from './authentication/Authenticate'
 import { PrivateRoute } from './authentication/PrivateRoute'
@@ -39,7 +40,7 @@ import { Permission } from './utils/permissions'
 import Hub from './hub/Hub'
 const { PushNotifications } = Plugins
 
-const ContextMenuHandler = () => {
+const ContextMenuHandler: FC = () => {
   const uiStore = UI.useContainer()
 
   return uiStore.contextMenu ? (
@@ -51,7 +52,7 @@ const ContextMenuHandler = () => {
   )
 }
 
-const IncomingCall = () => {
+const IncomingCall: FC = () => {
   const auth = Auth.useContainer()
   const call = Call.useContainer()
   const uiStore = UI.useContainer()
@@ -70,7 +71,7 @@ const IncomingCall = () => {
   )
 }
 
-const MarketingRouter = () => {
+const MarketingRouter: FC = () => {
   const auth = Auth.useContainer()
   const isPWA = useMedia('(display-mode: standalone)')
 
@@ -107,11 +108,9 @@ const MarketingRouter = () => {
   )
 }
 
-const OnboardingHandler = ({
-  onboardingStateChange
-}: {
+const OnboardingHandler: FC<{
   onboardingStateChange: (state: boolean) => void
-}) => {
+}> = ({ onboardingStateChange }) => {
   const auth = Auth.useContainer()
 
   const [onboardingComplete] = useSuspenseStorageItem<boolean>(
@@ -147,7 +146,7 @@ const OnboardingHandler = ({
   return <></>
 }
 
-const AppRouter = () => {
+const AppRouter: FC = () => {
   const auth = Auth.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
   const isPWA = useMedia('(display-mode: standalone)')
@@ -193,7 +192,12 @@ const AppRouter = () => {
 
   const location = useLocation()
 
-  if (location.pathname === '/home' || location.pathname === '/downloads' || location.pathname?.startsWith('/invite')) return <></>
+  if (
+    location.pathname === '/home' ||
+    location.pathname === '/downloads' ||
+    location.pathname?.startsWith('/invite')
+  )
+    return <></>
 
   return (
     <>
@@ -262,9 +266,7 @@ const AppRouter = () => {
   )
 }
 
-AppRouter.whyDidYouRender = true
-
-export const Router = memo(() => {
+export const Router: FC = memo(() => {
   const auth = Auth.useContainer()
   return (
     <div id='main'>

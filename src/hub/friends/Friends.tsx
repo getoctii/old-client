@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useState } from 'react'
+import { FC, Suspense, useMemo, useState } from 'react'
 import styles from './Friends.module.scss'
 import FriendCard from './FriendCard'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -11,7 +11,7 @@ import { faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { UI } from '../../state/ui'
 import { ModalTypes } from '../../utils/constants'
 
-const Friends = () => {
+const Friends: FC = () => {
   const ui = UI.useContainer()
   const { id, token } = Auth.useContainer()
   const { data: relationships } = useQuery(

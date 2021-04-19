@@ -10,8 +10,9 @@ import Integerations from '../integrations/state'
 import { useDropArea } from 'react-use'
 import { Auth } from '../authentication/state'
 import { useUser } from '../user/state'
+import { FC } from 'react'
 
-const CustomTheme = ({ id, name }: { id: string; name: string }) => {
+const CustomTheme: FC<{ id: string; name: string }> = ({ id, name }) => {
   const { themeID, setThemeID } = Theme.useContainer()
   return (
     <div

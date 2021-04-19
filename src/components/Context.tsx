@@ -1,13 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { isPlatform } from '@ionic/react'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import { ContextMenuItems, UI } from '../state/ui'
 import styles from './Context.module.scss'
 import { ActionSheetOptionStyle, Plugins } from '@capacitor/core'
 
 const { Modals } = Plugins
 
-export const ContextGlobal = () => {
+export const ContextGlobal: FC = () => {
   const { contextMenu, setContextMenu } = UI.useContainer()
   const handleClick = useCallback(() => {
     if (contextMenu) {
@@ -35,17 +35,14 @@ export const ContextGlobal = () => {
   return <></>
 }
 
-export const ContextMenu = ({
-  position,
-  items
-}: {
+export const ContextMenu: FC<{
   position: {
     top?: number
     left: number
     bottom?: number
   }
   items: ContextMenuItems
-}) => {
+}> = ({ position, items }) => {
   const { setContextMenu } = UI.useContainer()
 
   return (
@@ -81,17 +78,12 @@ export const ContextMenu = ({
   )
 }
 
-export const ContextWrapper = ({
-  title,
-  message,
-  children,
-  items
-}: {
+export const ContextWrapper: FC<{
   title: string
   message?: string
   children: React.ReactNode
   items: ContextMenuItems
-}) => {
+}> = ({ title, message, children, items }) => {
   const { setContextMenu } = UI.useContainer()
   const [touchTimeout, setTouchTimeout] = useState<any>()
   return (

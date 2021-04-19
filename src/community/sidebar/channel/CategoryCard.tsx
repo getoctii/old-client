@@ -6,7 +6,7 @@ import {
   DroppableProvided,
   DroppableStateSnapshot
 } from '@react-forked/dnd'
-import React, { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, FC } from 'react'
 import ChannelCard from './ChannelCard'
 import styles from './CategoryCard.module.scss'
 import { Permission } from '../../../utils/permissions'
@@ -24,13 +24,10 @@ import { Auth } from '../../../authentication/state'
 import { ConfirmationType } from '../../../components/Confirmation'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 
-export const CategoryChannelsDraggable = ({
-  id,
-  items
-}: {
+export const CategoryChannelsDraggable: FC<{
   id: string
   items: string[]
-}) => {
+}> = ({ id, items }) => {
   const DroppableComponent = useCallback(
     (provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
       <div
@@ -59,17 +56,12 @@ export const CategoryChannelsDraggable = ({
   )
 }
 
-export const CategoryCardView = ({
-  id,
-  name,
-  items,
-  index
-}: {
+export const CategoryCardView: FC<{
   id: string
   name: string
   items: string[]
   index: number
-}) => {
+}> = ({ id, name, items, index }) => {
   const matchTab = useRouteMatch<{ id: string; channelID: string }>(
     '/communities/:id/channels/:channelID'
   )

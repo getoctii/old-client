@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { DragDropContext, Droppable } from '@react-forked/dnd'
-import React, { Suspense, useCallback, useMemo } from 'react'
+import { FC, Suspense, useCallback, useMemo } from 'react'
 import { useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../../authentication/state'
 import Button from '../../../components/Button'
@@ -24,7 +24,7 @@ const reorder = (
   return result
 }
 
-const GroupsList = () => {
+const GroupsList: FC = () => {
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const auth = Auth.useContainer()
   const ui = UI.useContainer()
@@ -117,7 +117,7 @@ const GroupsList = () => {
   )
 }
 
-const GroupsPlaceholder = () => {
+const GroupsPlaceholder: FC = () => {
   const length = useMemo(() => Math.floor(Math.random() * 4) + 1, [])
   return (
     <div className={styles.groupsPlaceholder}>
@@ -128,7 +128,7 @@ const GroupsPlaceholder = () => {
   )
 }
 
-const GroupsView = () => {
+const GroupsView: FC = () => {
   const match = useRouteMatch<{ id: string }>('/communities/:id')
 
   return (

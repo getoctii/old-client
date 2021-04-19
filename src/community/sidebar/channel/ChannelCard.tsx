@@ -1,6 +1,6 @@
 import { faHashtag } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { memo, Suspense, useCallback, useMemo } from 'react'
+import { memo, Suspense, useCallback, useMemo, FC } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../../authentication/state'
 import { Clipboard } from '@capacitor/core'
@@ -33,8 +33,8 @@ import {
 import { ConfirmationType } from '../../../components/Confirmation'
 import { ErrorBoundary } from 'react-error-boundary'
 
-const ChannelCardDraggable = memo(
-  ({ id, index }: { id: string; index: number }) => {
+const ChannelCardDraggable: FC<{ id: string; index: number }> = memo(
+  ({ id, index }) => {
     const { hasPermissions } = Permission.useContainer()
     const draggableChild = useCallback(
       (provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
@@ -74,15 +74,11 @@ const ChannelCardDraggable = memo(
   }
 )
 
-const ChannelCardView = ({
-  id,
-  index,
-  dragging
-}: {
+const ChannelCardView: FC<{
   id: string
   index: number
   dragging?: boolean
-}) => {
+}> = ({ id, index, dragging }) => {
   const matchTab = useRouteMatch<{ id: string; channelID: string }>(
     '/communities/:id/channels/:channelID'
   )
@@ -294,7 +290,7 @@ const ChannelCardView = ({
   )
 }
 
-const ChannelCardPlaceholder = ({ index }: { index?: number }) => {
+const ChannelCardPlaceholder: FC<{ index?: number }> = ({ index }) => {
   const name = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
   return (
     <>

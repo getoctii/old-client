@@ -1,22 +1,17 @@
+import { FC } from 'react'
 import { useQuery } from 'react-query'
 import { useHistory } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
 import { clientGateway } from '../../utils/constants'
 import styles from './Featured.module.scss'
 
-const Card = ({
-  id,
-  name,
-  tagline,
-  banner,
-  icon
-}: {
+const Card: FC<{
   id: string
   name: string
   tagline: string
   banner?: string
   icon: string
-}) => {
+}> = ({ id, name, tagline, banner, icon }) => {
   const history = useHistory()
   return (
     <div
@@ -32,7 +27,7 @@ const Card = ({
   )
 }
 
-const Featured = () => {
+const Featured: FC = () => {
   const auth = Auth.useContainer()
   const { data: featured } = useQuery(['featured', auth.token], async () => {
     return (

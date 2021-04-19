@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo } from 'react'
+import { FC, Suspense, useMemo } from 'react'
 import Lookup from './Lookup'
 import { useMedia } from 'react-use'
 import { Redirect, Switch, useRouteMatch } from 'react-router-dom'
@@ -23,7 +23,7 @@ import StatusBar from '../components/StatusBar'
 
 const gitInfo = GitInfo()
 
-const Admin = () => {
+const Admin: FC = () => {
   const isMobile = useMedia('(max-width: 740px)')
   const { path } = useRouteMatch()
   const match = useRouteMatch<{ page: string }>('/admin/:page')

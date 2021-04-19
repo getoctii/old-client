@@ -1,4 +1,4 @@
-import React, { memo, Suspense } from 'react'
+import { memo, Suspense, FC } from 'react'
 import { General } from './General'
 import Invites from './Invites'
 import Navbar from './Navbar'
@@ -23,7 +23,7 @@ import List from '../../components/List'
 import StatusBar from '../../components/StatusBar'
 import Header from '../../components/Header'
 
-const SettingsPlaceholder = () => {
+const SettingsPlaceholder: FC = () => {
   const match = useRouteMatch<{ tab?: string; id: string }>(
     '/communities/:id/settings/:tab?'
   )
@@ -50,7 +50,7 @@ const SettingsPlaceholder = () => {
   )
 }
 
-const SettingsView = memo(() => {
+const SettingsView: FC = memo(() => {
   const isMobile = useMedia('(max-width: 873px)')
   const { id } = useParams<{ id: string }>()
   const { community, hasPermissions } = Permission.useContainer()
@@ -157,7 +157,7 @@ const SettingsView = memo(() => {
   )
 })
 
-const SettingsRouter = () => {
+const SettingsRouter: FC = () => {
   return (
     <Suspense fallback={SettingsPlaceholder}>
       <SettingsView />

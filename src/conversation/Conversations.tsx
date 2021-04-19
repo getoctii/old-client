@@ -4,7 +4,8 @@ import React, {
   useEffect,
   useLayoutEffect,
   useMemo,
-  useRef
+  useRef,
+  FC
 } from 'react'
 import styles from './Conversations.module.scss'
 import { Auth } from '../authentication/state'
@@ -21,13 +22,9 @@ import StatusBar from '../components/StatusBar'
 
 dayjs.extend(dayjsUTC)
 
-const ConversationCardWrapper = ({
-  id,
-  last_message_id,
-  channel_id,
-  people,
-  index
-}: Participant['conversation'] & { index: number; people: string[] }) => {
+const ConversationCardWrapper: FC<
+  Participant['conversation'] & { index: number; people: string[] }
+> = ({ id, last_message_id, channel_id, people, index }) => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
   return (
     <div key={id}>
@@ -46,7 +43,7 @@ const ConversationCardWrapper = ({
   )
 }
 
-const ConversationList = memo(() => {
+const ConversationList: FC = memo(() => {
   const auth = Auth.useContainer()
 
   const participants = useQuery(
@@ -108,7 +105,7 @@ const ConversationList = memo(() => {
   )
 })
 
-const ConversationsPlaceholder = () => {
+const ConversationsPlaceholder: FC = () => {
   const length = useMemo(() => Math.floor(Math.random() * 10) + 1, [])
   return (
     <>
@@ -122,7 +119,7 @@ const ConversationsPlaceholder = () => {
   )
 }
 
-export const Conversations = () => {
+export const Conversations: FC = () => {
   const isMobile = useMedia('(max-width: 740px)')
   const scrollRef = useRef<HTMLDivElement>(null)
   const currentScrollPosition = useScroll(scrollRef)

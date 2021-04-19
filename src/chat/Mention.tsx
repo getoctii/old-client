@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import styles from './Mention.module.scss'
@@ -6,17 +6,11 @@ import { getChannel } from './remote'
 import { useHistory } from 'react-router-dom'
 import { useUser } from '../user/state'
 
-const User = ({
-  userID,
-  selected,
-  attributes,
-  children
-}: {
+const User: FC<{
   userID: string
   selected?: boolean
   attributes?: any
-  children?: React.ReactChild
-}) => {
+}> = ({ userID, selected, attributes, children }) => {
   const { id } = Auth.useContainer()
   const user = useUser(userID)
   return (
@@ -32,17 +26,11 @@ const User = ({
   )
 }
 
-const Channel = ({
-  channelID,
-  selected,
-  attributes,
-  children
-}: {
+const Channel: FC<{
   channelID: string
   selected?: boolean
   attributes?: any
-  children?: React.ReactChild
-}) => {
+}> = ({ channelID, selected, attributes, children }) => {
   const { token } = Auth.useContainer()
   const history = useHistory()
   const channel = useQuery(['channel', channelID, token], getChannel)

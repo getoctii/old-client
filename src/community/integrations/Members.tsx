@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import dayjsCalendar from 'dayjs/plugin/calendar'
-import { memo, Suspense, useMemo, useRef, useState } from 'react'
+import { FC, memo, Suspense, useMemo, useRef, useState } from 'react'
 import { queryCache, useInfiniteQuery, useQuery } from 'react-query'
 import { useHistory, useParams } from 'react-router-dom'
 import { useMedia } from 'react-use'
@@ -33,7 +33,7 @@ import StatusBar from '../../components/StatusBar'
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
 
-const Group = ({ id }: { id: string }) => {
+const Group: FC<{ id: string }> = ({ id }) => {
   const { token } = Auth.useContainer()
   const group = useQuery(['group', id, token], getGroup)
   return (
@@ -46,7 +46,7 @@ const Group = ({ id }: { id: string }) => {
   )
 }
 
-const MemberCard = memo(({ memberObj }: { memberObj: MemberResponse }) => {
+const MemberCard: FC<{ memberObj: MemberResponse }> = memo(({ memberObj }) => {
   const { id } = useParams<{ id: string }>()
   const isMobile = useMedia('(max-width: 873px)')
   const auth = Auth.useContainer()
@@ -146,7 +146,7 @@ const MemberCard = memo(({ memberObj }: { memberObj: MemberResponse }) => {
   )
 })
 
-const Members = () => {
+const Members: FC = () => {
   const { token } = Auth.useContainer()
   const { id } = useParams<{ id: string }>()
   const { data: community } = useQuery(['community', id, token], getCommunity)

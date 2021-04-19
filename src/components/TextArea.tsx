@@ -1,7 +1,8 @@
 import { useField } from 'formik'
+import { FC } from 'react'
 import styles from './TextArea.module.scss'
 
-const TextArea = ({ name }: { name: string }) => {
+const TextArea: FC<{ name: string }> = ({ name }) => {
   const [field, meta] = useField(name)
 
   return (

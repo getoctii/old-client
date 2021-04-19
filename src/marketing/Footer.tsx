@@ -1,9 +1,9 @@
 import { faDiscord, faTwitter } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
+import { FC } from 'react'
 import styles from './Footer.module.scss'
 
-const Footer = () => {
+const Footer: FC = () => {
   return (
     <div className={styles.footer}>
       <div className={styles.socials}>

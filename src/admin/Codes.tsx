@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import dayjsCalendar from 'dayjs/plugin/calendar'
-import React, { memo, useMemo, useRef, useState } from 'react'
+import { FC, memo, useMemo, useRef, useState } from 'react'
 import { queryCache, useInfiniteQuery, useMutation } from 'react-query'
 import { Waypoint } from 'react-waypoint'
 import { Auth } from '../authentication/state'
@@ -33,7 +33,7 @@ interface CodeResponse {
   updated_at: number
 }
 
-const Code = memo(({ id, used, created_at }: CodeResponse) => {
+const Code: FC<CodeResponse> = memo(({ id, used, created_at }) => {
   const { token } = Auth.useContainer()
   const [deleteCode] = useMutation(
     async () =>
@@ -88,7 +88,7 @@ const Code = memo(({ id, used, created_at }: CodeResponse) => {
   )
 })
 
-const Codes = () => {
+const Codes: FC = () => {
   const isMobile = useMedia('(max-width: 740px)')
   const { token } = Auth.useContainer()
   const { data, canFetchMore, fetchMore } = useInfiniteQuery<

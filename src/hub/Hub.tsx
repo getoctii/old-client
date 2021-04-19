@@ -9,8 +9,9 @@ import Sideview from '../components/Sideview'
 import { faStoreAlt } from '@fortawesome/pro-duotone-svg-icons'
 import Friends from './friends/Friends'
 import StatusBar from '../components/StatusBar'
+import { FC } from 'react'
 
-const Hub = () => {
+const Hub: FC = () => {
   const isMobile = useMedia('(max-width: 740px)')
   const { path } = useRouteMatch()
   const match = useRouteMatch('/hub/:page')

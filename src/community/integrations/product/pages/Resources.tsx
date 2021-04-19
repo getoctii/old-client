@@ -5,7 +5,7 @@ import {
   faWindow
 } from '@fortawesome/pro-duotone-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { Suspense } from 'react'
+import { FC, Suspense } from 'react'
 import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
 import { Auth } from '../../../../authentication/state'
@@ -13,7 +13,7 @@ import List from '../../../../components/List'
 import { getResource, getResources, ResourceTypes } from '../../../remote'
 import styles from './Resources.module.scss'
 
-const ProductCard = ({ id }: { id: string }) => {
+const ProductCard: FC<{ id: string }> = ({ id }) => {
   const { productID } = useParams<{ productID: string }>()
   const auth = Auth.useContainer()
   const { data: resource } = useQuery(
@@ -46,7 +46,7 @@ const ProductCard = ({ id }: { id: string }) => {
   )
 }
 
-const Resources = () => {
+const Resources: FC = () => {
   const auth = Auth.useContainer()
   const { productID } = useParams<{ productID: string }>()
   const { data: resources } = useQuery(

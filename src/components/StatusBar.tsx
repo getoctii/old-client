@@ -1,13 +1,9 @@
-import { ReactNode } from 'react'
+import { FC } from 'react'
 import styles from './StatusBar.module.scss'
 
-const StatusBar = ({
-  children,
-  sidebar
-}: {
-  children: ReactNode
+const StatusBar: FC<{
   sidebar?: boolean
-}) => {
+}> = ({ children, sidebar }) => {
   return (
     <div className={`${styles.statusBar} ${sidebar ? styles.sidebar : ''}`}>
       {children}

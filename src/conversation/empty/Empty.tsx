@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { useQuery } from 'react-query'
 import { useHistory } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
@@ -16,11 +16,11 @@ import { createConversation } from '../remote'
 import styles from './Empty.module.scss'
 import { faPlusCircle } from '@fortawesome/pro-duotone-svg-icons'
 
-const FriendSuggestion = ({
+const FriendSuggestion: FC<RelationshipResponse & { onClick: () => void }> = ({
   recipient_id,
   user_id,
   onClick
-}: RelationshipResponse & { onClick: () => void }) => {
+}) => {
   const { id, token } = Auth.useContainer()
   const { data: user } = useQuery(['users', user_id, token], getUser)
   const { data: recipient } = useQuery(['users', recipient_id, token], getUser)
@@ -39,7 +39,7 @@ const FriendSuggestion = ({
   )
 }
 
-const Empty = () => {
+const Empty: FC = () => {
   const { id, token } = Auth.useContainer()
   const history = useHistory()
   const { data: relationships } = useQuery(
@@ -92,18 +92,6 @@ const Empty = () => {
           </Button>
         </div>
       )}
-
-      {/* 
-      <iframe
-        className={styles.video}
-        title='sgn'
-        width='966'
-        height='543'
-        src='https://www.youtube.com/embed/QHdZjxrG35U'
-        frameBorder={0}
-        allow='autoplay; encrypted-media'
-        allowFullScreen={false}
-      /> */}
     </div>
   )
 }

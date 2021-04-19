@@ -12,7 +12,7 @@ import { queryCache, useQuery } from 'react-query'
 import { faTimes } from '@fortawesome/pro-solid-svg-icons'
 import * as Yup from 'yup'
 import Modal from '../../../../components/Modal'
-import React from 'react'
+import { FC } from 'react'
 
 const ResourceSchema = Yup.object().shape({
   name: Yup.string()
@@ -21,7 +21,7 @@ const ResourceSchema = Yup.object().shape({
   type: Yup.number()
 })
 
-const NewResource = () => {
+const NewResource: FC = () => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
   const match = useRouteMatch<{ productID: string }>(

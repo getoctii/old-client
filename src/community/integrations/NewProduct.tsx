@@ -12,7 +12,7 @@ import { queryCache, useQuery } from 'react-query'
 import { faTimes } from '@fortawesome/pro-solid-svg-icons'
 import * as Yup from 'yup'
 import Modal from '../../components/Modal'
-import React from 'react'
+import { FC } from 'react'
 import IconPicker from '../../components/IconPicker'
 import TextArea from '../../components/TextArea'
 
@@ -23,7 +23,7 @@ const ProductSchema = Yup.object().shape({
   icon: Yup.string().url()
 })
 
-const NewProduct = () => {
+const NewProduct: FC = () => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')

@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import { useState, FC } from 'react'
 import { BarLoader } from 'react-spinners'
 import Button from './Button'
 import styles from './Update.module.scss'
 
-export const Update = () => {
+const Update: FC = () => {
   const [loading, setLoading] = useState(false)
   return (
     <div className={styles.update}>
@@ -25,3 +25,5 @@ export const Update = () => {
     </div>
   )
 }
+
+export default Update

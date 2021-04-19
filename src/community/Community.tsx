@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useState } from 'react'
+import { FC, Suspense, useCallback, useEffect, useState } from 'react'
 import styles from './Community.module.scss'
 import Chat from '../chat/Channel'
 import { Redirect, Switch, useParams, useRouteMatch } from 'react-router-dom'
@@ -26,7 +26,7 @@ import Product from './integrations/product/Product'
 import List from '../components/List'
 import { Placeholder } from '../components/Header'
 
-const NoPermission = ({ name }: CommunityResponse) => (
+const NoPermission: FC<CommunityResponse> = ({ name }) => (
   <div className={styles.noPermission}>
     <Helmet>
       <title>Octii - {name}</title>
@@ -39,7 +39,7 @@ const NoPermission = ({ name }: CommunityResponse) => (
   </div>
 )
 
-const Channel = () => {
+const Channel: FC = () => {
   const { id, channelID } = useParams<{ id: string; channelID: string }>()
   const auth = Auth.useContainer()
   const { data: channels } = useQuery(['channels', id, auth.token], getChannels)
@@ -52,7 +52,7 @@ const Channel = () => {
   return <Chat.Community key={channel.id} />
 }
 
-const ListPlaceholder = () => {
+const ListPlaceholder: FC = () => {
   return (
     <div className={styles.listPlaceholder}>
       <Placeholder />
@@ -61,7 +61,7 @@ const ListPlaceholder = () => {
   )
 }
 
-const CommunityPlaceholder = () => {
+const CommunityPlaceholder: FC = () => {
   const isMobile = useMedia('(max-width: 740px)')
   const matchTab = useRouteMatch<{ id: string; tab: string }>(
     '/communities/:id/:tab'
@@ -82,11 +82,9 @@ const CommunityPlaceholder = () => {
   )
 }
 
-const EmptyCommunityHandler = ({
-  emptyStateChange
-}: {
+const EmptyCommunityHandler: FC<{
   emptyStateChange: (state: boolean) => void
-}) => {
+}> = ({ emptyStateChange }) => {
   const { token } = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const { data: channels } = useQuery(
@@ -107,7 +105,7 @@ const EmptyCommunityHandler = ({
   return <></>
 }
 
-const CommunityChannelFallback = () => {
+const CommunityChannelFallback: FC = () => {
   const { token } = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const { data: channels } = useQuery(
@@ -130,7 +128,7 @@ const CommunityChannelFallback = () => {
   )
 }
 
-const CommunityView = () => {
+const CommunityView: FC = () => {
   const { token } = Auth.useContainer()
   const { path } = useRouteMatch()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
@@ -233,7 +231,7 @@ const CommunityView = () => {
   )
 }
 
-const CommunityProviders = () => {
+const CommunityProviders: FC = () => {
   return (
     <Permission.Provider>
       <CommunityView />
@@ -241,7 +239,7 @@ const CommunityProviders = () => {
   )
 }
 
-const Router = () => {
+const Router: FC = () => {
   const matchTab = useRouteMatch<{ id: string; tab: string }>(
     '/communities/:id/:tab'
   )

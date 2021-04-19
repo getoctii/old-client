@@ -15,6 +15,7 @@ import { useUser } from '../user/state'
 import * as Yup from 'yup'
 import { UI } from '../state/ui'
 import { State, UserResponse } from '../user/remote'
+import { FC } from 'react'
 
 const ProfileSchema = Yup.object().shape({
   username: Yup.string()
@@ -24,7 +25,7 @@ const ProfileSchema = Yup.object().shape({
   developer: Yup.boolean().optional()
 })
 
-const Profile = () => {
+const Profile: FC = () => {
   const uiStore = UI.useContainer()
   const { token, id } = Auth.useContainer()
   const user = useUser(id ?? undefined)

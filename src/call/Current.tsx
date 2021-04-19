@@ -5,12 +5,12 @@ import {
   faVolumeMute
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Call } from '../state/call'
 import styles from './Current.module.scss'
 import { useUser } from '../user/state'
 
-const Current = () => {
+const Current: FC = () => {
   const call = Call.useContainer()
   const user = useUser(call.otherUserID ?? undefined)
   const [audio] = useState(new Audio())

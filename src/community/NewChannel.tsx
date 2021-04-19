@@ -11,7 +11,7 @@ import { getChannels, getCommunity, getGroup, getGroups } from './remote'
 import { UI } from '../state/ui'
 import { useQuery } from 'react-query'
 import { faChevronLeft, faTimes } from '@fortawesome/pro-solid-svg-icons'
-import React, { useState } from 'react'
+import { FC, useState } from 'react'
 import * as Yup from 'yup'
 import { faMinusCircle, faPlusCircle } from '@fortawesome/pro-duotone-svg-icons'
 import Modal from '../components/Modal'
@@ -22,15 +22,11 @@ const ChannelSchema = Yup.object().shape({
     .max(30, 'Too long, must be less then 30 characters.')
 })
 
-const Group = ({
-  id,
-  onClick,
-  remove
-}: {
+const Group: FC<{
   id: string
   onClick: () => void
   remove: boolean
-}) => {
+}> = ({ id, onClick, remove }) => {
   const { token } = Auth.useContainer()
   const { data: group } = useQuery(['group', id, token], getGroup)
   return (
@@ -46,7 +42,7 @@ const Group = ({
   )
 }
 
-export const NewChannel = () => {
+const NewChannel: FC = () => {
   const history = useHistory()
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
@@ -255,3 +251,5 @@ export const NewChannel = () => {
     </Formik>
   )
 }
+
+export default NewChannel

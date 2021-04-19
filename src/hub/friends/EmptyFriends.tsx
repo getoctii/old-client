@@ -1,10 +1,10 @@
-import React from 'react'
+import { FC } from 'react'
 import Button from '../../components/Button'
 import { UI } from '../../state/ui'
 import { ModalTypes } from '../../utils/constants'
 import styles from './EmptyFriends.module.scss'
 
-const EmptyFriends = () => {
+const EmptyFriends: FC = () => {
   const ui = UI.useContainer()
   return (
     <div className={styles.emptyFriends}>

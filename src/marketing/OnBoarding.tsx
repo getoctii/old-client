@@ -1,7 +1,7 @@
 import { faChevronCircleRight } from '@fortawesome/pro-duotone-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { motion } from 'framer-motion'
-import React, { useState } from 'react'
+import { FC, useState } from 'react'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import { clientGateway } from '../utils/constants'
@@ -28,7 +28,7 @@ const cards = [
   }
 ]
 
-const Welcome = ({ onClick }: { onClick: () => void }) => {
+const Welcome: FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
     <div className={styles.container}>
       <h1>Welcome to Octii!</h1>
@@ -51,7 +51,7 @@ const Welcome = ({ onClick }: { onClick: () => void }) => {
   )
 }
 
-const OctiiTesters = () => {
+const OctiiTesters: FC = () => {
   const auth = Auth.useContainer()
   const [, setOnBoardingComplete] = useSuspenseStorageItem<boolean>(
     'onboarding-complete',
@@ -88,7 +88,7 @@ const OctiiTesters = () => {
   )
 }
 
-const Disclosure = ({ onClick }: { onClick: () => void }) => {
+const Disclosure: FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
     <div className={styles.disclosure}>
       <h1>Beta Disclosure</h1>
@@ -109,7 +109,7 @@ const Disclosure = ({ onClick }: { onClick: () => void }) => {
   )
 }
 
-const OnBoarding = () => {
+const OnBoarding: FC = () => {
   const [page, setPage] = useState(0)
   return (
     <div className={styles.onboarding}>

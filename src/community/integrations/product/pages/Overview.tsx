@@ -1,10 +1,11 @@
+import { FC } from 'react'
 import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
 import { Auth } from '../../../../authentication/state'
 import { getProduct } from '../../../remote'
 import styles from './Overview.module.scss'
 
-const Overview = () => {
+const Overview: FC = () => {
   const { productID } = useParams<{ productID: string }>()
   const auth = Auth.useContainer()
   const { data: product } = useQuery(

@@ -1,5 +1,5 @@
 import { Formik, Form, ErrorMessage, Field } from 'formik'
-import React, { useState } from 'react'
+import { FC, useState } from 'react'
 import { queryCache, useQuery } from 'react-query'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
@@ -52,7 +52,7 @@ const saveSettings = async (
   await queryCache.invalidateQueries(['community', communityID])
 }
 
-const SystemChannel = ({ community }: { community: CommunityResponse }) => {
+const SystemChannel: FC<{ community: CommunityResponse }> = ({ community }) => {
   const auth = Auth.useContainer()
   const { data: channels } = useQuery(
     ['channels', community.id, auth.token],
@@ -135,7 +135,10 @@ const SystemChannel = ({ community }: { community: CommunityResponse }) => {
     </div>
   )
 }
-const Personalization = ({ community }: { community: CommunityResponse }) => {
+
+const Personalization: FC<{
+  community: CommunityResponse
+}> = ({ community }) => {
   const auth = Auth.useContainer()
   const [saveName, setSaveName] = useState<string | undefined>(undefined)
   return (
@@ -230,7 +233,7 @@ type FindResponse = {
   discriminator: number
 }
 
-const DangerZone = ({ community }: { community: CommunityResponse }) => {
+const DangerZone: FC<{ community: CommunityResponse }> = ({ community }) => {
   const auth = Auth.useContainer()
   const history = useHistory()
   const user = useUser(auth?.id ?? undefined)
@@ -414,7 +417,7 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
   )
 }
 
-export const General = () => {
+export const General: FC = () => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
   const { data: community } = useQuery(

@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useState } from 'react'
+import { FC, Suspense, useMemo, useState } from 'react'
 import styles from './Channel.module.scss'
 import { useQuery } from 'react-query'
 import { ChannelPermissions, InternalChannelTypes } from '../utils/constants'
@@ -25,7 +25,9 @@ import { Chat } from './state'
 import { Permission } from '../utils/permissions'
 import AddParticipant from './AddParticipant'
 
-const TypingIndicator = ({ channelID }: { channelID: string }) => {
+const TypingIndicator: FC<{
+  channelID: string
+}> = ({ channelID }) => {
   const { id } = Auth.useContainer()
   const { typing } = Typing.useContainer()
   const users = useMemo(
@@ -52,7 +54,7 @@ const TypingIndicator = ({ channelID }: { channelID: string }) => {
   } else return <div className={styles.typingEmpty} />
 }
 
-const PrivateName = ({ id }: { id?: string }) => {
+const PrivateName: FC<{ id?: string }> = ({ id }) => {
   const { token } = Auth.useContainer()
   const user = useQuery(['users', id, token], getUser)
   return (
@@ -66,15 +68,11 @@ const PrivateName = ({ id }: { id?: string }) => {
   )
 }
 
-const Header = ({
-  participants,
-  type,
-  channel
-}: {
+const Header: FC<{
   participants?: string[]
   type: InternalChannelTypes
   channel?: ChannelResponse
-}) => {
+}> = ({ participants, type, channel }) => {
   const { token } = Auth.useContainer()
   const { data: users } = useQuery(
     ['users', participants ?? [], token],
@@ -95,7 +93,7 @@ const Header = ({
   )
 }
 
-const CommunityChannelView = () => {
+const CommunityChannelView: FC = () => {
   const { id, channelID } = useParams<{ id: string; channelID: string }>()
   return (
     <ChannelView
@@ -107,20 +105,14 @@ const CommunityChannelView = () => {
 }
 
 const supportedFiles = new Set(['image/png', 'image/gif', 'image/jpeg'])
-const ChannelView = ({
-  type,
-  channelID,
-  participants,
-  communityID,
-  conversationID
-}: {
+
+const ChannelView: FC<{
   type: InternalChannelTypes
   channelID: string
   participants?: string[]
   communityID?: string
-  // eslint-disable-next-line
   conversationID?: string
-}) => {
+}> = ({ type, channelID, participants, communityID, conversationID }) => {
   const { setUploadDetails } = Chat.useContainer()
   const { token, id } = Auth.useContainer()
   const call = Call.useContainer()
@@ -273,7 +265,7 @@ const ChannelView = ({
   )
 }
 
-const ChannelPlaceholder = () => {
+const ChannelPlaceholder: FC = () => {
   const username = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
   const status = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
   return (

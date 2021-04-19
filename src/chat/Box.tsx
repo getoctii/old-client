@@ -6,7 +6,7 @@ import {
   faSmileWink,
   faTimes
 } from '@fortawesome/pro-solid-svg-icons'
-import React, { Suspense, useMemo, useRef, useState } from 'react'
+import { FC, Suspense, useMemo, useRef, useState } from 'react'
 import { useMedia } from 'react-use'
 import Picker from 'emoji-picker-react'
 import { Auth } from '../authentication/state'
@@ -33,13 +33,10 @@ const adjectives = [
   ' about Innatical'
 ]
 
-const BoxView = ({
-  channelID,
-  hasPermission
-}: {
+const BoxView: FC<{
   channelID: string
   hasPermission: boolean
-}) => {
+}> = ({ channelID, hasPermission }) => {
   const { sendMessage, uploadDetails, setUploadDetails } = Chat.useContainer()
   const { token } = Auth.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
@@ -183,9 +180,7 @@ const BoxView = ({
   )
 }
 
-BoxView.whyDidYouRender = true
-
-const BoxPlaceholder = () => {
+const BoxPlaceholder: FC = () => {
   return (
     <div className={styles.placeholder}>
       <div className={styles.input} />

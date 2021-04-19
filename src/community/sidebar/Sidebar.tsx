@@ -1,7 +1,7 @@
 import { faEllipsisH } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Integrations from './Integrations'
-import { useState } from 'react'
+import { useState, FC } from 'react'
 import { useMutation } from 'react-query'
 import { useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
@@ -18,7 +18,7 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { UI } from '../../state/ui'
 
-const SidebarView = () => {
+const SidebarView: FC = () => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const [menu, setMenu] = useState(false)
@@ -114,7 +114,7 @@ const SidebarView = () => {
   )
 }
 
-const SidebarPlaceholder = () => {
+const SidebarPlaceholder: FC = () => {
   return (
     <div className={styles.placeholder}>
       <div className={styles.sidebar}>

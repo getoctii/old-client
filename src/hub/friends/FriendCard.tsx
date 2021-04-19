@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import styles from './FriendCard.module.scss'
 import { Auth } from '../../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -8,11 +8,11 @@ import { RelationshipResponse, RelationshipTypes } from './remote'
 import { clientGateway } from '../../utils/constants'
 import { useUser } from '../../user/state'
 
-const FriendCardView = ({
+const FriendCardView: FC<RelationshipResponse> = ({
   user_id,
   recipient_id,
   type
-}: RelationshipResponse) => {
+}) => {
   const { token, id } = Auth.useContainer()
   const user = useUser(user_id)
   const recipient = useUser(recipient_id)
@@ -93,7 +93,7 @@ const FriendCardView = ({
   )
 }
 
-const FriendCardPlaceholder = () => {
+const FriendCardPlaceholder: FC = () => {
   return (
     <div className={styles.friendPlaceholder}>
       <div className={styles.icon} />

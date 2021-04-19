@@ -1,14 +1,10 @@
 import { IconDefinition } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { ReactNode } from 'react'
+import { FC, ReactNode } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styles from './Sideview.module.scss'
 
-const Sideview = ({
-  name,
-  tabs,
-  children
-}: {
+const Sideview: FC<{
   name: string
   tabs: {
     name: string
@@ -17,7 +13,7 @@ const Sideview = ({
     link: string
   }[]
   children?: ReactNode
-}) => {
+}> = ({ name, tabs, children }) => {
   const history = useHistory()
   const match = useRouteMatch<{ page: string }>('/:tab/:page')
 

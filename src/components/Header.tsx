@@ -1,11 +1,11 @@
 import styles from './Header.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { ReactNode } from 'react'
+import { FC, ReactNode } from 'react'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { useMedia } from 'react-use'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
 
-const HeaderPlaceholder = () => {
+const HeaderPlaceholder: FC = () => {
   return (
     <div className={styles.placeholder}>
       <div className={styles.icon} />
@@ -17,17 +17,7 @@ const HeaderPlaceholder = () => {
   )
 }
 
-const Header = ({
-  className,
-  subheading,
-  heading,
-  onClick,
-  onBack,
-  color,
-  icon,
-  image,
-  action
-}: {
+const Header: FC<{
   className?: string
   subheading: string
   heading: string
@@ -37,6 +27,16 @@ const Header = ({
   icon?: IconDefinition
   image?: string
   action?: ReactNode
+}> = ({
+  className,
+  subheading,
+  heading,
+  onClick,
+  onBack,
+  color,
+  icon,
+  image,
+  action
 }) => {
   const isMobile = useMedia('(max-width: 740px)')
   return (

@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo, useState } from 'react'
+import { FC, memo, useEffect, useMemo, useState } from 'react'
 import { useQuery } from 'react-query'
 import styles from './Mentions.module.scss'
 import { fetchManyUsers, getParticipants, UserResponse } from '../user/remote'
@@ -11,15 +11,11 @@ import { ErrorBoundary } from 'react-error-boundary'
 
 type onMention = (id: string, type: 'user' | 'channel') => void
 
-const User = ({
-  user,
-  onMention,
-  selected
-}: {
+const User: FC<{
   user?: UserResponse
   onMention: onMention
   selected: boolean
-}) => {
+}> = ({ user, onMention, selected }) => {
   if (!user) return <></>
   return (
     <div
@@ -38,15 +34,11 @@ const User = ({
   )
 }
 
-const Channel = ({
-  channel,
-  onMention,
-  selected
-}: {
+const Channel: FC<{
   channel?: ChannelResponse
   onMention: onMention
   selected: boolean
-}) => {
+}> = ({ channel, onMention, selected }) => {
   return (
     <div
       className={`${styles.mention} ${selected ? styles.selected : ''}`}
@@ -57,19 +49,13 @@ const Channel = ({
   )
 }
 
-const MentionsPopup = ({
-  usersIDs,
-  search,
-  selected,
-  onMention,
-  onFiltered
-}: {
+const MentionsPopup: FC<{
   usersIDs: string[]
   search?: string
   onMention: onMention
   selected: number
   onFiltered: (users: UserResponse[]) => void
-}) => {
+}> = ({ usersIDs, search, selected, onMention, onFiltered }) => {
   const { token } = Auth.useContainer()
   const { data: users } = useQuery(['users', usersIDs, token], fetchManyUsers)
   const results = useMemo(
@@ -103,17 +89,12 @@ const MentionsPopup = ({
   )
 }
 
-const Conversation = ({
-  search,
-  onMention,
-  selected,
-  onFiltered
-}: {
+const Conversation: FC<{
   search: string
   onMention: onMention
   selected: number
   onFiltered: (users: UserResponse[]) => void
-}) => {
+}> = ({ search, onMention, selected, onFiltered }) => {
   const { token, id } = Auth.useContainer()
   const participants = useQuery(['participants', id, token], getParticipants)
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
@@ -162,117 +143,100 @@ const searchCommunityMembers = async (
       ).data
     : []
 
-const Channels = memo(
-  ({
-    search,
-    onMention,
-    selected,
-    onFiltered
-  }: {
-    search: string
-    onMention: onMention
-    selected: number
-    onFiltered: (users: ChannelResponse[]) => void
-  }) => {
-    const params = useParams<{ id: string }>()
-    const { token } = Auth.useContainer()
-    const { data: communityChannels } = useQuery(
-      ['channels', params.id, token],
-      getChannels
-    )
-    const channels = useMemo(
-      () =>
-        search !== ''
-          ? communityChannels?.filter((channel) =>
-              channel.name.includes(search)
-            )
-          : communityChannels,
-      [communityChannels, search]
-    )
+const Channels: FC<{
+  search: string
+  onMention: onMention
+  selected: number
+}> = memo(({ search, onMention, selected }) => {
+  const params = useParams<{ id: string }>()
+  const { token } = Auth.useContainer()
+  const { data: communityChannels } = useQuery(
+    ['channels', params.id, token],
+    getChannels
+  )
+  const channels = useMemo(
+    () =>
+      search !== ''
+        ? communityChannels?.filter((channel) => channel.name.includes(search))
+        : communityChannels,
+    [communityChannels, search]
+  )
 
-    return (
-      <div
-        className={styles.mentionPopup}
-        onMouseDown={(e) => {
-          e.preventDefault()
-        }}
-      >
-        <div className={styles.mentions}>
-          {channels &&
-            channels?.length > 0 &&
-            channels?.map((channel, index) => (
-              <Channel
-                key={channel.id}
-                channel={channel}
-                onMention={onMention}
-                selected={index === selected}
-              />
-            ))}
-        </div>
+  return (
+    <div
+      className={styles.mentionPopup}
+      onMouseDown={(e) => {
+        e.preventDefault()
+      }}
+    >
+      <div className={styles.mentions}>
+        {channels &&
+          channels?.length > 0 &&
+          channels?.map((channel, index) => (
+            <Channel
+              key={channel.id}
+              channel={channel}
+              onMention={onMention}
+              selected={index === selected}
+            />
+          ))}
       </div>
-    )
-  }
-)
-const Users = memo(
-  ({
-    search,
-    onMention,
-    selected,
-    onFiltered
-  }: {
-    search: string
-    onMention: onMention
-    selected: number
-    onFiltered: (users: UserResponse[]) => void
-  }) => {
-    const params = useParams<{ id: string }>()
-    const { token, id } = Auth.useContainer()
-    const isMobile = useMedia('(max-width: 740px)')
-    const [debouncedSearch, setDebouncedSearch] = useState(search)
-    useDebounce(() => setDebouncedSearch(search), 300, [search])
-    const { data: members } = useQuery(
-      ['members', params.id, debouncedSearch, token],
-      searchCommunityMembers
-    )
-    const defaultMembers = useQuery(['members', params.id, token], getMembers)
+    </div>
+  )
+})
 
-    const filteredMembers = useMemo(
-      () => members?.filter((member) => member.id !== id),
-      [members, id]
-    )
+const Users: FC<{
+  search: string
+  onMention: onMention
+  selected: number
+  onFiltered: (users: UserResponse[]) => void
+}> = memo(({ search, onMention, selected, onFiltered }) => {
+  const params = useParams<{ id: string }>()
+  const { token, id } = Auth.useContainer()
+  const isMobile = useMedia('(max-width: 740px)')
+  const [debouncedSearch, setDebouncedSearch] = useState(search)
+  useDebounce(() => setDebouncedSearch(search), 300, [search])
+  const { data: members } = useQuery(
+    ['members', params.id, debouncedSearch, token],
+    searchCommunityMembers
+  )
+  const defaultMembers = useQuery(['members', params.id, token], getMembers)
 
-    const truncatedDefaultMembers = useMemo(
-      () =>
-        isMobile
-          ? defaultMembers.data?.slice(0, 4)
-          : defaultMembers.data?.slice(0, 9),
-      [defaultMembers, isMobile]
-    )
-    const truncatedFilteredMembers = useMemo(
-      () => filteredMembers?.slice(0, 9),
-      [filteredMembers]
-    )
+  const filteredMembers = useMemo(
+    () => members?.filter((member) => member.id !== id),
+    [members, id]
+  )
 
-    return (
-      <MentionsPopup
-        usersIDs={
-          truncatedFilteredMembers && truncatedFilteredMembers.length > 0
-            ? truncatedFilteredMembers
-                .filter((member) => member.user.id !== id)
-                .map((member) => member.user.id)
-            : truncatedDefaultMembers
-            ? truncatedDefaultMembers
-                .filter((member) => member.user_id !== id)
-                .map((m) => m.user_id)
-            : []
-        }
-        onMention={onMention}
-        selected={selected}
-        onFiltered={onFiltered}
-      />
-    )
-  }
-)
+  const truncatedDefaultMembers = useMemo(
+    () =>
+      isMobile
+        ? defaultMembers.data?.slice(0, 4)
+        : defaultMembers.data?.slice(0, 9),
+    [defaultMembers, isMobile]
+  )
+  const truncatedFilteredMembers = useMemo(() => filteredMembers?.slice(0, 9), [
+    filteredMembers
+  ])
+
+  return (
+    <MentionsPopup
+      usersIDs={
+        truncatedFilteredMembers && truncatedFilteredMembers.length > 0
+          ? truncatedFilteredMembers
+              .filter((member) => member.user.id !== id)
+              .map((member) => member.user.id)
+          : truncatedDefaultMembers
+          ? truncatedDefaultMembers
+              .filter((member) => member.user_id !== id)
+              .map((m) => m.user_id)
+          : []
+      }
+      onMention={onMention}
+      selected={selected}
+      onFiltered={onFiltered}
+    />
+  )
+})
 
 const Mentions = { Conversation, Community: { Users, Channels } }
 

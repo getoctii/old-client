@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 import Input from '../components/Input'
 import styles from './Home.module.scss'
 import { Formik, Form, Field } from 'formik'
@@ -22,7 +22,7 @@ const NewsletterSchema = Yup.object().shape({
   email: Yup.string().email()
 })
 
-const Home = () => {
+const Home: FC = () => {
   const prefersDarkMode = useMedia('(prefers-color-scheme: dark)')
   const [submitted, setSubmitted] = useState(false)
   const ref = useRef<HTMLDivElement>(null)

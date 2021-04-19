@@ -1,6 +1,6 @@
 import { faChevronCircleRight } from '@fortawesome/pro-duotone-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Suspense, useState } from 'react'
+import { Suspense, useState, FC } from 'react'
 import { useQuery } from 'react-query'
 import { useHistory } from 'react-router-dom'
 import { useDebounce } from 'react-use'
@@ -11,7 +11,7 @@ import Icon from '../../user/Icon'
 import { clientGateway } from '../../utils/constants'
 import styles from './StoreHeader.module.scss'
 
-const ProductCard = ({ id }: { id: string }) => {
+const ProductCard: FC<{ id: string }> = ({ id }) => {
   const auth = Auth.useContainer()
   const history = useHistory()
   const { data: product } = useQuery(['product', id, auth.token], getProduct)
@@ -27,7 +27,7 @@ const ProductCard = ({ id }: { id: string }) => {
   )
 }
 
-const SearchCard = ({ search }: { search: string }) => {
+const SearchCard: FC<{ search: string }> = ({ search }) => {
   const auth = Auth.useContainer()
   const [debouncedSearch, setDebouncedSearch] = useState(search)
   useDebounce(() => setDebouncedSearch(search), 300, [search])
@@ -72,7 +72,7 @@ const SearchCard = ({ search }: { search: string }) => {
   )
 }
 
-const StoreHeader = () => {
+const StoreHeader: FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>()
   return (
     <div className={styles.header}>

@@ -1,6 +1,6 @@
 import { faPause, faPlay } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
+import { FC } from 'react'
 import { useAudio } from 'react-use'
 import Button from '../../components/Button'
 import styles from './Audio.module.scss'
@@ -17,7 +17,7 @@ const secondsToTimestamp = (seconds: number) => {
     .padStart(2, '0')}`
 }
 
-const AudioEmbed = ({ url }: { url: string }) => {
+const AudioEmbed: FC<{ url: string }> = ({ url }) => {
   const [audio, state, controls] = useAudio({
     src: url
   })

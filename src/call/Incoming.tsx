@@ -1,6 +1,6 @@
 import { faCheck, faTimes } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import Button from '../components/Button'
 import styles from './Incoming.module.scss'
 import { Call } from '../state/call'
@@ -10,15 +10,11 @@ import { getUser } from '../user/remote'
 import { UI } from '../state/ui'
 import { useAudio, useMedia } from 'react-use'
 
-const Incoming = ({
-  id,
-  userID,
-  peerID
-}: {
+const Incoming: FC<{
   id: string
   userID: string
   peerID: string
-}) => {
+}> = ({ id, userID, peerID }) => {
   const ui = UI.useContainer()
   const { token } = Auth.useContainer()
   const user = useQuery(['users', userID, token], getUser)

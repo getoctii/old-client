@@ -1,10 +1,10 @@
-import React from 'react'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import styles from './shared.module.scss'
 import { login } from '../remote'
 import { BarLoader } from 'react-spinners'
 import { Auth } from '../state'
 import * as Yup from 'yup'
+import { FC } from 'react'
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email'),
@@ -13,7 +13,7 @@ const LoginSchema = Yup.object().shape({
     .max(140, 'Too long, password must be under 140 characters.')
 })
 
-export const Login = () => {
+export const Login: FC = () => {
   const auth = Auth.useContainer()
   return (
     <Formik

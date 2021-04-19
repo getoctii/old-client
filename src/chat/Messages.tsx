@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+  FC
+} from 'react'
 import styles from './Messages.module.scss'
 import { queryCache, useInfiniteQuery, useQuery } from 'react-query'
 import { clientGateway } from '../utils/constants'
@@ -18,7 +25,7 @@ const { Keyboard } = Plugins
 
 dayjs.extend(dayjsUTC)
 
-const MessagesView = ({ channel }: { channel: ChannelResponse }) => {
+const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
   const {
     tracking,
     setTracking,
@@ -236,7 +243,7 @@ const MessagesView = ({ channel }: { channel: ChannelResponse }) => {
   )
 }
 
-const MessagesPlaceholder = () => {
+const MessagesPlaceholder: FC = () => {
   const length = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
   return (
     <div className={styles.messages}>

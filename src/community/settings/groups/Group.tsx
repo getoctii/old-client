@@ -1,4 +1,4 @@
-import React, { memo, Suspense, useCallback, useMemo, useState } from 'react'
+import { memo, Suspense, useCallback, useMemo, useState, FC } from 'react'
 import { Editable, Slate, withReact } from 'slate-react'
 import styles from './Group.module.scss'
 import {
@@ -27,7 +27,7 @@ import { queryCache, useQuery } from 'react-query'
 import { faUsers } from '@fortawesome/pro-duotone-svg-icons'
 import { Permission } from '../../../utils/permissions'
 
-const GroupNameEditor = (group: { id: string; name: string }) => {
+const GroupNameEditor: FC<{ id: string; name: string }> = (group) => {
   const { token } = Auth.useContainer()
   const editor = useMemo(() => withReact(createEditor()), [])
   const defaultGroupName = useMemo<any[]>(
@@ -80,15 +80,11 @@ const GroupNameEditor = (group: { id: string; name: string }) => {
   )
 }
 
-const PermissionsEditor = ({
-  id,
-  permissions,
-  base
-}: {
+const PermissionsEditor: FC<{
   id: string
   permissions: Permissions[]
   base?: boolean
-}) => {
+}> = ({ id, permissions, base }) => {
   const auth = Auth.useContainer()
   const [set, { add, remove, has, reset }] = useSet<Permissions>(
     new Set(permissions ?? [])
@@ -175,40 +171,42 @@ const PermissionsEditor = ({
   )
 }
 
-const DraggableGroup = memo(({ id, index }: { id: string; index: number }) => {
-  const { protectedGroups } = Permission.useContainer()
+const DraggableGroup: FC<{ id: string; index: number }> = memo(
+  ({ id, index }) => {
+    const { protectedGroups } = Permission.useContainer()
 
-  const draggableChild = useCallback(
-    (provided, snapshot) => (
-      <div
-        className={`${styles.draggable} ${
-          !!snapshot.isDragging ? styles.dragging : ''
-        }`}
-        ref={provided.innerRef}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
-        style={provided.draggableProps.style}
+    const draggableChild = useCallback(
+      (provided, snapshot) => (
+        <div
+          className={`${styles.draggable} ${
+            !!snapshot.isDragging ? styles.dragging : ''
+          }`}
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          style={provided.draggableProps.style}
+        >
+          <Suspense fallback={<Group.Placeholder />}>
+            <GroupCard id={id} base={false} />
+            {provided.placeholder}
+          </Suspense>
+        </div>
+      ),
+      [id]
+    )
+    return (
+      <Draggable
+        draggableId={id}
+        index={index}
+        isDragDisabled={!!protectedGroups.includes(id)}
       >
-        <Suspense fallback={<Group.Placeholder />}>
-          <GroupCard id={id} base={false} />
-          {provided.placeholder}
-        </Suspense>
-      </div>
-    ),
-    [id]
-  )
-  return (
-    <Draggable
-      draggableId={id}
-      index={index}
-      isDragDisabled={!!protectedGroups.includes(id)}
-    >
-      {draggableChild}
-    </Draggable>
-  )
-})
+        {draggableChild}
+      </Draggable>
+    )
+  }
+)
 
-const GroupCard = ({ id, base }: { id?: string; base?: boolean }) => {
+const GroupCard: FC<{ id?: string; base?: boolean }> = ({ id, base }) => {
   const { token } = Auth.useContainer()
   const { data: group } = useQuery(['group', id, token], getGroup, {
     enabled: !base && !!id
@@ -273,7 +271,7 @@ const GroupCard = ({ id, base }: { id?: string; base?: boolean }) => {
   )
 }
 
-const GroupPlaceholder = ({ className }: { className?: string }) => {
+const GroupPlaceholder: FC<{ className?: string }> = ({ className }) => {
   const name = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
   return (
     <div className={`${styles.groupPlaceholder} ${className ? className : ''}`}>
