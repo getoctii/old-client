@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { createContainer } from 'unstated-next'
+import { createContainer } from '@innatical/innstate'
 import { Auth } from '../authentication/state'
 import { postMessage } from './remote'
 

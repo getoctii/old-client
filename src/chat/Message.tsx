@@ -104,7 +104,12 @@ const MessageView: FC<{
   primary: boolean
 }> = memo(({ id, authorID, createdAt, primary, content, type }) => {
   const uiStore = UI.useContainer()
-  const { editingMessageID, setEditingMessageID } = Chat.useContainer()
+  const { editingMessageID, setEditingMessageID } = Chat.useContainerSelector(
+    ({ editingMessageID, setEditingMessageID }) => ({
+      editingMessageID,
+      setEditingMessageID
+    })
+  )
   const auth = Auth.useContainer()
   const { hasPermissions } = Permission.useContainer()
   const [deleteMessage] = useMutation(

@@ -1,4 +1,4 @@
-import { createContainer } from 'unstated-next'
+import { createContainer } from '@innatical/innstate'
 import { useState, useCallback } from 'react'
 
 const useTyping = () => {

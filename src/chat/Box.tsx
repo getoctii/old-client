@@ -37,7 +37,17 @@ const BoxView: FC<{
   channelID: string
   hasPermission: boolean
 }> = ({ channelID, hasPermission }) => {
-  const { sendMessage, uploadDetails, setUploadDetails } = Chat.useContainer()
+  const {
+    sendMessage,
+    uploadDetails,
+    setUploadDetails
+  } = Chat.useContainerSelector(
+    ({ sendMessage, uploadDetails, setUploadDetails }) => ({
+      sendMessage,
+      uploadDetails,
+      setUploadDetails
+    })
+  )
   const { token } = Auth.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
   const adjective = useMemo(

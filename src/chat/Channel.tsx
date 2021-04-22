@@ -113,7 +113,11 @@ const ChannelView: FC<{
   communityID?: string
   conversationID?: string
 }> = ({ type, channelID, participants, communityID, conversationID }) => {
-  const { setUploadDetails } = Chat.useContainer()
+  const {
+    setUploadDetails
+  } = Chat.useContainerSelector(({ setUploadDetails }) => ({
+    setUploadDetails
+  }))
   const { token, id } = Auth.useContainer()
   const call = Call.useContainer()
   const { typing } = Typing.useContainer()

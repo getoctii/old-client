@@ -1,4 +1,4 @@
-import { createContainer } from 'unstated-next'
+import { createContainer } from '@innatical/innstate'
 import { useEffect, useMemo, useState } from 'react'
 import { useMedia } from 'react-use'
 import octii from './themes/octii.json'

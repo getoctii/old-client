@@ -33,7 +33,23 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
     autoRead,
     setAutoRead,
     setChannelID
-  } = Chat.useContainer()
+  } = Chat.useContainerSelector(
+    ({
+      tracking,
+      setTracking,
+      editingMessageID,
+      autoRead,
+      setAutoRead,
+      setChannelID
+    }) => ({
+      tracking,
+      setTracking,
+      editingMessageID,
+      autoRead,
+      setAutoRead,
+      setChannelID
+    })
+  )
 
   useEffect(() => {
     setChannelID(channel.id)

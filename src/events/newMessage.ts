@@ -44,7 +44,13 @@ declare global {
 }
 
 const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
-  const { autoRead, channelID } = Chat.useContainer()
+  const {
+    autoRead,
+    channelID
+  } = Chat.useContainerSelector(({ autoRead, channelID }) => ({
+    autoRead,
+    channelID
+  }))
   const { id, token } = Auth.useContainer()
   const { stopTyping } = Typing.useContainer()
   const [mutedCommunities] = useSuspenseStorageItem<string[]>(

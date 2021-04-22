@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { createContainer } from 'unstated-next'
+import { createContainer } from '@innatical/innstate'
 import Peer from 'peerjs'
 import { clientGateway } from '../utils/constants'
 import { Auth } from '../authentication/state'

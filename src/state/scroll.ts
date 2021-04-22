@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createContainer } from 'unstated-next'
+import { createContainer } from '@innatical/innstate'
 
 const useScrollPosition = () => {
   const sidebarScrollPosition = useState<{

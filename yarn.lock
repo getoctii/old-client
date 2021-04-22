@@ -1402,6 +1402,14 @@
   resolved "https://registry.yarnpkg.com/@innatical/inncryption/-/inncryption-0.0.8.tgz#88172dbdc719e2e8adee52730a433167882303ca"
   integrity sha512-1WzEt0d4o8jxvOnrIwVXv5ebawAUJItwaVEuCbJ/6v1q+kxWJWeDcMxtDUkQXoYCVVcjfe+GcHP7aEdFyHG8/g==
 
+"@innatical/innstate@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@innatical/innstate/-/innstate-1.0.1.tgz#7353d31aca1b5fae9780a3c40ad711fcd9b53006"
+  integrity sha512-ROYaEFfPTRfcMsoMUJAcbfAK7vid0w/1rKW4kZmAL6rJhlDYOGXYU/a0dygj4iJte9FUKvACIPYFPZK1Ccr48Q==
+  dependencies:
+    "@wry/equality" "^0.4.0"
+    react-use-context-selector "^1.0.2"
+
 "@innatical/markdown@^0.3.5":
   version "0.3.5"
   resolved "https://registry.yarnpkg.com/@innatical/markdown/-/markdown-0.3.5.tgz#045521c0f604eafe813eab5fc9cf01000566a4f9"
@@ -2698,6 +2706,13 @@
   integrity sha512-BMFp33T4MC27qvCWsI1SqwZCxIlxoQXsPQFdGLDsPSg7sgoWX4Gzj0+hlKVrWrCBiIxi7gP2JcS9IK6CZzk8mg==
   dependencies:
     lodash "^4"
+
+"@wry/equality@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@wry/equality/-/equality-0.4.0.tgz#474491869a8d0590f4a33fd2a4850a77a0f63408"
+  integrity sha512-DxN/uawWfhRbgYE55zVCPOoe+jvsQ4m7PT1Wlxjyb/LCCLuU1UsucV2BbCxFAX8bjcSueFBbB5Qfj1Zfe8e7Fw==
+  dependencies:
+    tslib "^2.1.0"
 
 "@xobotyi/scrollbar-width@1.9.5":
   version "1.9.5"
@@ -10828,6 +10843,11 @@ react-universal-interface@^0.6.2:
   resolved "https://registry.yarnpkg.com/react-universal-interface/-/react-universal-interface-0.6.2.tgz#5e8d438a01729a4dbbcbeeceb0b86be146fe2b3b"
   integrity sha512-dg8yXdcQmvgR13RIlZbTRQOoUrDciFVoSBZILwjE2LFISxZZ8loVJKAkuzswl5js8BHda79bIb2b84ehU8IjXw==
 
+react-use-context-selector@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-use-context-selector/-/react-use-context-selector-1.0.2.tgz#f37f2190484914196daf99c8a4d534f871b7e143"
+  integrity sha512-3uBtI+m7B9SCf3fhBls0t+tdueNaz7ublF6Vvov5CBUuQ4DnBNKrxuSLRRi2jEYgMZBkKqrMDOIqCu0LGLORtw==
+
 react-use@^15.3.8:
   version "15.3.8"
   resolved "https://registry.yarnpkg.com/react-use/-/react-use-15.3.8.tgz#ca839ac7fb3d696e5ccbeabbc8dadc2698969d30"
@@ -13030,11 +13050,6 @@ unset-value@^1.0.0:
   dependencies:
     has-value "^0.3.1"
     isobject "^3.0.0"
-
-unstated-next@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/unstated-next/-/unstated-next-1.1.0.tgz#7bb4911a12fdf3cc8ad3eb11a0b315e4a8685ea8"
-  integrity sha512-AAn47ZncPvgBGOvMcn8tSRxsrqwf2VdAPxLASTuLJvZt4rhKfDvUkmYZLGfclImSfTVMv7tF4ynaVxin0JjDCA==
 
 untildify@^4.0.0:
   version "4.0.0"
