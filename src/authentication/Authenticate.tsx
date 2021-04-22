@@ -19,12 +19,8 @@ export const Authenticate: FC = () => {
         </picture>
         <h1>{match?.params.page === 'register' ? 'Register' : 'Login'}</h1>
         <Switch>
-          <Route name='Login' path={'/authenticate/login'} component={Login} />
-          <Route
-            name='Register'
-            path={'/authenticate/register'}
-            component={Register}
-          />
+          <Route path={'/authenticate/login'} component={Login} />
+          <Route path={'/authenticate/register'} component={Register} />
           <Route
             exact
             component={() => <Redirect to={'/authenticate/login'} />}
