@@ -21,7 +21,6 @@ import Loader from './components/Loader'
 import { Auth } from './authentication/state'
 import Home from './marketing/Home'
 import { isPlatform } from '@ionic/react'
-import Incoming from './call/Incoming'
 import { Call } from './state/call'
 import Current from './call/Current'
 import EventSource from './events'
@@ -54,17 +53,11 @@ const ContextMenuHandler: FC = () => {
 
 const IncomingCall: FC = () => {
   const auth = Auth.useContainer()
-  const call = Call.useContainer()
-  const uiStore = UI.useContainer()
+  const call = Call.useContainerSelector(({ state }) => ({ state }))
   const isMobile = useMedia('(max-width: 740px)')
   return auth.authenticated && isMobile ? (
     <>
-      <Suspense fallback={<></>}>
-        {call.callState !== 'idle' && <Current />}
-        {uiStore.modal?.name === ModalTypes.INCOMING_CALL && (
-          <Incoming {...uiStore.modal.props} />
-        )}
-      </Suspense>
+      <Suspense fallback={<></>}>{call.state && <Current />}</Suspense>
     </>
   ) : (
     <></>
@@ -256,9 +249,7 @@ const AppRouter: FC = () => {
       </Suspense>
       {!isMobile && (
         <>
-          <Suspense fallback={<></>}>
-            {call.callState !== 'idle' && <Current />}
-          </Suspense>
+          <Suspense fallback={<></>}>{call.state && <Current />}</Suspense>
         </>
       )}
       <IncomingCall />

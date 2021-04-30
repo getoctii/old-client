@@ -113,13 +113,12 @@ const ChannelView: FC<{
   communityID?: string
   conversationID?: string
 }> = ({ type, channelID, participants, communityID, conversationID }) => {
-  const {
-    setUploadDetails
-  } = Chat.useContainerSelector(({ setUploadDetails }) => ({
-    setUploadDetails
-  }))
+  const { setUploadDetails } = Chat.useContainerSelector(
+    ({ setUploadDetails }) => ({
+      setUploadDetails
+    })
+  )
   const { token, id } = Auth.useContainer()
-  const call = Call.useContainer()
   const { typing } = Typing.useContainer()
   const typingUsers = useMemo(
     () =>
@@ -206,25 +205,6 @@ const ChannelView: FC<{
                   icon={showAddParticipant ? faTimes : faUserPlus}
                 />
               </Button>
-            ) : (
-              <></>
-            )}
-            {type === InternalChannelTypes.PrivateChannel && participants ? (
-              call.otherUserID !== participants[0] && [0] && (
-                <Button
-                  type='button'
-                  onClick={async () => {
-                    if (call.callState !== 'idle') call.endCall()
-                    await call.ringUser(participants[0])
-                  }}
-                >
-                  {call.callState !== 'idle' ? (
-                    <FontAwesomeIcon icon={faPhoneSlash} />
-                  ) : (
-                    <FontAwesomeIcon icon={faPhone} />
-                  )}
-                </Button>
-              )
             ) : (
               <></>
             )}

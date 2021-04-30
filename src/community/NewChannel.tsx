@@ -178,6 +178,17 @@ const NewChannel: FC = () => {
                     >
                       Text Channel
                     </Button>
+                    <Button
+                      type={'button'}
+                      className={`${
+                        values.type === ChannelTypes.VOICE
+                          ? styles.selected
+                          : ''
+                      }`}
+                      onClick={() => setFieldValue('type', ChannelTypes.VOICE)}
+                    >
+                      Voice Channel
+                    </Button>
                     {(channels ?? []).filter(
                       (c) => c.type !== ChannelTypes.CATEGORY
                     ).length > 0 && (

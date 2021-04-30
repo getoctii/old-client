@@ -1,0 +1,28 @@
+.grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  margin-top: 2rem;
+  overflow-y: auto;
+  grid-gap: 1rem;
+}
+
+.card {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  background-position: center;
+  background-size: cover;
+}
+
+.channel {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  width: 100%;
+}
+
+.button {
+  background: var(--neko-colors-primary);
+  margin-left: auto;
+}

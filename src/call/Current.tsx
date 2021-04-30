@@ -11,44 +11,54 @@ import styles from './Current.module.scss'
 import { useUser } from '../user/state'
 
 const Current: FC = () => {
-  const call = Call.useContainer()
-  const user = useUser(call.otherUserID ?? undefined)
-  const [audio] = useState(new Audio())
+  const {
+    state,
+    setMuted,
+    muted,
+    setDeafened,
+    deafened,
+    setRoom
+  } = Call.useContainerSelector(
+    ({ state, setMuted, muted, setDeafened, deafened, setRoom }) => ({
+      state,
+      setMuted,
+      muted,
+      setDeafened,
+      deafened,
+      setRoom
+    })
+  )
 
-  useEffect(() => {
-    if (audio && call.stream) {
-      audio.srcObject = call.stream
-      audio.play()
-    }
-  }, [audio, call.stream])
   return (
     <div className={styles.current}>
-      <h3>Call w/{user?.username}</h3>
+      <h3>Call</h3>
       <p>
-        {call.callState === 'waiting'
-          ? 'Connecting to peer...'
-          : call.callState === 'ringing'
-          ? 'Ringing...'
-          : call.callState === 'connected'
+        {state === 'new' || !state
+          ? 'Connecting to server...'
+          : state === 'failed' || state === 'disconnected'
+          ? 'Connection failure'
+          : state === 'connected' ||
+            state === 'completed' ||
+            state === 'checking'
           ? 'Connected'
           : ''}
       </p>
       <nav>
-        <button onClick={() => call.setMuted(!call.muted)}>
-          {call.muted ? (
+        <button onClick={() => setMuted(!muted)}>
+          {muted ? (
             <FontAwesomeIcon icon={faMicrophoneSlash} fixedWidth />
           ) : (
             <FontAwesomeIcon icon={faMicrophone} fixedWidth />
           )}
         </button>
-        <button onClick={() => call.setDeafened(!call.deafened)}>
-          {call.deafened ? (
+        <button onClick={() => setDeafened(!deafened)}>
+          {deafened ? (
             <FontAwesomeIcon icon={faVolumeMute} fixedWidth />
           ) : (
             <FontAwesomeIcon icon={faVolume} fixedWidth />
           )}
         </button>
-        <button onClick={() => call.endCall()}>End Call</button>
+        <button onClick={() => setRoom(null)}>End Call</button>
       </nav>
     </div>
   )

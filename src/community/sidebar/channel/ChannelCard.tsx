@@ -1,4 +1,4 @@
-import { faHashtag } from '@fortawesome/pro-solid-svg-icons'
+import { faHashtag, faVolume } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { memo, Suspense, useCallback, useMemo, FC } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
@@ -32,6 +32,7 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ConfirmationType } from '../../../components/Confirmation'
 import { ErrorBoundary } from 'react-error-boundary'
+import Channel from '../../../chat/Channel'
 
 const ChannelCardDraggable: FC<{ id: string; index: number }> = memo(
   ({ id, index }) => {
@@ -214,19 +215,22 @@ const ChannelCardView: FC<{
           }
           className={`${styles.channel} ${
             matchTab?.params.channelID === channel.id &&
-            channel.type === ChannelTypes.TEXT
+            (channel.type === ChannelTypes.TEXT ||
+              channel.type === ChannelTypes.VOICE)
               ? styles.selected
               : ''
           }`}
           onClick={() => {
-            if (
-              matchTab?.params.channelID === channel.id ||
-              channel.type !== ChannelTypes.TEXT
-            )
-              return
-            return history.push(
-              `/communities/${community?.id}/channels/${channel.id}`
-            )
+            if (matchTab?.params.channelID === channel.id) return
+            if (channel.type === ChannelTypes.TEXT)
+              return history.push(
+                `/communities/${community?.id}/channels/${channel.id}`
+              )
+            else if (channel.type === ChannelTypes.VOICE)
+              return history.push(
+                `/communities/${community?.id}/channels/${channel.id}`
+              )
+            else return
           }}
         >
           <h4>
@@ -243,7 +247,13 @@ const ChannelCardView: FC<{
               }
             >
               <FontAwesomeIcon
-                icon={faHashtag}
+                icon={
+                  channel.type === ChannelTypes.TEXT
+                    ? faHashtag
+                    : channel.type === ChannelTypes.VOICE
+                    ? faVolume
+                    : faHashtag
+                }
                 fixedWidth={true}
                 style={
                   matchTab?.params.channelID === channel.id
@@ -281,6 +291,12 @@ const ChannelCardView: FC<{
                   icon={faBellSlash}
                   fixedWidth
                 />
+              )}
+              {matchTab?.params.channelID === channel.id &&
+              channel.type === ChannelTypes.VOICE ? (
+                <div className={styles.join}>Join</div>
+              ) : (
+                <></>
               )}
             </div>
           </h4>

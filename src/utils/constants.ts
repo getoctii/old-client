@@ -8,7 +8,8 @@ export const clientGateway = axios.create({
 export enum ChannelTypes {
   TEXT = 1,
   CATEGORY = 2,
-  CUSTOM = 3
+  VOICE = 3,
+  CUSTOM = 4
 }
 
 export enum ModalTypes {

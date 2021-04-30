@@ -25,6 +25,7 @@ import Products from './integrations/Products'
 import Product from './integrations/product/Product'
 import List from '../components/List'
 import { Placeholder } from '../components/Header'
+import VoiceChannel from './voice/VoiceChannel'
 
 const NoPermission: FC<CommunityResponse> = ({ name }) => (
   <div className={styles.noPermission}>
@@ -48,8 +49,14 @@ const Channel: FC = () => {
     () => channels?.find((channel) => channel.id === channelID),
     [channels, channelID]
   )
-  if (!channel || channel.type !== ChannelTypes.TEXT) return <></>
-  return <Chat.Community key={channel.id} />
+  if (!channel) return <></>
+  return channel.type === ChannelTypes.TEXT ? (
+    <Chat.Community key={channel.id} />
+  ) : channel.type === ChannelTypes.VOICE ? (
+    <VoiceChannel channel={channel} />
+  ) : (
+    <></>
+  )
 }
 
 const ListPlaceholder: FC = () => {

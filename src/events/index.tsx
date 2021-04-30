@@ -9,7 +9,6 @@ import useDeletedChannel from './deletedChannel'
 import useDeletedMember from './deletedMember'
 import useTyping from './typing'
 import useNewVoiceSession from './newVoiceSession'
-import useAcceptedVoiceSession from './acceptedVoiceSession'
 import useLog from './log'
 import useNewMention from './newMention'
 import useUpdatedConversation from './updatedConversation'
@@ -34,7 +33,6 @@ const EventSource = () => {
   const [eventSource] = useSubscribe()
 
   useLog(eventSource)
-  useAcceptedVoiceSession(eventSource)
   useDeletedChannel(eventSource)
   useDeletedGroup(eventSource)
   useDeletedGroupMember(eventSource)
