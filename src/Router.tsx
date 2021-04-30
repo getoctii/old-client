@@ -26,7 +26,7 @@ import Current from './call/Current'
 import EventSource from './events'
 import Context from './components/Context'
 import { Plugins } from '@capacitor/core'
-import { clientGateway, ModalTypes } from './utils/constants'
+import { clientGateway } from './utils/constants'
 import Downloads from './marketing/Downloads'
 import Invite from './invite/Invite'
 import Admin from './admin/Admin'
@@ -53,11 +53,11 @@ const ContextMenuHandler: FC = () => {
 
 const IncomingCall: FC = () => {
   const auth = Auth.useContainer()
-  const call = Call.useContainerSelector(({ state }) => ({ state }))
+  const call = Call.useContainerSelector(({ room }) => ({ room }))
   const isMobile = useMedia('(max-width: 740px)')
   return auth.authenticated && isMobile ? (
     <>
-      <Suspense fallback={<></>}>{call.state && <Current />}</Suspense>
+      <Suspense fallback={<></>}>{call.room && <Current />}</Suspense>
     </>
   ) : (
     <></>
@@ -249,7 +249,7 @@ const AppRouter: FC = () => {
       </Suspense>
       {!isMobile && (
         <>
-          <Suspense fallback={<></>}>{call.state && <Current />}</Suspense>
+          <Suspense fallback={<></>}>{call.room && <Current />}</Suspense>
         </>
       )}
       <IncomingCall />

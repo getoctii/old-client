@@ -5,6 +5,7 @@ const useCall = () => {
   const [room, setRoom] = useState<{
     id: string
     token: string
+    server: string
   } | null>()
   const [socket, setSocket] = useState<WebSocket | null>()
   const [socketReady, setSocketReady] = useState(false)
@@ -23,7 +24,7 @@ const useCall = () => {
       room: room.id,
       authorization: room.token
     })
-    setSocket(new WebSocket(`wss://voice.octii.chat?` + params.toString()))
+    setSocket(new WebSocket(room.server + '?' + params.toString()))
 
     return () => {
       setSocket(null)
@@ -271,7 +272,8 @@ const useCall = () => {
     deafened,
     setRoom,
     state,
-    play
+    play,
+    room
   }
 }
 

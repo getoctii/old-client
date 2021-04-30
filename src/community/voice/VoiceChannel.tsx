@@ -4,16 +4,17 @@ import { Auth } from '../../authentication/state'
 import { ChannelResponse } from '../../chat/remote'
 import Header from '../../components/Header'
 import Button from '../../components/Button'
-import { UserResponse } from '../../user/remote'
 import { useUser } from '../../user/state'
 import styles from './VoiceChannel.module.scss'
 import { Call } from '../../state/call'
 import { clientGateway } from '../../utils/constants'
 
-const VoiceCard: FC<{ user: UserResponse; speaking: boolean }> = ({
-  user,
+const VoiceCard: FC<{ userID: string; speaking: boolean }> = ({
+  userID,
   speaking
 }) => {
+  const user = useUser(userID)
+  if (!user) return <></>
   return (
     <div
       className={styles.card}
@@ -26,11 +27,10 @@ const VoiceCard: FC<{ user: UserResponse; speaking: boolean }> = ({
 }
 
 const VoiceChannel: FC<{ channel: ChannelResponse }> = ({ channel }) => {
-  const { id, token } = Auth.useContainer()
+  const { token } = Auth.useContainer()
   const { setRoom, play } = Call.useContainer()
-  const user = useUser(id ?? undefined)
-  if (!user) return <></>
 
+  console.log(channel)
   return (
     <div className={styles.channel}>
       <Header
@@ -46,7 +46,7 @@ const VoiceChannel: FC<{ channel: ChannelResponse }> = ({ channel }) => {
               const {
                 data
               }: {
-                data: { room_id: string; token: string }
+                data: { room_id: string; token: string; server: string }
               } = await clientGateway.post(
                 `/channels/${channel.id}/join`,
                 {},
@@ -58,7 +58,8 @@ const VoiceChannel: FC<{ channel: ChannelResponse }> = ({ channel }) => {
               )
               setRoom({
                 token: data.token,
-                id: data.room_id
+                id: data.room_id,
+                server: data.server
               })
               play()
             }}
@@ -68,9 +69,9 @@ const VoiceChannel: FC<{ channel: ChannelResponse }> = ({ channel }) => {
         }
       />
       <div className={styles.grid}>
-        {new Array(100).fill(0).map(() => {
-          return <VoiceCard user={user} speaking />
-        })}
+        {channel.voice_users?.map((id) => (
+          <VoiceCard userID={id} speaking={false} />
+        ))}
       </div>
     </div>
   )

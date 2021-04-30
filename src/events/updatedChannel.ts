@@ -21,6 +21,7 @@ const useUpdatedChannel = (eventSource: EventSourcePolyfill | null) => {
         type: ChannelTypes
         parent_id: string
         community_id: string
+        voice_users?: string[]
       }
       log('Events', 'purple', 'UPDATED_CHANNEL')
       queryCache.setQueryData<ChannelResponse>(
@@ -37,7 +38,7 @@ const useUpdatedChannel = (eventSource: EventSourcePolyfill | null) => {
         }
       )
       queryCache.setQueryData<ChannelResponse[]>(
-        ['channels', id, token],
+        ['channels', event.community_id, token],
         (initial) => {
           if (initial) {
             return initial.map((c) =>

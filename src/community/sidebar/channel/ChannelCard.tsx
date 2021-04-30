@@ -32,7 +32,7 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ConfirmationType } from '../../../components/Confirmation'
 import { ErrorBoundary } from 'react-error-boundary'
-import Channel from '../../../chat/Channel'
+import { Call } from '../../../state/call'
 
 const ChannelCardDraggable: FC<{ id: string; index: number }> = memo(
   ({ id, index }) => {
@@ -178,6 +178,9 @@ const ChannelCardView: FC<{
     [mentions, channel]
   )
 
+  const { setRoom, play } = Call.useContainer()
+  const { token } = Auth.useContainer()
+
   if (!channel) return <></>
 
   return (
@@ -294,7 +297,32 @@ const ChannelCardView: FC<{
               )}
               {matchTab?.params.channelID === channel.id &&
               channel.type === ChannelTypes.VOICE ? (
-                <div className={styles.join}>Join</div>
+                <div
+                  className={styles.join}
+                  onClick={async () => {
+                    const {
+                      data
+                    }: {
+                      data: { room_id: string; token: string; server: string }
+                    } = await clientGateway.post(
+                      `/channels/${channel.id}/join`,
+                      {},
+                      {
+                        headers: {
+                          Authorization: token
+                        }
+                      }
+                    )
+                    setRoom({
+                      token: data.token,
+                      id: data.room_id,
+                      server: data.server
+                    })
+                    play()
+                  }}
+                >
+                  Join
+                </div>
               ) : (
                 <></>
               )}
