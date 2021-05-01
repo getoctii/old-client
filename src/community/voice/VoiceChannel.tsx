@@ -22,7 +22,11 @@ const VoiceCard: FC<{ userID: string; speaking: boolean }> = ({
         backgroundImage: `url(${user.avatar})`,
         border: speaking ? '5px solid var(--neko-text-primary)' : undefined
       }}
-    />
+    >
+      <div className={styles.name}>
+        <h1>{user.username}</h1>
+      </div>
+    </div>
   )
 }
 

@@ -1,18 +1,41 @@
 .grid {
   flex: 1;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
   margin-top: 2rem;
   overflow-y: auto;
-  grid-gap: 1rem;
+  flex-wrap: wrap;
+
+  * {
+    margin: 1rem;
+  }
 }
 
 .card {
   width: 200px;
   height: 200px;
   border-radius: 10px;
-  background-position: center;
   background-size: cover;
+
+  .name {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out, backdrop-filter 0.5s ease-in-out;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    border-radius: 10px;
+
+    &:hover {
+      opacity: 1;
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      margin: 0;
+    }
+  }
 }
 
 .channel {

@@ -8,29 +8,52 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FC } from 'react'
 import { Call } from '../state/call'
 import styles from './Current.module.scss'
+import { getChannel } from '../chat/remote'
+import { Auth } from '../authentication/state'
+import { useQuery } from 'react-query'
+import { useHistory } from 'react-router-dom'
 
 const Current: FC = () => {
+  const { token } = Auth.useContainer()
   const {
     state,
     setMuted,
     muted,
     setDeafened,
     deafened,
-    setRoom
+    setRoom,
+    room
   } = Call.useContainerSelector(
-    ({ state, setMuted, muted, setDeafened, deafened, setRoom }) => ({
+    ({ state, setMuted, muted, setDeafened, deafened, setRoom, room }) => ({
       state,
       setMuted,
       muted,
       setDeafened,
       deafened,
-      setRoom
+      setRoom,
+      room
     })
+  )
+
+  const history = useHistory()
+
+  const { data: channel } = useQuery(
+    ['channel', room?.channelID, token],
+    getChannel
   )
 
   return (
     <div className={styles.current}>
-      <h3>Call</h3>
+      <h3
+        className={styles.pointer}
+        onClick={() => {
+          history.push(
+            `/communities/${channel?.community_id}/channels/${channel?.id}`
+          )
+        }}
+      >
+        #{channel?.name}
+      </h3>
       <p>
         {state === 'new' || !state
           ? 'Connecting to server...'

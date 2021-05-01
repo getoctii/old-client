@@ -233,25 +233,27 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
         </div>
       )}
       {!loading && canFetchMore ? (
-        <Waypoint
-          bottomOffset={20}
-          onEnter={async () => {
-            try {
-              const current = ref.current
-              if (!current || !current.scrollHeight) return
-              const oldHeight = current.scrollHeight
-              const oldTop = current.scrollTop
-              setLoading(true)
-              await fetchMore()
-              if (!ref.current) return
-              ref.current.scrollTop = current.scrollHeight
-                ? current.scrollHeight - oldHeight + oldTop
-                : 0
-            } finally {
-              setLoading(false)
-            }
-          }}
-        />
+        <div className={styles.waypoint}>
+          <Waypoint
+            bottomOffset={30}
+            onEnter={async () => {
+              try {
+                const current = ref.current
+                if (!current || !current.scrollHeight) return
+                const oldHeight = current.scrollHeight
+                const oldTop = current.scrollTop
+                setLoading(true)
+                await fetchMore()
+                if (!ref.current) return
+                ref.current.scrollTop = current.scrollHeight
+                  ? current.scrollHeight - oldHeight + oldTop
+                  : 0
+              } finally {
+                setLoading(false)
+              }
+            }}
+          />
+        </div>
       ) : (
         <></>
       )}{' '}
