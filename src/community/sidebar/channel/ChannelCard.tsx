@@ -178,7 +178,7 @@ const ChannelCardView: FC<{
     [mentions, channel]
   )
 
-  const { setRoom, play } = Call.useContainer()
+  const { setRoom, play, room } = Call.useContainer()
   const { token } = Auth.useContainer()
 
   if (!channel) return <></>
@@ -296,7 +296,8 @@ const ChannelCardView: FC<{
                 />
               )}
               {matchTab?.params.channelID === channel.id &&
-              channel.type === ChannelTypes.VOICE ? (
+              channel.type === ChannelTypes.VOICE &&
+              room?.channelID !== channel.id ? (
                 <div
                   className={styles.join}
                   onClick={async () => {
@@ -316,7 +317,8 @@ const ChannelCardView: FC<{
                     setRoom({
                       token: data.token,
                       id: data.room_id,
-                      server: data.server
+                      server: data.server,
+                      channelID: channel.id
                     })
                     play()
                   }}

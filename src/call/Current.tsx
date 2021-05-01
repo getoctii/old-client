@@ -5,10 +5,9 @@ import {
   faVolumeMute
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { Call } from '../state/call'
 import styles from './Current.module.scss'
-import { useUser } from '../user/state'
 
 const Current: FC = () => {
   const {

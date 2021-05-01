@@ -8,15 +8,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronLeft,
   faHashtag,
-  faPhone,
-  faPhoneSlash,
   faTimes,
   faUserPlus
 } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useParams } from 'react-router-dom'
 import Box from './Box'
 import Typing from '../state/typing'
-import { Call } from '../state/call'
 import Button from '../components/Button'
 import { ChannelResponse, getChannel } from './remote'
 import Messages from './Messages'

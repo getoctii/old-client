@@ -28,7 +28,7 @@ const VoiceCard: FC<{ userID: string; speaking: boolean }> = ({
 
 const VoiceChannel: FC<{ channel: ChannelResponse }> = ({ channel }) => {
   const { token } = Auth.useContainer()
-  const { setRoom, play } = Call.useContainer()
+  const { setRoom, play, room } = Call.useContainer()
 
   console.log(channel)
   return (
@@ -39,33 +39,38 @@ const VoiceChannel: FC<{ channel: ChannelResponse }> = ({ channel }) => {
         color={'primary'}
         icon={faVolume}
         action={
-          <Button
-            type='button'
-            className={styles.button}
-            onClick={async () => {
-              const {
-                data
-              }: {
-                data: { room_id: string; token: string; server: string }
-              } = await clientGateway.post(
-                `/channels/${channel.id}/join`,
-                {},
-                {
-                  headers: {
-                    Authorization: token
+          room?.channelID !== channel.id ? (
+            <Button
+              type='button'
+              className={styles.button}
+              onClick={async () => {
+                const {
+                  data
+                }: {
+                  data: { room_id: string; token: string; server: string }
+                } = await clientGateway.post(
+                  `/channels/${channel.id}/join`,
+                  {},
+                  {
+                    headers: {
+                      Authorization: token
+                    }
                   }
-                }
-              )
-              setRoom({
-                token: data.token,
-                id: data.room_id,
-                server: data.server
-              })
-              play()
-            }}
-          >
-            Join
-          </Button>
+                )
+                setRoom({
+                  token: data.token,
+                  id: data.room_id,
+                  server: data.server,
+                  channelID: channel.id
+                })
+                play()
+              }}
+            >
+              Join
+            </Button>
+          ) : (
+            <></>
+          )
         }
       />
       <div className={styles.grid}>

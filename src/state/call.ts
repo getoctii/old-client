@@ -6,6 +6,7 @@ const useCall = () => {
     id: string
     token: string
     server: string
+    channelID: string
   } | null>()
   const [socket, setSocket] = useState<WebSocket | null>()
   const [socketReady, setSocketReady] = useState(false)
@@ -124,13 +125,12 @@ const useCall = () => {
   useEffect(() => {
     if (!socket || !connection) return
     const cb = (c: RTCPeerConnectionIceEvent) => {
-      if (c.candidate)
-        socket.send(
-          JSON.stringify({
-            data: c.candidate,
-            type: 'ICE'
-          })
-        )
+      socket.send(
+        JSON.stringify({
+          data: c.candidate,
+          type: 'ICE'
+        })
+      )
     }
 
     connection.addEventListener('icecandidate', cb)
