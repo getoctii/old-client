@@ -1,8 +1,8 @@
-import React from 'react'
+import { FC } from 'react'
 import { SyncLoader } from 'react-spinners'
 import styles from './Loader.module.scss'
 
-const Loader = () => {
+const Loader: FC = () => {
   return (
     <div className={styles.loader}>
       <SyncLoader />

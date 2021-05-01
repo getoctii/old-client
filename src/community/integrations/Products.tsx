@@ -13,10 +13,10 @@ import { faPlusCircle, faCubes } from '@fortawesome/pro-duotone-svg-icons'
 import { useMedia } from 'react-use'
 import { UI } from '../../state/ui'
 import { ModalTypes } from '../../utils/constants'
-import { Suspense } from 'react'
+import { Suspense, FC } from 'react'
 import StatusBar from '../../components/StatusBar'
 
-export const ProductCard = ({ id }: { id: string }) => {
+export const ProductCard: FC<{ id: string }> = ({ id }) => {
   const { id: communityID } = useParams<{ id: string }>()
   const auth = Auth.useContainer()
   const history = useHistory()
@@ -39,7 +39,7 @@ export const ProductCard = ({ id }: { id: string }) => {
   )
 }
 
-const Products = () => {
+const Products: FC = () => {
   const ui = UI.useContainer()
   const history = useHistory()
   const { token } = Auth.useContainer()

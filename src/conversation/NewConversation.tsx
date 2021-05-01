@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import styles from './NewConversation.module.scss'
 import Input from '../components/Input'
 import { Field, Form, Formik } from 'formik'
@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom'
 import { ParticipantsResponse } from '../user/remote'
 import { createConversation, findUser, validate } from './remote'
 
-const NewConversation = () => {
+const NewConversation: FC = () => {
   const { id, token } = Auth.useContainer()
   const history = useHistory()
   return (

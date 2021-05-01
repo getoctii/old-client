@@ -8,7 +8,7 @@ import {
 import { Auth } from '../authentication/state'
 import { useCallback, useMemo } from 'react'
 import { ChannelPermissions, Permissions } from './constants'
-import { createContainer } from 'unstated-next'
+import { createContainer } from '@innatical/innstate'
 import { useRouteMatch } from 'react-router-dom'
 import { getCommunities } from '../user/remote'
 import { ChannelResponse } from '../chat/remote'

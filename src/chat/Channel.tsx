@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useState } from 'react'
+import { FC, Suspense, useMemo, useState } from 'react'
 import styles from './Channel.module.scss'
 import { useQuery } from 'react-query'
 import { ChannelPermissions, InternalChannelTypes } from '../utils/constants'
@@ -8,15 +8,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronLeft,
   faHashtag,
-  faPhone,
-  faPhoneSlash,
   faTimes,
   faUserPlus
 } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useParams } from 'react-router-dom'
 import Box from './Box'
 import Typing from '../state/typing'
-import { Call } from '../state/call'
 import Button from '../components/Button'
 import { ChannelResponse, getChannel } from './remote'
 import Messages from './Messages'
@@ -25,7 +22,9 @@ import { Chat } from './state'
 import { Permission } from '../utils/permissions'
 import AddParticipant from './AddParticipant'
 
-const TypingIndicator = ({ channelID }: { channelID: string }) => {
+const TypingIndicator: FC<{
+  channelID: string
+}> = ({ channelID }) => {
   const { id } = Auth.useContainer()
   const { typing } = Typing.useContainer()
   const users = useMemo(
@@ -52,7 +51,7 @@ const TypingIndicator = ({ channelID }: { channelID: string }) => {
   } else return <div className={styles.typingEmpty} />
 }
 
-const PrivateName = ({ id }: { id?: string }) => {
+const PrivateName: FC<{ id?: string }> = ({ id }) => {
   const { token } = Auth.useContainer()
   const user = useQuery(['users', id, token], getUser)
   return (
@@ -66,15 +65,11 @@ const PrivateName = ({ id }: { id?: string }) => {
   )
 }
 
-const Header = ({
-  participants,
-  type,
-  channel
-}: {
+const Header: FC<{
   participants?: string[]
   type: InternalChannelTypes
   channel?: ChannelResponse
-}) => {
+}> = ({ participants, type, channel }) => {
   const { token } = Auth.useContainer()
   const { data: users } = useQuery(
     ['users', participants ?? [], token],
@@ -95,7 +90,7 @@ const Header = ({
   )
 }
 
-const CommunityChannelView = () => {
+const CommunityChannelView: FC = () => {
   const { id, channelID } = useParams<{ id: string; channelID: string }>()
   return (
     <ChannelView
@@ -107,23 +102,20 @@ const CommunityChannelView = () => {
 }
 
 const supportedFiles = new Set(['image/png', 'image/gif', 'image/jpeg'])
-const ChannelView = ({
-  type,
-  channelID,
-  participants,
-  communityID,
-  conversationID
-}: {
+
+const ChannelView: FC<{
   type: InternalChannelTypes
   channelID: string
   participants?: string[]
   communityID?: string
-  // eslint-disable-next-line
   conversationID?: string
-}) => {
-  const { setUploadDetails } = Chat.useContainer()
+}> = ({ type, channelID, participants, communityID, conversationID }) => {
+  const { setUploadDetails } = Chat.useContainerSelector(
+    ({ setUploadDetails }) => ({
+      setUploadDetails
+    })
+  )
   const { token, id } = Auth.useContainer()
-  const call = Call.useContainer()
   const { typing } = Typing.useContainer()
   const typingUsers = useMemo(
     () =>
@@ -213,25 +205,6 @@ const ChannelView = ({
             ) : (
               <></>
             )}
-            {type === InternalChannelTypes.PrivateChannel && participants ? (
-              call.otherUserID !== participants[0] && [0] && (
-                <Button
-                  type='button'
-                  onClick={async () => {
-                    if (call.callState !== 'idle') call.endCall()
-                    await call.ringUser(participants[0])
-                  }}
-                >
-                  {call.callState !== 'idle' ? (
-                    <FontAwesomeIcon icon={faPhoneSlash} />
-                  ) : (
-                    <FontAwesomeIcon icon={faPhone} />
-                  )}
-                </Button>
-              )
-            ) : (
-              <></>
-            )}
           </div>
           {showAddParticipant && (
             <AddParticipant
@@ -273,7 +246,7 @@ const ChannelView = ({
   )
 }
 
-const ChannelPlaceholder = () => {
+const ChannelPlaceholder: FC = () => {
   const username = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
   const status = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
   return (

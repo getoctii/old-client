@@ -10,11 +10,12 @@ import Header from '../../components/Header'
 import List from '../../components/List'
 import { useHistory } from 'react-router-dom'
 import { ProductCard } from '../../community/integrations/Products'
+import { FC } from 'react'
 
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
 
-const Queue = () => {
+const Queue: FC = () => {
   const { token } = Auth.useContainer()
   const { data: queue } = useQuery<string[]>(
     ['codes', token],

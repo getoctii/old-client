@@ -1,21 +1,20 @@
-import React, { useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import styles from './Modals.module.scss'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMedia } from 'react-use'
 import { ModalTypes } from '../utils/constants'
 import AddParticipant from '../chat/AddParticipant'
 import { Confirmation } from './Confirmation'
-import Incoming from '../call/Incoming'
 import { NewCommunity } from '../sidebar/NewCommunity'
 import NewConversation from '../conversation/NewConversation'
 import { NewGroup } from '../community/settings/groups/NewGroup'
 import File from '../chat/embeds/File'
-import { NewChannel } from '../community/NewChannel'
+import NewChannel from '../community/NewChannel'
 import NewInvite from '../community/NewInvite'
 import ManageGroups from '../community/ManageGroups'
 import { UI } from '../state/ui'
 import { Permission } from '../utils/permissions'
-import { Update } from './Update'
+import Update from './Update'
 import Status from './Status'
 import AddFriend from '../hub/friends/AddFriend'
 import NewProduct from '../community/integrations/NewProduct'
@@ -23,7 +22,6 @@ import NewResource from '../community/integrations/product/pages/NewResource'
 import NewVersion from '../community/integrations/product/pages/NewVersion'
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
-  const isMobile = useMedia('(max-width: 740px)')
   switch (name) {
     case ModalTypes.ADD_PARTICIPANT:
       return <AddParticipant {...props} />
@@ -31,8 +29,6 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <Confirmation {...props} />
     case ModalTypes.DEVELOPER_MODE:
       return <Confirmation {...props} />
-    case ModalTypes.INCOMING_CALL:
-      return !isMobile ? <Incoming {...props} /> : <></>
     case ModalTypes.NEW_COMMUNITY:
       return <NewCommunity />
     case ModalTypes.NEW_CONVERSATION:
@@ -64,7 +60,7 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
   }
 }
 
-const Modals = () => {
+const Modals: FC = () => {
   const uiStore = UI.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
   useEffect(() => {

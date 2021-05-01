@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import styles from './AddFriend.module.scss'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
@@ -22,7 +22,7 @@ const validate = (values: formData) => {
   return errors
 }
 
-const AddFriend = () => {
+const AddFriend: FC = () => {
   const ui = UI.useContainer()
   const { token, id } = Auth.useContainer()
   return (

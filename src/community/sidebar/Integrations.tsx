@@ -1,13 +1,13 @@
 import { faAddressBook, faUserCog } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useMemo } from 'react'
+import { useMemo, FC } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styles from './Integrations.module.scss'
 import { Permission } from '../../utils/permissions'
 import { Permissions } from '../../utils/constants'
 import { faWarehouseAlt } from '@fortawesome/pro-duotone-svg-icons'
 
-const IntegrationsView = () => {
+const IntegrationsView: FC = () => {
   const history = useHistory()
   const matchTab = useRouteMatch<{ id: string; tab: string }>(
     '/communities/:id/:tab?'
@@ -98,7 +98,7 @@ const IntegrationsView = () => {
   )
 }
 
-const Placeholder = () => {
+const Placeholder: FC = () => {
   const integrationOne = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
   const integrationTwo = useMemo(() => Math.floor(Math.random() * 6) + 3, [])
   return (

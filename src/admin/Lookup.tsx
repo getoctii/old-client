@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react'
+import { FC, Suspense, useState } from 'react'
 import { queryCache, useMutation } from 'react-query'
 import { ParticipantsResponse } from '../user/remote'
 import { Auth } from '../authentication/state'
@@ -20,7 +20,7 @@ import { Plugins } from '@capacitor/core'
 import { useMedia } from 'react-use'
 import { useUser } from '../user/state'
 
-const UserLookup = ({ userID }: { userID: string }) => {
+const UserLookup: FC<{ userID: string }> = ({ userID }) => {
   const history = useHistory()
   const auth = Auth.useContainer()
   const user = useUser(userID)
@@ -118,7 +118,7 @@ const UserLookup = ({ userID }: { userID: string }) => {
   )
 }
 
-const Lookup = () => {
+const Lookup: FC = () => {
   const auth = Auth.useContainer()
   const [lookup, setLookup] = useState<string>()
   const history = useHistory()

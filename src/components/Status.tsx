@@ -6,7 +6,7 @@ import {
   faTimesCircle
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
+import { FC } from 'react'
 import { queryCache, useQuery } from 'react-query'
 import { Auth } from '../authentication/state'
 import { clientGateway } from '../utils/constants'
@@ -39,7 +39,7 @@ const StatusSchema = Yup.object().shape({
     .max(140, 'Too long, must be less then 140 characters.')
 })
 
-const Status = () => {
+const Status: FC = () => {
   const { id, token } = Auth.useContainer()
   const ui = UI.useContainer()
   const user = useQuery(['users', id, token], getUser)

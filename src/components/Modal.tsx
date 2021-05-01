@@ -1,23 +1,16 @@
 import { IconDefinition } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { ReactNode } from 'react'
+import { FC, ReactNode } from 'react'
 import styles from './Modal.module.scss'
 
-const Modal = ({
-  onDismiss,
-  icon,
-  title,
-  subtitle,
-  children,
-  bottom
-}: {
+const Modal: FC<{
   onDismiss: () => void
   icon: IconDefinition
   title: string
   subtitle?: string
   children: ReactNode
   bottom?: ReactNode
-}) => {
+}> = ({ onDismiss, icon, title, subtitle, children, bottom }) => {
   return (
     <div className={styles.modal}>
       <div className={styles.header}>

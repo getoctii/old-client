@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useState } from 'react'
+import { FC, Suspense, useMemo, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
@@ -12,15 +12,11 @@ import { clientGateway } from '../utils/constants'
 import { Permission } from '../utils/permissions'
 import { faTimes } from '@fortawesome/pro-solid-svg-icons'
 
-const Group = ({
-  id,
-  memberID,
-  add
-}: {
+const Group: FC<{
   id: string
   memberID?: string
   add?: boolean
-}) => {
+}> = ({ id, memberID, add }) => {
   const { token } = Auth.useContainer()
   const { data: group } = useQuery(['group', id, token], getGroup)
   const { protectedGroups } = Permission.useContainer()
@@ -63,15 +59,11 @@ const Group = ({
   )
 }
 
-const Content = ({
-  memberID,
-  userID,
-  communityID
-}: {
+const Content: FC<{
   communityID: string
   memberID: string
   userID: string
-}) => {
+}> = ({ memberID, userID, communityID }) => {
   const { token } = Auth.useContainer()
   const { data: user } = useQuery(['users', userID, token], getUser)
   const { data: member } = useQuery(['member', memberID, token], getMember)
@@ -158,15 +150,11 @@ const Content = ({
   )
 }
 
-const ManageGroups = ({
-  memberID,
-  userID,
-  communityID
-}: {
+const ManageGroups: FC<{
   communityID: string
   memberID: string
   userID: string
-}) => {
+}> = ({ memberID, userID, communityID }) => {
   return (
     <Suspense fallback={<></>}>
       <Content communityID={communityID} memberID={memberID} userID={userID} />

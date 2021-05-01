@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import styles from './shared.module.scss'
 import { register } from '../remote'
@@ -17,7 +17,7 @@ const RegisterSchema = Yup.object().shape({
   betaCode: Yup.string().uuid('Invalid Beta Code')
 })
 
-export const Register = () => {
+export const Register: FC = () => {
   const auth = Auth.useContainer()
   return (
     <Formik

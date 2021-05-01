@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useState } from 'react'
 import decode from 'jwt-decode'
-import { createContainer } from 'unstated-next'
+import { createContainer } from '@innatical/innstate'
 import { clientGateway } from '../utils/constants'
 import { queryCache } from 'react-query'
 import { useSuspenseStorageItem } from '../utils/storage'

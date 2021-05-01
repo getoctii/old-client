@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, Form, Formik } from 'formik'
-import React, { useState } from 'react'
+import { FC, useState } from 'react'
 import { BarLoader } from 'react-spinners'
 import Button from '../../../components/Button'
 import Input from '../../../components/Input'
@@ -32,19 +32,13 @@ const GroupSchema = Yup.object().shape({
     .max(30, 'Too long, must be less then 30 characters.')
 })
 
-export const PermissionToggle = ({
-  name,
-  type,
-  toggled,
-  onToggle,
-  className
-}: {
+export const PermissionToggle: FC<{
   name: string
   type: Groups
   toggled?: boolean
   onToggle?: (value: boolean) => void
   className?: string
-}) => {
+}> = ({ name, type, toggled, onToggle, className }) => {
   return (
     <li
       onClick={() => {
@@ -63,7 +57,7 @@ export const PermissionToggle = ({
   )
 }
 
-export const NewPermissionStandalone = () => {
+export const NewPermissionStandalone: FC = () => {
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const auth = Auth.useContainer()
   const { hasPermissions, community } = Permission.useContainer()
@@ -183,6 +177,6 @@ export const NewPermissionStandalone = () => {
   )
 }
 
-export const NewGroup = () => {
+export const NewGroup: FC = () => {
   return <NewPermissionStandalone />
 }

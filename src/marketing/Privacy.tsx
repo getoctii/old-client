@@ -1,9 +1,9 @@
-import React from 'react'
+import { FC } from 'react'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import styles from './Privacy.module.scss'
 
-const Privacy = () => {
+const Privacy: FC = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.centered}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Redirect, useHistory, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { Auth } from '../authentication/state'
@@ -10,7 +10,7 @@ import { clientGateway } from '../utils/constants'
 import { Helmet } from 'react-helmet-async'
 import { useUser } from '../user/state'
 
-const InvitePreview = (invite: {
+const InvitePreview: FC<{
   code: string
   author_id: string
   community: {
@@ -20,7 +20,7 @@ const InvitePreview = (invite: {
     large: boolean
     owner_id: string
   }
-}) => {
+}> = (invite) => {
   const { token, id } = Auth.useContainer()
   const history = useHistory()
   const user = useUser(invite.author_id)
@@ -62,7 +62,7 @@ const InvitePreview = (invite: {
   )
 }
 
-const Invite = () => {
+const Invite: FC = () => {
   const { token } = Auth.useContainer()
   const params = useParams<{ invite: string; code?: string }>()
   const { data: invite } = useQuery(
@@ -80,7 +80,7 @@ const Invite = () => {
   )
 }
 
-const OnBoarding = () => {
+const OnBoarding: FC = () => {
   const { setBetaCode } = Auth.useContainer()
   const params = useParams<{ invite: string; code?: string }>()
   const [loading, setLoading] = useState(true)
@@ -97,7 +97,7 @@ const OnBoarding = () => {
   )
 }
 
-const View = () => {
+const View: FC = () => {
   const { authenticated } = Auth.useContainer()
 
   return authenticated ? <Invite /> : <OnBoarding />

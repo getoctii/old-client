@@ -1,6 +1,6 @@
 import { faPoop } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useMemo } from 'react'
+import { useMemo, FC } from 'react'
 import { matchPath, useHistory } from 'react-router-dom'
 import Button from '../../components/Button'
 import styles from './Invite.module.scss'
@@ -13,7 +13,7 @@ import { clientGateway } from '../../utils/constants'
 const isInvite = (url: string) =>
   /^https:\/\/octii\.(chat\/invite|com)\/[A-Za-z0-9_-]*/g.test(url)
 
-const InviteEmbed = ({ url }: { url: string }) => {
+const InviteEmbed: FC<{ url: string }> = ({ url }) => {
   const { token, id } = Auth.useContainer()
   const history = useHistory()
   const match = matchPath<{ invite: string; code: string }>(

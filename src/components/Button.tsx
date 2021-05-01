@@ -1,9 +1,16 @@
-import React, { CSSProperties } from 'react'
+import React, { FC, CSSProperties } from 'react'
 import styles from './Button.module.scss'
 
 type OnClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 
-const Button = ({
+const Button: FC<{
+  onClick?: OnClick
+  type: 'button' | 'submit' | 'reset'
+  disabled?: boolean
+  className?: string
+  style?: CSSProperties
+  props?: any
+}> = ({
   children,
   onClick,
   type,
@@ -11,14 +18,6 @@ const Button = ({
   className,
   style,
   props
-}: {
-  children?: React.ReactNode
-  onClick?: OnClick
-  type: 'button' | 'submit' | 'reset'
-  disabled?: boolean
-  className?: string
-  style?: CSSProperties
-  props?: any
 }) => {
   return (
     <button

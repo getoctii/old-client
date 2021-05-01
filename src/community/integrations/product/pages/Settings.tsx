@@ -1,5 +1,5 @@
 import { Formik, Form, ErrorMessage, Field } from 'formik'
-import React, { useState } from 'react'
+import { FC, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../../../authentication/state'
@@ -21,7 +21,7 @@ const DeleteSchema = Yup.object().shape({
     .optional()
 })
 
-const Personalization = () => {
+const Personalization: FC = () => {
   const { productID } = useParams<{ productID: string }>()
   const auth = Auth.useContainer()
   const [saveTagline, setSaveTagline] = useState<string | undefined>(undefined)
@@ -268,7 +268,7 @@ const Personalization = () => {
   )
 }
 
-const DangerZone = ({ community }: { community: CommunityResponse }) => {
+const DangerZone: FC<{ community: CommunityResponse }> = ({ community }) => {
   const auth = Auth.useContainer()
   const history = useHistory()
   return (
@@ -326,7 +326,7 @@ const DangerZone = ({ community }: { community: CommunityResponse }) => {
   )
 }
 
-export const Settings = () => {
+export const Settings: FC = () => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id/products')
   const { data: community } = useQuery(

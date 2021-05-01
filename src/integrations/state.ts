@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useQuery } from 'react-query'
-import { createContainer } from 'unstated-next'
+import { createContainer } from '@innatical/innstate'
 import { Auth } from '../authentication/state'
 import { getPurchases } from '../user/remote'
 import {

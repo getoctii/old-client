@@ -1,6 +1,6 @@
-import { faHashtag } from '@fortawesome/pro-solid-svg-icons'
+import { faHashtag, faVolume } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { memo, Suspense, useCallback, useMemo } from 'react'
+import { memo, Suspense, useCallback, useMemo, FC } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../../authentication/state'
 import { Clipboard } from '@capacitor/core'
@@ -32,9 +32,10 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ConfirmationType } from '../../../components/Confirmation'
 import { ErrorBoundary } from 'react-error-boundary'
+import { Call } from '../../../state/call'
 
-const ChannelCardDraggable = memo(
-  ({ id, index }: { id: string; index: number }) => {
+const ChannelCardDraggable: FC<{ id: string; index: number }> = memo(
+  ({ id, index }) => {
     const { hasPermissions } = Permission.useContainer()
     const draggableChild = useCallback(
       (provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
@@ -74,15 +75,11 @@ const ChannelCardDraggable = memo(
   }
 )
 
-const ChannelCardView = ({
-  id,
-  index,
-  dragging
-}: {
+const ChannelCardView: FC<{
   id: string
   index: number
   dragging?: boolean
-}) => {
+}> = ({ id, index, dragging }) => {
   const matchTab = useRouteMatch<{ id: string; channelID: string }>(
     '/communities/:id/channels/:channelID'
   )
@@ -181,6 +178,9 @@ const ChannelCardView = ({
     [mentions, channel]
   )
 
+  const { setRoom, play, room } = Call.useContainer()
+  const { token } = Auth.useContainer()
+
   if (!channel) return <></>
 
   return (
@@ -218,19 +218,22 @@ const ChannelCardView = ({
           }
           className={`${styles.channel} ${
             matchTab?.params.channelID === channel.id &&
-            channel.type === ChannelTypes.TEXT
+            (channel.type === ChannelTypes.TEXT ||
+              channel.type === ChannelTypes.VOICE)
               ? styles.selected
               : ''
           }`}
           onClick={() => {
-            if (
-              matchTab?.params.channelID === channel.id ||
-              channel.type !== ChannelTypes.TEXT
-            )
-              return
-            return history.push(
-              `/communities/${community?.id}/channels/${channel.id}`
-            )
+            if (matchTab?.params.channelID === channel.id) return
+            if (channel.type === ChannelTypes.TEXT)
+              return history.push(
+                `/communities/${community?.id}/channels/${channel.id}`
+              )
+            else if (channel.type === ChannelTypes.VOICE)
+              return history.push(
+                `/communities/${community?.id}/channels/${channel.id}`
+              )
+            else return
           }}
         >
           <h4>
@@ -247,7 +250,13 @@ const ChannelCardView = ({
               }
             >
               <FontAwesomeIcon
-                icon={faHashtag}
+                icon={
+                  channel.type === ChannelTypes.TEXT
+                    ? faHashtag
+                    : channel.type === ChannelTypes.VOICE
+                    ? faVolume
+                    : faHashtag
+                }
                 fixedWidth={true}
                 style={
                   matchTab?.params.channelID === channel.id
@@ -286,6 +295,39 @@ const ChannelCardView = ({
                   fixedWidth
                 />
               )}
+              {matchTab?.params.channelID === channel.id &&
+              channel.type === ChannelTypes.VOICE &&
+              room?.channelID !== channel.id ? (
+                <div
+                  className={styles.join}
+                  onClick={async () => {
+                    const {
+                      data
+                    }: {
+                      data: { room_id: string; token: string; server: string }
+                    } = await clientGateway.post(
+                      `/channels/${channel.id}/join`,
+                      {},
+                      {
+                        headers: {
+                          Authorization: token
+                        }
+                      }
+                    )
+                    setRoom({
+                      token: data.token,
+                      id: data.room_id,
+                      server: data.server,
+                      channelID: channel.id
+                    })
+                    play()
+                  }}
+                >
+                  Join
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           </h4>
         </div>
@@ -294,7 +336,7 @@ const ChannelCardView = ({
   )
 }
 
-const ChannelCardPlaceholder = ({ index }: { index?: number }) => {
+const ChannelCardPlaceholder: FC<{ index?: number }> = ({ index }) => {
   const name = useMemo(() => Math.floor(Math.random() * 5) + 3, [])
   return (
     <>

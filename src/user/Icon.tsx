@@ -1,17 +1,13 @@
 import { motion } from 'framer-motion'
-import React from 'react'
+import { FC } from 'react'
 import styles from './Icon.module.scss'
 import { State } from './remote'
 
-const Icon = ({
-  className,
-  avatar,
-  state
-}: {
+const Icon: FC<{
   className?: string
   avatar?: string
   state?: State
-}) => {
+}> = ({ className, avatar, state }) => {
   return (
     <motion.div
       className={`${styles.icon} ${className}`}

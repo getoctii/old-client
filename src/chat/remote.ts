@@ -25,6 +25,7 @@ export interface ChannelResponse {
   overrides?: {
     [groupID: string]: Override
   }
+  voice_users?: string[]
 }
 
 export interface MessageResponse {

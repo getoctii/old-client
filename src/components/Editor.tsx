@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useEffect, useState } from 'react'
+import { FC, Suspense, useCallback, useEffect, useState } from 'react'
 import { useMedia, usePageLeave } from 'react-use'
 import { Element, Text, Transforms, Editor, Range, Node } from 'slate'
 import { HistoryEditor } from 'slate-history'
@@ -22,7 +22,7 @@ import { ChannelResponse } from '../community/remote'
 import { isPlatform } from '@ionic/react'
 import styles from './Editor.module.scss'
 
-const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
+const Leaf: FC<RenderLeafProps> = ({ attributes, children, leaf }) => {
   return leaf.underline ? (
     <u {...attributes}>{children}</u>
   ) : leaf.strong ? (
@@ -88,24 +88,7 @@ const allowedKeys = new Set([
   'Slash'
 ])
 
-const EditorView = ({
-  id,
-  editor,
-  className,
-  mentionsClassName,
-  typingClassName,
-  inputClassName,
-  children,
-  emptyEditor,
-  placeholder,
-  newLines,
-  onEnter,
-  onTyping,
-  onDismiss,
-  typingIndicator,
-  userMentions,
-  channelMentions
-}: {
+const EditorView: FC<{
   id: string
   editor: Editor & ReactEditor & HistoryEditor
   className: string
@@ -122,6 +105,23 @@ const EditorView = ({
   typingIndicator?: boolean
   userMentions?: boolean
   channelMentions?: boolean
+}> = ({
+  id,
+  editor,
+  className,
+  mentionsClassName,
+  typingClassName,
+  inputClassName,
+  children,
+  emptyEditor,
+  placeholder,
+  newLines,
+  onEnter,
+  onTyping,
+  onDismiss,
+  typingIndicator,
+  userMentions,
+  channelMentions
 }) => {
   const match = useRouteMatch<{ id: string }>('/communities/:id/:tab?/:tab2?')
   const isMobile = useMedia('(max-width: 740px)')
@@ -251,7 +251,7 @@ const EditorView = ({
   const onMention = useCallback(
     (id: string, type: 'user' | 'channel') => {
       if (!target) return
-      Transforms.delete(editor, {at: target.range.anchor, unit: "word"})
+      Transforms.delete(editor, { at: target.range.anchor, unit: 'word' })
       Transforms.select(editor, target.range)
       Transforms.insertNodes(editor, {
         type: type,
@@ -270,14 +270,9 @@ const EditorView = ({
   )
 
   const [usersFiltered, setUsersFiltered] = useState<UserResponse[]>([])
-  const [channelsFiltered, setChannelsFiltered] = useState<ChannelResponse[]>(
-    []
-  )
+  const [channelsFiltered] = useState<ChannelResponse[]>([])
   const onUsersFiltered = useCallback((users: UserResponse[]) => {
     setUsersFiltered(users)
-  }, [])
-  const onChannelsFiltered = useCallback((channels: ChannelResponse[]) => {
-    setChannelsFiltered(channels)
   }, [])
   useEffect(() => {
     setSelected(0)
@@ -289,7 +284,11 @@ const EditorView = ({
         !isMobile &&
         !isPlatform('ipad') &&
         (event.target as any)?.type !== 'text' &&
-        (!(event.target as any)?.id || (event.target as any)?.id === id) && allowedKeys.has(event.code) && !event.ctrlKey && !event.altKey && !event.metaKey &&
+        (!(event.target as any)?.id || (event.target as any)?.id === id) &&
+        allowedKeys.has(event.code) &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        !event.metaKey &&
         !event.shiftKey
       ) {
         ReactEditor.focus(editor)
@@ -329,7 +328,6 @@ const EditorView = ({
                   search={search}
                   onMention={onMention}
                   selected={selected}
-                  onFiltered={onChannelsFiltered}
                 />
               ) : (
                 <></>

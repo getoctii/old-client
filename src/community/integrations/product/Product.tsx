@@ -3,7 +3,7 @@ import { useMedia } from 'react-use'
 import styles from './Product.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Navbar from './Navbar'
-import React, { Suspense } from 'react'
+import { Suspense, FC } from 'react'
 import { PrivateRoute } from '../../../authentication/PrivateRoute'
 import Overview from './pages/Overview'
 import { Settings } from './pages/Settings'
@@ -18,7 +18,7 @@ import { getProduct } from '../../remote'
 import { UI } from '../../../state/ui'
 import { ModalTypes } from '../../../utils/constants'
 
-const Product = () => {
+const Product: FC = () => {
   const ui = UI.useContainer()
   const auth = Auth.useContainer()
   const { path } = useRouteMatch()

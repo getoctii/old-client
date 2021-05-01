@@ -31,6 +31,7 @@ import { getCommunity } from '../community/remote'
 import { ModalTypes } from '../utils/constants'
 import { useSuspenseStorageItem } from '../utils/storage'
 import { useUser } from '../user/state'
+import { FC } from 'react'
 
 const reorder = (
   list: MembersResponse,
@@ -44,97 +45,92 @@ const reorder = (
   return result
 }
 
-const Community = memo(
-  ({
-    community,
-    index
-  }: {
-    community: {
-      id: string
-      name: string
-      icon?: string
-      large: boolean
-    }
-    index: number
-  }) => {
-    const { token, id } = Auth.useContainer()
-    const match = useRouteMatch<{
-      tab?: string
-      id?: string
-    }>('/:tab/:id')
-    const history = useHistory()
-    const communityFull = useQuery(
-      ['community', community.id, token],
-      getCommunity
-    )
-    const unreads = useQuery(['unreads', id, token], getUnreads)
-    const mentions = useQuery(['mentions', id, token], getMentions)
+const Community: FC<{
+  community: {
+    id: string
+    name: string
+    icon?: string
+    large: boolean
+  }
+  index: number
+}> = memo(({ community, index }) => {
+  const { token, id } = Auth.useContainer()
+  const match = useRouteMatch<{
+    tab?: string
+    id?: string
+  }>('/:tab/:id')
+  const history = useHistory()
+  const communityFull = useQuery(
+    ['community', community.id, token],
+    getCommunity
+  )
+  const unreads = useQuery(['unreads', id, token], getUnreads)
+  const mentions = useQuery(['mentions', id, token], getMentions)
 
-    const mentionsCount = useMemo(
-      () =>
-        communityFull.data?.channels
-          .map(
-            (channel) =>
-              mentions.data?.[channel]?.filter((mention) => !mention.read)
-                .length ?? 0
-          )
-          .reduce((acc, curr) => acc + curr, 0),
-      [communityFull, mentions]
-    )
+  const mentionsCount = useMemo(
+    () =>
+      communityFull.data?.channels
+        .map(
+          (channel) =>
+            mentions.data?.[channel]?.filter((mention) => !mention.read)
+              .length ?? 0
+        )
+        .reduce((acc, curr) => acc + curr, 0),
+    [communityFull, mentions]
+  )
 
-    const draggableChild = useCallback(
-      (provided) => (
-        <div
-          key={community.id}
-          style={provided.draggableProps.style}
-          className={
+  const draggableChild = useCallback(
+    (provided) => (
+      <div
+        key={community.id}
+        style={provided.draggableProps.style}
+        className={
+          match?.params.tab === 'communities' &&
+          match.params.id === community.id
+            ? `${styles.icon} ${styles.selected}`
+            : styles.icon
+        }
+        ref={provided.innerRef}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+        onClick={() => {
+          if (
             match?.params.tab === 'communities' &&
             match.params.id === community.id
-              ? `${styles.icon} ${styles.selected}`
-              : styles.icon
-          }
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          onClick={() => {
-            if (
-              match?.params.tab === 'communities' &&
-              match.params.id === community.id
-            )
-              return
-            return history.push(`/communities/${community.id}`)
-          }}
-        >
-          <img src={community.icon} alt={community.name} />
-          {match?.params.id !== community.id &&
-            (mentionsCount && mentionsCount > 0 ? (
-              <div
-                className={`${styles.mention} ${
-                  mentionsCount > 9 ? styles.pill : ''
-                }`}
-              >
-                <span>{mentionsCount > 99 ? '99+' : mentionsCount}</span>
-              </div>
-            ) : (
-              communityFull.data?.channels.some((channelID) => {
-                const channel = unreads.data?.[channelID]
-                return channel?.last_message_id !== channel?.read
-              }) && <div className={`${styles.badge}`} />
-            ))}
-        </div>
-      ),
-      [community, match, unreads, mentionsCount, communityFull, history]
-    )
+          )
+            return
+          return history.push(`/communities/${community.id}`)
+        }}
+      >
+        <img src={community.icon} alt={community.name} />
+        {match?.params.id !== community.id &&
+          (mentionsCount && mentionsCount > 0 ? (
+            <div
+              className={`${styles.mention} ${
+                mentionsCount > 9 ? styles.pill : ''
+              }`}
+            >
+              <span>{mentionsCount > 99 ? '99+' : mentionsCount}</span>
+            </div>
+          ) : (
+            communityFull.data?.channels.some((channelID) => {
+              const channel = unreads.data?.[channelID]
+              return channel?.last_message_id !== channel?.read
+            }) && <div className={`${styles.badge}`} />
+          ))}
+      </div>
+    ),
+    [community, match, unreads, mentionsCount, communityFull, history]
+  )
 
-    return (
-      <Draggable draggableId={community.id} index={index}>
-        {draggableChild}
-      </Draggable>
-    )
-  }
-)
+  return (
+    <Draggable draggableId={community.id} index={index}>
+      {draggableChild}
+    </Draggable>
+  )
+})
 
-const Placeholder = () => {
+const Placeholder: FC = () => {
   const length = useMemo(() => Math.floor(Math.random() * 10) + 1, [])
   return (
     <>
@@ -145,7 +141,7 @@ const Placeholder = () => {
   )
 }
 
-const Communities = () => {
+const Communities: FC = () => {
   const isMobile = useMedia('(max-width: 740px)')
   const { id, token } = Auth.useContainer()
   const communities = useQuery(['communities', id, token], getCommunities)
@@ -208,7 +204,7 @@ const Communities = () => {
   )
 }
 
-const Sidebar = () => {
+const Sidebar: FC = () => {
   const ui = UI.useContainer()
   const auth = Auth.useContainer()
   const history = useHistory()

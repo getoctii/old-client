@@ -1,204 +1,279 @@
-import { useState, useEffect, useCallback } from 'react'
-import { createContainer } from 'unstated-next'
-import Peer from 'peerjs'
-import { clientGateway } from '../utils/constants'
-import { Auth } from '../authentication/state'
-import { useSuspenseStorageItem } from '../utils/storage'
+import { createContainer } from '@innatical/innstate'
+import { useCallback, useEffect, useState } from 'react'
 
 const useCall = () => {
-  const { token } = Auth.useContainer()
-  const [peer] = useState(
-    new Peer({
-      host: 'signaling.octii.chat',
-      secure: true
+  const [room, setRoom] = useState<{
+    id: string
+    token: string
+    server: string
+    channelID: string
+  } | null>()
+  const [socket, setSocket] = useState<WebSocket | null>()
+  const [socketReady, setSocketReady] = useState(false)
+  const [connection, setConnection] = useState<RTCPeerConnection | null>()
+  const [state, setConnectionState] = useState<RTCIceConnectionState | null>()
+  const [localStream, setLocalSteam] = useState<MediaStream | null>()
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>()
+  const [audio] = useState(new Audio())
+  const [muted, setMuted] = useState(false)
+  const [deafened, setDeafened] = useState(false)
+
+  useEffect(() => {
+    if (!room) return
+
+    const params = new URLSearchParams({
+      room: room.id,
+      authorization: room.token
     })
-  )
-  const [peerID, setPeerID] = useState<null | string>(null)
-  const [sessionID, setSessionID] = useState<null | string>(null)
-  const [callState, setCallState] = useState<
-    'idle' | 'ringing' | 'waiting' | 'connected'
-  >('idle')
-  const [, setOtherPeerID] = useState<null | string>(null)
-  const [otherUserID, setOtherUserID] = useState<null | string>(null)
-  const [call, setCall] = useState<null | Peer.MediaConnection>(null)
-  const [inputStream, setInputStream] = useState<null | MediaStream>(null)
-  const [stream, setStream] = useState<null | MediaStream>(null)
-  const [muted, setMuted] = useSuspenseStorageItem<boolean>(
-    'voice-muted',
-    false
-  )
-  const [deafened, setDeafened] = useSuspenseStorageItem<boolean>(
-    'voice-deafened',
-    false
-  )
-
-  useEffect(() => {
-    if (inputStream && !muted) {
-      inputStream?.getTracks().forEach((track) => (track.enabled = true))
-    } else if (inputStream && muted) {
-      inputStream?.getTracks().forEach((track) => (track.enabled = false))
-    }
-  }, [muted, inputStream])
-
-  useEffect(() => {
-    if (stream && !deafened) {
-      stream?.getTracks().forEach((track) => (track.enabled = true))
-    } else if (inputStream && deafened) {
-      stream?.getTracks().forEach((track) => (track.enabled = false))
-    }
-  }, [deafened, stream, inputStream])
-
-  const endCall = useCallback(() => {
-    call?.close()
-    inputStream?.getTracks().forEach((track) => track.stop())
-
-    setCallState('idle')
-    setInputStream(null)
-    setOtherPeerID(null)
-    setOtherUserID(null)
-    setSessionID(null)
-    setCall(null)
-    setStream(null)
-  }, [call, inputStream])
-
-  useEffect(() => {
-    if (!call) return
-    const handler = () => {
-      endCall()
-    }
-
-    call.on('close', handler)
+    setSocket(new WebSocket(room.server + '?' + params.toString()))
 
     return () => {
-      call.off('close', handler)
+      setSocket(null)
+      setSocketReady(false)
     }
-  }, [call, endCall])
+  }, [room])
 
   useEffect(() => {
-    if (!call) return
-    const handler = (stream: MediaStream) => {
-      setCallState('connected')
-      setStream(stream)
-    }
-
-    call.on('stream', handler)
-
+    if (!socket) return
     return () => {
-      call.off('stream', handler)
+      socket.close()
     }
-  }, [call])
+  }, [socket])
 
   useEffect(() => {
-    const handler = (id: string) => {
-      setPeerID(id)
+    if (!socket) return
+    const cb = () => {
+      setSocketReady(true)
     }
 
-    peer.on('open', handler)
+    socket.addEventListener('open', cb)
 
     return () => {
-      peer.off('open', handler)
+      socket.removeEventListener('open', cb)
     }
-  }, [peer])
+  }, [socket])
 
   useEffect(() => {
-    const handler = async (call: Peer.MediaConnection) => {
-      setCall(call)
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: false
-        })
-        setInputStream(stream)
-        call.answer(stream)
-      } catch (error) {
-        const stream = new MediaStream()
-        setInputStream(stream)
-        call.answer(stream)
-      }
-    }
-
-    peer.on('call', handler)
-
-    return () => {
-      peer.off('call', handler)
-    }
-  }, [peer])
-
-  const ringUser = useCallback(
-    async (userID: string) => {
-      if (!peerID) return
-      const sentSessionID = (
-        await clientGateway.post(
-          '/voice',
-          { recipient: userID, peer_id: peerID },
-          {
-            headers: {
-              authorization: token
-            }
-          }
-        )
-      ).data.id
-      setSessionID(sentSessionID)
-      setOtherUserID(userID)
-      setCallState('ringing')
-    },
-    [peerID, token]
-  )
-
-  const acceptRequest = useCallback(
-    async (sessionID: string, userID: string, receivedPeerID: string) => {
-      if (!peerID) return
-      await clientGateway.post(
-        `/voice/${sessionID}/accept`,
-        { peer_id: peerID },
-        {
-          headers: {
-            authorization: token
-          }
-        }
+    if (!socket || !connection || !socketReady) return
+    const cb = async (message: MessageEvent) => {
+      const payload: { type: string; data: any } = JSON.parse(
+        message.data.toString()
       )
-      setOtherPeerID(receivedPeerID)
-      setOtherUserID(userID)
-      setSessionID(sessionID)
-      setCallState('waiting')
-    },
-    [peerID, token]
-  )
-
-  const establishCall = useCallback(
-    async (sentSessionID: string, receivedPeerID: string) => {
-      if (sentSessionID !== sessionID) return
-      setOtherPeerID(receivedPeerID)
-      setCallState('waiting')
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: false
-        })
-        setInputStream(stream)
-        setCall(peer.call(receivedPeerID, stream))
-      } catch (error) {
-        const stream = new MediaStream()
-        setInputStream(stream)
-        setCall(peer.call(receivedPeerID, stream))
+      switch (payload.type) {
+        case 'SDP':
+          if (
+            payload.data.type === 'offer' &&
+            connection.signalingState !== 'stable'
+          ) {
+            await Promise.all([
+              connection.setLocalDescription({ type: 'rollback' }),
+              connection.setRemoteDescription(payload.data)
+            ])
+          } else {
+            await connection.setRemoteDescription(payload.data)
+          }
+          if (payload.data.type === 'offer') {
+            await connection.setLocalDescription(
+              await connection.createAnswer()
+            )
+            socket.send(
+              JSON.stringify({
+                type: 'SDP',
+                data: connection.localDescription
+              })
+            )
+          }
+          break
+        case 'ICE':
+          await connection.addIceCandidate(payload.data)
       }
-    },
-    [sessionID, peer]
-  )
+    }
+
+    socket.addEventListener('message', cb)
+
+    return () => {
+      socket.removeEventListener('message', cb)
+    }
+  }, [socket, connection, socketReady])
+
+  useEffect(() => {
+    if (!socket || !socketReady) return
+    const connection = new RTCPeerConnection({
+      iceServers: [
+        {
+          urls: ['stun:stun.l.google.com:19302']
+        }
+      ]
+    })
+
+    setConnection(connection)
+
+    return () => {
+      setConnection(null)
+    }
+  }, [socket, socketReady])
+
+  useEffect(() => {
+    if (!connection) return
+
+    return () => {
+      connection.close()
+      setConnectionState(null)
+    }
+  }, [connection])
+
+  useEffect(() => {
+    if (!socket || !connection) return
+    const cb = (c: RTCPeerConnectionIceEvent) => {
+      socket.send(
+        JSON.stringify({
+          data: c.candidate,
+          type: 'ICE'
+        })
+      )
+    }
+
+    connection.addEventListener('icecandidate', cb)
+
+    return () => {
+      connection.removeEventListener('icecandidate', cb)
+    }
+  }, [socket, connection])
+
+  useEffect(() => {
+    if (!socket || !connection) return
+    const cb = async () => {
+      const offer = await connection.createOffer()
+      if (connection.signalingState !== 'stable') return
+      await connection.setLocalDescription(offer)
+      socket.send(
+        JSON.stringify({
+          type: 'SDP',
+          data: connection.localDescription
+        })
+      )
+    }
+
+    connection.addEventListener('negotiationneeded', cb)
+
+    return () => {
+      connection.removeEventListener('negotiationneeded', cb)
+    }
+  }, [socket, connection])
+
+  useEffect(() => {
+    if (!connection) return
+    const cb = () => {
+      console.log(connection.iceConnectionState)
+      setConnectionState(connection.iceConnectionState)
+    }
+
+    connection.addEventListener('iceconnectionstatechange', cb)
+
+    return () => {
+      connection.removeEventListener('iceconnectionstatechange', cb)
+    }
+  }, [connection])
+
+  useEffect(() => {
+    if (!connection) return
+    ;(async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false
+      })
+      setLocalSteam(stream)
+    })()
+
+    return () => {
+      setLocalSteam(null)
+    }
+  }, [connection])
+
+  useEffect(() => {
+    if (!connection) return
+    setRemoteStream(new MediaStream())
+
+    return () => {
+      setRemoteStream(null)
+    }
+  }, [connection])
+
+  useEffect(() => {
+    if (!connection || !remoteStream) return
+    const cb = (track: RTCTrackEvent) => {
+      console.log(track)
+      remoteStream.addTrack(track.track)
+    }
+
+    connection.addEventListener('track', cb)
+
+    return () => {
+      connection.removeEventListener('track', cb)
+    }
+  }, [connection, remoteStream])
+
+  useEffect(() => {
+    if (!localStream || !connection) return
+
+    localStream.getTracks().forEach((track) => connection.addTrack(track))
+  }, [localStream, connection])
+
+  useEffect(() => {
+    if (!localStream || !connection) return
+    const cb = (track: MediaStreamTrackEvent) => {
+      connection.addTrack(track.track)
+    }
+
+    localStream.addEventListener('addtrack', cb)
+
+    return () => {
+      localStream.removeEventListener('addtrack', cb)
+    }
+  }, [localStream, connection])
+
+  useEffect(() => {
+    if (!remoteStream || !audio) return
+    audio.srcObject = remoteStream
+    audio.play().catch(() => {})
+
+    return () => {
+      audio.srcObject = null
+      audio.pause()
+    }
+  }, [remoteStream, audio])
+
+  useEffect(() => {
+    if (!localStream) return
+    if (muted) {
+      localStream.getTracks().forEach((track) => (track.enabled = false))
+    } else {
+      localStream.getTracks().forEach((track) => (track.enabled = true))
+    }
+  }, [muted, localStream])
+
+  useEffect(() => {
+    if (!remoteStream) return
+    if (deafened) {
+      remoteStream.getTracks().forEach((track) => (track.enabled = false))
+    } else {
+      remoteStream.getTracks().forEach((track) => (track.enabled = true))
+    }
+  }, [deafened, remoteStream])
+
+  const play = useCallback(async () => {
+    return await audio.play()
+  }, [audio])
 
   return {
-    ringUser,
-    acceptRequest,
-    establishCall,
-    endCall,
-    callState,
-    stream,
-    otherUserID,
-    deafened,
+    setMuted,
     setDeafened,
     muted,
-    setMuted,
-    sessionID
+    deafened,
+    setRoom,
+    state,
+    play,
+    room
   }
 }
 

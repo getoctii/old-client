@@ -3,15 +3,15 @@ import styles from './Product.module.scss'
 import { faChevronCircleLeft } from '@fortawesome/pro-duotone-svg-icons'
 import Header from '../../components/Header'
 import { useHistory, useParams } from 'react-router-dom'
-import { queryCache, useQuery } from "react-query";
+import { queryCache, useQuery } from 'react-query'
 import { Auth } from '../../authentication/state'
 import { getProduct } from '../../community/remote'
 import { clientGateway } from '../../utils/constants'
 import { getPurchases } from '../../user/remote'
-import { BarLoader } from "react-spinners";
-import { useState } from "react";
+import { BarLoader } from 'react-spinners'
+import { useState, FC } from 'react'
 
-const Product = () => {
+const Product: FC = () => {
   const auth = Auth.useContainer()
   const history = useHistory()
   const { productID } = useParams<{ productID: string }>()
@@ -42,7 +42,7 @@ const Product = () => {
           alt={product?.banner}
         />
       ) : (
-        <div className={styles.banner}/>
+        <div className={styles.banner} />
       )}
       <div className={styles.main}>
         <div className={styles.info}>
@@ -67,13 +67,23 @@ const Product = () => {
                     }
                   }
                 )
-                await queryCache.refetchQueries(['purchases', auth.id, auth.token])
+                await queryCache.refetchQueries([
+                  'purchases',
+                  auth.id,
+                  auth.token
+                ])
               } finally {
                 setLoading(false)
               }
             }}
           >
-            { loading ? <BarLoader color='#ffffff' /> : purchases?.find((p) => p.id === productID) ? 'Owned' : 'Get'}
+            {loading ? (
+              <BarLoader color='#ffffff' />
+            ) : purchases?.find((p) => p.id === productID) ? (
+              'Owned'
+            ) : (
+              'Get'
+            )}
           </Button>
           <p>By purchasing this product, you agree to the Octii store TOS.</p>
         </div>

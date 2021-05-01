@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, FC } from 'react'
 import styles from './Channels.module.scss'
 import {
   ChannelTypes,
@@ -86,7 +86,7 @@ interface Dropper extends DropResult {
   type: string
 }
 
-const ChannelsView = () => {
+const ChannelsView: FC = () => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const { data: channels } = useQuery(
@@ -267,7 +267,7 @@ const ChannelsView = () => {
   )
 }
 
-const ChannelsPlaceholder = () => {
+const ChannelsPlaceholder: FC = () => {
   const length = useMemo(() => Math.floor(Math.random() * 10) + 1, [])
   return (
     <div className={styles.channelsPlaceholder}>

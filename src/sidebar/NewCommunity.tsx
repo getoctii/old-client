@@ -1,5 +1,5 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik'
-import { useState } from 'react'
+import { FC, useState } from 'react'
 import { BarLoader } from 'react-spinners'
 import Button from '../components/Button'
 import Input from '../components/Input'
@@ -25,7 +25,7 @@ const InviteSchema = Yup.object().shape({
   name: Yup.string()
 })
 
-const CreateCommunity = ({ dismiss }: { dismiss: Function }) => {
+const CreateCommunity: FC<{ dismiss: Function }> = ({ dismiss }) => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
   const history = useHistory()
@@ -129,7 +129,7 @@ const joinCommunity = async (invite: string, token: string) =>
     )
   ).data
 
-export const NewCommunity = () => {
+export const NewCommunity: FC = () => {
   const { token } = Auth.useContainer()
   const ui = UI.useContainer()
   const [createCommunityMenu, setCreateCommunityMenu] = useState(false)

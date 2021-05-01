@@ -1,7 +1,7 @@
 import { faExclamationCircle, faSearch } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Field, Form, Formik } from 'formik'
-import React, { useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
@@ -13,15 +13,11 @@ import styles from './AddParticipant.module.scss'
 import { useQuery } from 'react-query'
 import { getRelationships, RelationshipTypes } from '../hub/friends/remote'
 
-const AddParticipant = ({
-  groupID,
-  isPrivate,
-  participant
-}: {
+const AddParticipant: FC<{
   groupID?: string
   isPrivate: boolean
   participant?: string
-}) => {
+}> = ({ groupID, isPrivate, participant }) => {
   const uiStore = UI.useContainer()
   const history = useHistory()
   const { token, id } = Auth.useContainer()

@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { FC, Suspense, useEffect, useState } from 'react'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import Input from '../components/Input'
@@ -11,7 +11,9 @@ import { Plugins } from '@capacitor/core'
 import Modal from '../components/Modal'
 import { faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
 
-const InviteField = ({ onInvite }: { onInvite: (invite: string) => void }) => {
+const InviteField: FC<{ onInvite: (invite: string) => void }> = ({
+  onInvite
+}) => {
   const auth = Auth.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const { data: invite } = useQuery(
@@ -40,7 +42,7 @@ const InviteField = ({ onInvite }: { onInvite: (invite: string) => void }) => {
   return <Input defaultValue={`octii.com/${invite?.code ?? ''}`} disabled />
 }
 
-const NewInvite = () => {
+const NewInvite: FC = () => {
   const ui = UI.useContainer()
   const [invite, setInvite] = useState<string>()
   return (

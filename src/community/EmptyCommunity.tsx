@@ -12,6 +12,7 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ModalTypes } from '../utils/constants'
 import Button from '../components/Button'
+import { FC } from 'react'
 
 const cards = [
   {
@@ -31,7 +32,7 @@ const cards = [
   }
 ]
 
-const EmptyCommunity = ({ name, owner_id }: CommunityResponse) => {
+const EmptyCommunity: FC<CommunityResponse> = ({ name, owner_id }) => {
   const auth = Auth.useContainer()
   const ui = UI.useContainer()
   return (

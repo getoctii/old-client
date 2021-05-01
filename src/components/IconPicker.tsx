@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 import styles from './IconPicker.module.scss'
 import Button from './Button'
 import { MoonLoader } from 'react-spinners'
@@ -7,20 +7,20 @@ import { faFileUpload } from '@fortawesome/pro-solid-svg-icons'
 import axios from 'axios'
 import { faPoop } from '@fortawesome/pro-duotone-svg-icons'
 
-const IconPicker = ({
-  alt,
-  defaultIcon,
-  onUpload,
-  className,
-  forcedSmall,
-  recommendedIcon
-}: {
+const IconPicker: FC<{
   alt: string
   defaultIcon?: string
   onUpload: (url: string) => Promise<void> | void
   className?: string
   forcedSmall?: boolean
   recommendedIcon?: string
+}> = ({
+  alt,
+  defaultIcon,
+  onUpload,
+  className,
+  forcedSmall,
+  recommendedIcon
 }) => {
   const input = useRef<HTMLInputElement | null>(null)
   const [icon, setIcon] = useState<string | undefined>(defaultIcon || undefined)

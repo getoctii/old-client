@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useMemo } from 'react'
+import { FC, Suspense, useEffect, useMemo } from 'react'
 import styles from './Conversation.module.scss'
 import Chat from '../chat/Channel'
 import { Redirect, Switch, useHistory, useRouteMatch } from 'react-router-dom'
@@ -16,7 +16,7 @@ import { Helmet } from 'react-helmet-async'
 import { Permission } from '../utils/permissions'
 import { PrivateRoute } from '../authentication/PrivateRoute'
 
-const ConversationView = () => {
+const ConversationView: FC = () => {
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
   const { id, token } = Auth.useContainer()
   const { data: participants } = useQuery(
@@ -63,7 +63,7 @@ const ConversationView = () => {
   )
 }
 
-const ConversationProvider = () => {
+const ConversationProvider: FC = () => {
   const { id, token } = Auth.useContainer()
   const [lastConversation] = useSuspenseStorageItem<string>('last-conversation')
   const match = useRouteMatch<{ id: string }>('/conversations/:id')
@@ -143,7 +143,7 @@ const ConversationProvider = () => {
   )
 }
 
-const Redirects = () => {
+const Redirects: FC = () => {
   const { id, token } = Auth.useContainer()
   const { path } = useRouteMatch()
   const { data: participants } = useQuery(
@@ -196,7 +196,7 @@ const Redirects = () => {
   return <></>
 }
 
-const Nested = () => {
+const Nested: FC = () => {
   const { path } = useRouteMatch()
   const isMobile = useMedia('(max-width: 740px)')
   return (
@@ -227,7 +227,7 @@ const Nested = () => {
   )
 }
 
-const ConversationRouter = () => {
+const ConversationRouter: FC = () => {
   const { path } = useRouteMatch()
   const isMobile = useMedia('(max-width: 740px)')
 

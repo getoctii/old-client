@@ -1,11 +1,11 @@
-import React from 'react'
+import { FC } from 'react'
 import styles from './Authenticate.module.scss'
 import { Link, Switch, Route, Redirect, useRouteMatch } from 'react-router-dom'
 import { Login } from './forms/Login'
 import { Register } from './forms/Register'
 import { Auth } from './state'
 
-export const Authenticate = () => {
+export const Authenticate: FC = () => {
   const match = useRouteMatch<{ page: 'login' | 'register' }>(
     '/authenticate/:page'
   )
@@ -19,12 +19,8 @@ export const Authenticate = () => {
         </picture>
         <h1>{match?.params.page === 'register' ? 'Register' : 'Login'}</h1>
         <Switch>
-          <Route name='Login' path={'/authenticate/login'} component={Login} />
-          <Route
-            name='Register'
-            path={'/authenticate/register'}
-            component={Register}
-          />
+          <Route path={'/authenticate/login'} component={Login} />
+          <Route path={'/authenticate/register'} component={Register} />
           <Route
             exact
             component={() => <Redirect to={'/authenticate/login'} />}

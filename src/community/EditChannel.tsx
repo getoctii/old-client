@@ -15,7 +15,7 @@ import { BarLoader } from 'react-spinners'
 import styles from './EditChannel.module.scss'
 import { UI } from '../state/ui'
 import { queryCache, useQuery } from 'react-query'
-import React, { useMemo, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { ChannelResponse, getChannel, Override } from '../chat/remote'
 import * as Yup from 'yup'
 import { useHistory, useParams } from 'react-router-dom'
@@ -45,17 +45,12 @@ const ChannelSchema = Yup.object().shape({
     .max(140, 'Too long, must be less then 140 characters.')
 })
 
-const Group = ({
-  id,
-  onClick,
-  plus,
-  selected
-}: {
+const Group: FC<{
   id: string
   onClick: () => void
   plus?: boolean
   selected?: boolean
-}) => {
+}> = ({ id, onClick, plus, selected }) => {
   const { token } = Auth.useContainer()
   const { data: group } = useQuery(['group', id, token], getGroup)
   return (
@@ -72,7 +67,7 @@ const Group = ({
   )
 }
 
-const EmptyOverrides = () => {
+const EmptyOverrides: FC = () => {
   const auth = Auth.useContainer()
   const ui = UI.useContainer()
   const { id, channelID } = useParams<{ id: string; channelID: string }>()
@@ -143,15 +138,11 @@ const EmptyOverrides = () => {
   )
 }
 
-const Switch = ({
-  permission,
-  selection,
-  onSwitch
-}: {
+const Switch: FC<{
   permission: ChannelPermissions
   selection?: 'allow' | 'deny'
   onSwitch: (selection?: 'allow' | 'deny') => void
-}) => {
+}> = ({ permission, selection, onSwitch }) => {
   return (
     <div className={styles.switch}>
       {PermissionNames[permission]}
@@ -184,12 +175,9 @@ const Switch = ({
   )
 }
 
-const PermissionOverrides = ({
-  allow,
-  deny,
-  groupID,
-  type
-}: Override & { groupID?: string; type: 'channel' | 'group' }) => {
+const PermissionOverrides: FC<
+  Override & { groupID?: string; type: 'channel' | 'group' }
+> = ({ allow, deny, groupID, type }) => {
   const auth = Auth.useContainer()
   const { channelID } = useParams<{ id: string; channelID: string }>()
   const [
@@ -347,7 +335,7 @@ const PermissionOverrides = ({
   )
 }
 
-const DefaultOverrides = ({ base_allow, base_deny }: ChannelResponse) => {
+const DefaultOverrides: FC<ChannelResponse> = ({ base_allow, base_deny }) => {
   return (
     <div className={styles.defaultOverrides}>
       <h4>Default Overrides</h4>
@@ -360,7 +348,7 @@ const DefaultOverrides = ({ base_allow, base_deny }: ChannelResponse) => {
   )
 }
 
-const Overrides = ({ overrides: overrideObj }: ChannelResponse) => {
+const Overrides: FC<ChannelResponse> = ({ overrides: overrideObj }) => {
   const auth = Auth.useContainer()
   const { id, channelID } = useParams<{ id: string; channelID: string }>()
   const [overrideSelected, setOverrideSelected] = useState<string | undefined>(
@@ -451,7 +439,7 @@ const Overrides = ({ overrides: overrideObj }: ChannelResponse) => {
   )
 }
 
-export const EditChannel = () => {
+export const EditChannel: FC = () => {
   const { id, channelID } = useParams<{ id: string; channelID: string }>()
   const { token } = Auth.useContainer()
   const { protectedGroups } = Permission.useContainer()

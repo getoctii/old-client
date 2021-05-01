@@ -1,4 +1,5 @@
-import React, {
+import {
+  FC,
   memo,
   Suspense,
   useEffect,
@@ -6,7 +7,7 @@ import React, {
   useState,
   useCallback
 } from 'react'
-import { useLocation, useMedia } from "react-use";
+import { useLocation, useMedia } from 'react-use'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { Authenticate } from './authentication/Authenticate'
 import { PrivateRoute } from './authentication/PrivateRoute'
@@ -20,13 +21,12 @@ import Loader from './components/Loader'
 import { Auth } from './authentication/state'
 import Home from './marketing/Home'
 import { isPlatform } from '@ionic/react'
-import Incoming from './call/Incoming'
 import { Call } from './state/call'
 import Current from './call/Current'
 import EventSource from './events'
 import Context from './components/Context'
 import { Plugins } from '@capacitor/core'
-import { clientGateway, ModalTypes } from './utils/constants'
+import { clientGateway } from './utils/constants'
 import Downloads from './marketing/Downloads'
 import Invite from './invite/Invite'
 import Admin from './admin/Admin'
@@ -39,7 +39,7 @@ import { Permission } from './utils/permissions'
 import Hub from './hub/Hub'
 const { PushNotifications } = Plugins
 
-const ContextMenuHandler = () => {
+const ContextMenuHandler: FC = () => {
   const uiStore = UI.useContainer()
 
   return uiStore.contextMenu ? (
@@ -51,26 +51,20 @@ const ContextMenuHandler = () => {
   )
 }
 
-const IncomingCall = () => {
+const IncomingCall: FC = () => {
   const auth = Auth.useContainer()
-  const call = Call.useContainer()
-  const uiStore = UI.useContainer()
+  const call = Call.useContainerSelector(({ room }) => ({ room }))
   const isMobile = useMedia('(max-width: 740px)')
   return auth.authenticated && isMobile ? (
     <>
-      <Suspense fallback={<></>}>
-        {call.callState !== 'idle' && <Current />}
-        {uiStore.modal?.name === ModalTypes.INCOMING_CALL && (
-          <Incoming {...uiStore.modal.props} />
-        )}
-      </Suspense>
+      <Suspense fallback={<></>}>{call.room && <Current />}</Suspense>
     </>
   ) : (
     <></>
   )
 }
 
-const MarketingRouter = () => {
+const MarketingRouter: FC = () => {
   const auth = Auth.useContainer()
   const isPWA = useMedia('(display-mode: standalone)')
 
@@ -107,11 +101,9 @@ const MarketingRouter = () => {
   )
 }
 
-const OnboardingHandler = ({
-  onboardingStateChange
-}: {
+const OnboardingHandler: FC<{
   onboardingStateChange: (state: boolean) => void
-}) => {
+}> = ({ onboardingStateChange }) => {
   const auth = Auth.useContainer()
 
   const [onboardingComplete] = useSuspenseStorageItem<boolean>(
@@ -147,7 +139,7 @@ const OnboardingHandler = ({
   return <></>
 }
 
-const AppRouter = () => {
+const AppRouter: FC = () => {
   const auth = Auth.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
   const isPWA = useMedia('(display-mode: standalone)')
@@ -193,7 +185,12 @@ const AppRouter = () => {
 
   const location = useLocation()
 
-  if (location.pathname === '/home' || location.pathname === '/downloads' || location.pathname?.startsWith('/invite')) return <></>
+  if (
+    location.pathname === '/home' ||
+    location.pathname === '/downloads' ||
+    location.pathname?.startsWith('/invite')
+  )
+    return <></>
 
   return (
     <>
@@ -252,9 +249,7 @@ const AppRouter = () => {
       </Suspense>
       {!isMobile && (
         <>
-          <Suspense fallback={<></>}>
-            {call.callState !== 'idle' && <Current />}
-          </Suspense>
+          <Suspense fallback={<></>}>{call.room && <Current />}</Suspense>
         </>
       )}
       <IncomingCall />
@@ -262,9 +257,7 @@ const AppRouter = () => {
   )
 }
 
-AppRouter.whyDidYouRender = true
-
-export const Router = memo(() => {
+export const Router: FC = memo(() => {
   const auth = Auth.useContainer()
   return (
     <div id='main'>

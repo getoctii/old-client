@@ -1,4 +1,5 @@
 import { faBoxOpen, faReceipt } from '@fortawesome/pro-duotone-svg-icons'
+import { FC } from 'react'
 import { useQuery } from 'react-query'
 import { useHistory } from 'react-router-dom'
 import { Auth } from '../authentication/state'
@@ -9,7 +10,7 @@ import Icon from '../user/Icon'
 import { getPurchases } from '../user/remote'
 import styles from './Purchases.module.scss'
 
-const Purchases = () => {
+const Purchases: FC = () => {
   const history = useHistory()
   const auth = Auth.useContainer()
   const { data: purchases } = useQuery(

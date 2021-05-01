@@ -1,10 +1,10 @@
-import React from 'react'
+import { FC } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styles from './Navbar.module.scss'
 import { Permission } from '../../utils/permissions'
 import { Permissions } from '../../utils/constants'
 
-const NavbarView = () => {
+const NavbarView: FC = () => {
   const match = useRouteMatch<{ tab?: string; id: string }>(
     '/communities/:id/settings/:tab?'
   )
@@ -46,7 +46,7 @@ const NavbarView = () => {
   )
 }
 
-const NavbarPlaceholder = () => {
+const NavbarPlaceholder: FC = () => {
   return (
     <div className={styles.placeholder}>
       <div className={styles.item} />

@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import dayjsCalendar from 'dayjs/plugin/calendar'
-import React, { useMemo, useRef, useState } from 'react'
+import { FC, useMemo, useRef, useState } from 'react'
 import { useInfiniteQuery } from 'react-query'
 import { Waypoint } from 'react-waypoint'
 import { Auth } from '../authentication/state'
@@ -24,7 +24,8 @@ interface SubResponse {
   created_at: number
   updated_at: number
 }
-const Newsletters = () => {
+
+const Newsletters: FC = () => {
   const { token } = Auth.useContainer()
   const history = useHistory()
   const { data, canFetchMore, fetchMore } = useInfiniteQuery<

@@ -1,7 +1,8 @@
+import { FC } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styles from './Navbar.module.scss'
 
-const NavbarView = () => {
+const NavbarView: FC = () => {
   const match = useRouteMatch<{ productID: string; tab?: string; id: string }>(
     '/communities/:id/products/:productID/:tab?'
   )
@@ -55,7 +56,7 @@ const NavbarView = () => {
   )
 }
 
-const NavbarPlaceholder = () => {
+const NavbarPlaceholder: FC = () => {
   return (
     <div className={styles.placeholder}>
       <div className={styles.item} />

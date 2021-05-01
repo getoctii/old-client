@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import Profile from './Profile'
 import Security from './Security'
 import Themes from './Themes'
@@ -26,7 +26,7 @@ import StatusBar from '../components/StatusBar'
 
 const gitInfo = GitInfo()
 
-const Settings = () => {
+const Settings: FC = () => {
   const auth = Auth.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
   const { path } = useRouteMatch()

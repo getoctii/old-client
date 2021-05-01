@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import styles from './Confirmation.module.scss'
 import Button from './Button'
 import { UI } from '../state/ui'
@@ -9,13 +9,10 @@ export enum ConfirmationType {
   MESSAGE = 'message',
   DEVELOPER = 'developer'
 }
-export const Confirmation = ({
-  type,
-  onConfirm
-}: {
+export const Confirmation: FC<{
   type: ConfirmationType
   onConfirm: () => Promise<void> | void
-}) => {
+}> = ({ type, onConfirm }) => {
   const ui = UI.useContainer()
   return (
     <div className={styles.confirmation}>

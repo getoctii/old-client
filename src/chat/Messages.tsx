@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+  FC
+} from 'react'
 import styles from './Messages.module.scss'
 import { queryCache, useInfiniteQuery, useQuery } from 'react-query'
 import { clientGateway } from '../utils/constants'
@@ -18,7 +25,7 @@ const { Keyboard } = Plugins
 
 dayjs.extend(dayjsUTC)
 
-const MessagesView = ({ channel }: { channel: ChannelResponse }) => {
+const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
   const {
     tracking,
     setTracking,
@@ -26,7 +33,23 @@ const MessagesView = ({ channel }: { channel: ChannelResponse }) => {
     autoRead,
     setAutoRead,
     setChannelID
-  } = Chat.useContainer()
+  } = Chat.useContainerSelector(
+    ({
+      tracking,
+      setTracking,
+      editingMessageID,
+      autoRead,
+      setAutoRead,
+      setChannelID
+    }) => ({
+      tracking,
+      setTracking,
+      editingMessageID,
+      autoRead,
+      setAutoRead,
+      setChannelID
+    })
+  )
 
   useEffect(() => {
     setChannelID(channel.id)
@@ -210,25 +233,27 @@ const MessagesView = ({ channel }: { channel: ChannelResponse }) => {
         </div>
       )}
       {!loading && canFetchMore ? (
-        <Waypoint
-          bottomOffset={20}
-          onEnter={async () => {
-            try {
-              const current = ref.current
-              if (!current || !current.scrollHeight) return
-              const oldHeight = current.scrollHeight
-              const oldTop = current.scrollTop
-              setLoading(true)
-              await fetchMore()
-              if (!ref.current) return
-              ref.current.scrollTop = current.scrollHeight
-                ? current.scrollHeight - oldHeight + oldTop
-                : 0
-            } finally {
-              setLoading(false)
-            }
-          }}
-        />
+        <div className={styles.waypoint}>
+          <Waypoint
+            bottomOffset={30}
+            onEnter={async () => {
+              try {
+                const current = ref.current
+                if (!current || !current.scrollHeight) return
+                const oldHeight = current.scrollHeight
+                const oldTop = current.scrollTop
+                setLoading(true)
+                await fetchMore()
+                if (!ref.current) return
+                ref.current.scrollTop = current.scrollHeight
+                  ? current.scrollHeight - oldHeight + oldTop
+                  : 0
+              } finally {
+                setLoading(false)
+              }
+            }}
+          />
+        </div>
       ) : (
         <></>
       )}{' '}
@@ -236,7 +261,7 @@ const MessagesView = ({ channel }: { channel: ChannelResponse }) => {
   )
 }
 
-const MessagesPlaceholder = () => {
+const MessagesPlaceholder: FC = () => {
   const length = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
   return (
     <div className={styles.messages}>

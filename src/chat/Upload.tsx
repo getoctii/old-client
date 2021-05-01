@@ -1,6 +1,6 @@
 import { faFileUpload, faSpinner } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import styles from './Upload.module.scss'
 
 interface UploadDetails {
@@ -9,7 +9,7 @@ interface UploadDetails {
   onUpload: (file: File) => void
 }
 
-const Upload = ({ status, file, onUpload }: UploadDetails) => {
+const Upload: FC<UploadDetails> = ({ status, file, onUpload }) => {
   const [uploadURL, setUploadURL] = useState<string | ArrayBuffer | null>(null)
   useEffect(() => {
     const loadFile = new FileReader()

@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
 import dayjsCalendar from 'dayjs/plugin/calendar'
-import React, { memo, Suspense } from 'react'
+import { memo, Suspense, FC } from 'react'
 import { queryCache, useMutation, useQuery } from 'react-query'
 import { useRouteMatch } from 'react-router-dom'
 import { Auth } from '../../authentication/state'
@@ -25,7 +25,7 @@ import { useMedia } from 'react-use'
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
 
-const InviteCard = memo((invite: InviteResponse) => {
+const InviteCard: FC<InviteResponse> = memo((invite) => {
   const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
   const { token } = Auth.useContainer()
   const user = useQuery(['users', invite.author_id, token], getUser)
@@ -84,7 +84,7 @@ const InviteCard = memo((invite: InviteResponse) => {
   )
 })
 
-const InvitesView = () => {
+const InvitesView: FC = () => {
   const ui = UI.useContainer()
   const match = useRouteMatch<{ id: string }>('/communities/:id/settings')
   const { token } = Auth.useContainer()

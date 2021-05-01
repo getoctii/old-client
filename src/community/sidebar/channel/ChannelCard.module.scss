@@ -41,6 +41,11 @@
   .indicators {
     display: flex;
     margin-left: auto;
+
+    .join {
+      font-weight: 600;
+    }
+
     .unread {
       background-color: var(--neko-text-primary);
       width: 16px;
