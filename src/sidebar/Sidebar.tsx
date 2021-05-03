@@ -1,12 +1,4 @@
-import React, {
-  memo,
-  Suspense,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef
-} from 'react'
+import React, { memo, Suspense, useCallback, useMemo } from 'react'
 import styles from './Sidebar.module.scss'
 import { UI } from '../state/ui'
 import { Auth } from '../authentication/state'
@@ -25,8 +17,6 @@ import {
   MembersResponse,
   State
 } from '../user/remote'
-import { useScroll } from 'react-use'
-import { ScrollPosition } from '../state/scroll'
 import { getCommunity } from '../community/remote'
 import { ModalTypes } from '../utils/constants'
 import { useSuspenseStorageItem } from '../utils/storage'
@@ -212,11 +202,11 @@ const Sidebar: FC = () => {
   const matchTab = useRouteMatch<{ tab: string }>('/:tab')
   const user = useUser(auth.id ?? undefined)
 
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const currentScrollPosition = useScroll(scrollRef)
-  const {
-    sidebar: [scrollPosition, setScrollPosition]
-  } = ScrollPosition.useContainer()
+  // const scrollRef = useRef<HTMLDivElement>(null)
+  // const currentScrollPosition = useScroll(scrollRef)
+  // const {
+  //   sidebar: [scrollPosition, setScrollPosition]
+  // } = ScrollPosition.useContainer()
   const unreads = useQuery(['unreads', auth.id, auth.token], getUnreads)
   const mentions = useQuery(['mentions', auth.id, auth.token], getMentions)
 
@@ -239,18 +229,18 @@ const Sidebar: FC = () => {
     [participants, mentions]
   )
 
-  useLayoutEffect(() => {
-    if (scrollRef.current)
-      scrollRef.current.scrollTo(scrollPosition.x, scrollPosition.y)
-    // eslint-disable-next-line
-  }, [])
+  // useLayoutEffect(() => {
+  //   if (scrollRef.current)
+  //     scrollRef.current.scrollTo(scrollPosition.x, scrollPosition.y)
+  //   // eslint-disable-next-line
+  // }, [])
 
-  useEffect(() => {
-    setScrollPosition(currentScrollPosition)
-  }, [currentScrollPosition, setScrollPosition])
+  // useEffect(() => {
+  //   setScrollPosition(currentScrollPosition)
+  // }, [currentScrollPosition, setScrollPosition])
   return (
     <div className={styles.sidebar}>
-      <div className={styles.scrollable} ref={scrollRef}>
+      <div className={styles.scrollable} /*ref={scrollRef}*/>
         {isMobile && (
           <>
             <Button
