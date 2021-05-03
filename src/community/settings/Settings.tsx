@@ -119,23 +119,19 @@ const SettingsView: FC = memo(() => {
               {hasPermissions([Permissions.MANAGE_INVITES]) && (
                 <PrivateRoute
                   path={`${path}/invites`}
-                  component={Invites.View}
+                  render={Invites.View}
                   exact
                 />
               )}
               {hasPermissions([Permissions.MANAGE_GROUPS]) && (
                 <PrivateRoute
                   path={`${path}/groups`}
-                  component={Groups.View}
+                  render={Groups.View}
                   exact
                 />
               )}
               {hasPermissions([Permissions.MANAGE_COMMUNITY]) && (
-                <PrivateRoute
-                  path={`${path}/general`}
-                  component={General}
-                  exact
-                />
+                <PrivateRoute path={`${path}/general`} render={General} exact />
               )}
               <Redirect
                 path='*'
