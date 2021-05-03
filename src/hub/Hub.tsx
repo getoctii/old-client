@@ -39,10 +39,10 @@ const Hub: FC = () => {
         <div className={styles.pages}>
           <Switch>
             {!isMobile && <Redirect path={path} to={`${path}/store`} exact />}
-            <PrivateRoute path={`${path}/store`} component={Store} exact />
+            <PrivateRoute path={`${path}/store`} render={Store} exact />
             <PrivateRoute
               path={`${path}/store/:productID`}
-              component={Product}
+              render={Product}
               exact
             />
           </Switch>

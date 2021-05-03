@@ -236,7 +236,7 @@ const ConversationRouter: FC = () => {
       <Redirects />
       <Switch>
         <PrivateRoute
-          component={() => (
+          render={() => (
             <>
               {isMobile && <Sidebar />}
               <Empty />

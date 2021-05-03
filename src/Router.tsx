@@ -183,15 +183,6 @@ const AppRouter: FC = () => {
     setShowOnBoarding(state)
   }, [])
 
-  const location = useLocation()
-
-  if (
-    location.pathname === '/home' ||
-    location.pathname === '/downloads' ||
-    location.pathname?.startsWith('/invite')
-  )
-    return <></>
-
   return (
     <>
       <OnboardingHandler onboardingStateChange={onboardingHandler} />
@@ -207,11 +198,10 @@ const AppRouter: FC = () => {
           <OnBoarding />
         ) : (
           <>
-            {!isMobile && auth.authenticated && <Sidebar />}
             <Switch>
               <PrivateRoute
                 path='/settings'
-                component={() => (
+                render={() => (
                   <>
                     {isMobile && <Sidebar />}
                     <Suspense fallback={<Loader />}>
@@ -220,11 +210,11 @@ const AppRouter: FC = () => {
                   </>
                 )}
               />
-              <PrivateRoute path={'/admin'} component={Admin} />
-              <PrivateRoute path='/communities/:id' component={Community} />
+              <PrivateRoute path={'/admin'} render={Admin} />
+              <PrivateRoute path='/communities/:id' render={Community} />
               <PrivateRoute
                 path={'/conversations'}
-                component={Conversation}
+                render={Conversation}
                 redirect={
                   isPlatform('mobile') || isPWA
                     ? '/authenticate/login'
@@ -233,7 +223,7 @@ const AppRouter: FC = () => {
               />
               <PrivateRoute
                 path={'/hub'}
-                component={() => (
+                render={() => (
                   <>
                     {isMobile && <Sidebar />}
                     <Suspense fallback={<Loader />}>
@@ -257,12 +247,27 @@ const AppRouter: FC = () => {
   )
 }
 
+const SidebarWrapper: FC = () => {
+  const location = useLocation()
+
+  if (
+    location.pathname === '/home' ||
+    location.pathname === '/downloads' ||
+    location.pathname?.startsWith('/invite')
+  )
+    return <></>
+
+  return <Sidebar />
+}
+
 export const Router: FC = memo(() => {
   const auth = Auth.useContainer()
+  const isMobile = useMedia('(max-width: 740px)')
   return (
     <div id='main'>
       <BrowserRouter>
         <Context.Global />
+        {!isMobile && auth.authenticated && <SidebarWrapper />}
         <MarketingRouter />
         {auth.authenticated && <AppRouter />}
       </BrowserRouter>

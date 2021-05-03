@@ -1,4 +1,4 @@
-import { FC, Suspense, useCallback, useEffect, useState } from 'react'
+import { FC, memo, Suspense, useCallback, useEffect, useState } from 'react'
 import styles from './Community.module.scss'
 import Chat from '../chat/Channel'
 import { Redirect, Switch, useParams, useRouteMatch } from 'react-router-dom'
@@ -192,37 +192,29 @@ const CommunityView: FC = () => {
             <Switch>
               <PrivateRoute
                 path={`${path}/products/:productID`}
-                component={Product}
+                render={Product}
               />
-              <PrivateRoute
-                path={`${path}/products`}
-                component={Products}
-                exact
-              />
+              <PrivateRoute path={`${path}/products`} render={Products} exact />
 
               <PrivateRoute
                 path={`${path}/settings/:tab?`}
-                component={Settings.Router}
+                render={Settings.Router}
                 exact
               />
-              <PrivateRoute
-                path={`${path}/members`}
-                component={Members}
-                exact
-              />
+              <PrivateRoute path={`${path}/members`} render={Members} exact />
               <PrivateRoute
                 path={`${path}/channels/:channelID`}
-                component={Channel}
+                render={Channel}
                 exact
               />
               <PrivateRoute
                 path={`${path}/channels/:channelID/settings`}
-                component={EditChannel}
+                render={EditChannel}
                 exact
               />
               {!isMobile && (
                 <PrivateRoute
-                  component={() => (
+                  render={() => (
                     <Suspense fallback={<Chat.Placeholder />}>
                       <CommunityChannelFallback />
                     </Suspense>
@@ -270,4 +262,4 @@ const Router: FC = () => {
     </>
   )
 }
-export default Router
+export default memo(Router)
