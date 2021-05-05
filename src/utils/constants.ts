@@ -31,7 +31,8 @@ export enum ModalTypes {
   MANAGE_MEMBER_GROUPS,
   ADD_FRIEND,
   DEVELOPER_MODE,
-  PREVIEW_USER
+  PREVIEW_USER,
+  GENERATE_KEYCHAIN
 }
 
 export enum Groups {

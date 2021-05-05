@@ -27,6 +27,7 @@ import smoothscroll from 'smoothscroll-polyfill'
 import { isPlatform } from '@ionic/react'
 import { ModalTypes } from './utils/constants'
 import Integration from './integrations/state'
+import { Keychain } from './keychain/state'
 smoothscroll.polyfill()
 
 if (process.env.NODE_ENV === 'production') {
@@ -93,7 +94,9 @@ ReactDOM.render(
                       <Integration.Provider>
                         <Theme.Provider>
                           <ScrollPosition.Provider>
-                            <Router />
+                            <Keychain.Provider>
+                              <Router />
+                            </Keychain.Provider>
                           </ScrollPosition.Provider>
                         </Theme.Provider>
                       </Integration.Provider>

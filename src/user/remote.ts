@@ -1,5 +1,6 @@
 import { queryCache } from 'react-query'
 import { clientGateway } from '../utils/constants'
+import { ExportedProtectedKeychain } from '@innatical/inncryption/dist/types'
 
 export const fetchManyUsers = (_: string, ids: string[], token: string) => {
   return Promise.all(
@@ -137,4 +138,16 @@ export const getMentions = async (_: string, userID: string, token: string) =>
         Authorization: token
       }
     })
+  ).data
+
+export const getKeychain = async (_: string, userID: string, token: string) =>
+  (
+    await clientGateway.get<ExportedProtectedKeychain>(
+      `/users/${userID}/keychain`,
+      {
+        headers: {
+          Authorization: token
+        }
+      }
+    )
   ).data
