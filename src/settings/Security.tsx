@@ -87,9 +87,7 @@ const Security: FC = () => {
                 keychain = await decryptKeychain(values.oldPassword)
               }
 
-              oldPassword = new TextDecoder('utf-8').decode(
-                keychain?.authenticationToken
-              )
+              oldPassword = keychain?.authenticationToken!
             }
 
             let newPassword = values.newPassword
@@ -116,9 +114,7 @@ const Security: FC = () => {
                 }
               )
 
-              newPassword = new TextDecoder('utf-8').decode(
-                newKeychain?.authenticationToken
-              )
+              newPassword = newKeychain?.authenticationToken
             }
 
             await clientGateway.patch(

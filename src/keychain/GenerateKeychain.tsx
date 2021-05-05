@@ -42,9 +42,7 @@ const GenerateKeychain: FC = () => {
         const protectedKeychain = exportProtectedKeychain(
           await createProtectedKeychain(keychain, values.password)
         )
-        const newPassword = new TextDecoder('utf-8').decode(
-          keychain.authenticationToken
-        )
+        const newPassword = keychain.authenticationToken
 
         try {
           if (hasKeychain) {
@@ -56,9 +54,7 @@ const GenerateKeychain: FC = () => {
             await clientGateway.patch(
               `/users/${id}`,
               {
-                oldPassword: new TextDecoder('utf-8').decode(
-                  oldKeychain?.authenticationToken
-                ),
+                oldPassword: oldKeychain?.authenticationToken,
                 newPassword: newPassword
               },
               {
