@@ -1420,10 +1420,10 @@
   dependencies:
     browser-headers "^0.4.0"
 
-"@innatical/inncryption@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@innatical/inncryption/-/inncryption-0.0.8.tgz#88172dbdc719e2e8adee52730a433167882303ca"
-  integrity sha512-1WzEt0d4o8jxvOnrIwVXv5ebawAUJItwaVEuCbJ/6v1q+kxWJWeDcMxtDUkQXoYCVVcjfe+GcHP7aEdFyHG8/g==
+"@innatical/inncryption@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@innatical/inncryption/-/inncryption-0.0.11.tgz#b18330099e0ce8c6d8149544e1555f59ff0347d3"
+  integrity sha512-oTL/9KJ1DQuCkE7yUCs6nZT1ZSHoenGybN7Nt+8xi6dYH5DliERF+BAEnHxThaINgeYAhiseCNjFxNWe8/RsfA==
 
 "@innatical/innstate@^1.0.1":
   version "1.0.2"

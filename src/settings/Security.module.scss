@@ -9,6 +9,10 @@
     margin: 0;
   }
 
+  .status {
+    margin-top: 1rem;
+  }
+
   h2 {
     margin-bottom: 1rem;
   }
@@ -18,7 +22,7 @@
     color: var(--neko-text-danger);
   }
 
-  form {
+  .form {
     background: var(--neko-settings-card);
     padding: 2rem;
     margin-bottom: 2rem;
@@ -52,6 +56,12 @@
       margin-top: 1rem;
       background: var(--neko-colors-primary);
     }
+
+    .regenerateKeychain {
+      width: 100%;
+      margin-top: 1rem;
+      background: var(--neko-colors-danger);
+    }
   }
 
   @media (max-height: 740px) {
@@ -63,7 +73,7 @@
     padding-right: 2rem;
     padding-top: 2rem;
     width: 100%;
-    form {
+    .form {
       padding: 0;
       max-width: 100%;
       min-width: 100%;
@@ -97,7 +107,7 @@
       justify-content: center;
     }
 
-    form {
+    .form {
       padding: 1.5rem;
       max-width: 100%;
       min-width: 100%;

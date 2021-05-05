@@ -5,18 +5,22 @@ import styles from './Modal.module.scss'
 
 const Modal: FC<{
   onDismiss: () => void
-  icon: IconDefinition
+  icon: IconDefinition | FC
   title: string
   subtitle?: string
   children: ReactNode
   bottom?: ReactNode
-}> = ({ onDismiss, icon, title, subtitle, children, bottom }) => {
+}> = ({ onDismiss, icon: Icon, title, subtitle, children, bottom }) => {
   return (
     <div className={styles.modal}>
       <div className={styles.header}>
-        <div className={styles.icon} onClick={() => onDismiss()}>
-          <FontAwesomeIcon icon={icon} />
-        </div>
+        {typeof Icon === 'function' ? (
+          <Icon />
+        ) : (
+          <div className={styles.icon} onClick={() => onDismiss()}>
+            <FontAwesomeIcon icon={Icon} />
+          </div>
+        )}
         <div className={styles.title}>
           {subtitle && <small>{subtitle}</small>}
           <h2>{title}</h2>

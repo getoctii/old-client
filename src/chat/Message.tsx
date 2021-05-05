@@ -111,6 +111,9 @@ const MessageView: FC<{
     })
   )
   const auth = Auth.useContainer()
+  const ui = UI.useContainerSelector(({ setModal }) => ({
+    setModal
+  }))
   const { hasPermissions } = Permission.useContainer()
   const [deleteMessage] = useMutation(
     async () =>
@@ -299,7 +302,15 @@ const MessageView: FC<{
           }`}
         >
           {primary && type === MessageTypes.NORMAL && (
-            <h2 key='username'>
+            <h2
+              key='username'
+              onClick={() =>
+                ui.setModal({
+                  name: ModalTypes.PREVIEW_USER,
+                  props: { id: user?.id }
+                })
+              }
+            >
               <span>
                 {user?.username}
                 {user?.id === '987d59ba-1979-4cc4-8818-7fe2f3d4b560' ? (

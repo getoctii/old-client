@@ -20,6 +20,8 @@ import AddFriend from '../hub/friends/AddFriend'
 import NewProduct from '../community/integrations/NewProduct'
 import NewResource from '../community/integrations/product/pages/NewResource'
 import NewVersion from '../community/integrations/product/pages/NewVersion'
+import PreviewUser from '../user/PreviewUser'
+import GenerateKeychain from '../keychain/GenerateKeychain'
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
   switch (name) {
@@ -55,6 +57,10 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <NewResource />
     case ModalTypes.NEW_VERSION:
       return <NewVersion />
+    case ModalTypes.PREVIEW_USER:
+      return <PreviewUser {...props} />
+    case ModalTypes.GENERATE_KEYCHAIN:
+      return <GenerateKeychain />
     default:
       return <></>
   }
