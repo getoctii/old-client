@@ -30,7 +30,7 @@ const PasswordSchema = Yup.object().shape({
 })
 
 const KeychainCard: FC = () => {
-  const { hasKeychain } = Keychain.useContainer()
+  const { hasKeychain, decryptedKeychain } = Keychain.useContainer()
   const ui = UI.useContainer()
   return (
     <div className={styles.form}>
@@ -44,6 +44,14 @@ const KeychainCard: FC = () => {
       >
         {hasKeychain ? 'Regenerate Keychain' : 'Generate Keychain'}
       </Button>
+      <h4 className={styles.status}>
+        Status:{' '}
+        {!hasKeychain
+          ? 'Uninitalized'
+          : hasKeychain && !decryptedKeychain
+          ? 'Locked'
+          : 'Unlocked'}
+      </h4>
     </div>
   )
 }

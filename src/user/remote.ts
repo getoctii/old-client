@@ -141,13 +141,15 @@ export const getMentions = async (_: string, userID: string, token: string) =>
   ).data
 
 export const getKeychain = async (_: string, userID: string, token: string) =>
-  (
-    await clientGateway.get<ExportedProtectedKeychain>(
-      `/users/${userID}/keychain`,
-      {
-        headers: {
-          Authorization: token
-        }
-      }
-    )
-  ).data
+  userID && token
+    ? (
+        await clientGateway.get<ExportedProtectedKeychain>(
+          `/users/${userID}/keychain`,
+          {
+            headers: {
+              Authorization: token
+            }
+          }
+        )
+      ).data
+    : null
