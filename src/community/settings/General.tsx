@@ -23,6 +23,7 @@ const TransferSchema = Yup.object().shape({
   username: Yup.string()
     .min(2, 'Too short, must be at least 2 characters.')
     .max(16, 'Too long, must be less then 16 characters.')
+    .matches(/^[a-zA-Z0-9]+$/, 'Username must be alphanumeric.')
     .optional()
 })
 

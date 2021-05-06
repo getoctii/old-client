@@ -13,7 +13,8 @@ const RegisterSchema = Yup.object().shape({
     .max(140, 'Too long, password must be under 140 characters.'),
   username: Yup.string()
     .min(3, 'Too short, username must be at least 3 characters.')
-    .max(16, 'Too long, username must be under 16 characters.'),
+    .max(16, 'Too long, username must be under 16 characters.')
+    .matches(/^[a-zA-Z0-9]+$/, 'Username must be alphanumeric.'),
   betaCode: Yup.string().uuid('Invalid Beta Code')
 })
 
