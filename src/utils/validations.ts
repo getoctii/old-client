@@ -28,7 +28,7 @@ export const isPassword = (value: string) =>
 
 export const isUsername = (value: string) =>
   !value ||
-  (/^[a-zA-Z ]+$/.test(value) && value.length <= 16 && value.length >= 3)
+  (/^[a-zA-Z0-9]+$/.test(value) && value.length <= 16 && value.length >= 3)
 
 export const isInvite = (value: string) =>
   !value ||
