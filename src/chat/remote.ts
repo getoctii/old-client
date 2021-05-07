@@ -1,5 +1,8 @@
-import { encryptMessage } from '@innatical/inncryption'
-import { Keychain } from '@innatical/inncryption/dist/types'
+import { encryptMessage, exportEncryptedMessage } from '@innatical/inncryption'
+import {
+  ExportedEncryptedMessage,
+  Keychain
+} from '@innatical/inncryption/dist/types'
 import axios from 'axios'
 import {
   ChannelPermissions,
@@ -36,7 +39,9 @@ export interface MessageResponse {
   type: MessageTypes
   created_at: string
   updated_at: string
-  content: string
+  content?: string
+  encrypted_content?: ExportedEncryptedMessage
+  self_encrypted_content?: ExportedEncryptedMessage
 }
 
 export const getChannel = async (_: string, channelID: string, token: string) =>
@@ -77,12 +82,16 @@ export const postEncryptedMessage = async (
   keychain: Keychain,
   publicKey: CryptoKey
 ) => {
-  const selfEncryptedMessage = await encryptMessage(
-    keychain,
-    keychain.encryptionKeyPair.publicKey,
-    content
+  const selfEncryptedMessage = exportEncryptedMessage(
+    await encryptMessage(
+      keychain,
+      keychain.encryptionKeyPair.publicKey,
+      content
+    )
   )
-  const encryptedMessage = await encryptMessage(keychain, publicKey, content)
+  const encryptedMessage = exportEncryptedMessage(
+    await encryptMessage(keychain, publicKey, content)
+  )
   return (
     await clientGateway.post(
       `/channels/${channelID}/messages`,

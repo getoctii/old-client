@@ -20,6 +20,8 @@ import { getUnreads, Mentions } from '../user/remote'
 import { Chat } from './state'
 import { isPlatform } from '@ionic/react'
 import { Plugins } from '@capacitor/core'
+import { Keychain } from '../keychain/state'
+import { ErrorBoundary } from 'react-error-boundary'
 
 const { Keyboard } = Plugins
 
@@ -32,7 +34,8 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
     editingMessageID,
     autoRead,
     setAutoRead,
-    setChannelID
+    setChannelID,
+    publicSigningKey
   } = Chat.useContainerSelector(
     ({
       tracking,
@@ -40,16 +43,20 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       editingMessageID,
       autoRead,
       setAutoRead,
-      setChannelID
+      setChannelID,
+      publicSigningKey
     }) => ({
       tracking,
       setTracking,
       editingMessageID,
       autoRead,
       setAutoRead,
-      setChannelID
+      setChannelID,
+      publicSigningKey
     })
   )
+
+  const { keychain } = Keychain.useContainer()
 
   useEffect(() => {
     setChannelID(channel.id)
@@ -179,6 +186,8 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
 
   const length = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
 
+  if (!keychain) return <div key={channel.id} className={styles.messages}></div>
+
   return (
     <div key={channel.id} className={styles.messages} ref={ref}>
       <div key='buffer' className={styles.buffer} />
@@ -205,7 +214,20 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
               type={message.type}
               authorID={message.author_id}
               createdAt={message.created_at}
-              content={message.content}
+              content={
+                (!message.content
+                  ? message.author_id === id
+                    ? message.self_encrypted_content
+                    : message.encrypted_content
+                  : message.content)!
+              }
+              signing={
+                !message.content
+                  ? message.author_id === id
+                    ? keychain!.signingKeyPair.publicKey
+                    : publicSigningKey ?? undefined
+                  : undefined
+              }
               updatedAt={message.updated_at}
             />
           </React.Fragment>

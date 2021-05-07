@@ -11,7 +11,7 @@ import {
 } from '@fortawesome/pro-solid-svg-icons'
 import { Plugins } from '@capacitor/core'
 import { Auth } from '../authentication/state'
-import { useMutation } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import {
   clientGateway,
   MessageTypes,
@@ -42,6 +42,9 @@ import Mention from './Mention'
 import { Permission } from '../utils/permissions'
 import { useUser } from '../user/state'
 import File from './embeds/File'
+import { ExportedEncryptedMessage } from '@innatical/inncryption/dist/types'
+import { decryptMessage, importEncryptedMessage } from '@innatical/inncryption'
+import { Keychain } from '../keychain/state'
 
 const { Clipboard } = Plugins
 dayjs.extend(dayjsUTC)
@@ -99,10 +102,32 @@ const MessageView: FC<{
   authorID: string
   createdAt: string
   updatedAt: string
-  content: string
+  content: string | ExportedEncryptedMessage
+  signing?: CryptoKey
   type: MessageTypes
   primary: boolean
-}> = memo(({ id, authorID, createdAt, primary, content, type }) => {
+}> = memo(({ id, authorID, createdAt, primary, content, type, signing }) => {
+  const { keychain } = Keychain.useContainer()
+  const { data: messageContent } = useQuery(
+    ['messageContent', content],
+    async (_: string, content: string | ExportedEncryptedMessage) => {
+      if (typeof content === 'string') {
+        return content
+      } else {
+        const decrypted = await decryptMessage(
+          keychain!,
+          signing!,
+          importEncryptedMessage(content)
+        )
+
+        if (decrypted.verified) {
+          return decrypted.message
+        } else {
+          return '*The sender could not be verified...*'
+        }
+      }
+    }
+  )
   const uiStore = UI.useContainer()
   const { editingMessageID, setEditingMessageID } = Chat.useContainerSelector(
     ({ editingMessageID, setEditingMessageID }) => ({
@@ -137,7 +162,7 @@ const MessageView: FC<{
         danger: false,
         onClick: async () => {
           await Clipboard.write({
-            string: content
+            string: messageContent
           })
         }
       },
@@ -191,7 +216,7 @@ const MessageView: FC<{
     setEditingMessageID,
     hasPermissions
   ])
-  const output = useMarkdown(content, {
+  const output = useMarkdown(messageContent!, {
     bold: (str, key) => <strong key={key}>{str}</strong>,
     italic: (str, key) => <i key={key}>{str}</i>,
     underlined: (str, key) => <u key={key}>{str}</u>,
@@ -275,7 +300,7 @@ const MessageView: FC<{
   return (
     <Context.Wrapper
       title={`${user?.username || 'Unknown'}'s Message`}
-      message={content}
+      message={messageContent}
       key={id}
       items={getItems()}
     >
@@ -339,7 +364,7 @@ const MessageView: FC<{
           {editingMessageID === id ? (
             <EditBox
               id={id}
-              content={content}
+              content={messageContent!}
               onDismiss={() => setEditingMessageID(undefined)}
             />
           ) : (

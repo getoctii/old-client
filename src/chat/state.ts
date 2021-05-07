@@ -17,8 +17,10 @@ const useChat = () => {
   const [
     publicEncryptionKey,
     setPublicEncryptionKey
-  ] = useState<CryptoKey | null>()
-  const [publicSigningKey, setPublicSigningKey] = useState<CryptoKey | null>()
+  ] = useState<CryptoKey | null>(null)
+  const [publicSigningKey, setPublicSigningKey] = useState<CryptoKey | null>(
+    null
+  )
   const [uploadDetails, setUploadDetails] = useState<UploadDetails | null>(null)
   const [editingMessageID, setEditingMessageID] = useState<string | undefined>(
     undefined
