@@ -39,7 +39,7 @@ const useKeychain = () => {
   useEffect(() => {
     if (!(data && !keychain)) return
     setModal({ name: ModalTypes.DECRYPT_KEYCHAIN })
-  }, [data, keychain])
+  }, [data, keychain, setModal])
 
   return {
     decryptKeychain,
