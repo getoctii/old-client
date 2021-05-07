@@ -8,11 +8,14 @@ import {
   unlockProtectedKeychain
 } from '@innatical/inncryption'
 import * as types from '@innatical/inncryption/dist/types'
+import { UI } from '../state/ui'
+import { ModalTypes } from '../utils/constants'
 
 const useKeychain = () => {
   const { id, token } = Auth.useContainer()
   const [keychain, setKeychain] = useState<types.Keychain | null>(null)
   const { data } = useQuery(['keychain', id, token], getKeychain)
+  const { setModal } = UI.useContainer()
   useEffect(() => {
     setKeychain(null)
   }, [data])
@@ -32,6 +35,11 @@ const useKeychain = () => {
     },
     [data]
   )
+
+  useEffect(() => {
+    if (!(data && !keychain)) return
+    setModal({ name: ModalTypes.DECRYPT_KEYCHAIN })
+  }, [data, keychain])
 
   return {
     decryptKeychain,

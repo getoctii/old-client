@@ -32,7 +32,8 @@ export enum ModalTypes {
   ADD_FRIEND,
   DEVELOPER_MODE,
   PREVIEW_USER,
-  GENERATE_KEYCHAIN
+  GENERATE_KEYCHAIN,
+  DECRYPT_KEYCHAIN
 }
 
 export enum Groups {

@@ -1,4 +1,4 @@
-import { FC, Suspense, useMemo, useState } from 'react'
+import { FC, Suspense, useEffect, useMemo, useState } from 'react'
 import styles from './Channel.module.scss'
 import { useQuery } from 'react-query'
 import { ChannelPermissions, InternalChannelTypes } from '../utils/constants'
@@ -17,10 +17,11 @@ import Typing from '../state/typing'
 import Button from '../components/Button'
 import { ChannelResponse, getChannel } from './remote'
 import Messages from './Messages'
-import { fetchManyUsers, getUser } from '../user/remote'
+import { fetchManyUsers, getKeychain, getUser } from '../user/remote'
 import { Chat } from './state'
 import { Permission } from '../utils/permissions'
 import AddParticipant from './AddParticipant'
+import { importPublicKey } from '@innatical/inncryption'
 
 const TypingIndicator: FC<{
   channelID: string
@@ -110,11 +111,18 @@ const ChannelView: FC<{
   communityID?: string
   conversationID?: string
 }> = ({ type, channelID, participants, communityID, conversationID }) => {
-  const { setUploadDetails } = Chat.useContainerSelector(
-    ({ setUploadDetails }) => ({
-      setUploadDetails
+  const {
+    setUploadDetails,
+    setPublicEncryptionKey,
+    setPublicSigningKey
+  } = Chat.useContainerSelector(
+    ({ setUploadDetails, setPublicEncryptionKey, setPublicSigningKey }) => ({
+      setUploadDetails,
+      setPublicEncryptionKey,
+      setPublicSigningKey
     })
   )
+
   const { token, id } = Auth.useContainer()
   const { typing } = Typing.useContainer()
   const typingUsers = useMemo(
@@ -138,6 +146,31 @@ const ChannelView: FC<{
         })
     }
   })
+
+  const { data: otherKeychain } = useQuery(
+    [
+      'keychain',
+      type === InternalChannelTypes.PrivateChannel ? participants?.[0] : null,
+      token
+    ],
+    getKeychain
+  )
+
+  useEffect(() => {
+    if (!otherKeychain) return
+    ;(async () => {
+      setPublicEncryptionKey(
+        await importPublicKey(otherKeychain.encryption.publicKey, 'encryption')
+      )
+      setPublicSigningKey(
+        await importPublicKey(otherKeychain.signing.publicKey, 'signing')
+      )
+    })()
+
+    return () => {
+      setPublicEncryptionKey(null)
+    }
+  }, [otherKeychain, setPublicEncryptionKey, setPublicSigningKey])
 
   return (
     <Suspense fallback={<ChannelPlaceholder />}>
