@@ -45,8 +45,6 @@ const useUpdatedMessage = (eventSource: EventSourcePolyfill | null) => {
                 await Promise.all(
                   sub.map(async (msg: MessageResponse) => {
                     if (msg.id === event.id) {
-                      console.log('owo')
-
                       const otherKeychain = await queryCache.fetchQuery(
                         ['keychain', msg.author_id, token],
                         getKeychain

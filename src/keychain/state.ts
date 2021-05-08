@@ -63,8 +63,6 @@ const useKeychain = () => {
     decryptKeychain
   ])
 
-  console.log(keychainPassword)
-
   return {
     decryptKeychain,
     decryptedKeychain,

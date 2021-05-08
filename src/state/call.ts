@@ -164,7 +164,6 @@ const useCall = () => {
   useEffect(() => {
     if (!connection) return
     const cb = () => {
-      console.log(connection.iceConnectionState)
       setConnectionState(connection.iceConnectionState)
     }
 
@@ -202,7 +201,6 @@ const useCall = () => {
   useEffect(() => {
     if (!connection || !remoteStream) return
     const cb = (track: RTCTrackEvent) => {
-      console.log(track)
       remoteStream.addTrack(track.track)
     }
 

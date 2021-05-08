@@ -121,7 +121,6 @@ const BoxView: FC<{
                     file: uploadDetails.file
                   })
                   const file = await uploadFile(uploadDetails.file)
-                  console.log(file)
                   if (content !== '') {
                     await sendMessage(
                       `${content}\nhttps://innstor.innatical.com/${file}`

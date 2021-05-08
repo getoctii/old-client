@@ -5,6 +5,7 @@ import { register } from '../remote'
 import { BarLoader } from 'react-spinners'
 import { Auth } from '../state'
 import * as Yup from 'yup'
+import { Keychain } from '../../keychain/state'
 
 const RegisterSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email'),
@@ -20,6 +21,7 @@ const RegisterSchema = Yup.object().shape({
 
 export const Register: FC = () => {
   const auth = Auth.useContainer()
+  const { setKeychainPassword } = Keychain.useContainer()
   return (
     <Formik
       initialValues={{
@@ -45,7 +47,10 @@ export const Register: FC = () => {
         try {
           const response = await register(values)
           if (auth.betaCode) auth.setBetaCode(undefined)
-          if (response) auth.setToken(response.authorization)
+          if (response) {
+            auth.setToken(response.authorization)
+            setKeychainPassword(values.password)
+          }
         } catch (e) {
           const errors = e.response.data.errors
           const userErrors: { betaCode?: string } = {}

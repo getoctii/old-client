@@ -48,8 +48,6 @@ const useChat = () => {
     if (!tracking && autoRead) setAutoRead(false)
   }, [tracking, autoRead])
 
-  console.log(publicEncryptionKey, publicSigningKey)
-
   return {
     tracking,
     setTracking,

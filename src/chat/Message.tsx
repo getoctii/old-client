@@ -279,7 +279,6 @@ const MessageView: FC<{
           )
         }
       } else if (File.isFile(str)) {
-        console.log(str)
         return {
           link: <></>,
           embed: <File.Embed key={key} url={str} />

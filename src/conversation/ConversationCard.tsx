@@ -253,8 +253,6 @@ const ConversationCardView: FC<{
     ]
   })
 
-  console.log({ owo: messageContent === 'f', output })
-
   const { data: users } = useQuery(['users', people, token], fetchManyUsers)
   return (
     <Context.Wrapper

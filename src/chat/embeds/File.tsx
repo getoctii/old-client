@@ -49,7 +49,6 @@ const FileEmbed: FC<{ url: string }> = ({ url }: { url: string }) => {
   const ui = UI.useContainer()
   const [showPlaceholder, setShowPlaceholder] = useState(true)
   if (!image) return <></>
-  console.log(image)
   if (image.type === 'other') {
     return (
       <div className={styles.file}>

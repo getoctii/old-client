@@ -116,7 +116,6 @@ export const uploadFile = async (file: File) => {
     'https://innstor.innatical.com',
     formData
   )
-  console.log(response.data)
   return response.data.file
 }
 
@@ -188,7 +187,6 @@ export const getMessageContent = async (
     return content
   } else {
     if (!signing || !keychain || !content) return ''
-    console.log('uwu', signing, keychain, content)
     const decrypted = await decryptMessage(
       keychain,
       signing,

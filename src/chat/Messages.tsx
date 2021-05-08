@@ -125,7 +125,6 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       unreads.data[channel.id] &&
       messages[0]?.id !== unreads.data[channel.id].read
     ) {
-      console.log('owo')
       await clientGateway.post(
         `/channels/${channel.id}/read`,
         {},
