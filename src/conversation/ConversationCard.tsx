@@ -93,16 +93,20 @@ const ConversationCardView: FC<{
         return content
       } else {
         if (!otherPublicKey || !keychain || !content) return ''
-        const decrypted = await decryptMessage(
-          keychain,
-          otherPublicKey,
-          importEncryptedMessage(content)
-        )
+        try {
+          const decrypted = await decryptMessage(
+            keychain,
+            otherPublicKey,
+            importEncryptedMessage(content)
+          )
 
-        if (decrypted.verified) {
-          return decrypted.message
-        } else {
-          return '*The sender could not be verified...*'
+          if (decrypted.verified) {
+            return decrypted.message
+          } else {
+            return '*The sender could not be verified...*'
+          }
+        } catch {
+          return '*Message could not be decrypted*'
         }
       }
     }

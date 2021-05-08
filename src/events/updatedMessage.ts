@@ -78,16 +78,20 @@ const useUpdatedMessage = (eventSource: EventSourcePolyfill | null) => {
                             return content
                           } else {
                             if (!publicKey || !keychain || !content) return ''
-                            const decrypted = await decryptMessage(
-                              keychain,
-                              publicKey,
-                              importEncryptedMessage(content)
-                            )
+                            try {
+                              const decrypted = await decryptMessage(
+                                keychain,
+                                publicKey,
+                                importEncryptedMessage(content)
+                              )
 
-                            if (decrypted.verified) {
-                              return decrypted.message
-                            } else {
-                              return '*The sender could not be verified...*'
+                              if (decrypted.verified) {
+                                return decrypted.message
+                              } else {
+                                return '*The sender could not be verified...*'
+                              }
+                            } catch {
+                              return '*Message could not be decrypted*'
                             }
                           }
                         }
