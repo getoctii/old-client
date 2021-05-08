@@ -33,8 +33,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
     editingMessageID,
     autoRead,
     setAutoRead,
-    setChannelID,
-    publicSigningKey
+    setChannelID
   } = Chat.useContainerSelector(
     ({
       tracking,
@@ -42,16 +41,14 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       editingMessageID,
       autoRead,
       setAutoRead,
-      setChannelID,
-      publicSigningKey
+      setChannelID
     }) => ({
       tracking,
       setTracking,
       editingMessageID,
       autoRead,
       setAutoRead,
-      setChannelID,
-      publicSigningKey
+      setChannelID
     })
   )
 

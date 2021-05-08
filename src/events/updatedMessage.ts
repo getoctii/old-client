@@ -118,7 +118,7 @@ const useUpdatedMessage = (eventSource: EventSourcePolyfill | null) => {
     return () => {
       eventSource.removeEventListener(Events.UPDATED_MESSAGE, handler)
     }
-  }, [eventSource, id, token])
+  }, [eventSource, id, token, keychain])
 }
 
 export default useUpdatedMessage
