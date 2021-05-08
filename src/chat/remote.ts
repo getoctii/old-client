@@ -2,8 +2,7 @@ import {
   decryptMessage,
   encryptMessage,
   exportEncryptedMessage,
-  importEncryptedMessage,
-  importPublicKey
+  importEncryptedMessage
 } from '@innatical/inncryption'
 import {
   ExportedEncryptedMessage,

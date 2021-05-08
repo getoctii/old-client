@@ -21,7 +21,6 @@ import { Chat } from './state'
 import { isPlatform } from '@ionic/react'
 import { Plugins } from '@capacitor/core'
 import { Keychain } from '../keychain/state'
-import { ErrorBoundary } from 'react-error-boundary'
 
 const { Keyboard } = Plugins
 

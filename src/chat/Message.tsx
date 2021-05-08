@@ -30,7 +30,7 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
-import { getMessageContent, patchMessage } from './remote'
+import { patchMessage } from './remote'
 import Editor from '../components/Editor'
 import { Chat } from './state'
 import { withHistory } from 'slate-history'
@@ -42,10 +42,7 @@ import Mention from './Mention'
 import { Permission } from '../utils/permissions'
 import { useUser } from '../user/state'
 import File from './embeds/File'
-import {
-  ExportedEncryptedMessage,
-  Keychain as KeychainType
-} from '@innatical/inncryption/dist/types'
+import { ExportedEncryptedMessage } from '@innatical/inncryption/dist/types'
 import { decryptMessage, importEncryptedMessage } from '@innatical/inncryption'
 import { Keychain } from '../keychain/state'
 

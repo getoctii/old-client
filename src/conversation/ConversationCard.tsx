@@ -22,7 +22,7 @@ import {
   State
 } from '../user/remote'
 import { getMessage } from '../message/remote'
-import { getChannel, getMessageContent } from '../chat/remote'
+import { getChannel } from '../chat/remote'
 import { Clipboard } from '@capacitor/core'
 import Context from '../components/Context'
 import { ContextMenuItems } from '../state/ui'
@@ -31,10 +31,6 @@ import { ErrorBoundary } from 'react-error-boundary'
 import Mention from '../chat/Mention'
 import { useSuspenseStorageItem } from '../utils/storage'
 import { Keychain } from '../keychain/state'
-import {
-  ExportedEncryptedMessage,
-  ExportedProtectedKeychain
-} from '@innatical/inncryption/dist/types'
 import {
   decryptMessage,
   importEncryptedMessage,
@@ -308,13 +304,13 @@ const ConversationCardView: FC<{
         </div>
         <div className={styles.user} key='user'>
           <h4>{users?.map((user, index) => user.username).join(', ')}</h4>
-          {message?.content && (
+          {output && (
             <p>
               {message?.author_id === id
                 ? 'You: '
                 : (people?.length ?? 1) === 1
                 ? ''
-                : message.type === MessageTypes.NORMAL
+                : message?.type === MessageTypes.NORMAL
                 ? `${
                     users?.find((user) => user.id === message?.author_id)
                       ?.username ?? 'Unknown'
