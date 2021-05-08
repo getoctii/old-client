@@ -214,18 +214,10 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
               authorID={message.author_id}
               createdAt={message.created_at}
               content={
-                (!message.content
-                  ? message.author_id === id
-                    ? message.self_encrypted_content
-                    : message.encrypted_content
-                  : message.content)!
-              }
-              signing={
-                !message.content
-                  ? message.author_id === id
-                    ? keychain!.signingKeyPair.publicKey
-                    : publicSigningKey ?? undefined
-                  : undefined
+                message.content ??
+                (message.author_id === id
+                  ? message.self_encrypted_content
+                  : message.encrypted_content)
               }
               updatedAt={message.updated_at}
             />

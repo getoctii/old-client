@@ -156,21 +156,27 @@ const ChannelView: FC<{
     getKeychain
   )
 
+  const { data: publicKey } = useQuery(
+    ['publicKey', otherKeychain?.signing.publicKey],
+    async (_: string, key: number[]) => {
+      if (!key) return undefined
+      return await importPublicKey(key, 'signing')
+    }
+  )
+
   useEffect(() => {
-    if (!otherKeychain) return
     ;(async () => {
+      if (!otherKeychain || !publicKey) return
       setPublicEncryptionKey(
         await importPublicKey(otherKeychain.encryption.publicKey, 'encryption')
       )
-      setPublicSigningKey(
-        await importPublicKey(otherKeychain.signing.publicKey, 'signing')
-      )
+      setPublicSigningKey(publicKey)
     })()
 
     return () => {
       setPublicEncryptionKey(null)
     }
-  }, [otherKeychain, setPublicEncryptionKey, setPublicSigningKey])
+  }, [otherKeychain, setPublicEncryptionKey, setPublicSigningKey, publicKey])
 
   return (
     <Suspense fallback={<ChannelPlaceholder />}>

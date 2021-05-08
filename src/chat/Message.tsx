@@ -43,8 +43,13 @@ import { Permission } from '../utils/permissions'
 import { useUser } from '../user/state'
 import File from './embeds/File'
 import { ExportedEncryptedMessage } from '@innatical/inncryption/dist/types'
-import { decryptMessage, importEncryptedMessage } from '@innatical/inncryption'
+import {
+  decryptMessage,
+  importEncryptedMessage,
+  importPublicKey
+} from '@innatical/inncryption'
 import { Keychain } from '../keychain/state'
+import { getKeychain } from '../user/remote'
 
 const { Clipboard } = Plugins
 dayjs.extend(dayjsUTC)
@@ -102,22 +107,36 @@ const MessageView: FC<{
   authorID: string
   createdAt: string
   updatedAt: string
-  content: string | ExportedEncryptedMessage
-  signing?: CryptoKey
+  content?: string | ExportedEncryptedMessage
   type: MessageTypes
   primary: boolean
-}> = memo(({ id, authorID, createdAt, primary, content, type, signing }) => {
+}> = memo(({ id, authorID, createdAt, primary, content, type }) => {
+  const auth = Auth.useContainer()
+
   const { keychain } = Keychain.useContainer()
+  const { data: otherKeychain } = useQuery(
+    ['keychain', authorID, auth.token],
+    getKeychain
+  )
+
+  const { data: publicKey } = useQuery(
+    ['publicKey', otherKeychain?.signing.publicKey],
+    async (_: string, key: number[]) => {
+      if (!key) return undefined
+      return await importPublicKey(key, 'signing')
+    }
+  )
+
   const { data: messageContent } = useQuery(
-    ['messageContent', content, signing, keychain],
+    ['messageContent', content, publicKey, keychain],
     async () => {
       if (typeof content === 'string') {
         return content
       } else {
-        if (!signing || !keychain || !content) return ''
+        if (!publicKey || !keychain || !content) return ''
         const decrypted = await decryptMessage(
           keychain,
-          signing,
+          publicKey,
           importEncryptedMessage(content)
         )
 
@@ -136,7 +155,6 @@ const MessageView: FC<{
       setEditingMessageID
     })
   )
-  const auth = Auth.useContainer()
   const ui = UI.useContainerSelector(({ setModal }) => ({
     setModal
   }))
