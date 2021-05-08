@@ -7,7 +7,8 @@ import {
   faCopy,
   faTrashAlt,
   IconDefinition,
-  faPencilAlt
+  faPencilAlt,
+  faLock
 } from '@fortawesome/pro-solid-svg-icons'
 import { Plugins } from '@capacitor/core'
 import { Auth } from '../authentication/state'
@@ -30,7 +31,7 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
-import { patchMessage } from './remote'
+import { patchEncryptedMessage, patchMessage } from './remote'
 import Editor from '../components/Editor'
 import { Chat } from './state'
 import { withHistory } from 'slate-history'
@@ -68,12 +69,15 @@ const EditBox: FC<{
   id: string
   content: string
   onDismiss: () => void
-}> = ({ id, content, onDismiss }) => {
+  encrypted: boolean
+}> = ({ id, content, onDismiss, encrypted }) => {
   const { token } = Auth.useContainer()
   const editor = useMemo(
     () => withHistory(withReact(withMentions(createEditor()))),
     []
   )
+  const { keychain } = Keychain.useContainer()
+  const { publicEncryptionKey } = Chat.useContainer()
   return (
     <div className={styles.innerInput}>
       <Editor
@@ -93,7 +97,17 @@ const EditBox: FC<{
         onEnter={async (content) => {
           if (!token || !content) return
           onDismiss()
-          await patchMessage(id, content, token)
+          if (encrypted) {
+            await patchEncryptedMessage(
+              id,
+              content,
+              token,
+              keychain!,
+              publicEncryptionKey!
+            )
+          } else {
+            await patchMessage(id, content, token)
+          }
         }}
       />
 
@@ -374,6 +388,11 @@ const MessageView: FC<{
                     />
                   )
                 )}
+                {typeof content === 'object' ? (
+                  <FontAwesomeIcon className={styles.badge} icon={faLock} />
+                ) : (
+                  <></>
+                )}
               </span>
               <span className={styles.time}>
                 {dayjs.utc(createdAt).local().calendar()}
@@ -385,6 +404,7 @@ const MessageView: FC<{
               id={id}
               content={messageContent!}
               onDismiss={() => setEditingMessageID(undefined)}
+              encrypted={typeof content === 'object' ? true : false}
             />
           ) : (
             <p key={id}>{main}</p>

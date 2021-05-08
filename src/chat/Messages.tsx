@@ -80,6 +80,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       return !(
         messages?.[index + 1] &&
         message.author_id === messages?.[index + 1]?.author_id &&
+        message.content === messages?.[index + 1]?.content &&
         dayjs.utc(message?.created_at)?.valueOf() -
           dayjs.utc(messages?.[index - 1]?.created_at)?.valueOf() <
           300000

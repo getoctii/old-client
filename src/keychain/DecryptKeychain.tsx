@@ -17,7 +17,7 @@ const PasswordSchema = Yup.object().shape({
 })
 
 const DecryptKeychain: FC = () => {
-  const { decryptKeychain } = Keychain.useContainer()
+  const { decryptKeychain, setKeychainPassword } = Keychain.useContainer()
   const ui = UI.useContainer()
   return (
     <Formik
@@ -27,6 +27,7 @@ const DecryptKeychain: FC = () => {
         try {
           await decryptKeychain(values.password)
           ui.setModal(undefined)
+          setKeychainPassword(values.password)
         } catch (e) {
           return setErrors({
             password: 'Incorrect Password'

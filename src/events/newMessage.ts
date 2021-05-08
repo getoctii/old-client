@@ -75,66 +75,6 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
       const event = JSON.parse(e.data) as Message
       log('Events', 'purple', 'NEW_MESSAGE')
 
-      queryCache.setQueryData<Unreads>(['unreads', id, token], (initial) => {
-        if (initial) {
-          return {
-            ...initial,
-            [event.channel_id]: {
-              ...(initial[event.channel_id] ?? {}),
-              last_message_id: event.id,
-              read:
-                id === event.author.id ||
-                (autoRead && event.channel_id === channelID)
-                  ? event.id
-                  : initial[event.channel_id]?.read
-            }
-          }
-        } else {
-          return {
-            [event.channel_id]: {
-              last_message_id: event.id,
-              read:
-                id === event.author.id ||
-                (autoRead && event.channel_id === channelID)
-                  ? event.id
-                  : ''
-            }
-          }
-        }
-      })
-
-      const initial = queryCache.getQueryData<MessageResponse[][]>([
-        'messages',
-        event.channel_id,
-        token
-      ])
-
-      if (initial instanceof Array) {
-        queryCache.setQueryData<MessageResponse[][]>(
-          ['messages', event.channel_id, token],
-          initial[0].length < 25
-            ? [
-                [
-                  {
-                    ...event,
-                    author_id: event.author.id
-                  },
-                  ...initial[0]
-                ],
-                ...initial.slice(1)
-              ]
-            : [
-                [
-                  {
-                    ...event,
-                    author_id: event.author.id
-                  }
-                ],
-                ...initial
-              ]
-        )
-      }
-
       queryCache.setQueryData<MessageResponse>(['message', event.id, token], {
         ...event,
         author_id: event.author.id
@@ -145,24 +85,6 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
         id,
         token
       ])
-      // maybe its this?
-      if (participants instanceof Array) {
-        queryCache.setQueryData<ParticipantsResponse>(
-          ['participants', id, token],
-          participants.map((participant) =>
-            participant?.conversation?.channel_id === event.channel_id
-              ? {
-                  ...participant,
-                  conversation: {
-                    ...participant.conversation,
-                    last_message_id: event.id,
-                    last_message_date: event.created_at
-                  }
-                }
-              : participant
-          )
-        )
-      }
 
       const otherKeychain = await queryCache.fetchQuery(
         ['keychain', event.author.id, token],
@@ -211,6 +133,84 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
           }
         }
       )
+
+      const initial = queryCache.getQueryData<MessageResponse[][]>([
+        'messages',
+        event.channel_id,
+        token
+      ])
+
+      if (initial instanceof Array) {
+        queryCache.setQueryData<MessageResponse[][]>(
+          ['messages', event.channel_id, token],
+          initial[0].length < 25
+            ? [
+                [
+                  {
+                    ...event,
+                    author_id: event.author.id
+                  },
+                  ...initial[0]
+                ],
+                ...initial.slice(1)
+              ]
+            : [
+                [
+                  {
+                    ...event,
+                    author_id: event.author.id
+                  }
+                ],
+                ...initial
+              ]
+        )
+      }
+
+      if (participants instanceof Array) {
+        queryCache.setQueryData<ParticipantsResponse>(
+          ['participants', id, token],
+          participants.map((participant) =>
+            participant?.conversation?.channel_id === event.channel_id
+              ? {
+                  ...participant,
+                  conversation: {
+                    ...participant.conversation,
+                    last_message_id: event.id,
+                    last_message_date: event.created_at
+                  }
+                }
+              : participant
+          )
+        )
+      }
+
+      queryCache.setQueryData<Unreads>(['unreads', id, token], (initial) => {
+        if (initial) {
+          return {
+            ...initial,
+            [event.channel_id]: {
+              ...(initial[event.channel_id] ?? {}),
+              last_message_id: event.id,
+              read:
+                id === event.author.id ||
+                (autoRead && event.channel_id === channelID)
+                  ? event.id
+                  : initial[event.channel_id]?.read
+            }
+          }
+        } else {
+          return {
+            [event.channel_id]: {
+              last_message_id: event.id,
+              read:
+                id === event.author.id ||
+                (autoRead && event.channel_id === channelID)
+                  ? event.id
+                  : ''
+            }
+          }
+        }
+      })
 
       if (
         event.author.id !== id &&
@@ -298,7 +298,8 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
     user,
     token,
     autoRead,
-    channelID
+    channelID,
+    keychain
   ])
 }
 

@@ -133,6 +133,35 @@ export const patchMessage = async (
     )
   ).data
 
+export const patchEncryptedMessage = async (
+  messageID: string,
+  content: string,
+  token: string,
+  keychain: Keychain,
+  publicKey: CryptoKey
+) => {
+  const selfEncryptedMessage = exportEncryptedMessage(
+    await encryptMessage(
+      keychain,
+      keychain.encryptionKeyPair.publicKey,
+      content
+    )
+  )
+  const encryptedMessage = exportEncryptedMessage(
+    await encryptMessage(keychain, publicKey, content)
+  )
+  return (
+    await clientGateway.patch(
+      `/messages/${messageID}`,
+      {
+        encrypted_content: encryptedMessage,
+        self_encrypted_content: selfEncryptedMessage
+      },
+      { headers: { Authorization: token } }
+    )
+  ).data
+}
+
 export const getMessages = async (
   _: string,
   channelID: string,

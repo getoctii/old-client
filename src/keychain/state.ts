@@ -10,21 +10,23 @@ import {
 import * as types from '@innatical/inncryption/dist/types'
 import { UI } from '../state/ui'
 import { ModalTypes } from '../utils/constants'
+import { useSuspenseStorageItem } from '../utils/storage'
 
 const useKeychain = () => {
   const { id, token } = Auth.useContainer()
+  const [keychainPassword, setKeychainPassword] = useSuspenseStorageItem<
+    string | null
+  >('keychainPassword', null)
   const [keychain, setKeychain] = useState<types.Keychain | null>(null)
   const { data } = useQuery(['keychain', id, token], getKeychain)
   const { setModal } = UI.useContainer()
-  useEffect(() => {
-    setKeychain(null)
-  }, [data])
-
   const hasKeychain = useMemo(() => !!data, [data])
   const decryptedKeychain = useMemo(() => !!keychain, [keychain])
   const decryptKeychain = useCallback(
     async (password: string) => {
-      if (!data) throw Error('NoKeychainPresent')
+      if (!data) {
+        throw Error('NoKeychainPresent')
+      }
       const protectedKeychain = importProtectedKeychain(data)
       const keychain = await unlockProtectedKeychain(
         protectedKeychain,
@@ -37,15 +39,38 @@ const useKeychain = () => {
   )
 
   useEffect(() => {
+    setKeychain(null)
+  }, [data])
+
+  useEffect(() => {
     if (!(data && !keychain)) return
-    setModal({ name: ModalTypes.DECRYPT_KEYCHAIN })
-  }, [data, keychain, setModal])
+    if (keychainPassword === undefined) return
+    if (keychainPassword) {
+      try {
+        decryptKeychain(keychainPassword)
+      } catch {
+        setModal({ name: ModalTypes.DECRYPT_KEYCHAIN })
+      }
+    } else {
+      setModal({ name: ModalTypes.DECRYPT_KEYCHAIN })
+    }
+  }, [
+    data,
+    keychain,
+    setModal,
+    keychainPassword,
+    setKeychainPassword,
+    decryptKeychain
+  ])
+
+  console.log(keychainPassword)
 
   return {
     decryptKeychain,
     decryptedKeychain,
     hasKeychain,
-    keychain
+    keychain,
+    setKeychainPassword
   }
 }
 
