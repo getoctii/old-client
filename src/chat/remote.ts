@@ -1,3 +1,13 @@
+import {
+  decryptMessage,
+  encryptMessage,
+  exportEncryptedMessage,
+  importEncryptedMessage
+} from '@innatical/inncryption'
+import {
+  ExportedEncryptedMessage,
+  Keychain
+} from '@innatical/inncryption/dist/types'
 import axios from 'axios'
 import {
   ChannelPermissions,
@@ -34,7 +44,9 @@ export interface MessageResponse {
   type: MessageTypes
   created_at: string
   updated_at: string
-  content: string
+  content?: string
+  encrypted_content?: ExportedEncryptedMessage
+  self_encrypted_content?: ExportedEncryptedMessage
 }
 
 export const getChannel = async (_: string, channelID: string, token: string) =>
@@ -68,6 +80,35 @@ export const postMessage = async (
     )
   ).data
 
+export const postEncryptedMessage = async (
+  channelID: string,
+  content: string,
+  token: string,
+  keychain: Keychain,
+  publicKey: CryptoKey
+) => {
+  const selfEncryptedMessage = exportEncryptedMessage(
+    await encryptMessage(
+      keychain,
+      keychain.encryptionKeyPair.publicKey,
+      content
+    )
+  )
+  const encryptedMessage = exportEncryptedMessage(
+    await encryptMessage(keychain, publicKey, content)
+  )
+  return (
+    await clientGateway.post(
+      `/channels/${channelID}/messages`,
+      {
+        encrypted_content: encryptedMessage,
+        self_encrypted_content: selfEncryptedMessage
+      },
+      { headers: { Authorization: token } }
+    )
+  ).data
+}
+
 export const uploadFile = async (file: File) => {
   const formData = new FormData()
   formData.append('file', file)
@@ -75,7 +116,6 @@ export const uploadFile = async (file: File) => {
     'https://innstor.innatical.com',
     formData
   )
-  console.log(response.data)
   return response.data.file
 }
 
@@ -92,6 +132,35 @@ export const patchMessage = async (
     )
   ).data
 
+export const patchEncryptedMessage = async (
+  messageID: string,
+  content: string,
+  token: string,
+  keychain: Keychain,
+  publicKey: CryptoKey
+) => {
+  const selfEncryptedMessage = exportEncryptedMessage(
+    await encryptMessage(
+      keychain,
+      keychain.encryptionKeyPair.publicKey,
+      content
+    )
+  )
+  const encryptedMessage = exportEncryptedMessage(
+    await encryptMessage(keychain, publicKey, content)
+  )
+  return (
+    await clientGateway.patch(
+      `/messages/${messageID}`,
+      {
+        encrypted_content: encryptedMessage,
+        self_encrypted_content: selfEncryptedMessage
+      },
+      { headers: { Authorization: token } }
+    )
+  ).data
+}
+
 export const getMessages = async (
   _: string,
   channelID: string,
@@ -107,3 +176,31 @@ export const getMessages = async (
       }
     )
   ).data
+
+export const getMessageContent = async (
+  _: string,
+  content?: string | ExportedEncryptedMessage | null,
+  signing?: CryptoKey | null,
+  keychain?: Keychain | null
+) => {
+  if (typeof content === 'string') {
+    return content
+  } else {
+    if (!signing || !keychain || !content) return ''
+    try {
+      const decrypted = await decryptMessage(
+        keychain,
+        signing,
+        importEncryptedMessage(content)
+      )
+
+      if (decrypted.verified) {
+        return decrypted.message
+      } else {
+        return '*The sender could not be verified...*'
+      }
+    } catch {
+      return '*Message could not be decrypted*'
+    }
+  }
+}

@@ -14,7 +14,7 @@
     "@fortawesome/pro-duotone-svg-icons": "^5.15.2",
     "@fortawesome/pro-solid-svg-icons": "^5.15.2",
     "@fortawesome/react-fontawesome": "^0.1.14",
-    "@innatical/inncryption": "^0.0.11",
+    "@innatical/inncryption": "^0.0.12",
     "@innatical/innstate": "^1.0.1",
     "@innatical/markdown": "^0.3.5",
     "@innatical/mdast-util-underline": "^0.1.0",

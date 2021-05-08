@@ -20,6 +20,7 @@ import { getUnreads, Mentions } from '../user/remote'
 import { Chat } from './state'
 import { isPlatform } from '@ionic/react'
 import { Plugins } from '@capacitor/core'
+import { Keychain } from '../keychain/state'
 
 const { Keyboard } = Plugins
 
@@ -51,6 +52,8 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
     })
   )
 
+  const { keychain } = Keychain.useContainer()
+
   useEffect(() => {
     setChannelID(channel.id)
     setAutoRead(true)
@@ -74,6 +77,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       return !(
         messages?.[index + 1] &&
         message.author_id === messages?.[index + 1]?.author_id &&
+        message.content === messages?.[index + 1]?.content &&
         dayjs.utc(message?.created_at)?.valueOf() -
           dayjs.utc(messages?.[index - 1]?.created_at)?.valueOf() <
           300000
@@ -121,7 +125,6 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       unreads.data[channel.id] &&
       messages[0]?.id !== unreads.data[channel.id].read
     ) {
-      console.log('owo')
       await clientGateway.post(
         `/channels/${channel.id}/read`,
         {},
@@ -179,6 +182,8 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
 
   const length = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
 
+  if (!keychain) return <div key={channel.id} className={styles.messages}></div>
+
   return (
     <div key={channel.id} className={styles.messages} ref={ref}>
       <div key='buffer' className={styles.buffer} />
@@ -205,7 +210,12 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
               type={message.type}
               authorID={message.author_id}
               createdAt={message.created_at}
-              content={message.content}
+              content={
+                message.content ??
+                (message.author_id === id
+                  ? message.self_encrypted_content
+                  : message.encrypted_content)
+              }
               updatedAt={message.updated_at}
             />
           </React.Fragment>

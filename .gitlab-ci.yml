@@ -1,9 +1,5 @@
 image: node:latest
 
-cache:
-  paths:
-    - node_modules/
-
 build:
   stage: build
   before_script:
@@ -17,6 +13,9 @@ build:
     paths:
       - build
     expire_in: 1 week
+  cache:
+    paths:
+      - node_modules/
 
 deploy:
   stage: deploy

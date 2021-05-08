@@ -87,7 +87,7 @@ const Empty: FC = () => {
       ) : (
         <div className={styles.noFriends}>
           <h3>Looks like you don't have friends to chat with...</h3>
-          <Button type='button' onClick={() => history.push('/friends')}>
+          <Button type='button' onClick={() => history.push('/hub')}>
             Let's add some!
           </Button>
         </div>

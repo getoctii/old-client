@@ -33,8 +33,6 @@ const VoiceCard: FC<{ userID: string; speaking: boolean }> = ({
 const VoiceChannel: FC<{ channel: ChannelResponse }> = ({ channel }) => {
   const { token } = Auth.useContainer()
   const { setRoom, play, room } = Call.useContainer()
-
-  console.log(channel)
   return (
     <div className={styles.channel}>
       <Header

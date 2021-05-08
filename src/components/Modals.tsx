@@ -22,6 +22,7 @@ import NewResource from '../community/integrations/product/pages/NewResource'
 import NewVersion from '../community/integrations/product/pages/NewVersion'
 import PreviewUser from '../user/PreviewUser'
 import GenerateKeychain from '../keychain/GenerateKeychain'
+import DecryptKeychain from '../keychain/DecryptKeychain'
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
   switch (name) {
@@ -61,6 +62,8 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <PreviewUser {...props} />
     case ModalTypes.GENERATE_KEYCHAIN:
       return <GenerateKeychain />
+    case ModalTypes.DECRYPT_KEYCHAIN:
+      return <DecryptKeychain />
     default:
       return <></>
   }
@@ -97,6 +100,7 @@ const Modals: FC = () => {
                 className={styles.background}
                 onClick={() =>
                   uiStore.modal?.name !== ModalTypes.UPDATE &&
+                  uiStore.modal?.name !== ModalTypes.DECRYPT_KEYCHAIN &&
                   uiStore.clearModal()
                 }
               />
@@ -110,7 +114,9 @@ const Modals: FC = () => {
                 dragElastic={0}
                 onDrag={(e, info) => {
                   if (info.offset.y > 120) {
-                    uiStore.clearModal()
+                    uiStore.modal?.name !== ModalTypes.UPDATE &&
+                      uiStore.modal?.name !== ModalTypes.DECRYPT_KEYCHAIN &&
+                      uiStore.clearModal()
                   }
                 }}
                 variants={{

@@ -7,6 +7,7 @@ import { Plugins } from '@capacitor/core'
 import { Events, MessageTypes } from '../utils/constants'
 import { Auth } from '../authentication/state'
 import {
+  getKeychain,
   getUser,
   ParticipantsResponse,
   State,
@@ -18,8 +19,17 @@ import { Chat } from '../chat/state'
 import { parseMarkdown } from '@innatical/markdown'
 import { useSuspenseStorageItem } from '../utils/storage'
 import { MessageResponse } from '../chat/remote'
+import { Keychain } from '../keychain/state'
+import {
+  decryptMessage,
+  importEncryptedMessage,
+  importPublicKey
+} from '@innatical/inncryption'
+import { ExportedEncryptedMessage } from '@innatical/inncryption/dist/types'
 
 interface Message {
+  self_encrypted_content: ExportedEncryptedMessage
+  encrypted_content: ExportedEncryptedMessage
   id: string
   channel_id: string
   author: {
@@ -44,13 +54,12 @@ declare global {
 }
 
 const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
-  const {
-    autoRead,
-    channelID
-  } = Chat.useContainerSelector(({ autoRead, channelID }) => ({
-    autoRead,
-    channelID
-  }))
+  const { autoRead, channelID } = Chat.useContainerSelector(
+    ({ autoRead, channelID }) => ({
+      autoRead,
+      channelID
+    })
+  )
   const { id, token } = Auth.useContainer()
   const { stopTyping } = Typing.useContainer()
   const [mutedCommunities] = useSuspenseStorageItem<string[]>(
@@ -59,11 +68,75 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
   )
   const [mutedChannels] = useSuspenseStorageItem<string[]>('muted-channels', [])
   const user = useQuery(['users', id, token], getUser)
+  const { keychain } = Keychain.useContainer()
   useEffect(() => {
     if (!eventSource) return
     const handler = async (e: MessageEvent) => {
       const event = JSON.parse(e.data) as Message
       log('Events', 'purple', 'NEW_MESSAGE')
+
+      queryCache.setQueryData<MessageResponse>(['message', event.id, token], {
+        ...event,
+        author_id: event.author.id
+      })
+
+      const participants = queryCache.getQueryData<ParticipantsResponse>([
+        'participants',
+        id,
+        token
+      ])
+
+      const otherKeychain = await queryCache.fetchQuery(
+        ['keychain', event.author.id, token],
+        getKeychain
+      )
+
+      const publicKey = await queryCache.fetchQuery(
+        ['publicKey', otherKeychain?.signing.publicKey],
+        async (_: string, key: number[]) => {
+          if (!key) return undefined
+          return await importPublicKey(key, 'signing')
+        }
+      )
+
+      const content = await queryCache.fetchQuery(
+        [
+          'messageContent',
+          event?.content ??
+            (event?.author.id === id
+              ? event.self_encrypted_content
+              : event?.encrypted_content),
+          publicKey,
+          keychain
+        ],
+        async () => {
+          const content =
+            event?.content ??
+            (event?.author.id === id
+              ? event.self_encrypted_content
+              : event?.encrypted_content)
+          if (typeof content === 'string') {
+            return content
+          } else {
+            if (!publicKey || !keychain || !content) return ''
+            try {
+              const decrypted = await decryptMessage(
+                keychain,
+                publicKey,
+                importEncryptedMessage(content)
+              )
+
+              if (decrypted.verified) {
+                return decrypted.message
+              } else {
+                return '*The sender could not be verified...*'
+              }
+            } catch {
+              return '*Message could not be decrypted*'
+            }
+          }
+        }
+      )
 
       const initial = queryCache.getQueryData<MessageResponse[][]>([
         'messages',
@@ -97,6 +170,24 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
         )
       }
 
+      if (participants instanceof Array) {
+        queryCache.setQueryData<ParticipantsResponse>(
+          ['participants', id, token],
+          participants.map((participant) =>
+            participant?.conversation?.channel_id === event.channel_id
+              ? {
+                  ...participant,
+                  conversation: {
+                    ...participant.conversation,
+                    last_message_id: event.id,
+                    last_message_date: event.created_at
+                  }
+                }
+              : participant
+          )
+        )
+      }
+
       queryCache.setQueryData<Unreads>(['unreads', id, token], (initial) => {
         if (initial) {
           return {
@@ -124,34 +215,6 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
           }
         }
       })
-      queryCache.setQueryData<MessageResponse>(['message', event.id, token], {
-        ...event,
-        author_id: event.author.id
-      })
-
-      const participants = queryCache.getQueryData<ParticipantsResponse>([
-        'participants',
-        id,
-        token
-      ])
-      // maybe its this?
-      if (participants instanceof Array) {
-        queryCache.setQueryData<ParticipantsResponse>(
-          ['participants', id, token],
-          participants.map((participant) =>
-            participant?.conversation?.channel_id === event.channel_id
-              ? {
-                  ...participant,
-                  conversation: {
-                    ...participant.conversation,
-                    last_message_id: event.id,
-                    last_message_date: event.created_at
-                  }
-                }
-              : participant
-          )
-        )
-      }
 
       if (
         event.author.id !== id &&
@@ -159,7 +222,7 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
         !mutedChannels?.includes(event.channel_id) &&
         user.data?.state !== State.dnd
       ) {
-        const output = parseMarkdown(event.content, {
+        const output = parseMarkdown(content, {
           bold: (str) => str,
           italic: (str) => str,
           underlined: (str) => str,
@@ -239,7 +302,8 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
     user,
     token,
     autoRead,
-    channelID
+    channelID,
+    keychain
   ])
 }
 

@@ -90,17 +90,17 @@ ReactDOM.render(
               <UI.Provider>
                 <Typing.Provider>
                   <Call.Provider>
-                    <Chat.Provider>
-                      <Integration.Provider>
-                        <Theme.Provider>
-                          <ScrollPosition.Provider>
-                            <Keychain.Provider>
+                    <Keychain.Provider>
+                      <Chat.Provider>
+                        <Integration.Provider>
+                          <Theme.Provider>
+                            <ScrollPosition.Provider>
                               <Router />
-                            </Keychain.Provider>
-                          </ScrollPosition.Provider>
-                        </Theme.Provider>
-                      </Integration.Provider>
-                    </Chat.Provider>
+                            </ScrollPosition.Provider>
+                          </Theme.Provider>
+                        </Integration.Provider>
+                      </Chat.Provider>
+                    </Keychain.Provider>
                   </Call.Provider>
                 </Typing.Provider>
               </UI.Provider>

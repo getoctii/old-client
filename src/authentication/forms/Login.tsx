@@ -5,6 +5,7 @@ import { BarLoader } from 'react-spinners'
 import { Auth } from '../state'
 import * as Yup from 'yup'
 import { FC } from 'react'
+import { Keychain } from '../../keychain/state'
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email'),
@@ -15,6 +16,7 @@ const LoginSchema = Yup.object().shape({
 
 export const Login: FC = () => {
   const auth = Auth.useContainer()
+  const { setKeychainPassword } = Keychain.useContainer()
   return (
     <Formik
       initialValues={{ email: '', password: '' }}
@@ -27,7 +29,10 @@ export const Login: FC = () => {
         }
         try {
           const response = await login(values)
-          if (response) auth.setToken(response.authorization)
+          if (response) {
+            auth.setToken(response.authorization)
+            setKeychainPassword(values.password)
+          }
         } catch (e) {
           const errors = e.response.data.errors
           const userErrors: { email?: string; password?: string } = {}

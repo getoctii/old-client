@@ -7,11 +7,12 @@ import {
   faCopy,
   faTrashAlt,
   IconDefinition,
-  faPencilAlt
+  faPencilAlt,
+  faLock
 } from '@fortawesome/pro-solid-svg-icons'
 import { Plugins } from '@capacitor/core'
 import { Auth } from '../authentication/state'
-import { useMutation } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import {
   clientGateway,
   MessageTypes,
@@ -30,7 +31,7 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
-import { patchMessage } from './remote'
+import { patchEncryptedMessage, patchMessage } from './remote'
 import Editor from '../components/Editor'
 import { Chat } from './state'
 import { withHistory } from 'slate-history'
@@ -42,6 +43,14 @@ import Mention from './Mention'
 import { Permission } from '../utils/permissions'
 import { useUser } from '../user/state'
 import File from './embeds/File'
+import { ExportedEncryptedMessage } from '@innatical/inncryption/dist/types'
+import {
+  decryptMessage,
+  importEncryptedMessage,
+  importPublicKey
+} from '@innatical/inncryption'
+import { Keychain } from '../keychain/state'
+import { getKeychain } from '../user/remote'
 
 const { Clipboard } = Plugins
 dayjs.extend(dayjsUTC)
@@ -60,12 +69,15 @@ const EditBox: FC<{
   id: string
   content: string
   onDismiss: () => void
-}> = ({ id, content, onDismiss }) => {
+  encrypted: boolean
+}> = ({ id, content, onDismiss, encrypted }) => {
   const { token } = Auth.useContainer()
   const editor = useMemo(
     () => withHistory(withReact(withMentions(createEditor()))),
     []
   )
+  const { keychain } = Keychain.useContainer()
+  const { publicEncryptionKey } = Chat.useContainer()
   return (
     <div className={styles.innerInput}>
       <Editor
@@ -85,7 +97,17 @@ const EditBox: FC<{
         onEnter={async (content) => {
           if (!token || !content) return
           onDismiss()
-          await patchMessage(id, content, token)
+          if (encrypted) {
+            await patchEncryptedMessage(
+              id,
+              content,
+              token,
+              keychain!,
+              publicEncryptionKey!
+            )
+          } else {
+            await patchMessage(id, content, token)
+          }
         }}
       />
 
@@ -99,10 +121,51 @@ const MessageView: FC<{
   authorID: string
   createdAt: string
   updatedAt: string
-  content: string
+  content?: string | ExportedEncryptedMessage
   type: MessageTypes
   primary: boolean
 }> = memo(({ id, authorID, createdAt, primary, content, type }) => {
+  const auth = Auth.useContainer()
+
+  const { keychain } = Keychain.useContainer()
+  const { data: otherKeychain } = useQuery(
+    ['keychain', authorID, auth.token],
+    getKeychain
+  )
+
+  const { data: publicKey } = useQuery(
+    ['publicKey', otherKeychain?.signing.publicKey],
+    async (_: string, key: number[]) => {
+      if (!key) return undefined
+      return await importPublicKey(key, 'signing')
+    }
+  )
+
+  const { data: messageContent } = useQuery(
+    ['messageContent', content, publicKey, keychain],
+    async () => {
+      if (typeof content === 'string') {
+        return content
+      } else {
+        if (!publicKey || !keychain || !content) return ''
+        try {
+          const decrypted = await decryptMessage(
+            keychain,
+            publicKey,
+            importEncryptedMessage(content)
+          )
+
+          if (decrypted.verified) {
+            return decrypted.message
+          } else {
+            return '*The sender could not be verified...*'
+          }
+        } catch {
+          return '*Message could not be decrypted*'
+        }
+      }
+    }
+  )
   const uiStore = UI.useContainer()
   const { editingMessageID, setEditingMessageID } = Chat.useContainerSelector(
     ({ editingMessageID, setEditingMessageID }) => ({
@@ -110,7 +173,6 @@ const MessageView: FC<{
       setEditingMessageID
     })
   )
-  const auth = Auth.useContainer()
   const ui = UI.useContainerSelector(({ setModal }) => ({
     setModal
   }))
@@ -137,7 +199,7 @@ const MessageView: FC<{
         danger: false,
         onClick: async () => {
           await Clipboard.write({
-            string: content
+            string: messageContent
           })
         }
       },
@@ -183,15 +245,15 @@ const MessageView: FC<{
     return items
   }, [
     authorID,
-    content,
     deleteMessage,
     id,
     uiStore,
     auth.id,
     setEditingMessageID,
-    hasPermissions
+    hasPermissions,
+    messageContent
   ])
-  const output = useMarkdown(content, {
+  const output = useMarkdown(messageContent!, {
     bold: (str, key) => <strong key={key}>{str}</strong>,
     italic: (str, key) => <i key={key}>{str}</i>,
     underlined: (str, key) => <u key={key}>{str}</u>,
@@ -221,7 +283,6 @@ const MessageView: FC<{
           )
         }
       } else if (File.isFile(str)) {
-        console.log(str)
         return {
           link: <></>,
           embed: <File.Embed key={key} url={str} />
@@ -275,7 +336,7 @@ const MessageView: FC<{
   return (
     <Context.Wrapper
       title={`${user?.username || 'Unknown'}'s Message`}
-      message={content}
+      message={messageContent}
       key={id}
       items={getItems()}
     >
@@ -330,6 +391,11 @@ const MessageView: FC<{
                     />
                   )
                 )}
+                {typeof content === 'object' ? (
+                  <FontAwesomeIcon className={styles.badge} icon={faLock} />
+                ) : (
+                  <></>
+                )}
               </span>
               <span className={styles.time}>
                 {dayjs.utc(createdAt).local().calendar()}
@@ -339,8 +405,9 @@ const MessageView: FC<{
           {editingMessageID === id ? (
             <EditBox
               id={id}
-              content={content}
+              content={messageContent!}
               onDismiss={() => setEditingMessageID(undefined)}
+              encrypted={typeof content === 'object' ? true : false}
             />
           ) : (
             <p key={id}>{main}</p>
