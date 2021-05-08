@@ -1,4 +1,10 @@
-import { encryptMessage, exportEncryptedMessage } from '@innatical/inncryption'
+import {
+  decryptMessage,
+  encryptMessage,
+  exportEncryptedMessage,
+  importEncryptedMessage,
+  importPublicKey
+} from '@innatical/inncryption'
 import {
   ExportedEncryptedMessage,
   Keychain
@@ -143,3 +149,28 @@ export const getMessages = async (
       }
     )
   ).data
+
+export const getMessageContent = async (
+  _: string,
+  content?: string | ExportedEncryptedMessage | null,
+  signing?: CryptoKey | null,
+  keychain?: Keychain | null
+) => {
+  if (typeof content === 'string') {
+    return content
+  } else {
+    if (!signing || !keychain || !content) return ''
+    console.log('uwu', signing, keychain, content)
+    const decrypted = await decryptMessage(
+      keychain,
+      signing,
+      importEncryptedMessage(content)
+    )
+
+    if (decrypted.verified) {
+      return decrypted.message
+    } else {
+      return '*The sender could not be verified...*'
+    }
+  }
+}

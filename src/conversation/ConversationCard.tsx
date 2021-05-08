@@ -15,13 +15,14 @@ import { Auth } from '../authentication/state'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import {
   fetchManyUsers,
+  getKeychain,
   getMentions,
   getUnreads,
   Mentions,
   State
 } from '../user/remote'
 import { getMessage } from '../message/remote'
-import { getChannel } from '../chat/remote'
+import { getChannel, getMessageContent } from '../chat/remote'
 import { Clipboard } from '@capacitor/core'
 import Context from '../components/Context'
 import { ContextMenuItems } from '../state/ui'
@@ -29,6 +30,16 @@ import useMarkdown from '@innatical/markdown'
 import { ErrorBoundary } from 'react-error-boundary'
 import Mention from '../chat/Mention'
 import { useSuspenseStorageItem } from '../utils/storage'
+import { Keychain } from '../keychain/state'
+import {
+  ExportedEncryptedMessage,
+  ExportedProtectedKeychain
+} from '@innatical/inncryption/dist/types'
+import {
+  decryptMessage,
+  importEncryptedMessage,
+  importPublicKey
+} from '@innatical/inncryption'
 
 const ConversationCardView: FC<{
   people: string[]
@@ -52,6 +63,55 @@ const ConversationCardView: FC<{
     ['message', lastMessageID, token],
     getMessage
   )
+
+  const { keychain } = Keychain.useContainer()
+  const { data: otherKeychain } = useQuery(
+    ['keychain', message?.author_id, token],
+    getKeychain
+  )
+  const { data: otherPublicKey } = useQuery(
+    ['publicKey', otherKeychain?.signing.publicKey],
+    async (_: string, key: number[]) => {
+      if (!key) return undefined
+      return await importPublicKey(key, 'signing')
+    }
+  )
+
+  const { data: messageContent } = useQuery(
+    [
+      'messageContent',
+      message?.content ??
+        (message?.author_id === id
+          ? message.self_encrypted_content
+          : message?.encrypted_content),
+      otherPublicKey,
+      keychain
+    ],
+    async () => {
+      const content =
+        message?.content ??
+        (message?.author_id === id
+          ? message.self_encrypted_content
+          : message?.encrypted_content)
+      if (typeof content === 'string') {
+        return content
+      } else {
+        if (!otherPublicKey || !keychain || !content) return ''
+        const decrypted = await decryptMessage(
+          keychain,
+          otherPublicKey,
+          importEncryptedMessage(content)
+        )
+
+        if (decrypted.verified) {
+          return decrypted.message
+        } else {
+          return '*The sender could not be verified...*'
+        }
+      }
+    }
+  )
+
   const unreads = useQuery(['unreads', id, token], getUnreads)
   const mentions = useQuery(['mentions', id, token], getMentions)
 
@@ -150,7 +210,7 @@ const ConversationCardView: FC<{
     people?.length
   ])
 
-  const output = useMarkdown(message?.content || '', {
+  const output = useMarkdown(messageContent || '', {
     bold: (str, key) => <strong key={key}>{str}</strong>,
     italic: (str, key) => <i key={key}>{str}</i>,
     underlined: (str, key) => <u key={key}>{str}</u>,
@@ -196,6 +256,8 @@ const ConversationCardView: FC<{
       ]
     ]
   })
+
+  console.log({ owo: messageContent === 'f', output })
 
   const { data: users } = useQuery(['users', people, token], fetchManyUsers)
   return (

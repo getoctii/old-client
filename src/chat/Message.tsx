@@ -30,7 +30,7 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
-import { patchMessage } from './remote'
+import { getMessageContent, patchMessage } from './remote'
 import Editor from '../components/Editor'
 import { Chat } from './state'
 import { withHistory } from 'slate-history'
@@ -42,7 +42,10 @@ import Mention from './Mention'
 import { Permission } from '../utils/permissions'
 import { useUser } from '../user/state'
 import File from './embeds/File'
-import { ExportedEncryptedMessage } from '@innatical/inncryption/dist/types'
+import {
+  ExportedEncryptedMessage,
+  Keychain as KeychainType
+} from '@innatical/inncryption/dist/types'
 import { decryptMessage, importEncryptedMessage } from '@innatical/inncryption'
 import { Keychain } from '../keychain/state'
 
@@ -109,14 +112,15 @@ const MessageView: FC<{
 }> = memo(({ id, authorID, createdAt, primary, content, type, signing }) => {
   const { keychain } = Keychain.useContainer()
   const { data: messageContent } = useQuery(
-    ['messageContent', content],
-    async (_: string, content: string | ExportedEncryptedMessage) => {
+    ['messageContent', content, signing, keychain],
+    async () => {
       if (typeof content === 'string') {
         return content
       } else {
+        if (!signing || !keychain || !content) return ''
         const decrypted = await decryptMessage(
-          keychain!,
-          signing!,
+          keychain,
+          signing,
           importEncryptedMessage(content)
         )
 
@@ -208,13 +212,13 @@ const MessageView: FC<{
     return items
   }, [
     authorID,
-    content,
     deleteMessage,
     id,
     uiStore,
     auth.id,
     setEditingMessageID,
-    hasPermissions
+    hasPermissions,
+    messageContent
   ])
   const output = useMarkdown(messageContent!, {
     bold: (str, key) => <strong key={key}>{str}</strong>,
