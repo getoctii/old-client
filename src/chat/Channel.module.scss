@@ -19,6 +19,7 @@
     flex-direction: row;
     align-items: center;
     backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
     position: absolute;
     width: 100%;
 

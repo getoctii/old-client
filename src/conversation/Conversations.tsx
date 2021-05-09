@@ -1,4 +1,4 @@
-import React, {
+import {
   memo,
   Suspense,
   useEffect,
@@ -144,9 +144,9 @@ export const Conversations: FC = () => {
         <h3>Messages</h3>
         <NewConversation />
         <div className={styles.list}>
-          <React.Suspense fallback={<ConversationsPlaceholder />}>
+          <Suspense fallback={<ConversationsPlaceholder />}>
             <ConversationList />
-          </React.Suspense>
+          </Suspense>
         </div>
       </div>
     </StatusBar>

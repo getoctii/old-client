@@ -7,6 +7,7 @@
   padding: 0.5rem;
   border-radius: 10px;
   backdrop-filter: blur(35px);
+  -webkit-backdrop-filter: blur(35px);
 
   @-moz-document url-prefix() {
     // NOTE: Fireshit disables blur by default

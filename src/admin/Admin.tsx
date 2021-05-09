@@ -16,12 +16,12 @@ import {
   faNewspaper,
   faStreetView
 } from '@fortawesome/pro-duotone-svg-icons'
-import GitInfo from 'react-git-info/macro'
-import dayjs from 'dayjs'
+// import GitInfo from 'react-git-info/macro'
+// import dayjs from 'dayjs'
 import Queue from './store/Queue'
 import StatusBar from '../components/StatusBar'
 
-const gitInfo = GitInfo()
+// const gitInfo = GitInfo()
 
 const Admin: FC = () => {
   const isMobile = useMedia('(max-width: 740px)')
@@ -68,7 +68,7 @@ const Admin: FC = () => {
         <div className={styles.admin}>
           {!isMobile && (
             <Sideview name={'Admin'} tabs={tabs}>
-              <p className={styles.buildInfo}>
+              {/* <p className={styles.buildInfo}>
                 <strong>Branch:</strong> <kbd>{gitInfo.branch}</kbd>
                 <br />
                 <strong>Hash:</strong> <kbd>{gitInfo.commit.shortHash}</kbd>
@@ -79,7 +79,7 @@ const Admin: FC = () => {
                 <strong>Message:</strong>
                 <br />
                 <kbd>{gitInfo.commit.message}</kbd>
-              </p>
+              </p> */}
             </Sideview>
           )}
           <div className={styles.pages}>
@@ -93,7 +93,7 @@ const Admin: FC = () => {
                     exact
                     component={() => (
                       <Sideview name={'Admin'} tabs={tabs}>
-                        <p className={styles.buildInfo}>
+                        {/* <p className={styles.buildInfo}>
                           <strong>Branch:</strong> <kbd>{gitInfo.branch}</kbd>
                           <br />
                           <strong>Hash:</strong>{' '}
@@ -105,7 +105,7 @@ const Admin: FC = () => {
                           <strong>Message:</strong>
                           <br />
                           <kbd>{gitInfo.commit.message}</kbd>
-                        </p>
+                        </p> */}
                       </Sideview>
                     )}
                   />

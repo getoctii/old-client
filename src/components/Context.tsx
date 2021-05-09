@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { isPlatform } from '@ionic/react'
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useState, Fragment } from 'react'
 import { ContextMenuItems, UI } from '../state/ui'
 import styles from './Context.module.scss'
 import { ActionSheetOptionStyle, Plugins } from '@capacitor/core'
@@ -56,7 +56,7 @@ export const ContextMenu: FC<{
       }}
     >
       {items.map(({ text, icon, danger, onClick }, index) => (
-        <React.Fragment key={index}>
+        <Fragment key={index}>
           {danger && <hr />}
           <div
             className={danger ? styles.danger : ''}
@@ -72,7 +72,7 @@ export const ContextMenu: FC<{
             <span>{text}</span>
             <FontAwesomeIcon icon={icon} fixedWidth />
           </div>
-        </React.Fragment>
+        </Fragment>
       ))}
     </div>
   )

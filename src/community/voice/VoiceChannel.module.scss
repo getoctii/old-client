@@ -22,6 +22,8 @@
     height: 100%;
     opacity: 0;
     transition: opacity 0.2s ease-in-out, backdrop-filter 0.5s ease-in-out;
+    transition: opacity 0.2s ease-in-out,
+      -webkit-backdrop-filter 0.5s ease-in-out;
     align-items: center;
     justify-content: center;
     margin: 0;
@@ -30,6 +32,7 @@
     &:hover {
       opacity: 1;
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
 
     h1 {

@@ -1,4 +1,4 @@
-import React, { FC, memo, Suspense, useCallback, useMemo } from 'react'
+import { FC, memo, Suspense, useCallback, useMemo } from 'react'
 import styles from './Message.module.scss'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
