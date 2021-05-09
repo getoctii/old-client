@@ -3,7 +3,7 @@ import { StrictMode, Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import './index.scss'
 import 'typeface-inter'
-import * as serviceWorkerRegistration from './utils/serviceWorkerRegistration'
+// import * as serviceWorkerRegistration from './utils/serviceWorkerRegistration'
 import { Router } from './Router'
 import { ReactQueryDevtools } from 'react-query-devtools'
 import { Auth } from './authentication/state'
@@ -115,22 +115,22 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-if (!isPlatform('capacitor')) {
-  serviceWorkerRegistration.register({
-    onUpdate: (registration) => {
-      const waitingServiceWorker = registration.waiting
-      if (waitingServiceWorker) {
-        waitingServiceWorker.addEventListener('statechange', (event) => {
-          // @ts-ignore
-          if (event?.target?.state === 'activated') {
-            window.location.reload()
-          }
-        })
-      }
-      // @ts-ignore
-      window.waitingServiceWorker = waitingServiceWorker
-      // @ts-ignore
-      window.setModal({ name: ModalTypes.UPDATE })
-    }
-  })
-}
+// if (!isPlatform('capacitor')) {
+//   serviceWorkerRegistration.register({
+//     onUpdate: (registration) => {
+//       const waitingServiceWorker = registration.waiting
+//       if (waitingServiceWorker) {
+//         waitingServiceWorker.addEventListener('statechange', (event) => {
+//           // @ts-ignore
+//           if (event?.target?.state === 'activated') {
+//             window.location.reload()
+//           }
+//         })
+//       }
+//       // @ts-ignore
+//       window.waitingServiceWorker = waitingServiceWorker
+//       // @ts-ignore
+//       window.setModal({ name: ModalTypes.UPDATE })
+//     }
+//   })
+// }
