@@ -281,6 +281,7 @@ const EditorView: FC<{
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (
+        !ReactEditor.isFocused(editor) &&
         !isMobile &&
         !isPlatform('ipad') &&
         (event.target as any)?.type !== 'text' &&
