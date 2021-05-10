@@ -33,13 +33,11 @@
 }
 
 .imagePreview {
-  img {
-    border-radius: 10px;
-    object-fit: contain;
-    height: auto;
-    width: 100%;
-    display: block;
-  }
+  border-radius: 10px;
+  object-fit: contain;
+  height: auto;
+  width: 100%;
+  display: block;
 }
 
 .imageEmbed {
