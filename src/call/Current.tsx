@@ -39,7 +39,10 @@ const Current: FC = () => {
 
   const { data: channel } = useQuery(
     ['channel', room?.channelID, token],
-    getChannel
+    getChannel,
+    {
+      enabled: !!room?.channelID
+    }
   )
 
   return (
