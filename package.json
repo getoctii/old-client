@@ -79,7 +79,8 @@
     "build": "VITE_APP_GATEWAY_URL=https://gateway.octii.chat tsc && vite build",
     "ios": "VITE_APP_GATEWAY_URL=https://gateway.octii.chat ionic capacitor run ios -l --external",
     "build:ios": "VITE_APP_GATEWAY_URL=https://gateway.octii.chat ionic capacitor build ios",
-    "android": "ionic capacitor run android -l --external"
+    "android": "ionic capacitor run android -l --external",
+    "ionic:build": "VITE_APP_GATEWAY_URL=https://gateway.octii.chat tsc && vite build"
   },
   "eslintConfig": {
     "extends": "react-app"
