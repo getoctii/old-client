@@ -5,7 +5,6 @@ import { FC } from 'react'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
 import Button from '../../components/Button'
-import Modal from '../../components/Modal'
 import { UI } from '../../state/ui'
 import { ModalTypes } from '../../utils/constants'
 import styles from './File.module.scss'
@@ -16,16 +15,8 @@ const isFile = (url: string) =>
 const FilePreview: FC<{ url: string }> = ({ url }) => {
   const ui = UI.useContainer()
   return (
-    <div className={styles.imagePreview}>
-      <Modal
-        title={'Image'}
-        icon={faTimesCircle}
-        onDismiss={() => ui.clearModal()}
-      >
-        <div className={styles.image}>
-          <img alt={url} src={url} loading='lazy' />
-        </div>
-      </Modal>
+    <div className={styles.image}>
+      <img alt={url} src={url} loading='lazy' />
     </div>
   )
 }
