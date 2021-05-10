@@ -77,7 +77,7 @@ const VoiceChannel: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       />
       <div className={styles.grid}>
         {channel.voice_users?.map((id) => (
-          <VoiceCard userID={id} speaking={false} />
+          <VoiceCard userID={id} speaking={false} key={id} />
         ))}
       </div>
     </div>
