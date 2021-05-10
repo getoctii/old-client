@@ -1,10 +1,11 @@
-import React, {
+import {
   useState,
   useEffect,
   useRef,
   useCallback,
   useMemo,
-  FC
+  FC,
+  Fragment
 } from 'react'
 import styles from './Messages.module.scss'
 import { queryCache, useInfiniteQuery, useQuery } from 'react-query'
@@ -77,7 +78,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       return !(
         messages?.[index + 1] &&
         message.author_id === messages?.[index + 1]?.author_id &&
-        message.content === messages?.[index + 1]?.content &&
+        !!message.content === !!messages?.[index + 1]?.content &&
         dayjs.utc(message?.created_at)?.valueOf() -
           dayjs.utc(messages?.[index - 1]?.created_at)?.valueOf() <
           300000
@@ -194,7 +195,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       />
       {messages?.map((message, index) =>
         message ? (
-          <React.Fragment key={message.id}>
+          <Fragment key={message.id}>
             {unreads.data &&
               unreads.data[channel.id]?.read === message.id &&
               unreads.data[channel.id]?.read !== messages[0]?.id && (
@@ -218,7 +219,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
               }
               updatedAt={message.updated_at}
             />
-          </React.Fragment>
+          </Fragment>
         ) : (
           <></>
         )

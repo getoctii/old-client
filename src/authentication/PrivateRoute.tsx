@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { Auth } from './state'
 import { Route, Redirect } from 'react-router-dom'
 import { Suspense } from 'react'

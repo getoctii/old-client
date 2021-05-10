@@ -1,4 +1,4 @@
-import React, { memo, Suspense, useCallback, useMemo } from 'react'
+import { memo, Suspense, useCallback, useMemo } from 'react'
 import styles from './Sidebar.module.scss'
 import { UI } from '../state/ui'
 import { Auth } from '../authentication/state'

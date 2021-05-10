@@ -1,8 +1,9 @@
-import React from 'react'
+import './polyfills'
+import { StrictMode, Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import './index.scss'
 import 'typeface-inter'
-import * as serviceWorkerRegistration from './utils/serviceWorkerRegistration'
+// import * as serviceWorkerRegistration from './utils/serviceWorkerRegistration'
 import { Router } from './Router'
 import { ReactQueryDevtools } from 'react-query-devtools'
 import { Auth } from './authentication/state'
@@ -30,12 +31,12 @@ import Integration from './integrations/state'
 import { Keychain } from './keychain/state'
 smoothscroll.polyfill()
 
-if (process.env.NODE_ENV === 'production') {
+if (import.meta.env.PROD) {
   Sentry.init({
     dsn:
       'https://6f9ffeb08c814b15971d8241698bee28@o271654.ingest.sentry.io/5541960',
     integrations: [new SentryRRWeb(), new Integrations.BrowserTracing()],
-    release: process.env.REACT_APP_VERSION,
+    release: import.meta.env.VITE_APP_VERSION,
     tracesSampleRate: 0.5
   })
 }
@@ -63,7 +64,7 @@ document.oncontextmenu = (event) => {
 }
 
 ReactDOM.render(
-  <React.StrictMode>
+  <StrictMode>
     <ReactQueryConfigProvider
       config={{
         shared: {
@@ -84,7 +85,7 @@ ReactDOM.render(
           error: AxiosError
         }) => <Error resetErrorBoundary={resetError} error={error} />}
       >
-        <React.Suspense fallback={<Loader />}>
+        <Suspense fallback={<Loader />}>
           <HelmetProvider>
             <Auth.Provider>
               <UI.Provider>
@@ -107,29 +108,29 @@ ReactDOM.render(
             </Auth.Provider>
           </HelmetProvider>
           <ReactQueryDevtools />
-        </React.Suspense>
+        </Suspense>
       </Sentry.ErrorBoundary>
     </ReactQueryConfigProvider>
-  </React.StrictMode>,
+  </StrictMode>,
   document.getElementById('root')
 )
 
-if (!isPlatform('capacitor')) {
-  serviceWorkerRegistration.register({
-    onUpdate: (registration) => {
-      const waitingServiceWorker = registration.waiting
-      if (waitingServiceWorker) {
-        waitingServiceWorker.addEventListener('statechange', (event) => {
-          // @ts-ignore
-          if (event?.target?.state === 'activated') {
-            window.location.reload()
-          }
-        })
-      }
-      // @ts-ignore
-      window.waitingServiceWorker = waitingServiceWorker
-      // @ts-ignore
-      window.setModal({ name: ModalTypes.UPDATE })
-    }
-  })
-}
+// if (!isPlatform('capacitor')) {
+//   serviceWorkerRegistration.register({
+//     onUpdate: (registration) => {
+//       const waitingServiceWorker = registration.waiting
+//       if (waitingServiceWorker) {
+//         waitingServiceWorker.addEventListener('statechange', (event) => {
+//           // @ts-ignore
+//           if (event?.target?.state === 'activated') {
+//             window.location.reload()
+//           }
+//         })
+//       }
+//       // @ts-ignore
+//       window.waitingServiceWorker = waitingServiceWorker
+//       // @ts-ignore
+//       window.setModal({ name: ModalTypes.UPDATE })
+//     }
+//   })
+// }

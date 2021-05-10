@@ -1,4 +1,4 @@
-import React, { FC, CSSProperties } from 'react'
+import { FC, CSSProperties } from 'react'
 import styles from './Button.module.scss'
 
 type OnClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void

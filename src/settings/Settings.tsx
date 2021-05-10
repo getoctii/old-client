@@ -17,14 +17,14 @@ import {
   faUserShield
 } from '@fortawesome/pro-duotone-svg-icons'
 import Sideview from '../components/Sideview'
-import { isPlatform } from '@ionic/react'
-import GitInfo from 'react-git-info/macro'
+// import { isPlatform } from '@ionic/react'
+// import GitInfo from 'react-git-info/macro'
 import { queryCache } from 'react-query'
 import { Plugins } from '@capacitor/core'
 import Purchases from './Purchases'
 import StatusBar from '../components/StatusBar'
 
-const gitInfo = GitInfo()
+// const gitInfo = GitInfo()
 
 const Settings: FC = () => {
   const auth = Auth.useContainer()
@@ -78,10 +78,10 @@ const Settings: FC = () => {
         {!isMobile && (
           <Sideview name={'Settings'} tabs={tabs}>
             <div className={styles.info}>
-              <p className={styles.buildInfo}>
+              {/* <p className={styles.buildInfo}>
                 {isPlatform('ios') ? 'iOS' : gitInfo.branch || 'stable'}{' '}
                 <kbd>{gitInfo.commit.shortHash}</kbd>
-              </p>
+              </p> */}
               <div
                 className={styles.logout}
                 onClick={async () => {
@@ -107,10 +107,10 @@ const Settings: FC = () => {
                 component={() => (
                   <Sideview name={'Settings'} tabs={tabs}>
                     <div className={styles.info}>
-                      <p className={styles.buildInfo}>
+                      {/* <p className={styles.buildInfo}>
                         {isPlatform('ios') ? 'iOS' : gitInfo.branch || 'stable'}{' '}
                         <kbd>{gitInfo.commit.shortHash}</kbd>
-                      </p>
+                      </p> */}
                       <div
                         className={styles.logout}
                         onClick={async () => {

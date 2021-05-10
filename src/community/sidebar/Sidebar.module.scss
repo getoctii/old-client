@@ -108,6 +108,7 @@
   padding: 0.5rem;
   border-radius: 10px;
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 
   .menuItem {
     cursor: pointer;

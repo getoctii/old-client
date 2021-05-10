@@ -1,4 +1,4 @@
-import React, { FC, Suspense, useEffect, useState } from 'react'
+import { FC, Suspense, useEffect, useState } from 'react'
 import { Auth } from '../authentication/state'
 import Button from '../components/Button'
 import Input from '../components/Input'
