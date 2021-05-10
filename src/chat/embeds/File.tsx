@@ -15,7 +15,7 @@ const isFile = (url: string) =>
 const FilePreview: FC<{ url: string }> = ({ url }) => {
   const ui = UI.useContainer()
   return (
-    <div className={styles.image}>
+    <div className={styles.imagePreview}>
       <img alt={url} src={url} loading='lazy' />
     </div>
   )
