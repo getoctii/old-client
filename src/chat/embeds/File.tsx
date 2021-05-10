@@ -1,4 +1,4 @@
-import { faFileAlt, faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
+import { faFileAlt } from '@fortawesome/pro-duotone-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
 import { FC } from 'react'
