@@ -11,7 +11,7 @@ build:
     - yarn build
   artifacts:
     paths:
-      - build
+      - dist
     expire_in: 1 week
   cache:
     paths:
@@ -34,12 +34,12 @@ deploy:
     url: chat.innatical.com
   script:
     - mkdir maps
-    - mv build/static/js/*.js.map maps
+    - mv dist/static/js/*.js.map maps
     - export VITE_APP_VERSION=`sentry-cli releases propose-version`
     - sentry-cli releases new "$VITE_APP_VERSION"
     - sentry-cli releases set-commits "$VITE_APP_VERSION" --auto
     - sentry-cli releases files "$VITE_APP_VERSION" upload-sourcemaps ./maps --url-prefix '~/static/js'
     - sentry-cli releases finalize "$VITE_APP_VERSION"
-    - rsync -hrvz --delete --exclude=_ -e "ssh" --progress build/ gitlab_deploy@10.0.0.1:/var/www/chat.innatical.com
+    - rsync -hrvz --delete --exclude=_ -e "ssh" --progress dist/ gitlab_deploy@10.0.0.1:/var/www/chat.innatical.com
   only:
     - master
