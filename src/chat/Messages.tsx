@@ -53,7 +53,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
     })
   )
 
-  const { keychain } = Keychain.useContainer()
+  const { keychain, hasKeychain } = Keychain.useContainer()
 
   useEffect(() => {
     setChannelID(channel.id)
@@ -183,7 +183,19 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
 
   const length = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
 
-  if (!keychain) return <div key={channel.id} className={styles.messages}></div>
+  if (!keychain)
+    return (
+      <div key={channel.id} className={styles.noKeychain}>
+        {!hasKeychain ? (
+          <>
+            <h1>No Keychain Found</h1>
+            <h2>Please generate one in settings</h2>
+          </>
+        ) : (
+          <></>
+        )}
+      </div>
+    )
 
   return (
     <div key={channel.id} className={styles.messages} ref={ref}>
