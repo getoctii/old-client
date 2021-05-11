@@ -1,4 +1,4 @@
-import { faFileAlt, faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
+import { faFileAlt } from '@fortawesome/pro-duotone-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
 import { FC } from 'react'
@@ -13,11 +13,8 @@ const isFile = (url: string) =>
   /^https:\/\/innstor\.innatical\.com\/[A-Za-z0-9_-]+/g.test(url)
 
 const FilePreview: FC<{ url: string }> = ({ url }) => {
-  const ui = UI.useContainer()
   return (
-    <div className={styles.imagePreview}>
-      <img alt={url} src={url} loading='lazy' />
-    </div>
+    <img alt={url} src={url} loading='lazy' className={styles.imagePreview} />
   )
 }
 
