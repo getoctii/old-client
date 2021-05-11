@@ -31,9 +31,12 @@
     max-width: 50%;
     position: relative;
     z-index: 10;
-    border-radius: 16px;
     background: var(--neko-modal-foreground);
     overflow-y: auto;
+  }
+
+  .rounded {
+    border-radius: 16px;
   }
 
   @media (max-width: 740px) {

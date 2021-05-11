@@ -58,6 +58,7 @@ const FileEmbed: FC<{ url: string }> = ({ url }: { url: string }) => {
         onClick={() => {
           ui.setModal({
             name: ModalTypes.PREVIEW_IMAGE,
+            rounded: false,
             props: { url }
           })
         }}

@@ -153,7 +153,9 @@ const Modals: FC = () => {
                   },
                   exit: 'initialPopover'
                 })}
-                className={styles.content}
+                className={`${styles.content} ${
+                  uiStore.modal.rounded ?? true ? styles.rounded : ''
+                }`}
               >
                 <ResolveModal {...uiStore.modal} />
               </motion.div>
