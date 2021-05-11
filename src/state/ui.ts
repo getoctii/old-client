@@ -14,7 +14,7 @@ export type ContextMenuItems = ContextMenuItem[]
 
 const useUI = () => {
   const [modal, setModal] = useState<
-    { name: ModalTypes; props?: any } | undefined
+    { name: ModalTypes; rounded?: boolean; props?: any } | undefined
   >(undefined)
   const [contextMenu, setContextMenu] = useState<{
     position: { top?: number; left: number; bottom?: number }
