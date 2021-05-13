@@ -16,7 +16,7 @@ const RegisterSchema = Yup.object().shape({
     .min(3, 'Too short, username must be at least 3 characters.')
     .max(16, 'Too long, username must be under 16 characters.')
     .matches(/^[a-zA-Z0-9]+$/, 'Username must be alphanumeric.'),
-  betaCode: Yup.string().uuid('Invalid Beta Code')
+  betaCode: Yup.string().required('Beta code is required')
 })
 
 export const Register: FC = () => {
