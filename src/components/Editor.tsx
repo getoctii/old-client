@@ -21,6 +21,7 @@ import Mention from '../chat/Mention'
 import { ChannelResponse } from '../community/remote'
 import { isPlatform } from '@ionic/react'
 import styles from './Editor.module.scss'
+import { UI } from '../state/ui'
 
 const Leaf: FC<RenderLeafProps> = ({ attributes, children, leaf }) => {
   return leaf.underline ? (
@@ -278,9 +279,12 @@ const EditorView: FC<{
     setSelected(0)
   }, [target, usersFiltered, channelsFiltered])
 
+  const ui = UI.useContainer()
+
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (
+        !ui.modal &&
         !ReactEditor.isFocused(editor) &&
         !isMobile &&
         !isPlatform('ipad') &&
@@ -408,7 +412,7 @@ const EditorView: FC<{
           }}
         >
           <Editable
-            autoFocus={!isMobile && !isPlatform('ipad')}
+            autoFocus={!ui.modal && !isMobile && !isPlatform('ipad')}
             className={`${styles.input} ${inputClassName}`}
             autoCapitalize={isMobile ? 'true' : 'false'}
             spellCheck
