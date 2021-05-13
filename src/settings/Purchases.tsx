@@ -44,7 +44,16 @@ const Purchases: FC = () => {
             description={
               'You can get themes from the store by clicking the button! Anything you get from the store will show up here.'
             }
-            action={<Button type='button'>Go to store</Button>}
+            action={
+              <Button
+                type='button'
+                onClick={() => {
+                  history.push('/hub/store')
+                }}
+              >
+                Go to store
+              </Button>
+            }
           />
         )}
       </List.View>
