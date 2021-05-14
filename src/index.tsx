@@ -29,6 +29,7 @@ import { isPlatform } from '@ionic/react'
 import { ModalTypes } from './utils/constants'
 import Integration from './integrations/state'
 import { Keychain } from './keychain/state'
+import { Relationships } from './friends/relationships'
 smoothscroll.polyfill()
 
 if (import.meta.env.PROD) {
@@ -95,9 +96,11 @@ ReactDOM.render(
                       <Chat.Provider>
                         <Integration.Provider>
                           <Theme.Provider>
-                            <ScrollPosition.Provider>
-                              <Router />
-                            </ScrollPosition.Provider>
+                            <Relationships.Provider>
+                              <ScrollPosition.Provider>
+                                <Router />
+                              </ScrollPosition.Provider>
+                            </Relationships.Provider>
                           </Theme.Provider>
                         </Integration.Provider>
                       </Chat.Provider>

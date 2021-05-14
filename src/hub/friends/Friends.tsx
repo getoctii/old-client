@@ -3,44 +3,17 @@ import styles from './Friends.module.scss'
 import FriendCard from './FriendCard'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserClock } from '@fortawesome/pro-duotone-svg-icons'
-import { useQuery } from 'react-query'
-import { Auth } from '../../authentication/state'
-import { RelationshipTypes, getRelationships } from './remote'
 import EmptyFriends from './EmptyFriends'
 import { faPlus } from '@fortawesome/pro-solid-svg-icons'
 import { UI } from '../../state/ui'
 import { ModalTypes } from '../../utils/constants'
+import { Relationships } from '../../friends/relationships'
+import { Auth } from '../../authentication/state'
 
 const Friends: FC = () => {
   const ui = UI.useContainer()
-  const { id, token } = Auth.useContainer()
-  const { data: relationships } = useQuery(
-    ['relationships', id, token],
-    getRelationships
-  )
-  const incoming = useMemo(
-    () =>
-      relationships?.filter(
-        (relationship) =>
-          relationship.type === RelationshipTypes.INCOMING_FRIEND_REQUEST
-      ),
-    [relationships]
-  )
-  const outgoing = useMemo(
-    () =>
-      relationships?.filter(
-        (relationship) =>
-          relationship.type === RelationshipTypes.OUTGOING_FRIEND_REQUEST
-      ),
-    [relationships]
-  )
-  const friends = useMemo(
-    () =>
-      relationships?.filter(
-        (relationship) => relationship.type === RelationshipTypes.FRIEND
-      ),
-    [relationships]
-  )
+  const { id } = Auth.useContainer()
+  const { incoming, outgoing, friends } = Relationships.useContainer()
   const [showIncoming, setShowIncoming] = useState(false)
   const [showOutgoing, setShowOutgoing] = useState(false)
 

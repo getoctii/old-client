@@ -5,17 +5,26 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserTimes, faUserCheck } from '@fortawesome/pro-duotone-svg-icons'
 import Icon from '../../user/Icon'
 import { RelationshipResponse, RelationshipTypes } from './remote'
-import { clientGateway } from '../../utils/constants'
 import { useUser } from '../../user/state'
+import { Relationships } from '../../friends/relationships'
 
 const FriendCardView: FC<RelationshipResponse> = ({
   user_id,
   recipient_id,
   type
 }) => {
-  const { token, id } = Auth.useContainer()
+  const { id } = Auth.useContainer()
   const user = useUser(user_id)
   const recipient = useUser(recipient_id)
+  const {
+    newRelationship,
+    deleteRelationship
+  } = Relationships.useContainerSelector(
+    ({ newRelationship, deleteRelationship }) => ({
+      newRelationship,
+      deleteRelationship
+    })
+  )
   return (
     <div className={styles.card}>
       <Icon
@@ -41,15 +50,7 @@ const FriendCardView: FC<RelationshipResponse> = ({
               icon={faUserCheck}
               fixedWidth
               onClick={async () => {
-                await clientGateway.post(
-                  `/relationships/${user_id === id ? recipient_id : user_id}`,
-                  {},
-                  {
-                    headers: {
-                      Authorization: token
-                    }
-                  }
-                )
+                await newRelationship(user_id === id ? recipient_id : user_id)
               }}
             />
             <FontAwesomeIcon
@@ -57,13 +58,8 @@ const FriendCardView: FC<RelationshipResponse> = ({
               icon={faUserTimes}
               fixedWidth
               onClick={async () => {
-                await clientGateway.delete(
-                  `/relationships/${user_id === id ? recipient_id : user_id}`,
-                  {
-                    headers: {
-                      Authorization: token
-                    }
-                  }
+                await deleteRelationship(
+                  user_id === id ? recipient_id : user_id
                 )
               }}
             />
@@ -75,14 +71,7 @@ const FriendCardView: FC<RelationshipResponse> = ({
             icon={faUserTimes}
             fixedWidth
             onClick={async () => {
-              await clientGateway.delete(
-                `/relationships/${user_id === id ? recipient_id : user_id}`,
-                {
-                  headers: {
-                    Authorization: token
-                  }
-                }
-              )
+              await deleteRelationship(user_id === id ? recipient_id : user_id)
             }}
           />
         ) : (
