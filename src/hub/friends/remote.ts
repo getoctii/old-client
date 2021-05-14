@@ -14,13 +14,15 @@ export interface RelationshipResponse {
 }
 
 export const getRelationships = async (_: string, id: string, token: string) =>
-  (
-    await clientGateway.get<RelationshipResponse[]>(
-      `/users/${id}/relationships`,
-      {
-        headers: {
-          Authorization: token
-        }
-      }
-    )
-  ).data
+  !id || !token
+    ? undefined
+    : (
+        await clientGateway.get<RelationshipResponse[]>(
+          `/users/${id}/relationships`,
+          {
+            headers: {
+              Authorization: token
+            }
+          }
+        )
+      ).data
