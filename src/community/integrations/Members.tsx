@@ -48,9 +48,7 @@ const Group: FC<{ id: string }> = ({ id }) => {
 
 const MemberCard: FC<{ memberObj: MemberResponse }> = memo(({ memberObj }) => {
   const { id } = useParams<{ id: string }>()
-  const isMobile = useMedia('(max-width: 873px)')
   const auth = Auth.useContainer()
-  const history = useHistory()
   const ui = UI.useContainer()
   const member = useQuery(['member', memberObj.id, auth.token], getMember)
   const user = useUser(memberObj.user_id)
@@ -58,7 +56,15 @@ const MemberCard: FC<{ memberObj: MemberResponse }> = memo(({ memberObj }) => {
   return (
     <List.Card
       title={
-        <>
+        <div
+          className={styles.pointer}
+          onClick={() => {
+            ui.setModal({
+              name: ModalTypes.PREVIEW_USER,
+              props: { id: user?.id }
+            })
+          }}
+        >
           {user?.username}#
           {user?.discriminator === 0
             ? 'inn'
@@ -66,9 +72,21 @@ const MemberCard: FC<{ memberObj: MemberResponse }> = memo(({ memberObj }) => {
           {user?.id === community?.owner_id && (
             <FontAwesomeIcon icon={faCrown} />
           )}
-        </>
+        </div>
       }
-      icon={<Icon avatar={user?.avatar} state={user?.state} />}
+      icon={
+        <div
+          className={styles.pointer}
+          onClick={() => {
+            ui.setModal({
+              name: ModalTypes.PREVIEW_USER,
+              props: { id: user?.id }
+            })
+          }}
+        >
+          <Icon avatar={user?.avatar} state={user?.state} />
+        </div>
+      }
       subtitle={dayjs.utc(member?.data?.created_at).local().calendar()}
       groups={
         <>
@@ -105,39 +123,6 @@ const MemberCard: FC<{ memberObj: MemberResponse }> = memo(({ memberObj }) => {
               ) : (
                 <FontAwesomeIcon icon={faEllipsisHAlt} />
               )}
-            </Button>
-          )}
-        </>
-      }
-      actions={
-        <>
-          {!isMobile && user?.id !== id && (
-            <Button
-              className={styles.messageButton}
-              type='button'
-              onClick={async () => {
-                const cache = queryCache.getQueryData([
-                  'participants',
-                  auth.id,
-                  auth.token
-                ]) as ParticipantsResponse
-                const participant = cache?.find((participant) =>
-                  participant.conversation.participants.includes(
-                    memberObj.user_id
-                  )
-                )
-                if (!cache || !participant) {
-                  const result = await createConversation(auth.token!, {
-                    recipient: memberObj.user_id
-                  })
-                  if (result.id) history.push(`/conversations/${result.id}`)
-                } else {
-                  history.push(`/conversations/${participant.conversation.id}`)
-                }
-              }}
-            >
-              <FontAwesomeIcon icon={faPaperPlane} />
-              Message
             </Button>
           )}
         </>
