@@ -19,6 +19,10 @@ import {
   exportProtectedKeychain,
   updateKeychainPassword
 } from '@innatical/inncryption'
+import { useUser } from '../user/state'
+import { Plugins } from '@capacitor/core'
+
+const { Clipboard } = Plugins
 
 const PasswordSchema = Yup.object().shape({
   newPassword: Yup.string()
@@ -59,6 +63,7 @@ const KeychainCard: FC = () => {
 const Security: FC = () => {
   const { token, id } = Auth.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
+  const user = useUser(id ?? undefined)
   const history = useHistory()
   const {
     hasKeychain,
@@ -182,6 +187,21 @@ const Security: FC = () => {
         )}
       </Formik>
       <KeychainCard />
+      {user?.developer ? (
+        <Button
+          type='button'
+          className={styles.copyToken}
+          onClick={() => {
+            Clipboard.write({
+              string: token ?? ''
+            })
+          }}
+        >
+          Copy Token
+        </Button>
+      ) : (
+        <></>
+      )}
     </div>
   )
 }
