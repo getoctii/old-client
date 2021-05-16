@@ -45,10 +45,11 @@ const Community: FC<{
   index: number
 }> = memo(({ community, index }) => {
   const { token, id } = Auth.useContainer()
-  const match = useRouteMatch<{
-    tab?: string
-    id?: string
-  }>('/:tab/:id')
+  const match =
+    useRouteMatch<{
+      tab?: string
+      id?: string
+    }>('/:tab/:id')
   const history = useHistory()
   const communityFull = useQuery(
     ['community', community.id, token],
@@ -135,9 +136,8 @@ const Communities: FC = () => {
   const isMobile = useMedia('(max-width: 740px)')
   const { id, token } = Auth.useContainer()
   const communities = useQuery(['communities', id, token], getCommunities)
-  const [communitiesOrder, setCommunitiesOrder] = useSuspenseStorageItem<
-    string[]
-  >('communities')
+  const [communitiesOrder, setCommunitiesOrder] =
+    useSuspenseStorageItem<string[]>('communities')
 
   const onDragEnd = useCallback(
     (result) => {
