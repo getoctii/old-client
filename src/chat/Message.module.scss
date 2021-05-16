@@ -233,3 +233,12 @@
 .lineContent {
   color: var(--neko-text-secondary);
 }
+
+.copyCodeButton {
+  background-color: var(--neko-backgrounds-primary);
+  height: 1rem;
+  width: 7rem;
+  color: var(--neko-text-primary);
+  margin-top: 1rem;
+  margin-left: auto;
+}
