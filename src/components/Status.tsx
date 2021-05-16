@@ -39,7 +39,7 @@ const StatusSchema = Yup.object().shape({
     .max(140, 'Too long, must be less then 140 characters.')
 })
 
-const Status: FC<{ isClosable: boolean }> = ({ isClosable = true }) => {
+const Status: FC<{ isClosable?: boolean }> = ({ isClosable = true }) => {
   const { id, token } = Auth.useContainer()
   const ui = UI.useContainer()
   const user = useQuery(['users', id, token], getUser)
