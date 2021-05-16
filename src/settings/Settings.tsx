@@ -114,17 +114,6 @@ const Settings: FC = () => {
                         {isPlatform('ios') ? 'iOS' : gitInfo.branch || 'stable'}{' '}
                         <kbd>{gitInfo.commit.shortHash}</kbd>
                       </p> */}
-                      <div
-                        className={styles.logout}
-                        onClick={async () => {
-                          auth.setToken(null)
-                          await queryCache.invalidateQueries()
-                          await Plugins.Storage.clear()
-                          history.push('/authenticate/login')
-                        }}
-                      >
-                        Logout
-                      </div>
                     </div>
                   </Sideview>
                 )}
