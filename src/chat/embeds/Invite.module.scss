@@ -1,10 +1,10 @@
 .inviteEmbed {
   margin-top: 0.25rem;
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
   align-items: center;
   padding: 0.8rem;
-  max-width: 25rem;
+  flex: 1 1 auto;
   border-radius: 16px;
   background: var(--neko-input-background);
   .details {
@@ -64,6 +64,7 @@
     margin-left: auto;
     width: 5rem;
     max-width: 5rem;
+    margin-left: 1rem;
     &:disabled {
       cursor: not-allowed;
       background: var(--neko-colors-secondary);
