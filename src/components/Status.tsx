@@ -20,6 +20,9 @@ import Input from './Input'
 import { BarLoader } from 'react-spinners'
 import * as Yup from 'yup'
 
+import { useHistory } from 'react-router-dom'
+import { Plugins } from '@capacitor/core'
+
 const updateStatus = async (id: string, state: State, token: string) => {
   await clientGateway.patch(
     `/users/${id}`,
@@ -40,6 +43,9 @@ const StatusSchema = Yup.object().shape({
 })
 
 const Status: FC<{ isClosable?: boolean }> = ({ isClosable = true }) => {
+  const auth = Auth.useContainer()
+  const history = useHistory()
+
   const { id, token } = Auth.useContainer()
   const ui = UI.useContainer()
   const user = useQuery(['users', id, token], getUser)
@@ -121,6 +127,18 @@ const Status: FC<{ isClosable?: boolean }> = ({ isClosable = true }) => {
               <Button type='submit' disabled={isSubmitting}>
                 {isSubmitting ? <BarLoader color='#ffffff' /> : 'Update Status'}
               </Button>
+
+              <div
+                className={styles.logout}
+                onClick={async () => {
+                  auth.setToken(null)
+                  await queryCache.invalidateQueries()
+                  await Plugins.Storage.clear()
+                  history.push('/authenticate/login')
+                }}
+              >
+                Logout
+              </div>
             </Form>
           )}
         </Formik>

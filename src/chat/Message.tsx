@@ -1,4 +1,5 @@
 import { FC, memo, Suspense, useCallback, useMemo } from 'react'
+import Button from '../components/Button'
 import styles from './Message.module.scss'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
@@ -55,6 +56,10 @@ import { getKeychain } from '../user/remote'
 const { Clipboard } = Plugins
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsCalendar)
+
+const stringToLineArray = (str: string) => {
+  return str.split(/\n*\n/)
+}
 
 type Embed = {
   embed: React.ReactNode
@@ -291,7 +296,21 @@ const MessageView: FC<{
         return link
       }
     },
-    codeblock: (str, key) => <code key={key}>{str}</code>,
+    codeblock: (str, key) => ({
+      link: <></>,
+      embed: str ? (
+        <div key={key} className={styles.code}>
+          {stringToLineArray(str.trim()).map((e: string, i: number) => (
+            <span className={styles.line}>
+              <p className={styles.lineIndicator}>{i + 1} </p>
+              <p className={styles.lineContent}>{e}</p>
+            </span>
+          ))}
+        </div>
+      ) : (
+        <></>
+      )
+    }),
     custom: [
       [
         /<@([A-Za-z0-9-]+?)>/g,

@@ -1,3 +1,5 @@
+@import '@fontsource/ubuntu-mono';
+
 .message {
   display: flex;
   padding-left: 2rem;
@@ -206,4 +208,28 @@
   &.primary {
     margin-top: 0.8rem;
   }
+}
+
+.code {
+  background-color: var(--neko-backgrounds-secondary);
+  border-radius: 12px;
+  padding: 1rem;
+  font-weight: 300;
+  font-size: 1rem;
+
+  margin-top: -1rem;
+  font-family: 'Ubuntu Mono';
+}
+
+.line {
+  display: flex;
+  flex-direction: row;
+}
+
+.lineIndicator {
+  color: var(--neko-text-primary);
+}
+
+.lineContent {
+  color: var(--neko-text-secondary);
 }

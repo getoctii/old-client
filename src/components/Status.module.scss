@@ -3,11 +3,13 @@
   z-index: 1000;
   bottom: 0;
   left: 5.75rem;
-  bottom: 5rem;
-  background: var(--neko-sidebar-background);
+  //bottom: 5rem;
+  background: var(--neko-channels-background);
   width: 17.5rem;
   border-radius: 16px;
+
   padding: 1.5rem;
+
   h1 {
     font-weight: 500;
     font-size: 1.2rem;
@@ -49,6 +51,8 @@
 
   .form {
     input {
+      background-color: var(--neko-settings-background);
+
       margin-bottom: 1rem;
 
       &::placeholder {
@@ -76,4 +80,19 @@
     right: 1rem;
     bottom: calc(env(safe-area-inset-bottom) + 6.5rem);
   }
+}
+
+.logoutButton {
+  bottom: 13rem;
+}
+
+.logout {
+  text-align: center;
+  background: var(--neko-colors-danger);
+  border-radius: 10px;
+  color: var(--neko-text-inverse);
+  padding: 0.75rem;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 1rem;
 }
