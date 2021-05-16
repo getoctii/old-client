@@ -30,21 +30,32 @@
       height: 3rem;
       width: 3rem;
       font-size: 1.25rem;
+      border-radius: 50%;
       &:not(:last-child) {
         margin-right: 0.8rem;
       }
 
+      &.active {
+        border-color: var(--neko-status-online);
+        border: 2px solid;
+        background: red;
+      }
+
       &.online {
-        background: var(--neko-status-online);
+        color: var(--neko-status-online);
+        background: var(--neko-settings-background);
       }
       &.dnd {
-        background: var(--neko-status-dnd);
+        color: var(--neko-status-dnd);
+        background: var(--neko-settings-background);
       }
       &.idle {
-        background: var(--neko-status-idle);
+        color: var(--neko-status-idle);
+        background: var(--neko-settings-background);
       }
       &.offline {
-        background: var(--neko-status-offline);
+        color: var(--neko-status-offline);
+        background: var(--neko-settings-background);
       }
     }
   }

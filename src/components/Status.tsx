@@ -33,7 +33,7 @@ const updateStatus = async (id: string, state: State, token: string) => {
       }
     }
   )
-  await queryCache.invalidateQueries(['users', id])
+  await queryCache.refetchQueries(['users', id, token])
 }
 
 const StatusSchema = Yup.object().shape({
@@ -64,28 +64,36 @@ const Status: FC<{ isClosable?: boolean }> = ({ isClosable = true }) => {
       <div className={styles.statusButtons}>
         <Button
           type='button'
-          className={styles.online}
+          className={`${styles.online} ${
+            user.data?.state == State.online ? styles.active : null
+          }`}
           onClick={() => id && token && updateStatus(id, State.online, token)}
         >
           <FontAwesomeIcon icon={faCircle} />
         </Button>
         <Button
           type='button'
-          className={styles.idle}
+          className={`${styles.idle} ${
+            user.data?.state == State.idle ? styles.active : null
+          }`}
           onClick={() => id && token && updateStatus(id, State.idle, token)}
         >
           <FontAwesomeIcon icon={faMoon} />
         </Button>
         <Button
           type='button'
-          className={styles.dnd}
+          className={`${styles.dnd} ${
+            user.data?.state == State.dnd ? styles.active : null
+          }`}
           onClick={() => id && token && updateStatus(id, State.dnd, token)}
         >
           <FontAwesomeIcon icon={faStopCircle} />
         </Button>
         <Button
           type='button'
-          className={styles.invisible}
+          className={`${styles.offline} ${
+            user.data?.state == State.offline ? styles.active : null
+          }`}
           onClick={() => id && token && updateStatus(id, State.offline, token)}
         >
           <FontAwesomeIcon icon={faSignOut} />
