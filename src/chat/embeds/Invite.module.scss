@@ -4,7 +4,7 @@
   flex-direction: row;
   align-items: center;
   padding: 0.8rem;
-  max-width: 25rem;
+  flex-basis: auto;
   border-radius: 16px;
   background: var(--neko-input-background);
   .details {
