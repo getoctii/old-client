@@ -253,6 +253,7 @@ const ChannelView: FC<{
                   ? conversationID
                   : undefined
               }
+              participant={participants?.[0]}
             />
           )}
           <div className={styles.bg} />
