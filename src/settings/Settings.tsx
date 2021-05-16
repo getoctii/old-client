@@ -23,6 +23,7 @@ import { queryCache } from 'react-query'
 import { Plugins } from '@capacitor/core'
 import Purchases from './Purchases'
 import StatusBar from '../components/StatusBar'
+import Status from '../components/Status'
 
 // const gitInfo = GitInfo()
 
@@ -82,6 +83,8 @@ const Settings: FC = () => {
                 {isPlatform('ios') ? 'iOS' : gitInfo.branch || 'stable'}{' '}
                 <kbd>{gitInfo.commit.shortHash}</kbd>
               </p> */}
+              <Status isClosable={false} />
+
               <div
                 className={styles.logout}
                 onClick={async () => {
