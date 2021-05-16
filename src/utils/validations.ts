@@ -30,6 +30,9 @@ export const isUsername = (value: string) =>
   !value ||
   (/^[a-zA-Z0-9]+$/.test(value) && value.length <= 16 && value.length >= 3)
 
+export const isCommunityName = (value: string) =>
+  !value || (value.length <= 32 && value.length >= 3)
+
 export const isInvite = (value: string) =>
   !value ||
   /^[a-zA-Z0-9_-]+$/.test(value) ||

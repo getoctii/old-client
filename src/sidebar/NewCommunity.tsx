@@ -17,7 +17,7 @@ import { faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
 const CommunitySchema = Yup.object().shape({
   name: Yup.string()
     .min(2, 'Too short, must be at least 2 characters.')
-    .max(16, 'Too long, must be less then 16 characters.'),
+    .max(32, 'Too long, must be less then 16 characters.'),
   icon: Yup.string().url()
 })
 

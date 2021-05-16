@@ -6,7 +6,7 @@ import { Auth } from '../../authentication/state'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import { clientGateway } from '../../utils/constants'
-import { isUsername } from '../../utils/validations'
+import { isCommunityName } from '../../utils/validations'
 import styles from './General.module.scss'
 import { CommunityResponse, getChannels, getCommunity } from '../remote'
 import IconPicker from '../../components/IconPicker'
@@ -30,7 +30,7 @@ const TransferSchema = Yup.object().shape({
 const DeleteSchema = Yup.object().shape({
   name: Yup.string()
     .min(2, 'Too short, must be at least 2 characters.')
-    .max(16, 'Too long, must be less then 16 characters.')
+    .max(32, 'Too long, must be less then 16 characters.')
     .optional()
 })
 
@@ -183,7 +183,7 @@ const Personalization: FC<{
                   saveName &&
                   saveName !== '' &&
                   auth.token &&
-                  isUsername(saveName)
+                  isCommunityName(saveName)
                 ) {
                   await saveSettings(
                     community.id,
@@ -202,7 +202,7 @@ const Personalization: FC<{
                     !saveName ||
                     saveName === '' ||
                     !auth.token ||
-                    !isUsername(saveName)
+                    !isCommunityName(saveName)
                   )
                     return
                   await saveSettings(
@@ -219,7 +219,7 @@ const Personalization: FC<{
           </div>
         </div>
         <ul>
-          <li>- Must be 2-16 long</li>
+          <li>- Must be 2-32 long</li>
           <li>- Can only be letters, numbers, dashes, and underscores.</li>
         </ul>
       </div>
