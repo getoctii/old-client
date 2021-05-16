@@ -9,6 +9,7 @@
     "@capacitor/cli": "^2.4.6",
     "@capacitor/core": "^2.4.6",
     "@capacitor/ios": "2.4.6",
+    "@fontsource/ubuntu-mono": "^4.3.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.34",
     "@fortawesome/free-brands-svg-icons": "^5.15.2",
     "@fortawesome/pro-duotone-svg-icons": "^5.15.2",
