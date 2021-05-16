@@ -38,25 +38,31 @@ const useRelationships = () => {
     [relationships]
   )
 
-  const newRelationship = useCallback(async (recipientID: string) => {
-    await clientGateway.post(
-      `/relationships/${recipientID}`,
-      {},
-      {
+  const newRelationship = useCallback(
+    async (recipientID: string) => {
+      await clientGateway.post(
+        `/relationships/${recipientID}`,
+        {},
+        {
+          headers: {
+            Authorization: token
+          }
+        }
+      )
+    },
+    [token]
+  )
+
+  const deleteRelationship = useCallback(
+    async (recipientID: string) => {
+      await clientGateway.delete(`/relationships/${recipientID}`, {
         headers: {
           Authorization: token
         }
-      }
-    )
-  }, [])
-
-  const deleteRelationship = useCallback(async (recipientID: string) => {
-    await clientGateway.delete(`/relationships/${recipientID}`, {
-      headers: {
-        Authorization: token
-      }
-    })
-  }, [])
+      })
+    },
+    [token]
+  )
 
   const lookupRelationship = useCallback(
     (recipientID: string): 'friend' | 'incoming' | 'outgoing' | undefined => {
