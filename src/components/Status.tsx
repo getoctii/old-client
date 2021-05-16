@@ -39,7 +39,7 @@ const StatusSchema = Yup.object().shape({
     .max(140, 'Too long, must be less then 140 characters.')
 })
 
-const Status: FC = () => {
+const Status: FC<{ isClosable?: boolean }> = ({ isClosable = true }) => {
   const { id, token } = Auth.useContainer()
   const ui = UI.useContainer()
   const user = useQuery(['users', id, token], getUser)
@@ -47,9 +47,13 @@ const Status: FC = () => {
     <div className={styles.status}>
       <h1>
         Status
-        <span onClick={() => ui.clearModal()}>
-          <FontAwesomeIcon icon={faTimesCircle} />
-        </span>
+        {isClosable ? (
+          <span onClick={() => ui.clearModal()}>
+            <FontAwesomeIcon icon={faTimesCircle} />
+          </span>
+        ) : (
+          <></>
+        )}
       </h1>
       <div className={styles.statusButtons}>
         <Button
