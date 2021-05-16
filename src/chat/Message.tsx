@@ -300,12 +300,39 @@ const MessageView: FC<{
       link: <></>,
       embed: str ? (
         <div key={key} className={styles.code}>
-          {stringToLineArray(str.trim()).map((e: string, i: number) => (
-            <span className={styles.line}>
-              <p className={styles.lineIndicator}>{i + 1} </p>
-              <p className={styles.lineContent}>{e}</p>
-            </span>
-          ))}
+          {stringToLineArray(str.trim()).map((e: string, i: number) =>
+            i < 999 ? (
+              <span className={styles.line}>
+                <p className={styles.lineIndicator}>
+                  {i + 1} {' '.repeat(3 - (i + 1).toString().split('').length)}
+                </p>
+                <p className={styles.lineContent}>{e}</p>
+              </span>
+            ) : (
+              <></>
+            )
+          )}
+          <Button
+            type='button'
+            onClick={async () => {
+              await Clipboard.write({
+                string: str
+              })
+
+              await Plugins.LocalNotifications.schedule({
+                notifications: [
+                  {
+                    title: 'Successfully copied code block!',
+                    body: str.slice(0, 20) + '...',
+                    id: 1
+                  }
+                ]
+              })
+            }}
+            className={styles.copyCodeButton}
+          >
+            Copy Code
+          </Button>
         </div>
       ) : (
         <></>
