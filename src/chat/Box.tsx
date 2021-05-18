@@ -99,6 +99,7 @@ const BoxView: FC<{
 
         {hasPermission ? (
           <Editor
+            draftKey={channelID}
             id={'sendMessage'}
             editor={editor}
             emptyEditor={emptyEditor}
