@@ -456,7 +456,9 @@ const MessageView: FC<{
               encrypted={typeof content === 'object' ? true : false}
             />
           ) : (
-            <p key={id}>{main}</p>
+            <p key={id} className={styles.selectable}>
+              {main}
+            </p>
           )}
           {embeds.length > 0 ? embeds : <></>}
         </div>

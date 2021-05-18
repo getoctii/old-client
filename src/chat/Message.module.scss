@@ -232,6 +232,11 @@
 
 .lineContent {
   color: var(--neko-text-secondary);
+  -webkit-user-select: auto;
+  -khtml-user-select: auto;
+  -moz-user-select: auto;
+  -o-user-select: auto;
+  user-select: auto;
 }
 
 .copyCodeButton {
@@ -241,4 +246,12 @@
   color: var(--neko-text-primary);
   margin-top: 1rem;
   margin-left: auto;
+}
+
+.selectable {
+  -webkit-user-select: auto;
+  -khtml-user-select: auto;
+  -moz-user-select: auto;
+  -o-user-select: auto;
+  user-select: auto;
 }
