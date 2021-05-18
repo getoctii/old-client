@@ -75,6 +75,7 @@ const FileEmbed: FC<{ url: string }> = ({ url }: { url: string }) => {
         )}
 
         <img
+          className={showPlaceholder ? styles.hide : ''}
           onLoad={() => setShowPlaceholder(false)}
           onError={() => setShowPlaceholder(false)}
           width={(image.data?.width ?? 600) > 600 ? 600 : image.data?.width}
