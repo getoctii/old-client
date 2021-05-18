@@ -22,6 +22,7 @@ import { ChannelResponse } from '../community/remote'
 import { isPlatform } from '@ionic/react'
 import styles from './Editor.module.scss'
 import { UI } from '../state/ui'
+import { useSuspenseStorageItem } from '../utils/storage'
 
 const Leaf: FC<RenderLeafProps> = ({ attributes, children, leaf }) => {
   return leaf.underline ? (
@@ -106,6 +107,7 @@ const EditorView: FC<{
   typingIndicator?: boolean
   userMentions?: boolean
   channelMentions?: boolean
+  draftKey?: string
 }> = ({
   id,
   editor,
@@ -122,7 +124,8 @@ const EditorView: FC<{
   onDismiss,
   typingIndicator,
   userMentions,
-  channelMentions
+  channelMentions,
+  draftKey
 }) => {
   const match = useRouteMatch<{ id: string }>('/communities/:id/:tab?/:tab2?')
   const isMobile = useMedia('(max-width: 740px)')
@@ -134,6 +137,20 @@ const EditorView: FC<{
   }, [editor])
   usePageLeave(() => setTyping(false))
   const [value, setValue] = useState<Node[]>(emptyEditor)
+  const [draft, setDraft] = useSuspenseStorageItem<Node[]>(
+    'draft:' + draftKey ?? ''
+  )
+
+  useEffect(() => {
+    if (!draft) return
+    setValue(draft)
+  }, [])
+
+  useEffect(() => {
+    console.log(JSON.stringify(value))
+    setDraft(value)
+  }, [value])
+
   const [target, setTarget] = useState<
     { range: Range; type: 'user' | 'channel' } | undefined
   >()
