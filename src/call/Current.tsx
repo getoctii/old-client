@@ -83,9 +83,13 @@ const Current: FC = () => {
       <h3
         className={styles.pointer}
         onClick={() => {
-          history.push(
-            `/communities/${channel?.community_id}/channels/${channel?.id}`
-          )
+          if (room?.conversationID) {
+            history.push(`/conversations/${room.conversationID}`)
+          } else {
+            history.push(
+              `/communities/${channel?.community_id}/channels/${channel?.id}`
+            )
+          }
         }}
       >
         {users
