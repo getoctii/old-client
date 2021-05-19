@@ -240,6 +240,11 @@ const Sidebar: FC = () => {
   // }, [currentScrollPosition, setScrollPosition])
   return (
     <div className={styles.sidebar}>
+      {window.inntronType === 'native' && window.inntronPlatform === 'macos' ? (
+        <div className={styles.spacer} />
+      ) : (
+        <></>
+      )}
       <div className={styles.scrollable} /*ref={scrollRef}*/>
         {isMobile && (
           <>

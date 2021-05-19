@@ -49,7 +49,9 @@ interface Message {
 
 declare global {
   interface Window {
-    inntronNotify: undefined | ((title: string, body: string) => Promise<null>)
+    inntronNotify?: (title: string, body: string) => Promise<null>
+    inntronType?: 'native' | 'cross'
+    inntronPlatform?: 'macos' | 'windows' | 'linux'
   }
 }
 
