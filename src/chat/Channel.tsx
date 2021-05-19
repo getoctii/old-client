@@ -340,7 +340,7 @@ const ChannelView: FC<{
               />
             </Suspense>
             <div className={styles.buttonGroup}>
-              {!room ? (
+              {voiceChannel && room?.channelID !== voiceChannel.id ? (
                 <Button
                   type='button'
                   onClick={async () => {
