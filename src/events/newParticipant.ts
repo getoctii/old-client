@@ -16,6 +16,7 @@ const useNewParticipant = (eventSource: EventSourcePolyfill | null) => {
         conversation: {
           id: string
           channel_id: string
+          voice_channel_id: string
           last_message_id: string
           participants: string[]
         }

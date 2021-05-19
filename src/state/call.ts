@@ -6,7 +6,8 @@ const useCall = () => {
     id: string
     token: string
     server: string
-    channelID: string
+    channelID?: string
+    conversationID?: string
   } | null>()
   const [socket, setSocket] = useState<WebSocket | null>()
   const [socketReady, setSocketReady] = useState(false)

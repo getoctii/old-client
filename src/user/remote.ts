@@ -20,6 +20,7 @@ export type Participant = {
   conversation: {
     id: string
     channel_id: string
+    voice_channel_id: string
     last_message_id?: string
     last_message_date?: string
     participants: string[]
