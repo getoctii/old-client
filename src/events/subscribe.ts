@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { queryCache } from 'react-query'
 import { Auth } from '../authentication/state'
 import { CLIENT_GATEWAY_URL } from '../utils/constants'
+import { AppState, Plugins } from '@capacitor/core'
 import {
   getCommunities,
   getMentions,
@@ -9,26 +10,51 @@ import {
   getUnreads
 } from '../user/remote'
 
+const { App, BackgroundTask } = Plugins
+
 const useSubscribe = () => {
   const { token, id } = Auth.useContainer()
   const [eventSource, setEventSource] = useState<EventSource | null>(null)
   useEffect(() => {
     if (!token) return
-    const source = new EventSource(
-      `${CLIENT_GATEWAY_URL}/events/subscribe/${id}?authorization=${token}`
-    )
+    let evtSource: EventSource | null
 
-    setEventSource(source)
+    const createEventSource = () => {
+      const source = new EventSource(
+        `${CLIENT_GATEWAY_URL}/events/subscribe/${id}?authorization=${token}`
+      )
 
-    queryCache.prefetchQuery(['communities', id, token], getCommunities)
-    queryCache.prefetchQuery(['participants', id, token], getParticipants)
-    queryCache.prefetchQuery(['unreads', id, token], getUnreads)
-    queryCache.prefetchQuery(['mentions', id, token], getMentions)
+      evtSource = source
+
+      setEventSource(source)
+
+      queryCache.prefetchQuery(['communities', id, token], getCommunities)
+      queryCache.prefetchQuery(['participants', id, token], getParticipants)
+      queryCache.prefetchQuery(['unreads', id, token], getUnreads)
+      queryCache.prefetchQuery(['mentions', id, token], getMentions)
+    }
+
+    const stateChangeCb = (state: AppState) => {
+      if (!state.isActive) {
+        const taskID = BackgroundTask.beforeExit(() => {
+          evtSource?.close()
+          BackgroundTask.finish({ taskId: taskID })
+        })
+      } else {
+        createEventSource()
+      }
+    }
+
+    createEventSource()
+
+    const listener = App.addListener('appStateChange', stateChangeCb)
 
     return () => {
-      source.close()
+      listener.remove()
+      evtSource?.close()
     }
   }, [token, id])
+
   return [eventSource]
 }
 
