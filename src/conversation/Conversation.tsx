@@ -57,6 +57,7 @@ const ConversationView: FC = () => {
           conversationID={match?.params.id}
           participants={people}
           key={participant.conversation.channel_id}
+          voiceChannelID={participant.conversation.voice_channel_id}
         />
       </div>
     </Suspense>

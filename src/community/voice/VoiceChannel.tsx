@@ -9,10 +9,11 @@ import styles from './VoiceChannel.module.scss'
 import { Call } from '../../state/call'
 import { clientGateway } from '../../utils/constants'
 
-const VoiceCard: FC<{ userID: string; speaking: boolean }> = ({
-  userID,
-  speaking
-}) => {
+export const VoiceCard: FC<{
+  userID: string
+  speaking: boolean
+  small?: boolean
+}> = ({ userID, speaking, small }) => {
   const user = useUser(userID)
   if (!user) return <></>
   return (
@@ -20,12 +21,18 @@ const VoiceCard: FC<{ userID: string; speaking: boolean }> = ({
       className={styles.card}
       style={{
         backgroundImage: `url(${user.avatar})`,
-        border: speaking ? '5px solid var(--neko-text-primary)' : undefined
+        border: speaking ? '5px solid var(--neko-text-primary)' : undefined,
+        width: small ? 100 : undefined,
+        height: small ? 100 : undefined
       }}
     >
-      <div className={styles.name}>
-        <h1>{user.username}</h1>
-      </div>
+      {!small ? (
+        <div className={styles.name}>
+          <h1>{user.username}</h1>
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   )
 }

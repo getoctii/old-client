@@ -13,71 +13,66 @@
   .header {
     padding: calc(env(safe-area-inset-top) + 2rem) 2rem 1rem;
     display: flex;
-    height: calc(5.65rem + env(safe-area-inset-top));
-    min-height: calc(5.65rem + env(safe-area-inset-top));
     z-index: 3;
-    flex-direction: row;
-    align-items: center;
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    position: absolute;
+    flex-direction: column;
     width: 100%;
+    background-color: var(--neko-channels-background);
 
-    @-moz-document url-prefix() {
-      // NOTE: Fireshit disables blur by default
-      background-color: var(--neko-chat-background);
-    }
-
-    button {
-      background: var(--neko-colors-primary);
-      color: var(--neko-text-inverse);
-      padding: 0.5rem;
-      height: 2.65rem;
-      width: 2.65rem;
-      border-radius: 12px;
-      margin-left: auto;
-    }
-
-    .title {
+    .heading {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      height: 2.65rem;
-      width: 100%;
-      white-space: nowrap;
-      overflow-y: hidden;
-      text-overflow: ellipsis;
-      p {
-        margin: 0;
-      }
-    }
+      flex-direction: row;
 
-    .status {
-      margin: 0.3rem 0 0;
-      font-weight: 400;
-      font-size: 0.9rem;
-      width: 100%;
-      white-space: nowrap;
-      overflow-y: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .icon {
-      margin-right: 0.7rem;
-      padding: 0.5rem;
-      height: 2.65rem;
-      width: 2.65rem;
-      min-height: 2.65rem;
-      min-width: 2.65rem;
-      border-radius: 12px;
-      color: var(--neko-text-inverse);
-      cursor: pointer;
-      svg {
-        align-self: center;
+      button {
+        background: var(--neko-colors-primary);
+        color: var(--neko-text-inverse);
+        padding: 0.5rem;
+        height: 2.65rem;
+        width: 2.65rem;
+        border-radius: 12px;
+        margin-left: auto;
       }
-      display: flex;
-      vertical-align: middle;
-      justify-content: center;
+
+      .title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 2.65rem;
+        width: 100%;
+        white-space: nowrap;
+        overflow-y: hidden;
+        text-overflow: ellipsis;
+        p {
+          margin: 0;
+        }
+      }
+
+      .status {
+        margin: 0.3rem 0 0;
+        font-weight: 400;
+        font-size: 0.9rem;
+        width: 100%;
+        white-space: nowrap;
+        overflow-y: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .icon {
+        margin-right: 0.7rem;
+        padding: 0.5rem;
+        height: 2.65rem;
+        width: 2.65rem;
+        min-height: 2.65rem;
+        min-width: 2.65rem;
+        border-radius: 12px;
+        color: var(--neko-text-inverse);
+        cursor: pointer;
+        svg {
+          align-self: center;
+        }
+        display: flex;
+        vertical-align: middle;
+        justify-content: center;
+      }
     }
   }
 
@@ -98,13 +93,6 @@
     max-height: 2rem;
     min-height: 2rem;
     margin: 0 0 env(safe-area-inset-bottom);
-  }
-  @media (max-width: 740px) {
-    .header {
-      height: calc(env(safe-area-inset-top) + 5.65rem);
-      min-height: calc(env(safe-area-inset-top) + 5.65rem);
-      padding-top: calc(env(safe-area-inset-top) + 2rem);
-    }
   }
 }
 
@@ -196,5 +184,50 @@
     background: var(--neko-colors-secondary) !important;
 
     margin-right: 0.4rem;
+  }
+}
+
+.call {
+  padding: 1.5rem;
+
+  .users {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    :not(:first-child) {
+      margin-left: 0.5rem;
+    }
+
+    :not(:last-child) {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 1rem;
+
+    :not(:first-child) {
+      margin-left: 0.25rem;
+    }
+
+    :not(:last-child) {
+      margin-right: 0.25rem;
+    }
+
+    .disconnect {
+      background: var(--neko-colors-danger);
+    }
+
+    .connect {
+      background: var(--neko-colors-primary);
+    }
+
+    button {
+      background: var(--neko-colors-secondary);
+    }
   }
 }

@@ -1,15 +1,27 @@
 import { FC, Suspense, useEffect, useMemo, useState } from 'react'
 import styles from './Channel.module.scss'
 import { useQuery } from 'react-query'
-import { ChannelPermissions, InternalChannelTypes } from '../utils/constants'
+import {
+  ChannelPermissions,
+  clientGateway,
+  InternalChannelTypes
+} from '../utils/constants'
 import { Auth } from '../authentication/state'
 import { useDropArea, useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronLeft,
+  faComputerSpeaker,
   faHashtag,
+  faMicrophone,
+  faMicrophoneSlash,
+  faPhone,
+  faSpeaker,
   faTimes,
-  faUserPlus
+  faUserPlus,
+  faVolume,
+  faVolumeMute,
+  faVolumeSlash
 } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useParams } from 'react-router-dom'
 import Box from './Box'
@@ -22,6 +34,8 @@ import { Chat } from './state'
 import { Permission } from '../utils/permissions'
 import AddParticipant from './AddParticipant'
 import { importPublicKey } from '@innatical/inncryption'
+import { VoiceCard } from '../community/voice/VoiceChannel'
+import { Call } from '../state/call'
 
 const TypingIndicator: FC<{
   channelID: string
@@ -102,6 +116,81 @@ const CommunityChannelView: FC = () => {
   )
 }
 
+const CallView: FC<{ channel: ChannelResponse; conversationID: string }> = ({
+  channel,
+  conversationID
+}) => {
+  const {
+    muted,
+    setMuted,
+    setDeafened,
+    deafened,
+    room,
+    setRoom,
+    play
+  } = Call.useContainer()
+
+  const { token } = Auth.useContainer()
+  const current = useMemo(() => room?.channelID === channel.id, [room])
+
+  return (
+    <div className={styles.call}>
+      <div className={styles.users}>
+        {channel.voice_users?.map((user) => (
+          <VoiceCard userID={user} speaking={false} small />
+        ))}
+      </div>
+      <div className={styles.buttons}>
+        <Button type='button' onClick={() => setMuted(!muted)}>
+          <FontAwesomeIcon
+            icon={muted ? faMicrophoneSlash : faMicrophone}
+            fixedWidth
+          />
+        </Button>
+        <Button
+          className={current ? styles.disconnect : styles.connect}
+          type='button'
+          onClick={async () => {
+            if (current) {
+              setRoom(null)
+            } else {
+              const {
+                data
+              }: {
+                data: { room_id: string; token: string; server: string }
+              } = await clientGateway.post(
+                `/channels/${channel.id}/join`,
+                {},
+                {
+                  headers: {
+                    Authorization: token
+                  }
+                }
+              )
+              setRoom({
+                token: data.token,
+                id: data.room_id,
+                server: data.server,
+                conversationID,
+                channelID: channel.id
+              })
+              play()
+            }
+          }}
+        >
+          {current ? 'Disconnect' : 'Connect'}
+        </Button>
+        <Button type='button' onClick={() => setDeafened(!deafened)}>
+          <FontAwesomeIcon
+            icon={deafened ? faVolumeMute : faVolume}
+            fixedWidth
+          />
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 const supportedFiles = new Set(['image/png', 'image/gif', 'image/jpeg'])
 
 const ChannelView: FC<{
@@ -110,7 +199,15 @@ const ChannelView: FC<{
   participants?: string[]
   communityID?: string
   conversationID?: string
-}> = ({ type, channelID, participants, communityID, conversationID }) => {
+  voiceChannelID?: string
+}> = ({
+  type,
+  channelID,
+  participants,
+  communityID,
+  conversationID,
+  voiceChannelID
+}) => {
   const {
     setUploadDetails,
     setPublicEncryptionKey,
@@ -136,6 +233,13 @@ const ChannelView: FC<{
   const history = useHistory()
 
   const { data: channel } = useQuery(['channel', channelID, token], getChannel)
+  const { data: voiceChannel } = useQuery(
+    ['channel', voiceChannelID, token],
+    getChannel,
+    {
+      enabled: !!voiceChannelID
+    }
+  )
   const { hasChannelPermissions } = Permission.useContainer()
   const [bond] = useDropArea({
     onFiles: (files) => {
@@ -178,85 +282,130 @@ const ChannelView: FC<{
     }
   }, [otherKeychain, setPublicEncryptionKey, setPublicSigningKey, publicKey])
 
+  const { setRoom, play, room } = Call.useContainer()
+
   return (
     <Suspense fallback={<ChannelPlaceholder />}>
       <div className={styles.chat} {...bond}>
         <div className={styles.header}>
-          {isMobile ? (
-            <div
-              className={styles.icon}
-              style={
-                channel?.color !== '#0081FF'
-                  ? {
-                      backgroundColor: channel?.color
-                    }
-                  : {
-                      background: 'var(--neko-colors-primary)'
-                    }
-              }
-              onClick={() => {
-                if (isMobile) {
-                  if (type === InternalChannelTypes.CommunityChannel) {
-                    history.push(`/communities/${channel?.community_id}`)
-                  } else {
-                    history.push('/')
-                  }
+          <div className={styles.heading}>
+            {isMobile ? (
+              <div
+                className={styles.icon}
+                style={
+                  channel?.color !== '#0081FF'
+                    ? {
+                        backgroundColor: channel?.color
+                      }
+                    : {
+                        background: 'var(--neko-colors-primary)'
+                      }
                 }
-              }}
-            >
-              <FontAwesomeIcon
-                className={styles.backButton}
-                icon={faChevronLeft}
-              />
-            </div>
-          ) : (
-            <div
-              className={styles.icon}
-              style={
-                channel?.color !== '#0081FF'
-                  ? {
-                      backgroundColor: channel?.color
-                    }
-                  : {
-                      background: 'var(--neko-colors-primary)'
-                    }
-              }
-            >
-              <FontAwesomeIcon icon={faHashtag} />
-            </div>
-          )}
-          <Suspense fallback={<></>}>
-            <Header type={type} participants={participants} channel={channel} />
-          </Suspense>
-          <div className={styles.buttonGroup}>
-            {type === InternalChannelTypes.PrivateChannel ||
-            type === InternalChannelTypes.GroupChannel ? (
-              <Button
-                type='button'
                 onClick={() => {
-                  setShowAddParticipant(!showAddParticipant)
+                  if (isMobile) {
+                    if (type === InternalChannelTypes.CommunityChannel) {
+                      history.push(`/communities/${channel?.community_id}`)
+                    } else {
+                      history.push('/')
+                    }
+                  }
                 }}
               >
                 <FontAwesomeIcon
-                  icon={showAddParticipant ? faTimes : faUserPlus}
+                  className={styles.backButton}
+                  icon={faChevronLeft}
                 />
-              </Button>
+              </div>
             ) : (
-              <></>
+              <div
+                className={styles.icon}
+                style={
+                  channel?.color !== '#0081FF'
+                    ? {
+                        backgroundColor: channel?.color
+                      }
+                    : {
+                        background: 'var(--neko-colors-primary)'
+                      }
+                }
+              >
+                <FontAwesomeIcon icon={faHashtag} />
+              </div>
+            )}
+            <Suspense fallback={<></>}>
+              <Header
+                type={type}
+                participants={participants}
+                channel={channel}
+              />
+            </Suspense>
+            <div className={styles.buttonGroup}>
+              {!room ? (
+                <Button
+                  type='button'
+                  onClick={async () => {
+                    if (!voiceChannel) return
+                    const {
+                      data
+                    }: {
+                      data: { room_id: string; token: string; server: string }
+                    } = await clientGateway.post(
+                      `/channels/${voiceChannel.id}/join`,
+                      {},
+                      {
+                        headers: {
+                          Authorization: token
+                        }
+                      }
+                    )
+                    setRoom({
+                      token: data.token,
+                      id: data.room_id,
+                      server: data.server,
+                      conversationID,
+                      channelID: voiceChannelID
+                    })
+                    play()
+                  }}
+                >
+                  <FontAwesomeIcon icon={faPhone} />
+                </Button>
+              ) : (
+                <></>
+              )}
+              {type === InternalChannelTypes.PrivateChannel ||
+              type === InternalChannelTypes.GroupChannel ? (
+                <Button
+                  type='button'
+                  onClick={() => {
+                    setShowAddParticipant(!showAddParticipant)
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={showAddParticipant ? faTimes : faUserPlus}
+                  />
+                </Button>
+              ) : (
+                <></>
+              )}
+            </div>
+            {showAddParticipant && (
+              <AddParticipant
+                isPrivate={type === InternalChannelTypes.PrivateChannel}
+                groupID={
+                  type === InternalChannelTypes.GroupChannel
+                    ? conversationID
+                    : undefined
+                }
+                participant={participants?.[0]}
+              />
             )}
           </div>
-          {showAddParticipant && (
-            <AddParticipant
-              isPrivate={type === InternalChannelTypes.PrivateChannel}
-              groupID={
-                type === InternalChannelTypes.GroupChannel
-                  ? conversationID
-                  : undefined
-              }
-              participant={participants?.[0]}
-            />
+          {voiceChannel && (voiceChannel.voice_users?.length ?? 0) > 0 ? (
+            <CallView channel={voiceChannel} conversationID={conversationID!} />
+          ) : (
+            <></>
           )}
-          <div className={styles.bg} />
         </div>
         <Suspense fallback={<Messages.Placeholder />}>
           {channel ? (

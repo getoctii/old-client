@@ -5,16 +5,17 @@ import {
   faVolumeMute
 } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { Call } from '../state/call'
 import styles from './Current.module.scss'
 import { getChannel } from '../chat/remote'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { useHistory } from 'react-router-dom'
+import { fetchManyUsers, getParticipants } from '../user/remote'
 
 const Current: FC = () => {
-  const { token } = Auth.useContainer()
+  const { token, id } = Auth.useContainer()
   const {
     state,
     setMuted,
@@ -45,6 +46,38 @@ const Current: FC = () => {
     }
   )
 
+  const { data: participants } = useQuery(
+    ['participants', id, token],
+    getParticipants,
+    {
+      enabled: !!room?.conversationID
+    }
+  )
+
+  const participant = useMemo(
+    () =>
+      participants?.find(
+        (participant) => participant.conversation.id === room?.conversationID
+      ),
+    [participants, room]
+  )
+
+  const people = useMemo(
+    () =>
+      participant?.conversation.participants.filter((userID) => userID !== id),
+    [participant, id]
+  )
+
+  const { data: users } = useQuery(
+    ['users', people ?? [], token],
+    fetchManyUsers
+    // {
+    //   enabled: !!people
+    // }
+  )
+
+  console.log(people)
+
   return (
     <div className={styles.current}>
       <h3
@@ -55,7 +88,9 @@ const Current: FC = () => {
           )
         }}
       >
-        #{channel?.name}
+        {users
+          ? 'Call w/' + users?.map((i) => i.username).join(', ')
+          : '#' + channel?.name}
       </h3>
       <p>
         {state === 'new' || !state
