@@ -1,4 +1,3 @@
-import { EventSourcePolyfill } from 'event-source-polyfill'
 import { useEffect, useState } from 'react'
 import { queryCache } from 'react-query'
 import { Auth } from '../authentication/state'
@@ -12,18 +11,11 @@ import {
 
 const useSubscribe = () => {
   const { token, id } = Auth.useContainer()
-  const [eventSource, setEventSource] = useState<EventSourcePolyfill | null>(
-    null
-  )
+  const [eventSource, setEventSource] = useState<EventSource | null>(null)
   useEffect(() => {
     if (!token) return
-    const source = new EventSourcePolyfill(
-      `${CLIENT_GATEWAY_URL}/events/subscribe/${id}`,
-      {
-        headers: {
-          Authorization: token
-        }
-      }
+    const source = new EventSource(
+      `${CLIENT_GATEWAY_URL}/events/subscribe/${id}?authorization=${token}`
     )
 
     setEventSource(source)
