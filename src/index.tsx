@@ -7,7 +7,11 @@ import 'typeface-inter'
 import { Router } from './Router'
 import { ReactQueryDevtools } from 'react-query-devtools'
 import { Auth } from './authentication/state'
-import { queryCache, ReactQueryConfigProvider } from 'react-query'
+import {
+  queryCache,
+  ReactQueryConfigProvider,
+  setFocusHandler
+} from 'react-query'
 import Loader from './components/Loader'
 import Error from './components/Error'
 import { UI } from './state/ui'
@@ -25,12 +29,13 @@ import { AxiosError } from 'axios'
 import { HelmetProvider } from 'react-helmet-async'
 // @ts-ignore
 import smoothscroll from 'smoothscroll-polyfill'
-import { isPlatform } from '@ionic/react'
-import { ModalTypes } from './utils/constants'
 import Integration from './integrations/state'
 import { Keychain } from './keychain/state'
 import { Relationships } from './friends/relationships'
+import { AppState, Plugins } from '@capacitor/core'
 smoothscroll.polyfill()
+
+const { App } = Plugins
 
 if (import.meta.env.PROD) {
   Sentry.init({
@@ -64,6 +69,18 @@ document.oncontextmenu = (event) => {
   event.preventDefault()
 }
 
+setFocusHandler((handleFocus) => {
+  const listener = App.addListener('appStateChange', (state: AppState) => {
+    if (state.isActive) {
+      handleFocus()
+    }
+  })
+
+  return () => {
+    listener.remove()
+  }
+})
+
 ReactDOM.render(
   <StrictMode>
     <ReactQueryConfigProvider
@@ -72,7 +89,7 @@ ReactDOM.render(
           suspense: true
         },
         queries: {
-          refetchOnWindowFocus: false
+          refetchOnWindowFocus: true
         }
       }}
     >
