@@ -452,7 +452,7 @@ const EditorView: FC<{
                 case 'Enter': {
                   if (event.shiftKey && newLines) {
                     event.preventDefault()
-                    editor.insertBreak()
+                    editor.insertText('\n')
                   } else if (target && userMentions) {
                     event.preventDefault()
                     if (usersFiltered?.[selected]?.id)
