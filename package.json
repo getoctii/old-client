@@ -17,7 +17,7 @@
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@innatical/inncryption": "^0.0.13",
     "@innatical/innstate": "^1.0.1",
-    "@innatical/markdown": "^0.3.5",
+    "@innatical/markdown": "^0.4.0",
     "@innatical/mdast-util-underline": "^0.1.0",
     "@innatical/micromark-extension-underline": "^0.1.0",
     "@ionic/cli": "^6.12.4",
