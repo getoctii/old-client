@@ -5,7 +5,7 @@ import {
   useCallback,
   useMemo,
   FC,
-  Fragment
+  Suspense
 } from 'react'
 import styles from './Messages.module.scss'
 import { queryCache, useInfiniteQuery, useQuery } from 'react-query'
@@ -68,8 +68,11 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
   >(['messages', channel.id, token], getMessages, {
     getFetchMore: (last) => {
       return last.length < 25 ? undefined : last[last.length - 1].id
-    }
+    },
+    suspense: false
   })
+
+  console.log(canFetchMore)
 
   const messages = useMemo(() => data?.flat(), [data])
 
@@ -207,7 +210,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       />
       {messages?.map((message, index) =>
         message ? (
-          <Fragment key={message.id}>
+          <Suspense key={message.id} fallback={<Message.Placeholder />}>
             {unreads.data &&
               unreads.data[channel.id]?.read === message.id &&
               unreads.data[channel.id]?.read !== messages[0]?.id && (
@@ -231,7 +234,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
               }
               updatedAt={message.updated_at}
             />
-          </Fragment>
+          </Suspense>
         ) : (
           <></>
         )
@@ -258,28 +261,23 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       {!loading && canFetchMore ? (
         <div className={styles.waypoint}>
           <Waypoint
-            bottomOffset={30}
+            bottomOffset={75}
             onEnter={async () => {
+              console.log('enter')
               try {
-                const current = ref.current
-                if (!current || !current.scrollHeight) return
-                const oldHeight = current.scrollHeight
-                const oldTop = current.scrollTop
                 setLoading(true)
                 await fetchMore()
-                if (!ref.current) return
-                ref.current.scrollTop = current.scrollHeight
-                  ? current.scrollHeight - oldHeight + oldTop
-                  : 0
               } finally {
                 setLoading(false)
               }
             }}
-          />
+          >
+            <div className={styles.waypoint} />
+          </Waypoint>
         </div>
       ) : (
         <></>
-      )}{' '}
+      )}
     </div>
   )
 }
