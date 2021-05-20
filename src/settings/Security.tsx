@@ -188,17 +188,19 @@ const Security: FC = () => {
       </Formik>
       <KeychainCard />
       {user?.developer ? (
-        <Button
-          type='button'
-          className={styles.copyToken}
-          onClick={() => {
-            Clipboard.write({
-              string: token ?? ''
-            })
-          }}
-        >
-          Copy Token
-        </Button>
+        <div className={styles.developer}>
+          <Button
+            type='button'
+            className={styles.copyToken}
+            onClick={() => {
+              Clipboard.write({
+                string: token ?? ''
+              })
+            }}
+          >
+            Copy Token
+          </Button>
+        </div>
       ) : (
         <></>
       )}

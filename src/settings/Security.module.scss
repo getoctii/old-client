@@ -126,7 +126,13 @@
   }
 }
 
-.copyToken {
-  width: 100%;
-  background: var(--neko-colors-danger);
+.developer {
+  padding: 2rem;
+  border-radius: 14px;
+  background: var(--neko-settings-card);
+
+  .copyToken {
+    width: 100%;
+    background: var(--neko-colors-danger);
+  }
 }
