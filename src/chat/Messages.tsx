@@ -5,7 +5,7 @@ import {
   useCallback,
   useMemo,
   FC,
-  Fragment
+  Suspense
 } from 'react'
 import styles from './Messages.module.scss'
 import { queryCache, useInfiniteQuery, useQuery } from 'react-query'
@@ -62,7 +62,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
   }, [setAutoRead, setTracking, setChannelID, channel.id])
 
   const { token, id } = Auth.useContainer()
-  const { data, canFetchMore, fetchMore } = useInfiniteQuery<
+  const { data, canFetchMore, fetchMore, isFetchingMore } = useInfiniteQuery<
     MessageResponse[],
     any
   >(['messages', channel.id, token], getMessages, {
@@ -88,7 +88,6 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
   )
 
   const ref = useRef<HTMLDivElement>(null)
-  const [loading, setLoading] = useState(false)
   const trackingRef = useRef(tracking)
 
   useEffect(() => {
@@ -207,7 +206,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       />
       {messages?.map((message, index) =>
         message ? (
-          <Fragment key={message.id}>
+          <Suspense key={message.id} fallback={<Message.Placeholder />}>
             {unreads.data &&
               unreads.data[channel.id]?.read === message.id &&
               unreads.data[channel.id]?.read !== messages[0]?.id && (
@@ -231,7 +230,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
               }
               updatedAt={message.updated_at}
             />
-          </Fragment>
+          </Suspense>
         ) : (
           <></>
         )
@@ -248,38 +247,24 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       ) : (
         <></>
       )}
-      {loading && (
-        <div className={styles.messages}>
-          {Array.from(Array(length).keys()).map((_, index) => (
-            <Message.Placeholder key={index} />
-          ))}
-        </div>
-      )}
-      {!loading && canFetchMore ? (
+      {isFetchingMore === 'next' &&
+        Array(length)
+          .fill(0)
+          .map((_, index) => <Message.Placeholder key={index} />)}
+      {isFetchingMore !== 'next' && canFetchMore ? (
         <div className={styles.waypoint}>
           <Waypoint
-            bottomOffset={30}
             onEnter={async () => {
-              try {
-                const current = ref.current
-                if (!current || !current.scrollHeight) return
-                const oldHeight = current.scrollHeight
-                const oldTop = current.scrollTop
-                setLoading(true)
-                await fetchMore()
-                if (!ref.current) return
-                ref.current.scrollTop = current.scrollHeight
-                  ? current.scrollHeight - oldHeight + oldTop
-                  : 0
-              } finally {
-                setLoading(false)
-              }
+              await fetchMore()
             }}
-          />
+            bottomOffset={30}
+          >
+            <div className={styles.waypoint} />
+          </Waypoint>
         </div>
       ) : (
         <></>
-      )}{' '}
+      )}
     </div>
   )
 }
@@ -288,7 +273,7 @@ const MessagesPlaceholder: FC = () => {
   const length = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
   return (
     <div className={styles.messages}>
-      {Array.from(Array(length).keys()).map((_, index) => (
+      {Array.from(Array(length).fill(0).keys()).map((_, index) => (
         <Message.Placeholder key={index} />
       ))}
     </div>
