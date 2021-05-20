@@ -23,15 +23,19 @@
     margin-top: 0.8rem;
     align-items: center;
     .nameWrapper {
+      flex: 1;
       background: var(--neko-chat-background);
       border-radius: 12px;
+      overflow: hidden;
+      margin-right: 0.8rem;
+
       h5 {
         margin: 1rem;
         font-size: 1rem;
-        overflow: hidden;
+        font-weight: 600;
         text-overflow: ellipsis;
         white-space: nowrap;
-        font-weight: 600;
+        overflow: hidden;
       }
     }
     button {
