@@ -21,16 +21,18 @@
   .uploadInfo {
     display: flex;
     margin-top: 0.8rem;
-    border-radius: 8px;
-    background: var(--neko-chat-background);
     align-items: center;
-    h5 {
-      margin: 1rem;
-      font-size: 1rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-weight: 600;
+    .nameWrapper {
+      background: var(--neko-chat-background);
+      border-radius: 12px;
+      h5 {
+        margin: 1rem;
+        font-size: 1rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 600;
+      }
     }
     button {
       border-radius: 12px;

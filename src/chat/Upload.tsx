@@ -24,7 +24,9 @@ const Upload: FC<UploadDetails> = ({ status, file, onUpload }) => {
         <img alt={file.name} src={uploadURL} />
       )}
       <div className={styles.uploadInfo}>
-        <h5>{file.name}</h5>
+        <div className={styles.nameWrapper}>
+          <h5>{file.name}</h5>
+        </div>
         <button
           onClick={() => onUpload(file)}
           disabled={status === 'uploading'}
