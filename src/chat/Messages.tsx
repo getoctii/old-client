@@ -62,17 +62,14 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
   }, [setAutoRead, setTracking, setChannelID, channel.id])
 
   const { token, id } = Auth.useContainer()
-  const { data, canFetchMore, fetchMore } = useInfiniteQuery<
+  const { data, canFetchMore, fetchMore, isFetchingMore } = useInfiniteQuery<
     MessageResponse[],
     any
   >(['messages', channel.id, token], getMessages, {
     getFetchMore: (last) => {
       return last.length < 25 ? undefined : last[last.length - 1].id
-    },
-    suspense: false
+    }
   })
-
-  console.log(canFetchMore)
 
   const messages = useMemo(() => data?.flat(), [data])
 
@@ -91,7 +88,6 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
   )
 
   const ref = useRef<HTMLDivElement>(null)
-  const [loading, setLoading] = useState(false)
   const trackingRef = useRef(tracking)
 
   useEffect(() => {
@@ -251,26 +247,17 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       ) : (
         <></>
       )}
-      {loading && (
-        <div className={styles.messages}>
-          {Array.from(Array(length).keys()).map((_, index) => (
-            <Message.Placeholder key={index} />
-          ))}
-        </div>
-      )}
-      {!loading && canFetchMore ? (
+      {isFetchingMore === 'next' &&
+        Array(length)
+          .fill(0)
+          .map((_, index) => <Message.Placeholder key={index} />)}
+      {isFetchingMore !== 'next' && canFetchMore ? (
         <div className={styles.waypoint}>
           <Waypoint
-            bottomOffset={75}
             onEnter={async () => {
-              console.log('enter')
-              try {
-                setLoading(true)
-                await fetchMore()
-              } finally {
-                setLoading(false)
-              }
+              await fetchMore()
             }}
+            bottomOffset={30}
           >
             <div className={styles.waypoint} />
           </Waypoint>
@@ -286,7 +273,7 @@ const MessagesPlaceholder: FC = () => {
   const length = useMemo(() => Math.floor(Math.random() * 10) + 8, [])
   return (
     <div className={styles.messages}>
-      {Array.from(Array(length).keys()).map((_, index) => (
+      {Array.from(Array(length).fill(0).keys()).map((_, index) => (
         <Message.Placeholder key={index} />
       ))}
     </div>
