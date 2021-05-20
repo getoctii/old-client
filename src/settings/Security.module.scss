@@ -135,4 +135,13 @@
     width: 100%;
     background: var(--neko-colors-danger);
   }
+
+  @media (max-width: 990px) and (min-width: 741px) {
+    background: var(--neko-settings-background);
+    padding: 0;
+  }
+
+  @media (max-width: 740px) {
+    padding: 1.5rem;
+  }
 }
