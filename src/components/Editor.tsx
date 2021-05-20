@@ -142,12 +142,12 @@ const EditorView: FC<{
   )
 
   useEffect(() => {
-    if (!draft) return
+    if (!draft || !draftKey) return
     setValue(draft)
   }, [])
 
   useEffect(() => {
-    console.log(JSON.stringify(value))
+    if (!draftKey) return
     setDraft(value)
   }, [value])
 
