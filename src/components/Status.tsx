@@ -136,7 +136,7 @@ const Status: FC<{ isClosable?: boolean }> = ({ isClosable = true }) => {
                 {isSubmitting ? <BarLoader color='#ffffff' /> : 'Update Status'}
               </Button>
 
-              <div
+              {/* <div
                 className={styles.logout}
                 onClick={async () => {
                   auth.setToken(null)
@@ -146,7 +146,7 @@ const Status: FC<{ isClosable?: boolean }> = ({ isClosable = true }) => {
                 }}
               >
                 Logout
-              </div>
+              </div> */}
             </Form>
           )}
         </Formik>
