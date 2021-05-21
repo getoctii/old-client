@@ -23,6 +23,8 @@ import NewVersion from '../community/integrations/product/pages/NewVersion'
 import PreviewUser from '../user/PreviewUser'
 import GenerateKeychain from '../keychain/GenerateKeychain'
 import DecryptKeychain from '../keychain/DecryptKeychain'
+import MFAModal from '../authentication/MFAModal'
+import CodePrompt from '../authentication/CodePrompt'
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
   switch (name) {
@@ -64,6 +66,10 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <GenerateKeychain />
     case ModalTypes.DECRYPT_KEYCHAIN:
       return <DecryptKeychain />
+    case ModalTypes.ENABLED_2FA:
+      return <MFAModal {...props} />
+    case ModalTypes.CODE_PROMPT:
+      return <CodePrompt {...props} />
     default:
       return <></>
   }
@@ -101,6 +107,7 @@ const Modals: FC = () => {
                 onClick={() =>
                   uiStore.modal?.name !== ModalTypes.UPDATE &&
                   uiStore.modal?.name !== ModalTypes.DECRYPT_KEYCHAIN &&
+                  uiStore.modal?.name !== ModalTypes.CODE_PROMPT &&
                   uiStore.clearModal()
                 }
               />
@@ -116,6 +123,7 @@ const Modals: FC = () => {
                   if (info.offset.y > 120) {
                     uiStore.modal?.name !== ModalTypes.UPDATE &&
                       uiStore.modal?.name !== ModalTypes.DECRYPT_KEYCHAIN &&
+                      uiStore.modal?.name !== ModalTypes.CODE_PROMPT &&
                       uiStore.clearModal()
                   }
                 }}

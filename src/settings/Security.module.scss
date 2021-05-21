@@ -51,16 +51,17 @@
       background: var(--neko-colors-primary);
     }
 
-    .generateKeychain {
-      width: 100%;
-      margin-top: 1rem;
+    .primary {
       background: var(--neko-colors-primary);
     }
 
-    .regenerateKeychain {
+    .danger {
+      background: var(--neko-colors-danger);
+    }
+
+    .settingsButton {
       width: 100%;
       margin-top: 1rem;
-      background: var(--neko-colors-danger);
     }
   }
 
