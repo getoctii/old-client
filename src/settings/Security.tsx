@@ -121,7 +121,7 @@ const MFACard = () => {
           })
           ui.setModal({
             name: ModalTypes.ENABLED_2FA,
-            props: { url, key }
+            props: { url, TOTPKey: key }
           })
           queryCache.invalidateQueries(['users', id, token])
         }}

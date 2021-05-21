@@ -6,7 +6,7 @@ import Modal from '../components/Modal'
 import QRCode from 'qrcode.react'
 import styles from './MFAModal.module.scss'
 
-const MFAModal: FC<{ url: string; key: string }> = ({ url, key }) => {
+const MFAModal: FC<{ url: string; TOTPKey: string }> = ({ url, TOTPKey }) => {
   return (
     <Modal
       title='2FA Enabled'
@@ -17,7 +17,7 @@ const MFAModal: FC<{ url: string; key: string }> = ({ url, key }) => {
           type='button'
           onClick={async () => {
             await Plugins.Clipboard.write({
-              string: key
+              string: TOTPKey
             })
           }}
           className={styles.button}
