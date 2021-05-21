@@ -47,6 +47,7 @@ export type UserResponse = {
   email?: string
   developer?: boolean
   disabled?: boolean
+  totp: boolean
 }
 
 export type Member = {

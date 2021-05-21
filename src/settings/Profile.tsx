@@ -79,7 +79,7 @@ const Profile: FC = () => {
               }
             )
             queryCache.setQueryData<UserResponse>(
-              ['user', id, token],
+              ['users', id, token],
               (initial) => {
                 if (initial) {
                   return {
@@ -96,7 +96,8 @@ const Profile: FC = () => {
                     state: user?.state ?? State.offline,
                     status: user?.status ?? '',
                     avatar: values.avatar,
-                    developer: values.developer
+                    developer: values.developer,
+                    totp: user!.totp
                   }
                 }
               }

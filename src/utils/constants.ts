@@ -33,7 +33,9 @@ export enum ModalTypes {
   DEVELOPER_MODE,
   PREVIEW_USER,
   GENERATE_KEYCHAIN,
-  DECRYPT_KEYCHAIN
+  DECRYPT_KEYCHAIN,
+  ENABLED_2FA,
+  CODE_PROMPT
 }
 
 export enum Groups {

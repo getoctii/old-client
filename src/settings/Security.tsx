@@ -33,6 +33,10 @@ const PasswordSchema = Yup.object().shape({
     .max(140, 'Too long, password must be under 140 characters.')
 })
 
+const MFASchema = Yup.object().shape({
+  code: Yup.string().matches(/^\d+$/).length(6)
+})
+
 const KeychainCard: FC = () => {
   const { hasKeychain, decryptedKeychain } = Keychain.useContainer()
   const ui = UI.useContainer()
@@ -41,9 +45,9 @@ const KeychainCard: FC = () => {
       <h4>Manage Keychain</h4>
       <Button
         type='button'
-        className={
-          hasKeychain ? styles.regenerateKeychain : styles.generateKeychain
-        }
+        className={`${styles.settingsButton} ${
+          hasKeychain ? styles.danger : styles.primary
+        }`}
         onClick={() => ui.setModal({ name: ModalTypes.GENERATE_KEYCHAIN })}
       >
         {hasKeychain ? 'Regenerate Keychain' : 'Generate Keychain'}
@@ -56,6 +60,74 @@ const KeychainCard: FC = () => {
           ? 'Locked'
           : 'Unlocked'}
       </h4>
+    </div>
+  )
+}
+
+const MFACard = () => {
+  const { token, id } = Auth.useContainer()
+  const user = useUser(id ?? undefined)
+  const ui = UI.useContainer()
+
+  return user?.totp ? (
+    <Formik
+      initialValues={{ code: '' }}
+      validationSchema={MFASchema}
+      onSubmit={async ({ code }) => {
+        await clientGateway.delete(`/users/${id}/totp?code=${code}`, {
+          headers: {
+            authorization: token
+          }
+        })
+        queryCache.invalidateQueries(['users', id, token])
+      }}
+    >
+      {({ isSubmitting }) => (
+        <Form className={styles.form}>
+          <h4>Disable 2FA</h4>
+          <div className={styles.password}>
+            <label htmlFor='code' className={styles.inputName}>
+              Code
+            </label>
+            <Field component={Input} name='code' />
+            <ErrorMessage component='p' name='code' className={styles.error} />
+          </div>
+          <Button
+            disabled={isSubmitting}
+            type='submit'
+            className={`${styles.danger} ${styles.settingsButton}`}
+          >
+            {isSubmitting ? <BarLoader color='#ffffff' /> : 'Disable 2FA'}
+          </Button>
+        </Form>
+      )}
+    </Formik>
+  ) : (
+    <div className={styles.form}>
+      <h4>Manage 2FA</h4>
+      <Button
+        type='button'
+        className={`${styles.settingsButton} ${styles.primary}`}
+        onClick={async () => {
+          const {
+            data: { url, key }
+          } = await clientGateway.post<{
+            url: string
+            key: string
+          }>(`/users/${id}/totp`, null, {
+            headers: {
+              authorization: token
+            }
+          })
+          ui.setModal({
+            name: ModalTypes.ENABLED_2FA,
+            props: { url, key }
+          })
+          queryCache.invalidateQueries(['users', id, token])
+        }}
+      >
+        Enable 2FA
+      </Button>
     </div>
   )
 }
@@ -187,6 +259,7 @@ const Security: FC = () => {
         )}
       </Formik>
       <KeychainCard />
+      <MFACard />
       {user?.developer ? (
         <div className={styles.developer}>
           <Button

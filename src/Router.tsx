@@ -188,12 +188,6 @@ const AppRouter: FC = () => {
       <OnboardingHandler onboardingStateChange={onboardingHandler} />
       <EventSource />
       <Suspense fallback={<></>}>
-        <AnimatePresence>
-          <Modal key='modals' />
-          <ContextMenuHandler key='contextmenu' />
-        </AnimatePresence>
-      </Suspense>
-      <Suspense fallback={<></>}>
         {showOnBoarding ? (
           <OnBoarding />
         ) : (
@@ -270,6 +264,12 @@ export const Router: FC = memo(() => {
         {!isMobile && auth.authenticated && <SidebarWrapper />}
         <MarketingRouter />
         {auth.authenticated && <AppRouter />}
+        <Suspense fallback={<></>}>
+          <AnimatePresence>
+            <Modal key='modals' />
+            <ContextMenuHandler key='contextmenu' />
+          </AnimatePresence>
+        </Suspense>
       </BrowserRouter>
     </div>
   )

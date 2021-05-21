@@ -1,0 +1,20 @@
+.codeWrapper {
+  display: flex;
+  flex-direction: column;
+
+  text-align: center;
+
+  .code {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  p {
+    margin: 0;
+    margin-top: 1.25rem;
+  }
+}
+
+.button {
+  background: var(--neko-colors-primary);
+}

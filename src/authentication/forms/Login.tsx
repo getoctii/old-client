@@ -6,6 +6,8 @@ import { Auth } from '../state'
 import * as Yup from 'yup'
 import { FC } from 'react'
 import { Keychain } from '../../keychain/state'
+import { UI } from '../../state/ui'
+import { ModalTypes } from '../../utils/constants'
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email'),
@@ -17,6 +19,8 @@ const LoginSchema = Yup.object().shape({
 export const Login: FC = () => {
   const auth = Auth.useContainer()
   const { setKeychainPassword } = Keychain.useContainer()
+  const ui = UI.useContainer()
+
   return (
     <Formik
       initialValues={{ email: '', password: '' }}
@@ -28,18 +32,32 @@ export const Login: FC = () => {
           return
         }
         try {
-          const response = await login(values)
+          const response = await login(values, async () => {
+            return new Promise((resolve, reject) => {
+              ui.setModal({
+                name: ModalTypes.CODE_PROMPT,
+                props: { onCode: resolve, onClose: reject }
+              })
+            })
+          })
           if (response) {
             auth.setToken(response.authorization)
             setKeychainPassword(values.password)
           }
         } catch (e) {
           const errors = e.response.data.errors
-          const userErrors: { email?: string; password?: string } = {}
+          const userErrors: {
+            email?: string
+            password?: string
+            code?: string
+          } = {}
           if (errors.includes('UserNotFound'))
             userErrors.email = 'Incorrect Email'
           if (errors.includes('WrongPassword'))
             userErrors.password = 'Incorrect Password'
+          if (errors.includes('WrongCode')) {
+            userErrors.password = 'Incorrect Code'
+          }
           setErrors(userErrors)
         } finally {
           setSubmitting(false)

@@ -14,12 +14,17 @@ type LoginResponse = {
   authorization: string
 }
 
-export const login = async (values: { email: string; password: string }) => {
+export const login = async (
+  values: { email: string; password: string },
+  promptForCode: () => Promise<string>
+) => {
   const {
-    data: { tokenSalt }
-  } = await clientGateway.get<{ tokenSalt?: number[] }>(
+    data: { tokenSalt, totp }
+  } = await clientGateway.get<{ tokenSalt?: number[]; totp: boolean }>(
     `/users/login?email=${values.email}`
   )
+
+  const code = totp ? await promptForCode() : undefined
 
   if (tokenSalt) {
     const password = arrayBufferToString(
@@ -31,12 +36,17 @@ export const login = async (values: { email: string; password: string }) => {
     return (
       await clientGateway.post<LoginResponse>('/users/login', {
         ...values,
-        password
+        password,
+        code
       })
     ).data
   } else {
-    return (await clientGateway.post<LoginResponse>('/users/login', values))
-      .data
+    return (
+      await clientGateway.post<LoginResponse>('/users/login', {
+        ...values,
+        code
+      })
+    ).data
   }
 }
 
