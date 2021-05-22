@@ -15,101 +15,105 @@ import {
 } from '@capacitor/core'
 import { useSuspenseStorageItem } from '../utils/storage'
 import Integrations from '../integrations/state'
-import * as z from 'zod'
+// import * as Yup from 'zod'
+import * as Yup from 'yup'
 const { Keyboard, StatusBar } = Plugins
 const isThemeBundle = (theme: Theme | ThemeBundle): theme is ThemeBundle => {
   return (theme as ThemeBundle).dark !== undefined
 }
 
-export const themeSchema = z.object({
-  colors: z.object({
-    primary: z.string(),
-    secondary: z.string(),
-    success: z.string(),
-    info: z.string(),
-    danger: z.string(),
-    warning: z.string(),
-    light: z.string(),
-    dark: z.string()
-  }),
-  text: z.object({
-    normal: z.string(),
-    inverse: z.string(),
-    primary: z.string(),
-    danger: z.string(),
-    warning: z.string(),
-    secondary: z.string()
-  }),
-  backgrounds: z.object({
-    primary: z.string(),
-    secondary: z.string()
-  }),
-  settings: z.object({
-    background: z.string(),
-    card: z.string(),
-    input: z.string()
-  }),
-  sidebar: z.object({
-    background: z.string(),
-    seperator: z.string(),
-    shadow: z.string()
-  }),
-  context: z.object({
-    background: z.string(),
-    seperator: z.string()
-  }),
-  channels: z.object({
-    background: z.string(),
-    seperator: z.string()
-  }),
-  chat: z.object({
-    background: z.string(),
-    hover: z.string()
-  }),
-  status: z.object({
-    selected: z.string(),
-    online: z.string(),
-    idle: z.string(),
-    dnd: z.string(),
-    offline: z.string()
-  }),
-  message: z.object({
-    author: z.string(),
-    date: z.string(),
-    message: z.string()
-  }),
-  mention: z.object({
-    me: z.string(),
-    other: z.string()
-  }),
-  input: z.object({
-    background: z.string(),
-    text: z.string()
-  }),
-  modal: z.object({
-    background: z.string(),
-    foreground: z.string()
-  }),
-  emojis: z.object({
-    background: z.string(),
-    input: z.string()
-  }),
-  global: z.string().optional()
-})
+export const themeSchema = Yup.object({
+  colors: Yup.object({
+    primary: Yup.string().defined(),
+    secondary: Yup.string().defined(),
+    success: Yup.string().defined(),
+    info: Yup.string().defined(),
+    danger: Yup.string().defined(),
+    warning: Yup.string().defined(),
+    light: Yup.string().defined(),
+    dark: Yup.string().defined()
+  }).defined(),
+  text: Yup.object({
+    normal: Yup.string().defined(),
+    inverse: Yup.string().defined(),
+    primary: Yup.string().defined(),
+    danger: Yup.string().defined(),
+    warning: Yup.string().defined(),
+    secondary: Yup.string().defined()
+  }).defined(),
+  backgrounds: Yup.object({
+    primary: Yup.string().defined(),
+    secondary: Yup.string().defined()
+  }).defined(),
+  settings: Yup.object({
+    background: Yup.string().defined(),
+    card: Yup.string().defined(),
+    input: Yup.string().defined()
+  }).defined(),
+  sidebar: Yup.object({
+    background: Yup.string().defined(),
+    seperator: Yup.string().defined(),
+    shadow: Yup.string().defined()
+  }).defined(),
+  context: Yup.object({
+    background: Yup.string().defined(),
+    seperator: Yup.string().defined()
+  }).defined(),
+  channels: Yup.object({
+    background: Yup.string().defined(),
+    seperator: Yup.string().defined()
+  }).defined(),
+  chat: Yup.object({
+    background: Yup.string().defined(),
+    hover: Yup.string().defined()
+  }).defined(),
+  status: Yup.object({
+    selected: Yup.string().defined(),
+    online: Yup.string().defined(),
+    idle: Yup.string().defined(),
+    dnd: Yup.string().defined(),
+    offline: Yup.string().defined()
+  }).defined(),
+  message: Yup.object({
+    author: Yup.string().defined(),
+    date: Yup.string().defined(),
+    message: Yup.string().defined()
+  }).defined(),
+  mention: Yup.object({
+    me: Yup.string().defined(),
+    other: Yup.string().defined()
+  }).defined(),
+  input: Yup.object({
+    background: Yup.string().defined(),
+    text: Yup.string().defined()
+  }).defined(),
+  modal: Yup.object({
+    background: Yup.string().defined(),
+    foreground: Yup.string().defined()
+  }).defined(),
+  emojis: Yup.object({
+    background: Yup.string().defined(),
+    input: Yup.string().defined()
+  }).defined(),
+  global: Yup.string().optional().notRequired()
+}).defined()
 
-export const devThemeBundleSchema = z.object({
-  name: z.string(),
+export const devThemeBundleSchema = Yup.object({
+  name: Yup.string().defined(),
   dark: themeSchema,
   light: themeSchema
-})
+}).defined()
 
-export const themeBundleSchema = devThemeBundleSchema.extend({
-  id: z.string()
-})
+export const themeBundleSchema = Yup.object({
+  name: Yup.string().defined(),
+  dark: themeSchema,
+  light: themeSchema,
+  id: Yup.string().defined()
+}).defined()
 
-export type Theme = z.infer<typeof themeSchema>
-export type DevThemeBundle = z.infer<typeof devThemeBundleSchema>
-export type ThemeBundle = z.infer<typeof themeBundleSchema>
+export type Theme = Yup.InferType<typeof themeSchema>
+export type DevThemeBundle = Yup.InferType<typeof devThemeBundleSchema>
+export type ThemeBundle = Yup.InferType<typeof themeBundleSchema>
 
 const globalStyle = document.createElement('style')
 globalStyle.type = 'text/css'
@@ -137,7 +141,7 @@ const useTheme = () => {
           integerations.payloads
             ?.flatMap((payload) => payload.themes ?? [])
             .find((theme) => theme.id === themeID) ||
-          octii,
+          (octii as any),
     [themeID, integerations.payloads, devTheme]
   )
 

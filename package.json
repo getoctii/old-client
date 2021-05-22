@@ -72,7 +72,7 @@
     "unified": "^9.2.0",
     "unist-util-visit": "^2.0.3",
     "yup": "^0.32.9",
-    "zod": "^1.11.13"
+    "zod": "^3.0.2"
   },
   "scripts": {
     "start": "vite",

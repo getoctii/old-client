@@ -43,11 +43,13 @@ const Themes = () => {
       if (!user?.developer) return
       const content = await files[0].text()
       try {
-        const parsed = devThemeBundleSchema.parse(JSON.parse(content))
+        const parsed = await devThemeBundleSchema.validate(JSON.parse(content))
         setDevTheme({ ...parsed, id: 'dev' } as ThemeBundle)
         setThemeID('dev')
-      } catch {
+      } catch (e) {
         console.error('Failed to load custom theme')
+        console.log(!!e)
+        console.error(e)
       }
     }
   })
