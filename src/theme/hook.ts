@@ -131,7 +131,10 @@ const useTheme = () => {
     'light' | 'dark' | 'system'
   >('theme-variations', 'system')
 
-  const [devTheme, setDevTheme] = useState<ThemeBundle | null>(null)
+  const [devTheme, setDevTheme] = useSuspenseStorageItem<ThemeBundle | null>(
+    'devTheme',
+    null
+  )
 
   const theme = useMemo<Theme | ThemeBundle>(
     () =>
