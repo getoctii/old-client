@@ -1,6 +1,9 @@
 import {
+  faDesktop,
   faMicrophone,
   faMicrophoneSlash,
+  faPhoneSlash,
+  faTimes,
   faVolume,
   faVolumeMute
 } from '@fortawesome/pro-solid-svg-icons'
@@ -23,16 +26,33 @@ const Current: FC = () => {
     setDeafened,
     deafened,
     setRoom,
-    room
+    room,
+    shareScreen,
+    sharingScreen,
+    setScreenStream
   } = Call.useContainerSelector(
-    ({ state, setMuted, muted, setDeafened, deafened, setRoom, room }) => ({
+    ({
       state,
       setMuted,
       muted,
       setDeafened,
       deafened,
       setRoom,
-      room
+      room,
+      shareScreen,
+      sharingScreen,
+      setScreenStream
+    }) => ({
+      state,
+      setMuted,
+      muted,
+      setDeafened,
+      deafened,
+      setRoom,
+      room,
+      shareScreen,
+      sharingScreen,
+      setScreenStream
     })
   )
 
@@ -75,8 +95,6 @@ const Current: FC = () => {
     //   enabled: !!people
     // }
   )
-
-  console.log(people)
 
   return (
     <div className={styles.current}>
@@ -122,7 +140,24 @@ const Current: FC = () => {
             <FontAwesomeIcon icon={faVolume} fixedWidth />
           )}
         </button>
-        <button onClick={() => setRoom(null)}>End Call</button>
+        {room?.conversationID ? (
+          <button
+            onClick={() =>
+              sharingScreen ? setScreenStream(null) : shareScreen()
+            }
+          >
+            {sharingScreen ? (
+              <FontAwesomeIcon icon={faTimes} fixedWidth />
+            ) : (
+              <FontAwesomeIcon icon={faDesktop} fixedWidth />
+            )}
+          </button>
+        ) : (
+          <></>
+        )}
+        <button onClick={() => setRoom(null)}>
+          <FontAwesomeIcon icon={faPhoneSlash} fixedWidth />
+        </button>
       </nav>
     </div>
   )

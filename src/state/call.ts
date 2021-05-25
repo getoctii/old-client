@@ -1,23 +1,41 @@
 import { createContainer } from '@innatical/innstate'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
+declare global {
+  interface MediaDevices {
+    getDisplayMedia(constraints?: MediaStreamConstraints): Promise<MediaStream>
+  }
+
+  // if constraints config still lose some prop, you can define it by yourself also
+  interface MediaTrackConstraintSet {
+    displaySurface?: ConstrainDOMString
+    logicalSurface?: ConstrainBoolean
+    // more....
+  }
+}
 
 const useCall = () => {
-  const [room, setRoom] = useState<{
-    id: string
-    token: string
-    server: string
-    channelID?: string
-    conversationID?: string
-  } | null>()
+  const [room, setRoom] =
+    useState<{
+      id: string
+      token: string
+      server: string
+      channelID?: string
+      conversationID?: string
+    } | null>()
   const [socket, setSocket] = useState<WebSocket | null>()
   const [socketReady, setSocketReady] = useState(false)
   const [connection, setConnection] = useState<RTCPeerConnection | null>()
   const [state, setConnectionState] = useState<RTCIceConnectionState | null>()
   const [localStream, setLocalSteam] = useState<MediaStream | null>()
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>()
+  const [remoteVideoTracks, setRemoteVideoTracks] =
+    useState<MediaStreamTrack[] | null>()
   const [audio] = useState(new Audio())
   const [muted, setMuted] = useState(false)
   const [deafened, setDeafened] = useState(false)
+  const [screenStream, setScreenStream] = useState<MediaStream | null>()
+  const senders = useRef<Map<MediaStreamTrack, RTCRtpSender>>(new Map())
 
   useEffect(() => {
     if (!room) return
@@ -120,8 +138,10 @@ const useCall = () => {
     return () => {
       connection.close()
       setConnectionState(null)
+      senders.current = new Map()
+      setScreenStream(null)
     }
-  }, [connection])
+  }, [connection, senders])
 
   useEffect(() => {
     if (!socket || !connection) return
@@ -193,16 +213,22 @@ const useCall = () => {
   useEffect(() => {
     if (!connection) return
     setRemoteStream(new MediaStream())
+    setRemoteVideoTracks([])
 
     return () => {
       setRemoteStream(null)
+      setRemoteVideoTracks(null)
     }
   }, [connection])
 
   useEffect(() => {
-    if (!connection || !remoteStream) return
+    if (!connection || !remoteStream || !remoteVideoTracks) return
     const cb = (track: RTCTrackEvent) => {
-      remoteStream.addTrack(track.track)
+      if (track.track.kind === 'audio') {
+        remoteStream.addTrack(track.track)
+      } else if (track.track.kind === 'video') {
+        setRemoteVideoTracks([...remoteVideoTracks, track.track])
+      }
     }
 
     connection.addEventListener('track', cb)
@@ -210,7 +236,7 @@ const useCall = () => {
     return () => {
       connection.removeEventListener('track', cb)
     }
-  }, [connection, remoteStream])
+  }, [connection, remoteStream, remoteVideoTracks])
 
   useEffect(() => {
     if (!localStream || !connection) return
@@ -245,24 +271,69 @@ const useCall = () => {
   useEffect(() => {
     if (!localStream) return
     if (muted) {
-      localStream.getTracks().forEach((track) => (track.enabled = false))
+      localStream.getAudioTracks().forEach((track) => (track.enabled = false))
     } else {
-      localStream.getTracks().forEach((track) => (track.enabled = true))
+      localStream.getAudioTracks().forEach((track) => (track.enabled = true))
     }
   }, [muted, localStream])
 
   useEffect(() => {
     if (!remoteStream) return
     if (deafened) {
-      remoteStream.getTracks().forEach((track) => (track.enabled = false))
+      remoteStream.getAudioTracks().forEach((track) => (track.enabled = false))
     } else {
-      remoteStream.getTracks().forEach((track) => (track.enabled = true))
+      remoteStream.getAudioTracks().forEach((track) => (track.enabled = true))
     }
   }, [deafened, remoteStream])
 
   const play = useCallback(async () => {
     return await audio.play()
   }, [audio])
+
+  const shareScreen = useCallback(async () => {
+    setScreenStream(await navigator.mediaDevices.getDisplayMedia())
+  }, [])
+
+  useEffect(() => {
+    if (!screenStream || !connection) return
+    screenStream
+      .getTracks()
+      .forEach((track) =>
+        senders.current.set(track, connection.addTrack(track))
+      )
+
+    const addTrack = (track: MediaStreamTrackEvent) => {
+      senders.current.set(track.track, connection.addTrack(track.track))
+    }
+    const removeTrack = (track: MediaStreamTrackEvent) => {
+      const sender = senders.current.get(track.track)
+      if (sender) {
+        connection.removeTrack(sender)
+        senders.current.delete(track.track)
+      }
+    }
+
+    screenStream.addEventListener('addtrack', addTrack)
+    screenStream.addEventListener('removetrack', removeTrack)
+
+    return () => {
+      screenStream.removeEventListener('addtrack', addTrack)
+      screenStream.removeEventListener('removetrack', removeTrack)
+      screenStream.getTracks().forEach((track) => {
+        const sender = senders.current.get(track)
+        if (sender) connection.removeTrack(sender)
+      })
+    }
+  }, [screenStream, connection])
+
+  useEffect(() => {
+    if (!screenStream) return
+    return () => {
+      screenStream.getTracks().forEach((track) => track.stop())
+    }
+  }, [screenStream])
+
+  const sharingScreen = useMemo(() => !!screenStream, [screenStream])
 
   return {
     setMuted,
@@ -272,7 +343,11 @@ const useCall = () => {
     setRoom,
     state,
     play,
-    room
+    room,
+    shareScreen,
+    sharingScreen,
+    setScreenStream,
+    remoteVideoTracks
   }
 }
 
