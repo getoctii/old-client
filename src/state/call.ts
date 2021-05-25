@@ -1,5 +1,6 @@
 import { createContainer } from '@innatical/innstate'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { send } from 'vite'
 
 declare global {
   interface MediaDevices {
@@ -224,6 +225,7 @@ const useCall = () => {
   useEffect(() => {
     if (!connection || !remoteStream || !remoteVideoTracks) return
     const cb = (track: RTCTrackEvent) => {
+      console.log(track)
       if (track.track.kind === 'audio') {
         remoteStream.addTrack(track.track)
       } else if (track.track.kind === 'video') {
@@ -241,21 +243,18 @@ const useCall = () => {
   useEffect(() => {
     if (!localStream || !connection) return
 
-    localStream.getTracks().forEach((track) => connection.addTrack(track))
-  }, [localStream, connection])
-
-  useEffect(() => {
-    if (!localStream || !connection) return
-    const cb = (track: MediaStreamTrackEvent) => {
-      connection.addTrack(track.track)
-    }
-
-    localStream.addEventListener('addtrack', cb)
+    localStream.getTracks().forEach((track) => {
+      senders.current.set(track, connection.addTrack(track, localStream))
+    })
 
     return () => {
-      localStream.removeEventListener('addtrack', cb)
+      localStream.getTracks().forEach((track) => {
+        track.stop()
+        const sender = senders.current.get(track)
+        if (sender) connection.removeTrack(sender)
+      })
     }
-  }, [localStream, connection])
+  }, [localStream, connection, senders])
 
   useEffect(() => {
     if (!remoteStream || !audio) return
