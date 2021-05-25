@@ -1,4 +1,4 @@
-import { FC, Suspense, useEffect, useMemo, useState } from 'react'
+import { FC, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import styles from './Channel.module.scss'
 import { useQuery } from 'react-query'
 import {
@@ -10,18 +10,17 @@ import { Auth } from '../authentication/state'
 import { useDropArea, useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
+  faArrowDown,
+  faArrowUp,
   faChevronLeft,
-  faComputerSpeaker,
   faHashtag,
   faMicrophone,
   faMicrophoneSlash,
   faPhone,
-  faSpeaker,
   faTimes,
   faUserPlus,
   faVolume,
-  faVolumeMute,
-  faVolumeSlash
+  faVolumeMute
 } from '@fortawesome/pro-solid-svg-icons'
 import { useHistory, useParams } from 'react-router-dom'
 import Box from './Box'
@@ -116,6 +115,19 @@ const CommunityChannelView: FC = () => {
   )
 }
 
+const VideoCard: FC<{ track: MediaStreamTrack }> = ({ track }) => {
+  const ref = useRef<HTMLVideoElement | null>(null)
+
+  useEffect(() => {
+    if (!ref.current) return
+    const stream = new MediaStream()
+    stream.addTrack(track)
+    ref.current.srcObject = stream
+    ref.current?.play()
+  }, [ref, track])
+  return <video ref={ref} className={styles.video} />
+}
+
 const CallView: FC<{ channel: ChannelResponse; conversationID: string }> = ({
   channel,
   conversationID
@@ -127,18 +139,64 @@ const CallView: FC<{ channel: ChannelResponse; conversationID: string }> = ({
     deafened,
     room,
     setRoom,
-    play
+    play,
+    remoteVideoTracks
   } = Call.useContainer()
-
   const { token } = Auth.useContainer()
   const current = useMemo(() => room?.channelID === channel.id, [room])
-
+  const [currentVideoStream, setCurrentVideoStream] = useState(0)
+  const trackLength = useMemo(
+    () => remoteVideoTracks?.length ?? 0,
+    [remoteVideoTracks]
+  )
   return (
     <div className={styles.call}>
-      <div className={styles.users}>
-        {channel.voice_users?.map((user) => (
-          <VoiceCard userID={user} speaking={false} small />
-        ))}
+      <div className={styles.callContent}>
+        <div
+          className={`${styles.users} ${
+            remoteVideoTracks?.length ?? 0 > 0 ? styles.vertical : ''
+          }`}
+        >
+          {channel.voice_users?.map((user) => (
+            <VoiceCard userID={user} speaking={false} small />
+          ))}
+        </div>
+        {trackLength > 0 ? (
+          <>
+            <div className={styles.videoStreams}>
+              {remoteVideoTracks ? (
+                <VideoCard track={remoteVideoTracks[currentVideoStream]} />
+              ) : (
+                <></>
+              )}
+            </div>
+            <div className={styles.videoButtons}>
+              <Button
+                type={'button'}
+                onClick={() => {
+                  if (currentVideoStream + 1 > trackLength - 1)
+                    setCurrentVideoStream(0)
+                  else setCurrentVideoStream(currentVideoStream + 1)
+                }}
+              >
+                <FontAwesomeIcon icon={faArrowUp} />
+              </Button>
+              <Button
+                type={'button'}
+                onClick={() => {
+                  console.log(currentVideoStream - 1 < 0)
+                  if (currentVideoStream - 1 < 0)
+                    setCurrentVideoStream(trackLength - 1)
+                  else setCurrentVideoStream(currentVideoStream - 1)
+                }}
+              >
+                <FontAwesomeIcon icon={faArrowDown} />
+              </Button>
+            </div>
+          </>
+        ) : (
+          <></>
+        )}
       </div>
       <div className={styles.buttons}>
         <Button type='button' onClick={() => setMuted(!muted)}>
@@ -208,17 +266,14 @@ const ChannelView: FC<{
   conversationID,
   voiceChannelID
 }) => {
-  const {
-    setUploadDetails,
-    setPublicEncryptionKey,
-    setPublicSigningKey
-  } = Chat.useContainerSelector(
-    ({ setUploadDetails, setPublicEncryptionKey, setPublicSigningKey }) => ({
-      setUploadDetails,
-      setPublicEncryptionKey,
-      setPublicSigningKey
-    })
-  )
+  const { setUploadDetails, setPublicEncryptionKey, setPublicSigningKey } =
+    Chat.useContainerSelector(
+      ({ setUploadDetails, setPublicEncryptionKey, setPublicSigningKey }) => ({
+        setUploadDetails,
+        setPublicEncryptionKey,
+        setPublicSigningKey
+      })
+    )
 
   const { token, id } = Auth.useContainer()
   const { typing } = Typing.useContainer()
