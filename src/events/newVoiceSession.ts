@@ -15,11 +15,6 @@ const useNewVoiceSession = (eventSource: EventSourcePolyfill | null) => {
         peer_id: string
       }
       log('Events', 'purple', 'NEW_VOICE_SESSION')
-
-      ui.setModal({
-        name: ModalTypes.INCOMING_CALL,
-        props: { id: event.id, userID: event.user_id, peerID: event.peer_id }
-      })
     }
 
     eventSource.addEventListener(Events.NEW_VOICE_SESSION, handler)
