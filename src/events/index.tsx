@@ -28,6 +28,7 @@ import useUpdatedChannel from './updatedChannel'
 import useUpdatedOverride from './updatedOverride'
 import useNewOverride from './newOverride'
 import useDeletedOverride from './deletedOverride'
+import useRinging from './ringing'
 
 const EventSource = () => {
   const [eventSource] = useSubscribe()
@@ -61,6 +62,7 @@ const EventSource = () => {
   useUpdatedMessage(eventSource)
   useUpdatedCommunity(eventSource)
   useUpdatedOverride(eventSource)
+  useRinging(eventSource)
   return <></>
 }
 

@@ -25,6 +25,7 @@ import GenerateKeychain from '../keychain/GenerateKeychain'
 import DecryptKeychain from '../keychain/DecryptKeychain'
 import MFAModal from '../authentication/MFAModal'
 import CodePrompt from '../authentication/CodePrompt'
+import Ringing from '../call/Ringing'
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
   switch (name) {
@@ -70,6 +71,8 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <MFAModal {...props} />
     case ModalTypes.CODE_PROMPT:
       return <CodePrompt {...props} />
+    case ModalTypes.RINGING:
+      return <Ringing {...props} />
     default:
       return <></>
   }
@@ -87,7 +90,7 @@ const Modals: FC = () => {
     <Permission.Provider>
       <AnimatePresence exitBeforeEnter>
         {uiStore.modal.name !== ModalTypes.STATUS ? (
-          (!isMobile || uiStore.modal.name !== ModalTypes.INCOMING_CALL) && (
+          !isMobile && (
             <motion.div
               className={`${styles.modal} ${
                 !uiStore.modal ? styles.hidden : ''

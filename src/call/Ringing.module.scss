@@ -1,0 +1,53 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  img {
+    width: 6rem;
+    height: 6rem;
+    object-fit: cover;
+    border-radius: 14px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+}
+
+.gc {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 14px;
+  background: var(--neko-colors-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.primary {
+  background: var(--neko-colors-primary);
+}
+
+.danger {
+  background: var(--neko-colors-danger);
+}
+
+.buttons {
+  display: flex;
+  width: 100%;
+
+  :not(:first-child) {
+    margin-left: 0.5rem;
+  }
+
+  :not(:last-child) {
+    margin-right: 0.5rem;
+  }
+
+  button {
+    height: 3rem;
+    width: 100%;
+    font-size: 1.25rem;
+  }
+}
