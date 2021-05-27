@@ -417,12 +417,14 @@ const MessageView: FC<{
                 style={{
                   backgroundImage: `url(${richContent?.avatar || user?.avatar})`
                 }}
-                onClick={() =>
-                  ui.setModal({
-                    name: ModalTypes.PREVIEW_USER,
-                    props: { id: user?.id }
-                  })
-                }
+                onClick={() => {
+                  if (type === MessageTypes.NORMAL) {
+                    ui.setModal({
+                      name: ModalTypes.PREVIEW_USER,
+                      props: { id: user?.id }
+                    })
+                  }
+                }}
               />
             )}
           <div
