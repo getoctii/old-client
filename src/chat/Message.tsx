@@ -440,12 +440,14 @@ const MessageView: FC<{
                 type === MessageTypes.WEBHOOK) && (
                 <h2
                   key='username'
-                  onClick={() =>
-                    ui.setModal({
-                      name: ModalTypes.PREVIEW_USER,
-                      props: { id: user?.id }
-                    })
-                  }
+                  onClick={() => {
+                    if (type === MessageTypes.NORMAL) {
+                      ui.setModal({
+                        name: ModalTypes.PREVIEW_USER,
+                        props: { id: user?.id }
+                      })
+                    }
+                  }}
                 >
                   <span>
                     {richContent?.username || user?.username}
