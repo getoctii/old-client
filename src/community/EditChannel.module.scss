@@ -348,3 +348,43 @@
     background: var(--neko-colors-primary);
   }
 }
+
+.webhookRow {
+  display: flex;
+  align-items: center;
+
+  input {
+    width: 100%;
+    height: 3.5rem;
+    background: var(--neko-settings-background);
+  }
+
+  button {
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-top: 0;
+  }
+
+  .danger {
+    background: var(--neko-colors-danger);
+  }
+
+  :not(:first-child) {
+    margin-left: 0.25rem;
+  }
+
+  :not(:last-child) {
+    margin-right: 0.25rem;
+  }
+}
+
+.webhook {
+  background: var(--neko-settings-card);
+  border-radius: 11px;
+  padding: 1rem;
+  margin-top: 1rem;
+
+  h1 {
+    font-size: 1.2rem;
+  }
+}

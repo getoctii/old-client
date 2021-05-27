@@ -78,6 +78,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       return !(
         messages?.[index + 1] &&
         message.author_id === messages?.[index + 1]?.author_id &&
+        message.type === messages?.[index + 1]?.type &&
         !!message.content === !!messages?.[index + 1]?.content &&
         dayjs.utc(message?.created_at)?.valueOf() -
           dayjs.utc(messages?.[index - 1]?.created_at)?.valueOf() <
@@ -229,6 +230,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
                   : message.encrypted_content)
               }
               updatedAt={message.updated_at}
+              richContent={message.rich_content}
             />
           </Suspense>
         ) : (

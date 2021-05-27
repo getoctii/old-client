@@ -31,10 +31,19 @@ import { getCommunity, getGroup, getGroups } from './remote'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BlockPicker } from 'react-color'
 import { useMedia, useSet } from 'react-use'
-import { faCheck, faMinus, faTimes } from '@fortawesome/pro-solid-svg-icons'
+import {
+  faCheck,
+  faCopy,
+  faMinus,
+  faTimes,
+  faUndo
+} from '@fortawesome/pro-solid-svg-icons'
 import { Permission } from '../utils/permissions'
 import TextArea from '../components/TextArea'
 import StatusBar from '../components/StatusBar'
+import { Plugins } from '@capacitor/core'
+
+const { Clipboard } = Plugins
 
 const ChannelSchema = Yup.object().shape({
   name: Yup.string()
@@ -180,14 +189,10 @@ const PermissionOverrides: FC<
 > = ({ allow, deny, groupID, type }) => {
   const auth = Auth.useContainer()
   const { channelID } = useParams<{ id: string; channelID: string }>()
-  const [
-    allowed,
-    { add: addAllowed, remove: removeAllowed, has: hasAllowed }
-  ] = useSet<ChannelPermissions>(new Set(allow ?? []))
-  const [
-    denied,
-    { add: addDenied, remove: removeDenied, has: hasDenied }
-  ] = useSet<ChannelPermissions>(new Set(deny ?? []))
+  const [allowed, { add: addAllowed, remove: removeAllowed, has: hasAllowed }] =
+    useSet<ChannelPermissions>(new Set(allow ?? []))
+  const [denied, { add: addDenied, remove: removeDenied, has: hasDenied }] =
+    useSet<ChannelPermissions>(new Set(deny ?? []))
 
   const showSave = useMemo(
     () =>
@@ -570,6 +575,49 @@ export const EditChannel: FC = () => {
             </Form>
           )}
         </Formik>
+
+        <div className={styles.webhook}>
+          <h1>Webhook</h1>
+          <div className={styles.webhookRow}>
+            <Input
+              value={`https://gateway.octii.chat/channels/${channel?.id}/webhook/${channel?.webhook_code}`}
+              disabled
+            />
+            <Button type={'button'}>
+              <FontAwesomeIcon
+                icon={faCopy}
+                onClick={() => {
+                  Clipboard.write({
+                    string: `https://gateway.octii.chat/channels/${channel?.id}/webhook/${channel?.webhook_code}`
+                  })
+                }}
+              />
+            </Button>
+            <Button
+              type={'button'}
+              className={styles.danger}
+              onClick={async () => {
+                await clientGateway.patch(
+                  `/channels/${channelID}`,
+                  {
+                    webhook_code: true
+                  },
+                  {
+                    headers: { Authorization: token }
+                  }
+                )
+
+                await queryCache.invalidateQueries([
+                  'channel',
+                  channelID,
+                  token
+                ])
+              }}
+            >
+              <FontAwesomeIcon icon={faUndo} />
+            </Button>
+          </div>
+        </div>
 
         {Object.keys(channel?.overrides ?? {}).filter(
           (groupID) => !protectedGroups.includes(groupID)

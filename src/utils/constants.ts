@@ -188,7 +188,8 @@ export enum MessageTypes {
   PINNED = 2,
   MEMBER_ADDED = 3,
   MEMBER_REMOVED = 4,
-  ADMINISTRATOR = 5
+  ADMINISTRATOR = 5,
+  WEBHOOK = 6
 }
 
 export enum InternalChannelTypes {

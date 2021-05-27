@@ -36,6 +36,7 @@ export interface ChannelResponse {
     [groupID: string]: Override
   }
   voice_users?: string[]
+  webhook_code?: string
 }
 
 export interface MessageResponse {
@@ -47,6 +48,10 @@ export interface MessageResponse {
   content?: string
   encrypted_content?: ExportedEncryptedMessage
   self_encrypted_content?: ExportedEncryptedMessage
+  rich_content?: {
+    username: string
+    avatar: string
+  }
 }
 
 export const getChannel = async (_: string, channelID: string, token: string) =>
