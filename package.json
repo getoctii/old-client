@@ -83,7 +83,7 @@
     "build:ios": "VITE_APP_GATEWAY_URL=https://gateway.octii.chat ionic capacitor build ios",
     "android": "ionic capacitor run android -l --external",
     "ionic:build": "VITE_APP_GATEWAY_URL=https://gateway.octii.chat tsc && vite build",
-    "preinstall": "/bin/bash -c \"[[ $DO_CI == 1 ]] && echo \\\"@fortawesome:registry=https://npmfontawesome.com/\n//npm.fontawesome.com/:_authToken=$FA_KEY\\\" > ~/.npmrc || true\""
+    "preinstall": "/bin/bash -c \"[[ \\\"$DO_CI\\\" == 1 ]] && echo \\\"@fortawesome:registry=https://npmfontawesome.com/\n//npm.fontawesome.com/:_authToken=$FA_KEY\\\" > ~/.npmrc || true\""
   },
   "eslintConfig": {
     "extends": "react-app"
