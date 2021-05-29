@@ -72,14 +72,12 @@ const IconPicker: FC<{
           formData.append('file', image)
           try {
             const response = await axios.post<{ file: string }>(
-              'https://innstor.innatical.com',
+              'https://api.octii.chat/cdn/icon',
               formData
             )
             setIsUploading(false)
-            setIcon(`https://innstor.innatical.com/${response.data?.file}`)
-            await onUpload(
-              `https://innstor.innatical.com/${response.data?.file}`
-            )
+            setIcon(response.data?.file)
+            await onUpload(response.data?.file)
           } catch (error) {
             setError(true)
           }

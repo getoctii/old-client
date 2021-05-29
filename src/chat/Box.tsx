@@ -37,17 +37,14 @@ const BoxView: FC<{
   channelID: string
   hasPermission: boolean
 }> = ({ channelID, hasPermission }) => {
-  const {
-    sendMessage,
-    uploadDetails,
-    setUploadDetails
-  } = Chat.useContainerSelector(
-    ({ sendMessage, uploadDetails, setUploadDetails }) => ({
-      sendMessage,
-      uploadDetails,
-      setUploadDetails
-    })
-  )
+  const { sendMessage, uploadDetails, setUploadDetails } =
+    Chat.useContainerSelector(
+      ({ sendMessage, uploadDetails, setUploadDetails }) => ({
+        sendMessage,
+        uploadDetails,
+        setUploadDetails
+      })
+    )
   const { token } = Auth.useContainer()
   const isMobile = useMedia('(max-width: 740px)')
   const adjective = useMemo(
@@ -72,8 +69,9 @@ const BoxView: FC<{
                   status: 'uploading',
                   file
                 })
-                const url = await uploadFile(file)
-                await sendMessage(`https://innstor.innatical.com/${url}`)
+                if (!token) return
+                const url = await uploadFile(file, token)
+                await sendMessage(url)
                 setUploadDetails(null)
               }}
             />
@@ -116,18 +114,16 @@ const BoxView: FC<{
             }}
             onEnter={async (content) => {
               if (content !== '' || uploadDetails) {
-                if (uploadDetails) {
+                if (uploadDetails && token) {
                   setUploadDetails({
                     status: 'uploading',
                     file: uploadDetails.file
                   })
-                  const file = await uploadFile(uploadDetails.file)
+                  const file = await uploadFile(uploadDetails.file, token)
                   if (content !== '') {
-                    await sendMessage(
-                      `${content}\nhttps://innstor.innatical.com/${file}`
-                    )
+                    await sendMessage(`${content}\n${file}`)
                   } else {
-                    await sendMessage(`https://innstor.innatical.com/${file}`)
+                    await sendMessage(file)
                   }
                   setUploadDetails(null)
                 } else {

@@ -114,12 +114,17 @@ export const postEncryptedMessage = async (
   ).data
 }
 
-export const uploadFile = async (file: File) => {
+export const uploadFile = async (file: File, token: string) => {
   const formData = new FormData()
   formData.append('file', file)
   const response = await axios.post<{ file: string }>(
-    'https://innstor.innatical.com',
-    formData
+    'https://api.octii.chat/cdn/file',
+    formData,
+    {
+      headers: {
+        Authorization: token
+      }
+    }
   )
   return response.data.file
 }
