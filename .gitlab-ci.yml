@@ -13,23 +13,3 @@ build:
   cache:
     paths:
       - node_modules/
-
-deploy:
-  stage: deploy
-  image: alpine:latest
-  before_script:
-    - apk update && apk add openssh-client bash rsync curl bash
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    - curl -sL https://sentry.io/get-cli/ | bash
-  environment:
-    name: production
-    url: octii.chat
-  script:
-    - rsync -hrvz --delete --exclude=_ -e "ssh" --progress dist/ octii-admin@185.187.169.100:/var/www/octii.chat
-  only:
-    - master
