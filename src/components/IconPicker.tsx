@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileUpload } from '@fortawesome/pro-solid-svg-icons'
 import axios from 'axios'
 import { faPoop } from '@fortawesome/pro-duotone-svg-icons'
+import { Auth } from '../authentication/state'
 
 const IconPicker: FC<{
   alt: string
@@ -26,6 +27,7 @@ const IconPicker: FC<{
   const [icon, setIcon] = useState<string | undefined>(defaultIcon || undefined)
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
+  const { token } = Auth.useContainer()
   return (
     <div
       className={`${styles.icon} ${className ?? ''} ${
@@ -73,7 +75,12 @@ const IconPicker: FC<{
           try {
             const response = await axios.post<{ file: string }>(
               'https://api.octii.chat/cdn/icon',
-              formData
+              formData,
+              {
+                headers: {
+                  Authorization: token
+                }
+              }
             )
             setIsUploading(false)
             setIcon(response.data?.file)
