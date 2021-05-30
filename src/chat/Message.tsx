@@ -296,7 +296,11 @@ const MessageView: FC<{
         } else if (File.isFile(str)) {
           return {
             link: <></>,
-            embed: <File.Embed key={key} url={str} />
+            embed: (
+              <ErrorBoundary fallbackRender={() => <p>{link}</p>}>
+                <File.Embed key={key} url={str} />
+              </ErrorBoundary>
+            )
           }
         } else {
           return link
