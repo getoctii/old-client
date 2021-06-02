@@ -40,7 +40,6 @@
     "framer-motion": "^2.7.7",
     "ion-sdk-js": "^1.6.3",
     "jwt-decode": "^3.1.1",
-    "peerjs": "innatical/peerjs",
     "prettier": "^2.1.2",
     "qrcode.react": "^1.0.1",
     "react": "^17.0.1",
