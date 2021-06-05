@@ -39,8 +39,7 @@ const { App } = Plugins
 
 if (import.meta.env.PROD) {
   Sentry.init({
-    dsn:
-      'https://6f9ffeb08c814b15971d8241698bee28@o271654.ingest.sentry.io/5541960',
+    dsn: 'https://6f9ffeb08c814b15971d8241698bee28@o271654.ingest.sentry.io/5541960',
     integrations: [new SentryRRWeb(), new Integrations.BrowserTracing()],
     release: import.meta.env.VITE_APP_VERSION,
     tracesSampleRate: 0.5
@@ -59,10 +58,6 @@ P.S. If you do know what you're doing, maybe you should join us :P.
 lleyton@innatical.com
 `,
   'font-size: 18px; font-family: Inter, sans-serif; font-weight: 600'
-)
-
-LocalNotifications.requestPermission().catch(() =>
-  console.warn('Notifications not supported')
 )
 
 document.oncontextmenu = (event) => {

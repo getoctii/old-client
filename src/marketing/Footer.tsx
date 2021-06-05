@@ -11,6 +11,7 @@ const Footer: FC = () => {
           target='_blank'
           rel='noopener noreferrer'
           href='https://twitter.com/innatical'
+          title='Twitter'
         >
           <FontAwesomeIcon icon={faTwitter} />
         </a>
@@ -18,6 +19,7 @@ const Footer: FC = () => {
           target='_blank'
           rel='noopener noreferrer'
           href='https://discord.gg/XTFJF5pNSG '
+          title='Discord'
         >
           <FontAwesomeIcon icon={faDiscord} />
         </a>
@@ -29,7 +31,7 @@ const Footer: FC = () => {
         </span>{' '}
         in Minnesota & California
       </p>
-      <h4>© 2021 Innatical</h4>
+      <h3>© 2021 Innatical</h3>
     </div>
   )
 }

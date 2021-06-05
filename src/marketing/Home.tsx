@@ -105,11 +105,11 @@ const Home: FC = () => {
       <div className={styles.body} ref={ref}>
         <div className={styles.questions}>
           <div className={styles.question}>
-            <h3>
+            <h2>
               Great, another chat app.
               <br />
               Why should I sign up?
-            </h3>
+            </h2>
             <p>
               Octii aims to augment the traditional chat experience using the
               power of integrations. Our integrations will change how you use
@@ -118,7 +118,7 @@ const Home: FC = () => {
             </p>
           </div>
           <div className={styles.question}>
-            <h3>What do you mean by integrations?</h3>
+            <h2>What do you mean by integrations?</h2>
             <p>
               Octii integrations let developers create anything they can
               imagine, including themes, games, moderation tools, and other
@@ -126,7 +126,7 @@ const Home: FC = () => {
             </p>
           </div>
           <div className={styles.question}>
-            <h3>Hold up, did I hear themes?</h3>
+            <h2>Hold up, did I hear themes?</h2>
             <p>
               Yes! Octii comes with different themes that you can switch
               between. You can even install themes created by the community from
@@ -134,7 +134,7 @@ const Home: FC = () => {
             </p>
           </div>
           <div className={styles.question}>
-            <h3>What about my privacy?</h3>
+            <h2>What about my privacy?</h2>
             <p>
               Here at Innatical, we believe that privacy is a fundamental human
               right. We will never track or sell any of your data to any 3rd
@@ -143,7 +143,7 @@ const Home: FC = () => {
             </p>
           </div>
           <div className={styles.question}>
-            <h3>I’m sold. How do I get started?</h3>
+            <h2>I’m sold. How do I get started?</h2>
             <p>
               Octii is currently in private beta. If you want a chance to
               receive early access, subscribe to our mailing list!
@@ -151,7 +151,7 @@ const Home: FC = () => {
           </div>
           <hr />
           <div className={styles.question}>
-            <h3>So, what does it look like?</h3>
+            <h2>So, what does it look like?</h2>
             <p>
               Glad you asked, here's a screenshot. <sup>2</sup>
             </p>
