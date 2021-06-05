@@ -117,14 +117,15 @@
       align-items: center;
       .question {
         max-width: 380px;
-        h3,
+        h2,
         p {
           margin: 0;
           color: var(--neko-default-text);
         }
 
-        h3 {
+        h2 {
           margin-bottom: 0.5rem;
+          font-size: 1.25rem;
         }
         p {
           margin-bottom: 1.8rem;
