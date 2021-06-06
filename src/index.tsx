@@ -60,10 +60,6 @@ lleyton@innatical.com
   'font-size: 18px; font-family: Inter, sans-serif; font-weight: 600'
 )
 
-document.oncontextmenu = (event) => {
-  event.preventDefault()
-}
-
 setFocusHandler((handleFocus) => {
   const listener = App.addListener('appStateChange', (state: AppState) => {
     if (state.isActive) {
