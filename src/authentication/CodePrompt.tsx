@@ -43,7 +43,7 @@ const CodePrompt: FC<{ onCode: (code: string) => void }> = ({ onCode }) => {
           <Form className={styles.form}>
             <div className={styles.code}>
               <label htmlFor='code'>Code</label>
-              <Field component={Input} name='code' />
+              <Field component={Input} name='code' autoFocus />
               <ErrorMessage
                 component='p'
                 name='code'

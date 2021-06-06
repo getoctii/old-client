@@ -9,6 +9,7 @@ import {
   getParticipants,
   getUnreads
 } from '../user/remote'
+import { isPlatform } from '@ionic/react'
 
 const { App, BackgroundTask } = Plugins
 
@@ -35,6 +36,7 @@ const useSubscribe = () => {
     }
 
     const stateChangeCb = (state: AppState) => {
+      if (!isPlatform('capacitor')) return
       if (!state.isActive) {
         const taskID = BackgroundTask.beforeExit(() => {
           evtSource?.close()
