@@ -4,6 +4,7 @@ import { createContainer } from '@innatical/innstate'
 import { clientGateway } from '../utils/constants'
 import { queryCache } from 'react-query'
 import { useSuspenseStorageItem } from '../utils/storage'
+import { Plugins } from '@capacitor/core'
 
 const useAuth = () => {
   const [token, setToken] = useSuspenseStorageItem<string | null>(
@@ -19,8 +20,10 @@ const useAuth = () => {
   )
 
   useEffect(() => {
-    if (payload?.exp && payload.exp <= Math.floor(Date.now() / 1000))
-      setToken(null)
+    if (payload?.exp && payload.exp <= Math.floor(Date.now() / 1000)) {
+      Plugins.Storage.clear()
+      queryCache.clear()
+    }
   }, [payload, setToken])
 
   useEffect(() => {
