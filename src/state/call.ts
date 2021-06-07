@@ -1,6 +1,5 @@
 import { createContainer } from '@innatical/innstate'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { send } from 'vite'
 
 declare global {
   interface MediaDevices {
@@ -26,6 +25,7 @@ const useCall = () => {
     } | null>()
   const [socket, setSocket] = useState<WebSocket | null>()
   const [socketReady, setSocketReady] = useState(false)
+  const [serverReady, setServerReady] = useState(false)
   const [connection, setConnection] = useState<RTCPeerConnection | null>()
   const [state, setConnectionState] = useState<RTCIceConnectionState | null>()
   const [localStream, setLocalSteam] = useState<MediaStream | null>()
@@ -50,6 +50,7 @@ const useCall = () => {
     return () => {
       setSocket(null)
       setSocketReady(false)
+      setServerReady(false)
     }
   }, [room])
 
@@ -74,13 +75,14 @@ const useCall = () => {
   }, [socket])
 
   useEffect(() => {
-    if (!socket || !connection || !socketReady) return
+    if (!socket) return
     const cb = async (message: MessageEvent) => {
       const payload: { type: string; data: any } = JSON.parse(
         message.data.toString()
       )
       switch (payload.type) {
         case 'SDP':
+          if (!connection) return
           if (
             payload.data.type === 'offer' &&
             connection.signalingState !== 'stable'
@@ -105,7 +107,11 @@ const useCall = () => {
           }
           break
         case 'ICE':
+          if (!connection) return
           await connection.addIceCandidate(payload.data)
+          break
+        case 'STATE':
+          if (payload.data === 'ready') setServerReady(true)
       }
     }
 
@@ -114,10 +120,10 @@ const useCall = () => {
     return () => {
       socket.removeEventListener('message', cb)
     }
-  }, [socket, connection, socketReady])
+  }, [socket, connection])
 
   useEffect(() => {
-    if (!socket || !socketReady) return
+    if (!socket || !socketReady || !serverReady) return
     const connection = new RTCPeerConnection({
       iceServers: [
         {
@@ -131,7 +137,7 @@ const useCall = () => {
     return () => {
       setConnection(null)
     }
-  }, [socket, socketReady])
+  }, [socket, socketReady, serverReady])
 
   useEffect(() => {
     if (!connection) return
@@ -203,6 +209,7 @@ const useCall = () => {
         audio: true,
         video: false
       })
+
       setLocalSteam(stream)
     })()
 
