@@ -110,7 +110,7 @@ const Current: FC = () => {
           }
         }}
       >
-        {users
+        {users && users.length > 0
           ? 'Call w/' + users?.map((i) => i.username).join(', ')
           : '#' + channel?.name}
       </h3>
