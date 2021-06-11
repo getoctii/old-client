@@ -14,6 +14,44 @@ declare global {
   }
 }
 
+const preferCodec = (codecs: RTCRtpCodecCapability[], mimeType: string) => {
+  const otherCodecs: RTCRtpCodecCapability[] = []
+  const sortedCodecs: RTCRtpCodecCapability[] = []
+
+  codecs.forEach((codec) => {
+    if (codec.mimeType === mimeType) {
+      sortedCodecs.push(codec)
+    } else {
+      otherCodecs.push(codec)
+    }
+  })
+
+  return sortedCodecs.concat(otherCodecs)
+}
+
+const changeVideoCodec = (conection: RTCPeerConnection, mimeType: string) => {
+  const transceivers = conection.getTransceivers()
+
+  transceivers.forEach((transceiver) => {
+    const kind = transceiver.sender.track?.kind
+    if (!kind) return
+
+    let sendCodecs = RTCRtpSender.getCapabilities(kind)?.codecs
+    let recvCodecs = RTCRtpReceiver.getCapabilities(kind)?.codecs
+    if (!sendCodecs || !recvCodecs) return
+
+    if (kind === 'video') {
+      sendCodecs = preferCodec(sendCodecs, mimeType)
+      recvCodecs = preferCodec(recvCodecs, mimeType)
+      transceiver.setCodecPreferences([...sendCodecs, ...recvCodecs])
+    }
+  })
+
+  if (conection.onnegotiationneeded) {
+    conection.onnegotiationneeded(new Event('onnegotiationneeded'))
+  }
+}
+
 const useCall = () => {
   const [room, setRoom] =
     useState<{
@@ -293,8 +331,15 @@ const useCall = () => {
         senders.current.set(track, connection.addTrack(track))
       )
 
+    // @ts-ignore
+    if (window.chrome)
+      changeVideoCodec(connection, 'video/webm; codecs="vp9, vorbis"')
+
     const addTrack = (track: MediaStreamTrackEvent) => {
       senders.current.set(track.track, connection.addTrack(track.track))
+      // @ts-ignore
+      if (window.chrome)
+        changeVideoCodec(connection, 'video/webm; codecs="vp9, vorbis"')
     }
     const removeTrack = (track: MediaStreamTrackEvent) => {
       const sender = senders.current.get(track.track)
