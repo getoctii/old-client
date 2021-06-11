@@ -24,9 +24,8 @@ const useCall = () => {
       conversationID?: string
     } | null>()
   const [socket, setSocket] = useState<WebSocket | null>()
-  const [socketReady, setSocketReady] = useState(false)
-  const [serverReady, setServerReady] = useState(false)
   const [connection, setConnection] = useState<RTCPeerConnection | null>()
+  const connectionRef = useRef<RTCPeerConnection | null>()
   const [state, setConnectionState] = useState<RTCIceConnectionState | null>()
   const [localStream, setLocalSteam] = useState<MediaStream | null>()
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>()
@@ -49,8 +48,8 @@ const useCall = () => {
 
     return () => {
       setSocket(null)
-      setSocketReady(false)
-      setServerReady(false)
+      setConnection(null)
+      connectionRef.current = null
     }
   }, [room])
 
@@ -63,55 +62,58 @@ const useCall = () => {
 
   useEffect(() => {
     if (!socket) return
-    const cb = () => {
-      setSocketReady(true)
-    }
-
-    socket.addEventListener('open', cb)
-
-    return () => {
-      socket.removeEventListener('open', cb)
-    }
-  }, [socket])
-
-  useEffect(() => {
-    if (!socket) return
-    const cb = async (message: MessageEvent) => {
+    const cb = (message: MessageEvent) => {
       const payload: { type: string; data: any } = JSON.parse(
         message.data.toString()
       )
+      const connection = connectionRef.current
       switch (payload.type) {
         case 'SDP':
+          console.log(payload, !!connection)
           if (!connection) return
-          if (
-            payload.data.type === 'offer' &&
-            connection.signalingState !== 'stable'
-          ) {
-            await Promise.all([
-              connection.setLocalDescription({ type: 'rollback' }),
-              connection.setRemoteDescription(payload.data)
-            ])
-          } else {
-            await connection.setRemoteDescription(payload.data)
-          }
-          if (payload.data.type === 'offer') {
-            await connection.setLocalDescription(
-              await connection.createAnswer()
-            )
-            socket.send(
-              JSON.stringify({
-                type: 'SDP',
-                data: connection.localDescription
-              })
-            )
-          }
+          ;(async () => {
+            if (
+              payload.data.type === 'offer' &&
+              connection.signalingState !== 'stable'
+            ) {
+              await Promise.all([
+                connection.setLocalDescription({ type: 'rollback' }),
+                connection.setRemoteDescription(payload.data)
+              ])
+            } else {
+              await connection.setRemoteDescription(payload.data)
+            }
+            if (payload.data.type === 'offer') {
+              await connection.setLocalDescription(
+                await connection.createAnswer()
+              )
+              socket.send(
+                JSON.stringify({
+                  type: 'SDP',
+                  data: connection.localDescription
+                })
+              )
+            }
+          })()
           break
         case 'ICE':
           if (!connection) return
-          await connection.addIceCandidate(payload.data)
+          ;(async () => {
+            await connection.addIceCandidate(payload.data)
+          })()
           break
         case 'STATE':
-          if (payload.data === 'ready') setServerReady(true)
+          if (payload.data === 'ready') {
+            const connection = new RTCPeerConnection({
+              iceServers: [
+                {
+                  urls: ['stun:stun.l.google.com:19302']
+                }
+              ]
+            })
+            connectionRef.current = connection
+            setConnection(connection)
+          }
       }
     }
 
@@ -121,23 +123,6 @@ const useCall = () => {
       socket.removeEventListener('message', cb)
     }
   }, [socket, connection])
-
-  useEffect(() => {
-    if (!socket || !socketReady || !serverReady) return
-    const connection = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: ['stun:stun.l.google.com:19302']
-        }
-      ]
-    })
-
-    setConnection(connection)
-
-    return () => {
-      setConnection(null)
-    }
-  }, [socket, socketReady, serverReady])
 
   useEffect(() => {
     if (!connection) return
