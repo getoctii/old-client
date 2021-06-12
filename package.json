@@ -74,7 +74,7 @@
     "zod": "^3.0.2"
   },
   "scripts": {
-    "start": "vite",
+    "start": "vite preview",
     "dev": "VITE_APP_GATEWAY_URL=https://api.octii.chat/v1 vite",
     "preview": "vite preview",
     "build": "tsc && VITE_APP_GATEWAY_URL=https://api.octii.chat/v1 vite build",
