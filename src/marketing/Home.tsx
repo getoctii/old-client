@@ -113,8 +113,8 @@ const Home: FC = () => {
             <p>
               Octii aims to augment the traditional chat experience using the
               power of integrations. Our integrations will change how you use
-              and think about social media, and provide a fluid experience never
-              seen before.
+              and think about communication, and provide a fluid experience
+              never seen before.
             </p>
           </div>
           <div className={styles.question}>
