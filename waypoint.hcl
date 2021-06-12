@@ -10,6 +10,8 @@ app "octii-client" {
   }
 
   deploy {
-    use "docker" {}
+    use "docker" {
+      service_port = 5000
+    }
   }
 }
