@@ -15,8 +15,14 @@ import { UI } from '../state/ui'
 import { clientGateway } from '../utils/constants'
 import { Call } from '../state/call'
 import { useHistory } from 'react-router-dom'
+import { useAudio } from 'react-use'
 
 const Ringing: FC<{ id: string }> = ({ id }) => {
+  const [audio] = useAudio({
+    src: 'https://cdn.octii.chat/assets/ringtone.wav',
+    autoPlay: true,
+    loop: true
+  })
   const auth = Auth.useContainer()
   const ui = UI.useContainer()
   const { data: participants } = useQuery(
@@ -48,6 +54,7 @@ const Ringing: FC<{ id: string }> = ({ id }) => {
 
   return (
     <Modal onDismiss={() => {}} icon={faPhone} title={'Incoming Call'}>
+      {audio}
       <div className={styles.container}>
         {users?.length === 1 ? (
           <img src={users[0].avatar} alt={users[0].username} />
