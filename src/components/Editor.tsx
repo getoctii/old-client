@@ -376,7 +376,7 @@ const EditorView: FC<{
                   search={search}
                   selected={selected}
                   onFiltered={onCommandsFiltered}
-                ></Commands>
+                />
               ) : (
                 <></>
               )
