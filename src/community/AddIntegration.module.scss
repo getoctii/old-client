@@ -1,0 +1,22 @@
+.bottom {
+  background: var(--neko-colors-primary);
+}
+
+.list {
+  button {
+    width: 100%;
+
+    &:not(:first-child) {
+      margin-top: 0.25rem;
+    }
+    &:not(:last-child) {
+      margin-bottom: 0.25rem;
+    }
+
+    background: var(--neko-input-background);
+  }
+
+  .selected {
+    background: var(--neko-colors-secondary);
+  }
+}

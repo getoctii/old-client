@@ -10,7 +10,8 @@ import {
   IconDefinition,
   faPencilAlt,
   faLock,
-  faSpiderWeb
+  faSpiderWeb,
+  faLink
 } from '@fortawesome/pro-solid-svg-icons'
 import { Plugins } from '@capacitor/core'
 import { Auth } from '../authentication/state'
@@ -53,6 +54,7 @@ import {
 } from '@innatical/inncryption'
 import { Keychain } from '../keychain/state'
 import { getKeychain } from '../user/remote'
+import { getProduct, getResource } from '../community/remote'
 
 const { Clipboard } = Plugins
 dayjs.extend(dayjsUTC)
@@ -130,7 +132,17 @@ const MessageView: FC<{
   content?: string | ExportedEncryptedMessage
   type: MessageTypes
   primary: boolean
-  richContent?: { username: string; avatar: string }
+  richContent?: {
+    username?: string
+    avatar?: string
+    resource_id?: string
+    product_id?: string
+    actions?: {
+      type: 'button'
+      content: string
+      action: number
+    }[]
+  }
 }> = memo(
   ({ id, authorID, createdAt, primary, content, type, richContent }) => {
     const auth = Auth.useContainer()
@@ -146,6 +158,27 @@ const MessageView: FC<{
       async (_: string, key: number[]) => {
         if (!key) return undefined
         return await importPublicKey(key, 'signing')
+      }
+    )
+
+    const { data: product } = useQuery(
+      ['products', richContent?.product_id, auth.token],
+      getProduct,
+      {
+        enabled: !!richContent?.product_id
+      }
+    )
+
+    const { data: resource } = useQuery(
+      [
+        'resource',
+        richContent?.product_id,
+        richContent?.resource_id,
+        auth.token
+      ],
+      getResource,
+      {
+        enabled: !!richContent?.resource_id
       }
     )
 
@@ -394,7 +427,7 @@ const MessageView: FC<{
     return (
       <Context.Wrapper
         title={`${
-          richContent?.username || user?.username || 'Unknown'
+          resource?.name || richContent?.username || user?.username || 'Unknown'
         }'s Message`}
         message={messageContent}
         key={id}
@@ -403,7 +436,9 @@ const MessageView: FC<{
         <div
           className={`${styles.message} ${
             primary ||
-            (type !== MessageTypes.NORMAL && type !== MessageTypes.WEBHOOK)
+            (type !== MessageTypes.NORMAL &&
+              type !== MessageTypes.WEBHOOK &&
+              type !== MessageTypes.INTEGRATION)
               ? styles.primary
               : ''
           } ${
@@ -415,11 +450,15 @@ const MessageView: FC<{
           }`}
         >
           {primary &&
-            (type === MessageTypes.NORMAL || type === MessageTypes.WEBHOOK) && (
+            (type === MessageTypes.NORMAL ||
+              type === MessageTypes.WEBHOOK ||
+              type === MessageTypes.INTEGRATION) && (
               <div
                 className={styles.avatar}
                 style={{
-                  backgroundImage: `url(${richContent?.avatar || user?.avatar})`
+                  backgroundImage: `url(${
+                    product?.icon || richContent?.avatar || user?.avatar
+                  })`
                 }}
                 onClick={() => {
                   if (type === MessageTypes.NORMAL) {
@@ -435,7 +474,9 @@ const MessageView: FC<{
             className={`${styles.content} ${
               !(
                 primary ||
-                (type !== MessageTypes.NORMAL && type !== MessageTypes.WEBHOOK)
+                (type !== MessageTypes.NORMAL &&
+                  type !== MessageTypes.WEBHOOK &&
+                  type !== MessageTypes.INTEGRATION)
               )
                 ? styles.spacer
                 : ''
@@ -443,7 +484,8 @@ const MessageView: FC<{
           >
             {primary &&
               (type === MessageTypes.NORMAL ||
-                type === MessageTypes.WEBHOOK) && (
+                type === MessageTypes.WEBHOOK ||
+                type === MessageTypes.INTEGRATION) && (
                 <h2
                   key='username'
                   onClick={() => {
@@ -456,7 +498,7 @@ const MessageView: FC<{
                   }}
                 >
                   <span>
-                    {richContent?.username || user?.username}
+                    {resource?.name || richContent?.username || user?.username}
                     {user?.id === '987d59ba-1979-4cc4-8818-7fe2f3d4b560' ? (
                       <FontAwesomeIcon
                         className={styles.badge}
@@ -477,6 +519,8 @@ const MessageView: FC<{
                         className={styles.badge}
                         icon={faSpiderWeb}
                       />
+                    ) : type === MessageTypes.INTEGRATION ? (
+                      <FontAwesomeIcon className={styles.badge} icon={faLink} />
                     ) : (
                       user?.discriminator === 0 && (
                         <FontAwesomeIcon
@@ -509,6 +553,15 @@ const MessageView: FC<{
               </p>
             )}
             {embeds.length > 0 ? embeds : <></>}
+            {richContent?.actions?.length ?? 0 > 0 ? (
+              <div className={styles.actions}>
+                {richContent?.actions?.map(({ content }) => (
+                  <Button type='button'>{content}</Button>
+                ))}
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </Context.Wrapper>

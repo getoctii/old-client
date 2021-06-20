@@ -26,6 +26,7 @@ import DecryptKeychain from '../keychain/DecryptKeychain'
 import MFAModal from '../authentication/MFAModal'
 import CodePrompt from '../authentication/CodePrompt'
 import Ringing from '../call/Ringing'
+import AddIntegration from '../community/AddIntegration'
 
 const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
   switch (name) {
@@ -73,6 +74,8 @@ const ResolveModal = ({ name, props }: { name: ModalTypes; props?: any }) => {
       return <CodePrompt {...props} />
     case ModalTypes.RINGING:
       return <Ringing {...props} />
+    case ModalTypes.ADD_INTEGRATION:
+      return <AddIntegration />
     default:
       return <></>
   }

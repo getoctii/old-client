@@ -22,6 +22,7 @@ import { Permission } from '../../utils/permissions'
 import List from '../../components/List'
 import StatusBar from '../../components/StatusBar'
 import Header from '../../components/Header'
+import Integrations from './integrations'
 
 const SettingsPlaceholder: FC = () => {
   const match = useRouteMatch<{ tab?: string; id: string }>(
@@ -133,11 +134,21 @@ const SettingsView: FC = memo(() => {
               {hasPermissions([Permissions.MANAGE_COMMUNITY]) && (
                 <PrivateRoute path={`${path}/general`} render={General} exact />
               )}
+              {hasPermissions([Permissions.MANAGE_COMMUNITY]) && (
+                <PrivateRoute
+                  path={`${path}/integrations`}
+                  render={Integrations}
+                  exact
+                />
+              )}
+
               <Redirect
                 path='*'
                 to={`${
                   hasPermissions([Permissions.MANAGE_COMMUNITY])
                     ? `/communities/${id}/settings/general`
+                    : hasPermissions([Permissions.MANAGE_COMMUNITY])
+                    ? `/communities/${id}/settings/integrations`
                     : hasPermissions([Permissions.MANAGE_GROUPS])
                     ? `/communities/${id}/settings/groups`
                     : hasPermissions([Permissions.MANAGE_INVITES])

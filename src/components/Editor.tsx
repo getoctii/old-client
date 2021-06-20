@@ -23,6 +23,8 @@ import { isPlatform } from '@ionic/react'
 import styles from './Editor.module.scss'
 import { UI } from '../state/ui'
 import { useSuspenseStorageItem } from '../utils/storage'
+import Commands from '../chat/Commands'
+import { Auth } from '../authentication/state'
 
 const Leaf: FC<RenderLeafProps> = ({ attributes, children, leaf }) => {
   return leaf.underline ? (
@@ -151,9 +153,8 @@ const EditorView: FC<{
     setDraft(value)
   }, [value])
 
-  const [target, setTarget] = useState<
-    { range: Range; type: 'user' | 'channel' } | undefined
-  >()
+  const [target, setTarget] =
+    useState<{ range: Range; type: 'user' | 'channel' } | undefined>()
   const [search, setSearch] = useState('')
   useEffect(() => {
     if (!onTyping) return
@@ -360,6 +361,9 @@ const EditorView: FC<{
           </Suspense>
         </div>
       )}
+      <div className={mentionsClassName}>
+        <Commands />
+      </div>
       <div
         className={`${styles.editor} ${className} ${
           typingIndicator ? typingClassName : ''

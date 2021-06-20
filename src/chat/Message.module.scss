@@ -256,3 +256,19 @@
   -o-user-select: auto;
   user-select: auto;
 }
+
+.actions {
+  display: flex;
+  margin-top: 0.25rem;
+  button {
+    background: var(--neko-colors-primary);
+
+    &:not(:first-child) {
+      margin-left: 0.25rem;
+    }
+
+    &:not(:last-child) {
+      margin-right: 0.25rem;
+    }
+  }
+}
