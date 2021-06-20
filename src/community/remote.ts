@@ -259,18 +259,19 @@ export const getVersion = async (
     )
   ).data
 
-interface IntegrationResponse {
+export interface CommandResponse {
+  name: string
+  description: string
+  params: {
+    name: string
+    type: 'string'
+  }[]
+}
+export interface IntegrationResponse {
   name: string
   id: string
   icon: string
-  commands: {
-    name: string
-    description: string
-    params: {
-      name: string
-      type: 'string'
-    }[]
-  }[]
+  commands: CommandResponse[]
 }
 
 export const getIntegrations = async (_: string, id: string, token: string) => {

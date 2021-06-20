@@ -18,7 +18,11 @@ import underlineToMarkdown from '@innatical/mdast-util-underline/to-markdown'
 import Mentions from '../chat/Mentions'
 import { useRouteMatch } from 'react-router-dom'
 import Mention from '../chat/Mention'
-import { ChannelResponse } from '../community/remote'
+import {
+  ChannelResponse,
+  CommandResponse,
+  IntegrationResponse
+} from '../community/remote'
 import { isPlatform } from '@ionic/react'
 import styles from './Editor.module.scss'
 import { UI } from '../state/ui'
@@ -154,7 +158,9 @@ const EditorView: FC<{
   }, [value])
 
   const [target, setTarget] =
-    useState<{ range: Range; type: 'user' | 'channel' } | undefined>()
+    useState<
+      { range: Range; type: 'user' | 'channel' | 'command' } | undefined
+    >()
   const [search, setSearch] = useState('')
   useEffect(() => {
     if (!onTyping) return
@@ -290,12 +296,15 @@ const EditorView: FC<{
 
   const [usersFiltered, setUsersFiltered] = useState<UserResponse[]>([])
   const [channelsFiltered] = useState<ChannelResponse[]>([])
+  const [commandsFiltered, setCommandsFiltered] = useState<CommandResponse[]>(
+    []
+  )
   const onUsersFiltered = useCallback((users: UserResponse[]) => {
     setUsersFiltered(users)
   }, [])
   useEffect(() => {
     setSelected(0)
-  }, [target, usersFiltered, channelsFiltered])
+  }, [target, usersFiltered, channelsFiltered, commandsFiltered])
 
   const ui = UI.useContainer()
 
@@ -352,6 +361,8 @@ const EditorView: FC<{
                   onMention={onMention}
                   selected={selected}
                 />
+              ) : target.type === 'command' ? (
+                <Commands search={search}></Commands>
               ) : (
                 <></>
               )
@@ -361,9 +372,6 @@ const EditorView: FC<{
           </Suspense>
         </div>
       )}
-      <div className={mentionsClassName}>
-        <Commands />
-      </div>
       <div
         className={`${styles.editor} ${className} ${
           typingIndicator ? typingClassName : ''
@@ -402,7 +410,9 @@ const EditorView: FC<{
                 )
 
               const before =
-                mentionType === '@' || mentionType === '#'
+                mentionType === '@' ||
+                mentionType === '#' ||
+                mentionType === '/'
                   ? characterBefore
                   : wordBefore && Editor.before(editor, wordBefore)
               const beforeRange = before && Editor.range(editor, before, start)
@@ -410,17 +420,28 @@ const EditorView: FC<{
                 beforeRange && Editor.string(editor, beforeRange)
               const beforeMatch =
                 beforeText &&
-                (beforeText.match(/^@(\w*)$/) ?? beforeText.match(/^#(\w*)$/))
+                (beforeText.match(/^@(\w*)$/) ??
+                  beforeText.match(/^#(\w*)$/) ??
+                  beforeText.match(/^\/(\w*)$/))
               const after = Editor.after(editor, start)
               const afterRange = Editor.range(editor, start, after)
               const afterText = Editor.string(editor, afterRange)
               const afterMatch = afterText.match(/^(\s|$)/)
 
               if (beforeMatch && afterMatch) {
-                if (mentionType === '@' || mentionType === '#') {
+                if (
+                  mentionType === '@' ||
+                  mentionType === '#' ||
+                  mentionType === '/'
+                ) {
                   setTarget({
                     range: beforeRange!,
-                    type: mentionType === '@' ? 'user' : 'channel'
+                    type:
+                      mentionType === '@'
+                        ? 'user'
+                        : mentionType === '/'
+                        ? 'command'
+                        : 'channel'
                   })
                 }
 
@@ -459,9 +480,12 @@ const EditorView: FC<{
                     editor.insertText('\n')
                   } else if (target && userMentions) {
                     event.preventDefault()
-                    if (usersFiltered?.[selected]?.id)
+                    if (usersFiltered?.[selected]?.id && target.type === 'user')
                       onMention(usersFiltered[selected].id, target.type)
-                    if (channelsFiltered?.[selected]?.id)
+                    if (
+                      channelsFiltered?.[selected]?.id &&
+                      target.type === 'channel'
+                    )
                       onMention(channelsFiltered[selected].id, target.type)
                   } else {
                     event.preventDefault()
