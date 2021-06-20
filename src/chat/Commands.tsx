@@ -9,10 +9,13 @@ const Commands = () => {
   const match = useRouteMatch<{ id: string }>('/communities/:id')
   const { data: installed } = useQuery(
     ['communityIntegrations', match?.params.id, token],
-    getIntegrations
+    getIntegrations,
+    {
+      enabled: !!match?.params.id
+    }
   )
 
-  return (
+  return installed && installed.length > 0 ? (
     <div className={styles.commandsPopup}>
       {installed?.flatMap((integration) =>
         integration.commands.map((command) => (
@@ -31,6 +34,8 @@ const Commands = () => {
         ))
       )}
     </div>
+  ) : (
+    <></>
   )
 }
 
