@@ -302,6 +302,14 @@ const EditorView: FC<{
   const onUsersFiltered = useCallback((users: UserResponse[]) => {
     setUsersFiltered(users)
   }, [])
+
+  const onCommandsFiltered = useCallback(
+    (commands: (CommandResponse & { icon: string })[]) => {
+      setCommandsFiltered(commands)
+    },
+    []
+  )
+
   useEffect(() => {
     setSelected(0)
   }, [target, usersFiltered, channelsFiltered, commandsFiltered])
@@ -335,6 +343,8 @@ const EditorView: FC<{
     }
   }, [editor, isMobile, id])
 
+  console.log(selected)
+
   return (
     <>
       {target && (
@@ -362,7 +372,11 @@ const EditorView: FC<{
                   selected={selected}
                 />
               ) : target.type === 'command' ? (
-                <Commands search={search}></Commands>
+                <Commands
+                  search={search}
+                  selected={selected}
+                  onFiltered={onCommandsFiltered}
+                ></Commands>
               ) : (
                 <></>
               )
@@ -516,6 +530,12 @@ const EditorView: FC<{
                           ? channelsFiltered.length - 1
                           : selected - 1
                       )
+                    else if (target.type === 'command')
+                      setSelected(
+                        selected - 1 < 0
+                          ? commandsFiltered.length - 1
+                          : selected - 1
+                      )
                   } else {
                     if (target.type === 'user')
                       setSelected(
@@ -526,6 +546,12 @@ const EditorView: FC<{
                     else if (target.type === 'channel')
                       setSelected(
                         selected + 1 > channelsFiltered.length - 1
+                          ? 0
+                          : selected + 1
+                      )
+                    else if (target.type === 'command')
+                      setSelected(
+                        selected + 1 > commandsFiltered.length - 1
                           ? 0
                           : selected + 1
                       )

@@ -9,6 +9,10 @@
   padding: 0.5rem;
 }
 
+.selected {
+  background: var(--neko-colors-primary);
+  border-radius: 16px;
+}
 .command {
   display: flex;
   padding: 0.25rem;
@@ -33,11 +37,6 @@
       margin-bottom: 0;
       font-size: 1rem;
       font-weight: 400;
-      color: var(--neko-text-secondary);
-    }
-
-    .arguments {
-      color: var(--neko-text-primary);
     }
   }
 }
