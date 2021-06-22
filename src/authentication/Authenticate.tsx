@@ -49,7 +49,7 @@ export const Authenticate: FC = () => {
             <br />
             <span className={styles.extensible}>Extensible.</span>
           </h1>
-          <h3>Limited Beta Access</h3>
+          <h3>Public Alpha</h3>
         </div>
         <div className={styles.timeline}>
           <div>
@@ -59,10 +59,14 @@ export const Authenticate: FC = () => {
             Beta 2 <div className={styles.circle} />
           </div>
           <div>
-            Beta 3 <div className={`${styles.circle} ${styles.current}`} />
+            Beta 3 <div className={`${styles.circle}`} />
           </div>
           <div>
-            Open Beta <div className={`${styles.circle} ${styles.next}`} />
+            Public Alpha
+            <div className={`${styles.circle} ${styles.current}`} />
+          </div>
+          <div>
+            Public Beta <div className={`${styles.circle} ${styles.next}`} />
           </div>
           <div>
             Release <div className={`${styles.circle} ${styles.next}`} />

@@ -58,7 +58,6 @@ export const register = async (values: {
   email: string
   username: string
   password: string
-  betaCode: string
 }) => {
   const keychain = await generateKeychain(values.password)
   const protectedKeychain = exportProtectedKeychain(
