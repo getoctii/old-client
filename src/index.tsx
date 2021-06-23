@@ -72,6 +72,10 @@ setFocusHandler((handleFocus) => {
   }
 })
 
+addEventListener('contextmenu', (e) => {
+  e.preventDefault()
+})
+
 ReactDOM.render(
   <StrictMode>
     <ReactQueryConfigProvider
