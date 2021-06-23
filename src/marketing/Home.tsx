@@ -60,7 +60,7 @@ const Home: FC = () => {
           >
             {({ values, submitForm, isSubmitting, errors }) => (
               <Form className={styles.form}>
-                <label htmlFor='email'>Get Notified for Public Beta</label>
+                <label htmlFor='email'>Get Notified for Updates</label>
                 <div className={styles.input}>
                   <Field
                     id='email'
@@ -145,8 +145,8 @@ const Home: FC = () => {
           <div className={styles.question}>
             <h2>I’m sold. How do I get started?</h2>
             <p>
-              Octii is currently in private beta. If you want a chance to
-              receive early access, subscribe to our mailing list!
+              Octii is currently in public alpha. You can sign up for access
+              now. If you want to stay updated, subscribe to our mailing list!
             </p>
           </div>
           <hr />

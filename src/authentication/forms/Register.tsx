@@ -15,8 +15,7 @@ const RegisterSchema = Yup.object().shape({
   username: Yup.string()
     .min(3, 'Too short, username must be at least 3 characters.')
     .max(16, 'Too long, username must be under 16 characters.')
-    .matches(/^[a-zA-Z0-9]+$/, 'Username must be alphanumeric.'),
-  betaCode: Yup.string().required('Beta code is required')
+    .matches(/^[a-zA-Z0-9]+$/, 'Username must be alphanumeric.')
 })
 
 export const Register: FC = () => {
@@ -27,21 +26,14 @@ export const Register: FC = () => {
       initialValues={{
         email: '',
         password: '',
-        username: '',
-        betaCode: auth.betaCode || ''
+        username: ''
       }}
       validationSchema={RegisterSchema}
       onSubmit={async (values, { setSubmitting, setErrors, setFieldError }) => {
-        if (
-          !values?.username ||
-          !values?.email ||
-          !values?.password ||
-          !values?.betaCode
-        ) {
+        if (!values?.username || !values?.email || !values?.password) {
           !values?.username && setFieldError('username', 'Required')
           !values?.email && setFieldError('email', 'Required')
           !values?.password && setFieldError('password', 'Required')
-          !values?.betaCode && setFieldError('betaCode', 'Required')
           return
         }
         try {
@@ -52,11 +44,6 @@ export const Register: FC = () => {
             setKeychainPassword(values.password)
           }
         } catch (e) {
-          const errors = e.response.data.errors
-          const userErrors: { betaCode?: string } = {}
-          if (errors.includes('WrongBetaCode'))
-            userErrors.betaCode = 'Incorrect Code'
-          setErrors(userErrors)
         } finally {
           setSubmitting(false)
         }
@@ -105,20 +92,6 @@ export const Register: FC = () => {
             name='password'
           />
 
-          <label htmlFor='betaCode' className={styles.label}>
-            Beta Code
-          </label>
-          <Field
-            className={styles.input}
-            id='betaCode'
-            name='betaCode'
-            type='text'
-          />
-          <ErrorMessage
-            component='p'
-            className={styles.error}
-            name='betaCode'
-          />
           <button
             className={styles.button}
             type='submit'

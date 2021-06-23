@@ -43,17 +43,19 @@ const useKeychain = () => {
   }, [data])
 
   useEffect(() => {
-    if (!(data && !keychain)) return
-    if (keychainPassword === undefined) return
-    if (keychainPassword) {
-      try {
-        decryptKeychain(keychainPassword)
-      } catch {
+    ;(async () => {
+      if (!(data && !keychain)) return
+      if (keychainPassword === undefined) return
+      if (keychainPassword) {
+        try {
+          await decryptKeychain(keychainPassword)
+        } catch {
+          setModal({ name: ModalTypes.DECRYPT_KEYCHAIN })
+        }
+      } else {
         setModal({ name: ModalTypes.DECRYPT_KEYCHAIN })
       }
-    } else {
-      setModal({ name: ModalTypes.DECRYPT_KEYCHAIN })
-    }
+    })()
   }, [
     data,
     keychain,
