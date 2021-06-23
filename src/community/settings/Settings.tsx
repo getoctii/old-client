@@ -22,7 +22,7 @@ import { Permission } from '../../utils/permissions'
 import List from '../../components/List'
 import StatusBar from '../../components/StatusBar'
 import Header from '../../components/Header'
-import Integrations from './integrations'
+import Integrations from './Integrations'
 
 const SettingsPlaceholder: FC = () => {
   const match = useRouteMatch<{ tab?: string; id: string }>(
