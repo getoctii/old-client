@@ -150,7 +150,10 @@ const MessageView: FC<{
     const { keychain } = Keychain.useContainer()
     const { data: otherKeychain } = useQuery(
       ['keychain', authorID, auth.token],
-      getKeychain
+      getKeychain,
+      {
+        enabled: typeof content !== 'string'
+      }
     )
 
     const { data: publicKey } = useQuery(
@@ -158,6 +161,9 @@ const MessageView: FC<{
       async (_: string, key: number[]) => {
         if (!key) return undefined
         return await importPublicKey(key, 'signing')
+      },
+      {
+        enabled: typeof content !== 'string'
       }
     )
 

@@ -47,7 +47,10 @@ const useUpdatedMessage = (eventSource: EventSourcePolyfill | null) => {
                     if (msg.id === event.id) {
                       const otherKeychain = await queryCache.fetchQuery(
                         ['keychain', msg.author_id, token],
-                        getKeychain
+                        getKeychain,
+                        {
+                          staleTime: Infinity
+                        }
                       )
 
                       const publicKey = await queryCache.fetchQuery(
@@ -55,6 +58,9 @@ const useUpdatedMessage = (eventSource: EventSourcePolyfill | null) => {
                         async (_: string, key: number[]) => {
                           if (!key) return undefined
                           return await importPublicKey(key, 'signing')
+                        },
+                        {
+                          staleTime: Infinity
                         }
                       )
 

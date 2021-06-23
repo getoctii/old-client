@@ -4,7 +4,11 @@ import { ExportedProtectedKeychain } from '@innatical/inncryption/dist/types'
 
 export const fetchManyUsers = (_: string, ids: string[], token: string) => {
   return Promise.all(
-    ids.map((id) => queryCache.fetchQuery(['users', id, token], getUser))
+    ids.map((id) =>
+      queryCache.fetchQuery(['users', id, token], getUser, {
+        staleTime: Infinity
+      })
+    )
   )
 }
 

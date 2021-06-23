@@ -90,7 +90,10 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
 
       const otherKeychain = await queryCache.fetchQuery(
         ['keychain', event.author.id, token],
-        getKeychain
+        getKeychain,
+        {
+          staleTime: Infinity
+        }
       )
 
       const publicKey = await queryCache.fetchQuery(
@@ -98,6 +101,9 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
         async (_: string, key: number[]) => {
           if (!key) return undefined
           return await importPublicKey(key, 'signing')
+        },
+        {
+          staleTime: Infinity
         }
       )
 
@@ -262,9 +268,8 @@ const useNewMessage = (eventSource: EventSourcePolyfill | null) => {
           }
         } else if (!isPlatform('capacitor')) {
           try {
-            const {
-              granted
-            } = await Plugins.LocalNotifications.requestPermission()
+            const { granted } =
+              await Plugins.LocalNotifications.requestPermission()
             if (granted) {
               await Plugins.LocalNotifications.schedule({
                 notifications: [
