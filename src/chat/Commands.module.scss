@@ -1,0 +1,44 @@
+.commandsPopup {
+  position: absolute;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  bottom: 1rem;
+  z-index: 3;
+  background: var(--neko-channels-background);
+  border-radius: 16px;
+  padding: 0.5rem;
+}
+
+.selected {
+  background: var(--neko-colors-primary);
+  border-radius: 16px;
+}
+.command {
+  display: flex;
+  padding: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  align-items: center;
+
+  img {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 12px;
+  }
+
+  .text {
+    margin-left: 1rem;
+    h1 {
+      margin-top: 0;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 0;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+  }
+}

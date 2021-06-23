@@ -258,3 +258,31 @@ export const getVersion = async (
       }
     )
   ).data
+
+export interface CommandResponse {
+  name: string
+  description: string
+  params: {
+    name: string
+    type: 'string'
+  }[]
+}
+export interface IntegrationResponse {
+  name: string
+  id: string
+  icon: string
+  commands: CommandResponse[]
+}
+
+export const getIntegrations = async (_: string, id: string, token: string) => {
+  return (
+    await clientGateway.get<IntegrationResponse[]>(
+      `/communities/${id}/integrations`,
+      {
+        headers: {
+          Authorization: token
+        }
+      }
+    )
+  ).data
+}

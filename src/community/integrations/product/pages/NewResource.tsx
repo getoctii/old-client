@@ -74,7 +74,7 @@ const NewResource: FC = () => {
           <div className={styles.newResource}>
             <Modal
               onDismiss={() => ui.clearModal()}
-              title={'New Version'}
+              title={'New Resource'}
               subtitle={`${product?.name}`}
               icon={faTimes}
               bottom={
@@ -103,6 +103,19 @@ const NewResource: FC = () => {
                   onClick={() => setFieldValue('type', ResourceTypes.THEME)}
                 >
                   Theme
+                </Button>
+                <Button
+                  type={'button'}
+                  className={`${
+                    values.type === ResourceTypes.SERVER_INTEGRATION
+                      ? styles.selected
+                      : ''
+                  }`}
+                  onClick={() =>
+                    setFieldValue('type', ResourceTypes.SERVER_INTEGRATION)
+                  }
+                >
+                  Server Integration
                 </Button>
               </div>
               <label htmlFor='name' className={styles.inputName}>

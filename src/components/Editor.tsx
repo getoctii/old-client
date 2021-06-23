@@ -18,11 +18,18 @@ import underlineToMarkdown from '@innatical/mdast-util-underline/to-markdown'
 import Mentions from '../chat/Mentions'
 import { useRouteMatch } from 'react-router-dom'
 import Mention from '../chat/Mention'
-import { ChannelResponse } from '../community/remote'
+import {
+  ChannelResponse,
+  CommandResponse,
+  IntegrationResponse
+} from '../community/remote'
 import { isPlatform } from '@ionic/react'
 import styles from './Editor.module.scss'
 import { UI } from '../state/ui'
 import { useSuspenseStorageItem } from '../utils/storage'
+import Commands from '../chat/Commands'
+import { Auth } from '../authentication/state'
+import { clientGateway } from '../utils/constants'
 
 const Leaf: FC<RenderLeafProps> = ({ attributes, children, leaf }) => {
   return leaf.underline ? (
@@ -127,7 +134,9 @@ const EditorView: FC<{
   channelMentions,
   draftKey
 }) => {
-  const match = useRouteMatch<{ id: string }>('/communities/:id/:tab?/:tab2?')
+  const match = useRouteMatch<{ id: string; tab2: string }>(
+    '/communities/:id/:tab?/:tab2?'
+  )
   const isMobile = useMedia('(max-width: 740px)')
   const [typing, setTyping] = useState<boolean>(false)
   useEffect(() => {
@@ -151,9 +160,10 @@ const EditorView: FC<{
     setDraft(value)
   }, [value])
 
-  const [target, setTarget] = useState<
-    { range: Range; type: 'user' | 'channel' } | undefined
-  >()
+  const [target, setTarget] =
+    useState<
+      { range: Range; type: 'user' | 'channel' | 'command' } | undefined
+    >()
   const [search, setSearch] = useState('')
   useEffect(() => {
     if (!onTyping) return
@@ -289,12 +299,23 @@ const EditorView: FC<{
 
   const [usersFiltered, setUsersFiltered] = useState<UserResponse[]>([])
   const [channelsFiltered] = useState<ChannelResponse[]>([])
+  const [commandsFiltered, setCommandsFiltered] = useState<
+    (CommandResponse & { resourceID: string })[]
+  >([])
   const onUsersFiltered = useCallback((users: UserResponse[]) => {
     setUsersFiltered(users)
   }, [])
+
+  const onCommandsFiltered = useCallback(
+    (commands: (CommandResponse & { icon: string; resourceID: string })[]) => {
+      setCommandsFiltered(commands)
+    },
+    []
+  )
+
   useEffect(() => {
     setSelected(0)
-  }, [target, usersFiltered, channelsFiltered])
+  }, [target, usersFiltered, channelsFiltered, commandsFiltered])
 
   const ui = UI.useContainer()
 
@@ -325,6 +346,27 @@ const EditorView: FC<{
     }
   }, [editor, isMobile, id])
 
+  const { token } = Auth.useContainer()
+
+  const onCommand = useCallback(
+    async (resourceOD: string, name: string) => {
+      await clientGateway.post(
+        `/channels/${match?.params.tab2}/execute`,
+        {
+          resource_id: resourceOD,
+          name,
+          params: []
+        },
+        {
+          headers: {
+            Authorization: token
+          }
+        }
+      )
+    },
+    [token]
+  )
+
   return (
     <>
       {target && (
@@ -350,6 +392,12 @@ const EditorView: FC<{
                   search={search}
                   onMention={onMention}
                   selected={selected}
+                />
+              ) : target.type === 'command' ? (
+                <Commands
+                  search={search}
+                  selected={selected}
+                  onFiltered={onCommandsFiltered}
                 />
               ) : (
                 <></>
@@ -398,7 +446,9 @@ const EditorView: FC<{
                 )
 
               const before =
-                mentionType === '@' || mentionType === '#'
+                mentionType === '@' ||
+                mentionType === '#' ||
+                mentionType === '/'
                   ? characterBefore
                   : wordBefore && Editor.before(editor, wordBefore)
               const beforeRange = before && Editor.range(editor, before, start)
@@ -406,17 +456,28 @@ const EditorView: FC<{
                 beforeRange && Editor.string(editor, beforeRange)
               const beforeMatch =
                 beforeText &&
-                (beforeText.match(/^@(\w*)$/) ?? beforeText.match(/^#(\w*)$/))
+                (beforeText.match(/^@(\w*)$/) ??
+                  beforeText.match(/^#(\w*)$/) ??
+                  beforeText.match(/^\/(\w*)$/))
               const after = Editor.after(editor, start)
               const afterRange = Editor.range(editor, start, after)
               const afterText = Editor.string(editor, afterRange)
               const afterMatch = afterText.match(/^(\s|$)/)
 
               if (beforeMatch && afterMatch) {
-                if (mentionType === '@' || mentionType === '#') {
+                if (
+                  mentionType === '@' ||
+                  mentionType === '#' ||
+                  mentionType === '/'
+                ) {
                   setTarget({
                     range: beforeRange!,
-                    type: mentionType === '@' ? 'user' : 'channel'
+                    type:
+                      mentionType === '@'
+                        ? 'user'
+                        : mentionType === '/'
+                        ? 'command'
+                        : 'channel'
                   })
                 }
 
@@ -455,10 +516,28 @@ const EditorView: FC<{
                     editor.insertText('\n')
                   } else if (target && userMentions) {
                     event.preventDefault()
-                    if (usersFiltered?.[selected]?.id)
+                    if (usersFiltered?.[selected]?.id && target.type === 'user')
                       onMention(usersFiltered[selected].id, target.type)
-                    if (channelsFiltered?.[selected]?.id)
+                    if (
+                      channelsFiltered?.[selected]?.id &&
+                      target.type === 'channel'
+                    )
                       onMention(channelsFiltered[selected].id, target.type)
+                    if (target.type === 'command') {
+                      if (commandsFiltered[selected].name === search) {
+                        onCommand(
+                          commandsFiltered[selected].resourceID,
+                          commandsFiltered[selected].name
+                        )
+                        Transforms.select(editor, Editor.start(editor, []))
+                        setValue(emptyEditor)
+                      } else {
+                        Editor.insertText(
+                          editor,
+                          commandsFiltered[selected].name.slice(search.length)
+                        )
+                      }
+                    }
                   } else {
                     event.preventDefault()
                     const content = serialize(value)
@@ -488,6 +567,12 @@ const EditorView: FC<{
                           ? channelsFiltered.length - 1
                           : selected - 1
                       )
+                    else if (target.type === 'command')
+                      setSelected(
+                        selected - 1 < 0
+                          ? commandsFiltered.length - 1
+                          : selected - 1
+                      )
                   } else {
                     if (target.type === 'user')
                       setSelected(
@@ -498,6 +583,12 @@ const EditorView: FC<{
                     else if (target.type === 'channel')
                       setSelected(
                         selected + 1 > channelsFiltered.length - 1
+                          ? 0
+                          : selected + 1
+                      )
+                    else if (target.type === 'command')
+                      setSelected(
+                        selected + 1 > commandsFiltered.length - 1
                           ? 0
                           : selected + 1
                       )

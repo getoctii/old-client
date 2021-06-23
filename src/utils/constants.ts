@@ -35,7 +35,8 @@ export enum ModalTypes {
   DECRYPT_KEYCHAIN,
   ENABLED_2FA,
   CODE_PROMPT,
-  RINGING
+  RINGING,
+  ADD_INTEGRATION
 }
 
 export enum Groups {
@@ -61,7 +62,8 @@ export enum Permissions {
   MANAGE_COMMUNITY = 14,
   MANAGE_MESSAGES = 15,
   ADMINISTRATOR = 16,
-  OWNER = 17
+  OWNER = 17,
+  MANAGE_PRODUCTS = 18
 }
 
 export enum ChannelPermissions {
@@ -117,6 +119,7 @@ export const PermissionsGroups: { [key in Groups]: Permissions[] } = {
     Permissions.MANAGE_MESSAGES
   ],
   [Groups.ADMIN]: [
+    Permissions.MANAGE_PRODUCTS,
     Permissions.MANAGE_COMMUNITY,
     Permissions.ADMINISTRATOR,
     Permissions.OWNER
@@ -138,6 +141,7 @@ export const PermissionNames = {
   [Permissions.MANAGE_CHANNELS]: 'Manage Channels',
   [Permissions.MANAGE_INVITES]: 'Manage Invites',
   [Permissions.MANAGE_MESSAGES]: 'Manage Messages',
+  [Permissions.MANAGE_PRODUCTS]: 'Manage Products',
   [Permissions.MANAGE_COMMUNITY]: 'Manage Community',
   [Permissions.ADMINISTRATOR]: 'Administrator',
   [Permissions.OWNER]: 'Owner'
@@ -189,7 +193,8 @@ export enum MessageTypes {
   MEMBER_ADDED = 3,
   MEMBER_REMOVED = 4,
   ADMINISTRATOR = 5,
-  WEBHOOK = 6
+  WEBHOOK = 6,
+  INTEGRATION = 7
 }
 
 export enum InternalChannelTypes {

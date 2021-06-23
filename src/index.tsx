@@ -84,7 +84,8 @@ ReactDOM.render(
           suspense: true
         },
         queries: {
-          refetchOnWindowFocus: true
+          refetchOnWindowFocus: true,
+          staleTime: Infinity
         }
       }}
     >

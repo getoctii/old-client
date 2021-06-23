@@ -22,6 +22,20 @@ const NavbarView: FC = () => {
           General
         </li>
       )}
+      {hasPermissions([Permissions.MANAGE_COMMUNITY]) && (
+        <li
+          onClick={() =>
+            history.push(
+              `/communities/${match?.params.id}/settings/integrations`
+            )
+          }
+          className={
+            match?.params.tab === 'integrations' ? styles.selected : ''
+          }
+        >
+          Integrations
+        </li>
+      )}
       {hasPermissions([Permissions.MANAGE_INVITES]) && (
         <li
           onClick={() =>
