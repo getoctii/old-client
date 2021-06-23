@@ -3,15 +3,20 @@ import { useQuery } from 'react-query'
 import { useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'
 import { CommandResponse, getIntegrations } from '../community/remote'
+import { clientGateway } from '../utils/constants'
 import styles from './Commands.module.scss'
 
 const Commands: React.FC<{
   search: string
   selected: number
-  onFiltered: (commands: (CommandResponse & { icon: string })[]) => void
+  onFiltered: (
+    commands: (CommandResponse & { icon: string; resourceID: string })[]
+  ) => void
 }> = ({ search, selected, onFiltered }) => {
   const { token } = Auth.useContainer()
-  const match = useRouteMatch<{ id: string }>('/communities/:id')
+  const match = useRouteMatch<{ id: string; channelID: string }>(
+    '/communities/:id/channels/:channelID'
+  )
   const { data: installed } = useQuery(
     ['communityIntegrations', match?.params.id, token],
     getIntegrations,
@@ -25,7 +30,8 @@ const Commands: React.FC<{
       installed?.flatMap((integration) =>
         integration.commands.map((command) => ({
           ...command,
-          icon: integration.icon
+          icon: integration.icon,
+          resourceID: integration.id
         }))
       ),
     [installed]

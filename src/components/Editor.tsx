@@ -29,6 +29,7 @@ import { UI } from '../state/ui'
 import { useSuspenseStorageItem } from '../utils/storage'
 import Commands from '../chat/Commands'
 import { Auth } from '../authentication/state'
+import { clientGateway } from '../utils/constants'
 
 const Leaf: FC<RenderLeafProps> = ({ attributes, children, leaf }) => {
   return leaf.underline ? (
@@ -133,7 +134,9 @@ const EditorView: FC<{
   channelMentions,
   draftKey
 }) => {
-  const match = useRouteMatch<{ id: string }>('/communities/:id/:tab?/:tab2?')
+  const match = useRouteMatch<{ id: string; tab2: string }>(
+    '/communities/:id/:tab?/:tab2?'
+  )
   const isMobile = useMedia('(max-width: 740px)')
   const [typing, setTyping] = useState<boolean>(false)
   useEffect(() => {
@@ -296,15 +299,15 @@ const EditorView: FC<{
 
   const [usersFiltered, setUsersFiltered] = useState<UserResponse[]>([])
   const [channelsFiltered] = useState<ChannelResponse[]>([])
-  const [commandsFiltered, setCommandsFiltered] = useState<CommandResponse[]>(
-    []
-  )
+  const [commandsFiltered, setCommandsFiltered] = useState<
+    (CommandResponse & { resourceID: string })[]
+  >([])
   const onUsersFiltered = useCallback((users: UserResponse[]) => {
     setUsersFiltered(users)
   }, [])
 
   const onCommandsFiltered = useCallback(
-    (commands: (CommandResponse & { icon: string })[]) => {
+    (commands: (CommandResponse & { icon: string; resourceID: string })[]) => {
       setCommandsFiltered(commands)
     },
     []
@@ -343,7 +346,26 @@ const EditorView: FC<{
     }
   }, [editor, isMobile, id])
 
-  console.log(selected)
+  const { token } = Auth.useContainer()
+
+  const onCommand = useCallback(
+    async (resourceOD: string, name: string) => {
+      await clientGateway.post(
+        `/channels/${match?.params.tab2}/execute`,
+        {
+          resource_id: resourceOD,
+          name,
+          params: []
+        },
+        {
+          headers: {
+            Authorization: token
+          }
+        }
+      )
+    },
+    [token]
+  )
 
   return (
     <>
@@ -501,6 +523,21 @@ const EditorView: FC<{
                       target.type === 'channel'
                     )
                       onMention(channelsFiltered[selected].id, target.type)
+                    if (target.type === 'command') {
+                      if (commandsFiltered[selected].name === search) {
+                        onCommand(
+                          commandsFiltered[selected].resourceID,
+                          commandsFiltered[selected].name
+                        )
+                        Transforms.select(editor, Editor.start(editor, []))
+                        setValue(emptyEditor)
+                      } else {
+                        Editor.insertText(
+                          editor,
+                          commandsFiltered[selected].name.slice(search.length)
+                        )
+                      }
+                    }
                   } else {
                     event.preventDefault()
                     const content = serialize(value)
