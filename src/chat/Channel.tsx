@@ -140,7 +140,8 @@ const CallView: FC<{ channel: ChannelResponse; conversationID: string }> = ({
     room,
     setRoom,
     play,
-    remoteVideoTracks
+    remoteVideoTracks,
+    speaking
   } = Call.useContainer()
   const { token } = Auth.useContainer()
   const current = useMemo(() => room?.channelID === channel.id, [room])
@@ -149,6 +150,9 @@ const CallView: FC<{ channel: ChannelResponse; conversationID: string }> = ({
     () => remoteVideoTracks?.length ?? 0,
     [remoteVideoTracks]
   )
+
+  console.log(speaking)
+
   return (
     <div className={styles.call}>
       <div className={styles.callContent}>
@@ -158,7 +162,13 @@ const CallView: FC<{ channel: ChannelResponse; conversationID: string }> = ({
           }`}
         >
           {channel.voice_users?.map((user) => (
-            <VoiceCard userID={user} speaking={false} small />
+            <VoiceCard
+              userID={user}
+              speaking={
+                (Array.from(speaking[user]?.values() ?? []).length ?? 0) > 0
+              }
+              small
+            />
           ))}
         </div>
         {trackLength > 0 ? (

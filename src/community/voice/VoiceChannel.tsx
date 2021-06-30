@@ -39,7 +39,7 @@ export const VoiceCard: FC<{
 
 const VoiceChannel: FC<{ channel: ChannelResponse }> = ({ channel }) => {
   const { token } = Auth.useContainer()
-  const { setRoom, play, room } = Call.useContainer()
+  const { setRoom, play, room, speaking } = Call.useContainer()
   return (
     <div className={styles.channel}>
       <Header
@@ -84,7 +84,13 @@ const VoiceChannel: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       />
       <div className={styles.grid}>
         {channel.voice_users?.map((id) => (
-          <VoiceCard userID={id} speaking={false} key={id} />
+          <VoiceCard
+            userID={id}
+            speaking={
+              (Array.from(speaking[id]?.values() ?? []).length ?? 0) > 0
+            }
+            key={id}
+          />
         ))}
       </div>
     </div>
