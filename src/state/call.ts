@@ -74,6 +74,8 @@ const useCall = () => {
   const [deafened, setDeafened] = useState(false)
   const [screenStream, setScreenStream] = useState<MediaStream | null>()
   const senders = useRef<Map<MediaStreamTrack, RTCRtpSender>>(new Map())
+  const mediaStreamIdentifiers = useRef<Record<string, string>>({})
+  const [speaking, setSpeaking] = useState<Record<string, Set<string>>>({})
 
   useEffect(() => {
     if (!room) return
@@ -101,15 +103,17 @@ const useCall = () => {
   useEffect(() => {
     if (!socket) return
     const cb = (message: MessageEvent) => {
-      const payload: { type: string; data: any } = JSON.parse(
-        message.data.toString()
-      )
+      const payload: {
+        type: string
+        data: any
+        streams: Record<string, string>
+      } = JSON.parse(message.data.toString())
       const connection = connectionRef.current
       switch (payload.type) {
         case 'SDP':
-          console.log(payload, !!connection)
           if (!connection) return
           ;(async () => {
+            mediaStreamIdentifiers.current = payload.streams
             if (
               payload.data.type === 'offer' &&
               connection.signalingState !== 'stable'
@@ -169,6 +173,7 @@ const useCall = () => {
       connection.close()
       setConnectionState(null)
       senders.current = new Map()
+      mediaStreamIdentifiers.current = {}
       setScreenStream(null)
     }
   }, [connection, senders])
@@ -255,9 +260,43 @@ const useCall = () => {
   useEffect(() => {
     if (!connection || !remoteStream || !remoteVideoTracks) return
     const cb = (track: RTCTrackEvent) => {
-      console.log(track)
+      const userID = mediaStreamIdentifiers.current[track.streams[0].id]
+
       if (track.track.kind === 'audio') {
+        console.log('user', userID)
         remoteStream.addTrack(track.track)
+
+        const context = new AudioContext()
+        const analyzer = context.createAnalyser()
+
+        setInterval(() => {
+          const dataArray = new Uint8Array(analyzer.frequencyBinCount)
+          analyzer.getByteFrequencyData(dataArray)
+          const trackActive =
+            dataArray.reduce((a, b) => a + b) / dataArray.length > 0
+          setSpeaking((speaking) => {
+            const set = speaking[userID] ?? new Set()
+
+            if (trackActive) {
+              if (set.has(track.track.id)) return speaking
+              set.add(track.track.id)
+            } else {
+              if (!set.has(track.track.id)) return speaking
+              set.delete(track.track.id)
+            }
+
+            return {
+              ...speaking,
+              [userID]: set
+            }
+          })
+        }, 30)
+
+        const stream = new MediaStream()
+        stream.addTrack(track.track)
+
+        context.createMediaStreamSource(stream).connect(analyzer)
+        context.createMediaStreamDestination()
       } else if (track.track.kind === 'video') {
         setRemoteVideoTracks([...remoteVideoTracks, track.track])
       }
@@ -383,7 +422,8 @@ const useCall = () => {
     shareScreen,
     sharingScreen,
     setScreenStream,
-    remoteVideoTracks
+    remoteVideoTracks,
+    speaking
   }
 }
 
