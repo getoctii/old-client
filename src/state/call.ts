@@ -1,5 +1,6 @@
 import { createContainer } from '@innatical/innstate'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Auth } from '../authentication/state'
 
 declare global {
   interface MediaDevices {
@@ -76,6 +77,7 @@ const useCall = () => {
   const senders = useRef<Map<MediaStreamTrack, RTCRtpSender>>(new Map())
   const mediaStreamIdentifiers = useRef<Record<string, string>>({})
   const [speaking, setSpeaking] = useState<Record<string, Set<string>>>({})
+  const { id } = Auth.useContainer()
 
   useEffect(() => {
     if (!room) return
@@ -313,6 +315,38 @@ const useCall = () => {
     if (!localStream || !connection) return
 
     localStream.getTracks().forEach((track) => {
+      const context = new AudioContext()
+      const analyzer = context.createAnalyser()
+
+      setInterval(() => {
+        const dataArray = new Uint8Array(analyzer.frequencyBinCount)
+        analyzer.getByteFrequencyData(dataArray)
+        const trackActive =
+          dataArray.reduce((a, b) => a + b) / dataArray.length > 0
+        setSpeaking((speaking) => {
+          const set = speaking[id ?? ''] ?? new Set()
+
+          if (trackActive) {
+            if (set.has(track.id)) return speaking
+            set.add(track.id)
+          } else {
+            if (!set.has(track.id)) return speaking
+            set.delete(track.id)
+          }
+
+          return {
+            ...speaking,
+            [id ?? '']: set
+          }
+        })
+      }, 30)
+
+      const stream = new MediaStream()
+      stream.addTrack(track)
+
+      context.createMediaStreamSource(stream).connect(analyzer)
+      context.createMediaStreamDestination()
+
       senders.current.set(track, connection.addTrack(track, localStream))
     })
 
