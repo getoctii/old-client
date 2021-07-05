@@ -161,7 +161,6 @@ const BoxView: FC<{
                   ref={uploadInput}
                   className={styles.uploadInput}
                   type='file'
-                  accept='.jpg, .png, .jpeg, .gif'
                   onChange={async (event) => {
                     if (!token || !event.target.files?.item(0)) return
                     setUploadDetails({

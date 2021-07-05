@@ -20,9 +20,16 @@ const Upload: FC<UploadDetails> = ({ status, file, onUpload }) => {
   })
   return (
     <div className={styles.upload}>
-      {uploadURL && typeof uploadURL === 'string' && (
-        <img alt={file.name} src={uploadURL} />
-      )}
+      {uploadURL &&
+        typeof uploadURL === 'string' &&
+        [
+          'image/apng',
+          'image/avif',
+          'image/gif',
+          'image/jpeg',
+          'image/png',
+          'image/webp'
+        ].includes(file.type) && <img src={uploadURL} alt={file.name} />}
       <div className={styles.uploadInfo}>
         <div className={styles.nameWrapper}>
           <h5>{file.name}</h5>
