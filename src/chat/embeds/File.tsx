@@ -83,7 +83,7 @@ const FileEmbed: FC<{ url: string }> = ({ url }: { url: string }) => {
           <p>{type}</p>
         </div>
         <Button type='button' onClick={() => window.open(url)}>
-          Open in Browser
+          Open
         </Button>
       </div>
     )
