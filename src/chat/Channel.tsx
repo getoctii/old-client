@@ -259,8 +259,6 @@ const CallView: FC<{ channel: ChannelResponse; conversationID: string }> = ({
   )
 }
 
-const supportedFiles = new Set(['image/png', 'image/gif', 'image/jpeg'])
-
 const ChannelView: FC<{
   type: InternalChannelTypes
   channelID: string
@@ -308,11 +306,10 @@ const ChannelView: FC<{
   const { hasChannelPermissions } = Permission.useContainer()
   const [bond] = useDropArea({
     onFiles: (files) => {
-      if (supportedFiles.has(files[0].type))
-        setUploadDetails({
-          status: 'pending',
-          file: files[0]
-        })
+      setUploadDetails({
+        status: 'pending',
+        file: files[0]
+      })
     }
   })
 
