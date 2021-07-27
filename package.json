@@ -75,13 +75,13 @@
   },
   "scripts": {
     "start": "vite preview",
-    "dev": "VITE_APP_GATEWAY_URL=https://api.octii.chat/v1 vite",
+    "dev": "VITE_APP_GATEWAY_URL=https://api.octii.chat vite",
     "preview": "vite preview",
-    "build": "tsc && VITE_APP_GATEWAY_URL=https://api.octii.chat/v1 vite build",
-    "ios": "VITE_APP_GATEWAY_URL=https://api.octii.chat/v1 ionic capacitor run ios -l --external",
-    "build:ios": "VITE_APP_GATEWAY_URL=https://api.octii.chat/v1 ionic capacitor build ios",
+    "build": "tsc && VITE_APP_GATEWAY_URL=https://api.octii.chat vite build",
+    "ios": "VITE_APP_GATEWAY_URL=https://api.octii.chat ionic capacitor run ios -l --external",
+    "build:ios": "VITE_APP_GATEWAY_URL=https://api.octii.chat ionic capacitor build ios",
     "android": "ionic capacitor run android -l --external",
-    "ionic:build": "tsc && VITE_APP_GATEWAY_URL=https://api.octii.chat/v1 vite build"
+    "ionic:build": "tsc && VITE_APP_GATEWAY_URL=https://api.octii.chat vite build"
   },
   "eslintConfig": {
     "extends": "react-app"
