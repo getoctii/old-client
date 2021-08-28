@@ -1,8 +1,0 @@
-{
-  "deno.enable": false,
-  "extensions.ignoreRecommendations": true,
-  "files.autoSave": "off",
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.tsc.autoDetect": "off",
-  "npm.autoDetect": "off"
-}
