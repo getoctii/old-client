@@ -12,10 +12,10 @@ import { useUser } from '../user/state'
 import {
   faPaintBrush,
   faReceipt,
-  faShield,
+  faShieldAlt,
   faUser,
   faUserShield
-} from '@fortawesome/pro-duotone-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import Sideview from '../components/Sideview'
 // import { isPlatform } from '@ionic/react'
 // import GitInfo from 'react-git-info/macro'
@@ -43,7 +43,7 @@ const Settings: FC = () => {
       },
       {
         name: 'Security',
-        icon: faShield,
+        icon: faShieldAlt,
         color: 'danger',
         link: '/settings/security'
       },

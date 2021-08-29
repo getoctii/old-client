@@ -16,12 +16,12 @@ import { UI } from '../../../state/ui'
 import { Auth } from '../../../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faPencil,
+  faPencilAlt,
   faTimes,
   faTimesCircle
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { useRouteMatch } from 'react-router-dom'
-import { faToggleOff, faToggleOn } from '@fortawesome/pro-duotone-svg-icons'
+import { faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons'
 import { useSet } from 'react-use'
 import { Permission } from '../../../utils/permissions'
 import * as Yup from 'yup'
@@ -91,7 +91,7 @@ export const NewPermissionStandalone: FC = () => {
             }
           )
           ui.clearModal()
-        } catch (e) {
+        } catch (e: any) {
           if (e.response.data.errors.includes('GroupNameInvalid'))
             setErrors({ name: 'Invalid Group Name' })
         } finally {
@@ -137,7 +137,7 @@ export const NewPermissionStandalone: FC = () => {
                       {/* @ts-ignore */}
                       {GroupNames[+group]}{' '}
                       <FontAwesomeIcon
-                        icon={editing === +group ? faTimesCircle : faPencil}
+                        icon={editing === +group ? faTimesCircle : faPencilAlt}
                       />
                     </div>
 

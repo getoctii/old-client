@@ -4,7 +4,7 @@ import {
   faPhone,
   faTimes,
   faUserFriends
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import Button from '../components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FC, useMemo } from 'react'

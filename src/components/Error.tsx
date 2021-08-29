@@ -1,16 +1,15 @@
 import { FC } from 'react'
 import styles from './Error.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faLock, faPoo } from '@fortawesome/pro-solid-svg-icons'
+import { faLock, faPoo } from '@fortawesome/free-solid-svg-icons'
 import Button from './Button'
-import { AxiosError } from 'axios'
 import { Plugins } from '@capacitor/core'
 import { queryCache } from 'react-query'
 
 const Error: FC<{
   className?: string
   resetErrorBoundary: () => void
-  error: AxiosError
+  error: any
 }> = ({ className, resetErrorBoundary, error }) => {
   const isInvalidAuth =
     error?.isAxiosError &&

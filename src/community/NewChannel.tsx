@@ -10,10 +10,10 @@ import { useHistory, useRouteMatch } from 'react-router-dom'
 import { getChannels, getCommunity, getGroup, getGroups } from './remote'
 import { UI } from '../state/ui'
 import { useQuery } from 'react-query'
-import { faChevronLeft, faTimes } from '@fortawesome/pro-solid-svg-icons'
+import { faChevronLeft, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FC, useState } from 'react'
 import * as Yup from 'yup'
-import { faMinusCircle, faPlusCircle } from '@fortawesome/pro-duotone-svg-icons'
+import { faMinusCircle, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import Modal from '../components/Modal'
 
 const ChannelSchema = Yup.object().shape({
@@ -112,7 +112,7 @@ const NewChannel: FC = () => {
               `/communities/${match?.params.id}/channels/${channel.id}`
             )
           ui.clearModal()
-        } catch (e) {
+        } catch (e: any) {
           const errors = e.response.data.errors
           const userErrors: { name?: string } = {}
           if (errors.includes('ChannelNameInvalid'))

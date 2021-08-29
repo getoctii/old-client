@@ -1,4 +1,4 @@
-import { faLink, faPlusCircle } from '@fortawesome/pro-solid-svg-icons'
+import { faLink, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useQuery } from 'react-query'
 import { useRouteMatch } from 'react-router-dom'

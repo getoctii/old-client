@@ -1,11 +1,11 @@
-import { faAddressBook, faUserCog } from '@fortawesome/pro-solid-svg-icons'
+import { faAddressBook, faUserCog } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useMemo, FC } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styles from './Integrations.module.scss'
 import { Permission } from '../../utils/permissions'
 import { Permissions } from '../../utils/constants'
-import { faWarehouseAlt } from '@fortawesome/pro-duotone-svg-icons'
+import { faWarehouse } from '@fortawesome/free-solid-svg-icons'
 
 const IntegrationsView: FC = () => {
   const history = useHistory()
@@ -56,7 +56,7 @@ const IntegrationsView: FC = () => {
           >
             <h4>
               <div className={styles.icon}>
-                <FontAwesomeIcon icon={faWarehouseAlt} fixedWidth={true} />
+                <FontAwesomeIcon icon={faWarehouse} fixedWidth={true} />
               </div>
               Products
             </h4>

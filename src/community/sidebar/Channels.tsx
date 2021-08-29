@@ -22,7 +22,7 @@ import {
   CategoryChannelsDraggable
 } from './channel/CategoryCard'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/pro-solid-svg-icons'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { Permission } from '../../utils/permissions'
 import { UI } from '../../state/ui'
 

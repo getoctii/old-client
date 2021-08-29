@@ -12,7 +12,7 @@ import {
   faChevronLeft,
   faExclamationCircle,
   faSearch
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import Icon from '../user/Icon'
 import { useHistory } from 'react-router-dom'
 import { clientGateway } from '../utils/constants'
@@ -148,7 +148,7 @@ const Lookup: FC = () => {
                 setLookup(user.id)
                 resetForm()
                 setErrors({ tag: 'No input' })
-              } catch (e) {
+              } catch (e: any) {
                 if (
                   e.response.data.errors.includes('UserNotFound') ||
                   e.response.data.errors.includes('RecipientNotFound')

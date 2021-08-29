@@ -15,7 +15,7 @@ import {
   faClipboardList,
   faNewspaper,
   faStreetView
-} from '@fortawesome/pro-duotone-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 // import GitInfo from 'react-git-info/macro'
 // import dayjs from 'dayjs'
 import Queue from './store/Queue'

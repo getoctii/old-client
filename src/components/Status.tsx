@@ -1,10 +1,10 @@
 import {
   faCircle,
   faMoon,
-  faSignOut,
+  faSignOutAlt,
   faStopCircle,
   faTimesCircle
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FC } from 'react'
 import { queryCache, useQuery } from 'react-query'
@@ -96,7 +96,7 @@ const Status: FC<{ isClosable?: boolean }> = ({ isClosable = true }) => {
           }`}
           onClick={() => id && token && updateStatus(id, State.offline, token)}
         >
-          <FontAwesomeIcon icon={faSignOut} />
+          <FontAwesomeIcon icon={faSignOutAlt} />
         </Button>
       </div>
       <div>

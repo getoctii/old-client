@@ -16,7 +16,7 @@ import {
   Permissions
 } from '../../../utils/constants'
 import Context from '../../../components/Context'
-import { faCopy, faPen, faTrashAlt } from '@fortawesome/pro-duotone-svg-icons'
+import { faCopy, faPen, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { Clipboard } from '@capacitor/core'
 import { UI } from '../../../state/ui'
 import { useMutation } from 'react-query'

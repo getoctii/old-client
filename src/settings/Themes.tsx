@@ -1,7 +1,7 @@
 import styles from './Themes.module.scss'
 import Theme, { devThemeBundleSchema, ThemeBundle, themes } from '../theme/hook'
 import Button from '../components/Button'
-import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { useMedia } from 'react-use'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useHistory } from 'react-router-dom'

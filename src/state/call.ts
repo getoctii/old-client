@@ -44,6 +44,7 @@ const changeVideoCodec = (conection: RTCPeerConnection, mimeType: string) => {
     if (kind === 'video') {
       sendCodecs = preferCodec(sendCodecs, mimeType)
       recvCodecs = preferCodec(recvCodecs, mimeType)
+      // @ts-ignore
       transceiver.setCodecPreferences([...sendCodecs, ...recvCodecs])
     }
   })

@@ -2,7 +2,7 @@ import { FC } from 'react'
 import styles from './FriendCard.module.scss'
 import { Auth } from '../../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserTimes, faUserCheck } from '@fortawesome/pro-duotone-svg-icons'
+import { faUserTimes, faUserCheck } from '@fortawesome/free-solid-svg-icons'
 import Icon from '../../user/Icon'
 import { RelationshipResponse, RelationshipTypes } from './remote'
 import { useUser } from '../../user/state'
@@ -16,15 +16,13 @@ const FriendCardView: FC<RelationshipResponse> = ({
   const { id } = Auth.useContainer()
   const user = useUser(user_id)
   const recipient = useUser(recipient_id)
-  const {
-    newRelationship,
-    deleteRelationship
-  } = Relationships.useContainerSelector(
-    ({ newRelationship, deleteRelationship }) => ({
-      newRelationship,
-      deleteRelationship
-    })
-  )
+  const { newRelationship, deleteRelationship } =
+    Relationships.useContainerSelector(
+      ({ newRelationship, deleteRelationship }) => ({
+        newRelationship,
+        deleteRelationship
+      })
+    )
   return (
     <div className={styles.card}>
       <Icon

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import Modal from '../components/Modal'
-import { faKeySkeleton } from '@fortawesome/pro-solid-svg-icons'
+import { faKey } from '@fortawesome/free-solid-svg-icons'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import Input from '../components/Input'
 import Button from '../components/Button'
@@ -103,7 +103,7 @@ const GenerateKeychain: FC = () => {
       {({ isSubmitting, submitForm }) => (
         <Modal
           title={'New Keychain'}
-          icon={faKeySkeleton}
+          icon={faKey}
           onDismiss={() => {}}
           bottom={
             <Button

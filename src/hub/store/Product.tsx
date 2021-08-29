@@ -1,6 +1,6 @@
 import Button from '../../components/Button'
 import styles from './Product.module.scss'
-import { faChevronCircleLeft } from '@fortawesome/pro-duotone-svg-icons'
+import { faChevronCircleLeft } from '@fortawesome/free-solid-svg-icons'
 import Header from '../../components/Header'
 import { useHistory, useParams } from 'react-router-dom'
 import { queryCache, useQuery } from 'react-query'

@@ -1,4 +1,4 @@
-import { faLock } from '@fortawesome/pro-solid-svg-icons'
+import { faLock } from '@fortawesome/free-solid-svg-icons'
 import { ErrorMessage, Form, Formik, Field } from 'formik'
 import { FC } from 'react'
 import Input from '../components/Input'

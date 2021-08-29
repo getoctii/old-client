@@ -15,7 +15,7 @@ import {
   faCopy,
   faTrashAlt,
   faPlusCircle
-} from '@fortawesome/pro-duotone-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import Button from '../components/Button'
 import { Plugins } from '@capacitor/core'
 import Header from '../components/Header'

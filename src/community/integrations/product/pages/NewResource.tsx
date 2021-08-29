@@ -9,7 +9,7 @@ import { useRouteMatch } from 'react-router-dom'
 import { getProduct, ResourceTypes } from '../../../remote'
 import { UI } from '../../../../state/ui'
 import { queryCache, useQuery } from 'react-query'
-import { faTimes } from '@fortawesome/pro-solid-svg-icons'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import * as Yup from 'yup'
 import Modal from '../../../../components/Modal'
 import { FC } from 'react'
@@ -57,7 +57,7 @@ const NewResource: FC = () => {
             }
           )
           ui.clearModal()
-        } catch (e) {
+        } catch (e: any) {
           const errors = e.response.data.errors
           const userErrors: { name?: string } = {}
           if (errors.includes('ResourceNameInvalid'))

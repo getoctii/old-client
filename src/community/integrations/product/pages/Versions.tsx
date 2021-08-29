@@ -1,4 +1,4 @@
-import { faCodeCommit } from '@fortawesome/pro-duotone-svg-icons'
+import { faCodeBranch } from '@fortawesome/free-solid-svg-icons'
 import { Suspense, FC } from 'react'
 import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
@@ -39,7 +39,7 @@ const Versions: FC = () => {
           <List.Empty
             title={'No versions found'}
             description={'Create a new version!'}
-            icon={faCodeCommit}
+            icon={faCodeBranch}
           />
         )}
       </List.View>

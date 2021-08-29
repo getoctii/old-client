@@ -3,9 +3,9 @@ import styles from './IconPicker.module.scss'
 import Button from './Button'
 import { MoonLoader } from 'react-spinners'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFileUpload } from '@fortawesome/pro-solid-svg-icons'
+import { faFileUpload } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
-import { faPoop } from '@fortawesome/pro-duotone-svg-icons'
+import { faPoop } from '@fortawesome/free-solid-svg-icons'
 import { Auth } from '../authentication/state'
 
 const IconPicker: FC<{

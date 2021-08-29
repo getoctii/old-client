@@ -95,7 +95,7 @@ export const postEncryptedMessage = async (
   const selfEncryptedMessage = exportEncryptedMessage(
     await encryptMessage(
       keychain,
-      keychain.encryptionKeyPair.publicKey,
+      keychain.encryptionKeyPair.publicKey!,
       content
     )
   )
@@ -152,7 +152,7 @@ export const patchEncryptedMessage = async (
   const selfEncryptedMessage = exportEncryptedMessage(
     await encryptMessage(
       keychain,
-      keychain.encryptionKeyPair.publicKey,
+      keychain.encryptionKeyPair.publicKey!,
       content
     )
   )

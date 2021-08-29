@@ -4,7 +4,10 @@ import Input from '../components/Input'
 import { Field, Form, Formik } from 'formik'
 import { Auth } from '../authentication/state'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExclamationCircle, faSearch } from '@fortawesome/pro-solid-svg-icons'
+import {
+  faExclamationCircle,
+  faSearch
+} from '@fortawesome/free-solid-svg-icons'
 import Button from '../components/Button'
 import { queryCache } from 'react-query'
 import { useHistory } from 'react-router-dom'
@@ -52,7 +55,7 @@ const NewConversation: FC = () => {
               resetForm()
               setErrors({ tag: 'No input' })
             }
-          } catch (e) {
+          } catch (e: any) {
             if (
               e.response.data.errors.includes('UserNotFound') ||
               e.response.data.errors.includes('RecipientNotFound')

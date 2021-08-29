@@ -8,10 +8,7 @@ import { Waypoint } from 'react-waypoint'
 import { Auth } from '../authentication/state'
 import styles from './Newsletters.module.scss'
 import { clientGateway } from '../utils/constants'
-import {
-  faUserClock,
-  faClipboardList
-} from '@fortawesome/pro-duotone-svg-icons'
+import { faUserClock, faClipboardList } from '@fortawesome/free-solid-svg-icons'
 import Header from '../components/Header'
 import List from '../components/List'
 import { useHistory } from 'react-router-dom'

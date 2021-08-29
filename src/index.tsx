@@ -18,14 +18,12 @@ import { UI } from './state/ui'
 import '@sentry/browser'
 import * as Sentry from '@sentry/react'
 import SentryRRWeb from '@sentry/rrweb'
-import { LocalNotifications } from '@capacitor/core'
 import Theme from './theme/hook'
 import Typing from './state/typing'
 import { ScrollPosition } from './state/scroll'
 import { Call } from './state/call'
 import { Chat } from './chat/state'
 import { Integrations } from '@sentry/tracing'
-import { AxiosError } from 'axios'
 import { HelmetProvider } from 'react-helmet-async'
 // @ts-ignore
 import smoothscroll from 'smoothscroll-polyfill'
@@ -91,13 +89,9 @@ ReactDOM.render(
     >
       <Sentry.ErrorBoundary
         onReset={() => queryCache.resetErrorBoundaries()}
-        fallback={({
-          resetError,
-          error
-        }: {
-          resetError: () => void
-          error: AxiosError
-        }) => <Error resetErrorBoundary={resetError} error={error} />}
+        fallback={({ resetError, error }) => (
+          <Error resetErrorBoundary={resetError} error={error} />
+        )}
       >
         <Suspense fallback={<Loader />}>
           <HelmetProvider>

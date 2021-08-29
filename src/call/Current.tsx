@@ -4,9 +4,9 @@ import {
   faMicrophoneSlash,
   faPhoneSlash,
   faTimes,
-  faVolume,
+  faVolumeUp,
   faVolumeMute
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FC, useMemo } from 'react'
 import { Call } from '../state/call'
@@ -137,7 +137,7 @@ const Current: FC = () => {
           {deafened ? (
             <FontAwesomeIcon icon={faVolumeMute} fixedWidth />
           ) : (
-            <FontAwesomeIcon icon={faVolume} fixedWidth />
+            <FontAwesomeIcon icon={faVolumeUp} fixedWidth />
           )}
         </button>
         {room?.conversationID ? (

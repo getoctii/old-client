@@ -3,11 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronRight,
   faCopy,
-  faHouseLeave,
+  faSignOutAlt,
   faTrashAlt,
   faUserFriends,
   faGlasses
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { useQuery, useMutation, queryCache } from 'react-query'
 import { clientGateway, MessageTypes } from '../utils/constants'
 import styles from './ConversationCard.module.scss'
@@ -188,7 +188,7 @@ const ConversationCardView: FC<{
         (people?.length ?? 1) === 1
           ? 'Delete Conversation'
           : 'Leave Conversation',
-      icon: (people?.length ?? 1) === 1 ? faTrashAlt : faHouseLeave,
+      icon: (people?.length ?? 1) === 1 ? faTrashAlt : faSignOutAlt,
       danger: true,
       onClick: (event) => {
         if (match?.params.id === conversationID) history.push('/')

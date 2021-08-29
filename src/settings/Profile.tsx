@@ -1,6 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { queryCache } from 'react-query'
 import { Auth } from '../authentication/state'
 import { clientGateway, ModalTypes } from '../utils/constants'

@@ -11,7 +11,7 @@ import styles from './Settings.module.scss'
 import { CommunityResponse, getCommunity, getProduct } from '../../../remote'
 import IconPicker from '../../../../components/IconPicker'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave } from '@fortawesome/pro-duotone-svg-icons'
+import { faSave } from '@fortawesome/free-solid-svg-icons'
 import * as Yup from 'yup'
 
 const DeleteSchema = Yup.object().shape({
@@ -26,9 +26,8 @@ const Personalization: FC = () => {
   const auth = Auth.useContainer()
   const [saveTagline, setSaveTagline] = useState<string | undefined>(undefined)
   const [saveName, setSaveName] = useState<string | undefined>(undefined)
-  const [saveDescription, setSaveDescription] = useState<string | undefined>(
-    undefined
-  )
+  const [saveDescription, setSaveDescription] =
+    useState<string | undefined>(undefined)
   const { data: product } = useQuery(
     ['product', productID, auth.token],
     getProduct

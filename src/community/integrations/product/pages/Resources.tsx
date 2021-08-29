@@ -1,9 +1,9 @@
 import {
   faCubes,
-  faPaintBrushAlt,
+  faPaintBrush,
   faServer,
-  faWindow
-} from '@fortawesome/pro-duotone-svg-icons'
+  faWindowMaximize
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FC, Suspense } from 'react'
 import { useQuery } from 'react-query'
@@ -34,9 +34,9 @@ const ProductCard: FC<{ id: string }> = ({ id }) => {
           }`}
         >
           {resource?.type === ResourceTypes.THEME ? (
-            <FontAwesomeIcon icon={faPaintBrushAlt} />
+            <FontAwesomeIcon icon={faPaintBrush} />
           ) : resource?.type === ResourceTypes.CLIENT_INTEGRATION ? (
-            <FontAwesomeIcon icon={faWindow} />
+            <FontAwesomeIcon icon={faWindowMaximize} />
           ) : (
             <FontAwesomeIcon icon={faServer} />
           )}

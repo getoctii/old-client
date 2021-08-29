@@ -1,4 +1,4 @@
-import { faCrown, faPaperPlane } from '@fortawesome/pro-solid-svg-icons'
+import { faCrown, faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import dayjs from 'dayjs'
 import dayjsUTC from 'dayjs/plugin/utc'
@@ -20,7 +20,7 @@ import {
   getMember,
   MemberResponse
 } from '../remote'
-import { faEllipsisHAlt, faUsers } from '@fortawesome/pro-duotone-svg-icons'
+import { faEllipsisH, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { UI } from '../../state/ui'
 import { ModalTypes, Permissions } from '../../utils/constants'
 import { Permission } from '../../utils/permissions'
@@ -121,7 +121,7 @@ const MemberCard: FC<{ memberObj: MemberResponse }> = memo(({ memberObj }) => {
               {member.data && member.data.groups.length < 1 ? (
                 'Add Group'
               ) : (
-                <FontAwesomeIcon icon={faEllipsisHAlt} />
+                <FontAwesomeIcon icon={faEllipsisH} />
               )}
             </Button>
           )}

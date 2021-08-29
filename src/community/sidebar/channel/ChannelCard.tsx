@@ -1,4 +1,4 @@
-import { faHashtag, faVolume } from '@fortawesome/pro-solid-svg-icons'
+import { faHashtag, faVolumeUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { memo, Suspense, useCallback, useMemo, FC } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
@@ -29,7 +29,7 @@ import {
   faTrashAlt,
   faBell,
   faBellSlash
-} from '@fortawesome/pro-duotone-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { ConfirmationType } from '../../../components/Confirmation'
 import { ErrorBoundary } from 'react-error-boundary'
 import { Call } from '../../../state/call'
@@ -254,7 +254,7 @@ const ChannelCardView: FC<{
                   channel.type === ChannelTypes.TEXT
                     ? faHashtag
                     : channel.type === ChannelTypes.VOICE
-                    ? faVolume
+                    ? faVolumeUp
                     : faHashtag
                 }
                 fixedWidth={true}

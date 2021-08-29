@@ -11,7 +11,7 @@ import Group from './Group'
 import { queryCache, useQuery } from 'react-query'
 import { getGroups } from '../../remote'
 import { AnimatePresence } from 'framer-motion'
-import { faPlusCircle, faUsersCrown } from '@fortawesome/pro-duotone-svg-icons'
+import { faPlusCircle, faUsers } from '@fortawesome/free-solid-svg-icons'
 
 const reorder = (
   list: string[],
@@ -96,7 +96,7 @@ const GroupsList: FC = () => {
         ) : (
           <>
             <div className={styles.empty}>
-              <FontAwesomeIcon size={'5x'} icon={faUsersCrown} />
+              <FontAwesomeIcon size={'5x'} icon={faUsers} />
               <h2>Get started with groups!</h2>
               <p>
                 Groups allow you to manage community members. For example, you

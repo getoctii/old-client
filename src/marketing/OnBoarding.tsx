@@ -1,4 +1,4 @@
-import { faChevronCircleRight } from '@fortawesome/pro-duotone-svg-icons'
+import { faChevronCircleRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { motion } from 'framer-motion'
 import { FC, useState } from 'react'

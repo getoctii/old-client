@@ -14,7 +14,7 @@ import { getUser } from '../../user/remote'
 import NewConversation from '../NewConversation'
 import { createConversation } from '../remote'
 import styles from './Empty.module.scss'
-import { faPlusCircle } from '@fortawesome/pro-duotone-svg-icons'
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 
 const FriendSuggestion: FC<RelationshipResponse & { onClick: () => void }> = ({
   recipient_id,

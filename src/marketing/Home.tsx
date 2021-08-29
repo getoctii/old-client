@@ -7,13 +7,13 @@ import {
   faArrowDown,
   faCheck,
   faExclamation
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { isEmail } from '../utils/validations'
 import { clientGateway } from '../utils/constants'
 import { motion } from 'framer-motion'
 import { useMedia } from 'react-use'
 import Button from '../components/Button'
-import { faMegaphone } from '@fortawesome/pro-solid-svg-icons'
+import { faBullhorn } from '@fortawesome/free-solid-svg-icons'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import * as Yup from 'yup'
@@ -75,7 +75,7 @@ const Home: FC = () => {
                     </Button>
                   ) : !isSubmitting && values.email !== '' && !submitted ? (
                     <Button type='submit' onClick={() => submitForm()}>
-                      <FontAwesomeIcon icon={faMegaphone} />
+                      <FontAwesomeIcon icon={faBullhorn} />
                     </Button>
                   ) : submitted ? (
                     <Button type='button' disabled>

@@ -11,10 +11,10 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheckCircle,
-  faPencil,
+  faPencilAlt,
   faTimesCircle,
   faTrash
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { createEditor } from 'slate'
 import { serialize } from '../../../utils/slate'
 import { getGroup } from '../../remote'
@@ -24,7 +24,7 @@ import Button from '../../../components/Button'
 import { useMedia, useSet } from 'react-use'
 import { Draggable } from '@react-forked/dnd'
 import { queryCache, useQuery } from 'react-query'
-import { faUsers } from '@fortawesome/pro-duotone-svg-icons'
+import { faUsers } from '@fortawesome/free-solid-svg-icons'
 import { Permission } from '../../../utils/permissions'
 
 const GroupNameEditor: FC<{ id: string; name: string }> = (group) => {
@@ -90,9 +90,10 @@ const PermissionsEditor: FC<{
     new Set(permissions ?? [])
   )
   const { hasPermissions, community } = Permission.useContainer()
-  const serverPermissions = useMemo(() => new Set(permissions ?? []), [
-    permissions
-  ])
+  const serverPermissions = useMemo(
+    () => new Set(permissions ?? []),
+    [permissions]
+  )
 
   const showSave = useMemo(
     () =>
@@ -253,7 +254,7 @@ const GroupCard: FC<{ id?: string; base?: boolean }> = ({ id, base }) => {
               </Button>
             )}
             <Button type='button' onClick={() => setEdit(!edit)}>
-              <FontAwesomeIcon icon={edit ? faTimesCircle : faPencil} />
+              <FontAwesomeIcon icon={edit ? faTimesCircle : faPencilAlt} />
             </Button>
           </div>
         )}

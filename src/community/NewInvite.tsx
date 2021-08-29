@@ -9,7 +9,7 @@ import { UI } from '../state/ui'
 import { useQuery } from 'react-query'
 import { Plugins } from '@capacitor/core'
 import Modal from '../components/Modal'
-import { faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 
 const InviteField: FC<{ onInvite: (invite: string) => void }> = ({
   onInvite

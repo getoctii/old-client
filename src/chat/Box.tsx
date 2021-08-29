@@ -5,7 +5,7 @@ import {
   faFileUpload,
   faSmileWink,
   faTimes
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { FC, Suspense, useMemo, useRef, useState } from 'react'
 import { useMedia } from 'react-use'
 import Picker from 'emoji-picker-react'

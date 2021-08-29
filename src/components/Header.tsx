@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FC, ReactNode } from 'react'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { useMedia } from 'react-use'
-import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 
 const HeaderPlaceholder: FC = () => {
   return (

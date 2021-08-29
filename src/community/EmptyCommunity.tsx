@@ -9,7 +9,7 @@ import {
   faMapPin,
   faPlusCircle,
   faUserFriends
-} from '@fortawesome/pro-duotone-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { ModalTypes } from '../utils/constants'
 import Button from '../components/Button'
 import { FC } from 'react'

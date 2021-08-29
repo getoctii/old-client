@@ -1,4 +1,4 @@
-import { faVolume } from '@fortawesome/pro-solid-svg-icons'
+import { faVolumeUp } from '@fortawesome/free-solid-svg-icons'
 import { FC } from 'react'
 import { Auth } from '../../authentication/state'
 import { ChannelResponse } from '../../chat/remote'
@@ -46,7 +46,7 @@ const VoiceChannel: FC<{ channel: ChannelResponse }> = ({ channel }) => {
         heading={channel.name}
         subheading=''
         color={'primary'}
-        icon={faVolume}
+        icon={faVolumeUp}
         action={
           room?.channelID !== channel.id ? (
             <Button

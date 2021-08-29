@@ -19,9 +19,9 @@ import {
   faPhone,
   faTimes,
   faUserPlus,
-  faVolume,
+  faVolumeUp,
   faVolumeMute
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { useHistory, useParams } from 'react-router-dom'
 import Box from './Box'
 import Typing from '../state/typing'
@@ -250,7 +250,7 @@ const CallView: FC<{ channel: ChannelResponse; conversationID: string }> = ({
         </Button>
         <Button type='button' onClick={() => setDeafened(!deafened)}>
           <FontAwesomeIcon
-            icon={deafened ? faVolumeMute : faVolume}
+            icon={deafened ? faVolumeMute : faVolumeUp}
             fixedWidth
           />
         </Button>

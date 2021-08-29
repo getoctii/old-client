@@ -15,7 +15,7 @@ import {
   faPlusCircle,
   faTrashAlt,
   faUsers
-} from '@fortawesome/pro-duotone-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { clientGateway, ModalTypes } from '../../utils/constants'
 import { Plugins } from '@capacitor/core'
 import List from '../../components/List'

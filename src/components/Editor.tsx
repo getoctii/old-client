@@ -218,11 +218,12 @@ const EditorView: FC<{
             [node.type]: true,
             anchor: {
               path,
-              offset: (node.children as any)[0].position?.start.offset ?? 0
+              offset: (node as any).children[0].position?.start.offset ?? 0
             },
             focus: {
               path,
-              offset: (node.children as any)[0].position?.end.offset ?? 0
+              offset:
+                ((node as any).children as any)[0].position?.end.offset ?? 0
             }
           })
         } else {

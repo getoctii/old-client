@@ -1,4 +1,4 @@
-import { faDownload, faPause, faPlay } from '@fortawesome/pro-solid-svg-icons'
+import { faDownload, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FC } from 'react'
 import { useAudio } from 'react-use'
@@ -25,7 +25,13 @@ const AudioEmbed: FC<{ url: string }> = ({ url }) => {
   return (
     <div className={styles.audioEmbed}>
       {audio}
-      <Button type="button" className={styles.downloadButton} onClick={() => window.open(url)}><FontAwesomeIcon icon={faDownload} width={"20px"} /></Button>
+      <Button
+        type='button'
+        className={styles.downloadButton}
+        onClick={() => window.open(url)}
+      >
+        <FontAwesomeIcon icon={faDownload} width={'20px'} />
+      </Button>
 
       <Button
         type='button'

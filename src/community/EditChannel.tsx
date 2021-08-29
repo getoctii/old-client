@@ -26,7 +26,7 @@ import {
   faTimesCircle,
   faTrash,
   faUserLock
-} from '@fortawesome/pro-duotone-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { getCommunity, getGroup, getGroups } from './remote'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BlockPicker } from 'react-color'
@@ -37,7 +37,7 @@ import {
   faMinus,
   faTimes,
   faUndo
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { Permission } from '../utils/permissions'
 import TextArea from '../components/TextArea'
 import StatusBar from '../components/StatusBar'
@@ -492,7 +492,7 @@ export const EditChannel: FC = () => {
                 }
               )
               ui.clearModal()
-            } catch (e) {
+            } catch (e: any) {
               const errors = e.response.data.errors
               const userErrors: { name?: string } = {}
               if (errors.includes('ChannelNameInvalid'))

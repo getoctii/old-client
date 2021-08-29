@@ -10,9 +10,9 @@ import {
   IconDefinition,
   faPencilAlt,
   faLock,
-  faSpiderWeb,
+  faEthernet,
   faLink
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { Plugins } from '@capacitor/core'
 import { Auth } from '../authentication/state'
 import { useMutation, useQuery } from 'react-query'
@@ -26,12 +26,11 @@ import Context from '../components/Context'
 import useMarkdown from '@innatical/markdown'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faCatSpace,
   faTimesCircle,
   faUserNinja,
   faUserShield,
   faHeart
-} from '@fortawesome/pro-duotone-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { ErrorBoundary } from 'react-error-boundary'
 import { UI } from '../state/ui'
 import { patchEncryptedMessage, patchMessage } from './remote'
@@ -510,11 +509,6 @@ const MessageView: FC<{
                         className={styles.badge}
                         icon={faUserNinja}
                       />
-                    ) : user?.id === '99343aac-2301-415d-aece-17b021d3a459' ? (
-                      <FontAwesomeIcon
-                        className={styles.badge}
-                        icon={faCatSpace}
-                      />
                     ) : user?.id === '71df7ca2-93c5-4a8a-be6e-f068fd91d68e' ? (
                       <FontAwesomeIcon
                         className={styles.badge}
@@ -523,7 +517,7 @@ const MessageView: FC<{
                     ) : type === MessageTypes.WEBHOOK ? (
                       <FontAwesomeIcon
                         className={styles.badge}
-                        icon={faSpiderWeb}
+                        icon={faEthernet}
                       />
                     ) : type === MessageTypes.INTEGRATION ? (
                       <FontAwesomeIcon className={styles.badge} icon={faLink} />

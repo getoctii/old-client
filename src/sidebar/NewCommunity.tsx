@@ -7,12 +7,12 @@ import { clientGateway } from '../utils/constants'
 import styles from './NewCommunity.module.scss'
 import { UI } from '../state/ui'
 import { Auth } from '../authentication/state'
-import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { useHistory } from 'react-router-dom'
 import IconPicker from '../components/IconPicker'
 import * as Yup from 'yup'
 import Modal from '../components/Modal'
-import { faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 
 const CommunitySchema = Yup.object().shape({
   name: Yup.string()
@@ -55,7 +55,7 @@ const CreateCommunity: FC<{ dismiss: Function }> = ({ dismiss }) => {
           )
           ui.clearModal()
           if (community?.id) history.push(`/communities/${community.id}`)
-        } catch (e) {
+        } catch (e: any) {
           if (e.response.data.errors.includes('CommunityNameInvalid'))
             setErrors({ name: 'Invalid Community Name' })
           if (e.response.data.errors.includes('InvalidIcon'))
@@ -155,7 +155,7 @@ export const NewCommunity: FC = () => {
                   .community_id
                 history.push(`/communities/${id}`)
                 ui.clearModal()
-              } catch (e) {
+              } catch (e: any) {
                 if (e.response.data.errors.includes('InvalidCode'))
                   setErrors({ invite: 'Invalid Invite' })
                 if (e.response.data.errors.includes('InviteNotFound'))

@@ -1,4 +1,4 @@
-import { faPoop } from '@fortawesome/pro-solid-svg-icons'
+import { faPoop } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useMemo, FC } from 'react'
 import { matchPath, useHistory } from 'react-router-dom'

@@ -1,4 +1,4 @@
-import { faLock } from '@fortawesome/pro-solid-svg-icons'
+import { faLock } from '@fortawesome/free-solid-svg-icons'
 import { FC } from 'react'
 import Button from '../components/Button'
 import { Plugins } from '@capacitor/core'

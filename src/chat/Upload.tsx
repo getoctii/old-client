@@ -1,4 +1,4 @@
-import { faFileUpload, faSpinner } from '@fortawesome/pro-solid-svg-icons'
+import { faFileUpload, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FC, useEffect, useState } from 'react'
 import styles from './Upload.module.scss'

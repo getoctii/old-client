@@ -1,4 +1,7 @@
-import { faExclamationCircle, faSearch } from '@fortawesome/pro-solid-svg-icons'
+import {
+  faExclamationCircle,
+  faSearch
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Field, Form, Formik } from 'formik'
 import { FC, useMemo } from 'react'
@@ -79,7 +82,7 @@ const AddParticipant: FC<{
               resetForm()
               setErrors({ tag: 'No input' })
             }
-          } catch (e) {
+          } catch (e: any) {
             if (
               e.response.data.errors.includes('UserNotFound') ||
               e.response.data.errors.includes('RecipientNotFound')

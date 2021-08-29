@@ -1,4 +1,4 @@
-import { faEllipsisH } from '@fortawesome/pro-solid-svg-icons'
+import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Integrations from './Integrations'
 import { useState, FC } from 'react'
@@ -13,9 +13,9 @@ import { Permission } from '../../utils/permissions'
 import {
   faBell,
   faBellSlash,
-  faHouseLeave,
+  faSignOutAlt,
   faUserPlus
-} from '@fortawesome/pro-duotone-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { UI } from '../../state/ui'
 
 const SidebarView: FC = () => {
@@ -101,7 +101,7 @@ const SidebarView: FC = () => {
                   }}
                 >
                   <span>Leave Community</span>{' '}
-                  <FontAwesomeIcon icon={faHouseLeave} fixedWidth />
+                  <FontAwesomeIcon icon={faSignOutAlt} fixedWidth />
                 </div>
               </>
             )}

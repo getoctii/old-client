@@ -7,10 +7,10 @@ import { getGroup, getGroups, getMember } from './remote'
 import { UI } from '../state/ui'
 import { getUser } from '../user/remote'
 import { useQuery } from 'react-query'
-import { faPlusCircle, faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
+import { faPlusCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { clientGateway } from '../utils/constants'
 import { Permission } from '../utils/permissions'
-import { faTimes } from '@fortawesome/pro-solid-svg-icons'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 const Group: FC<{
   id: string

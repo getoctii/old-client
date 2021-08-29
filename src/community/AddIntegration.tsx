@@ -1,4 +1,4 @@
-import { faLink } from '@fortawesome/pro-solid-svg-icons'
+import { faLink } from '@fortawesome/free-solid-svg-icons'
 import { useQuery } from 'react-query'
 import { useRouteMatch } from 'react-router-dom'
 import { Auth } from '../authentication/state'

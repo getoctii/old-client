@@ -14,7 +14,7 @@ import {
 import styles from './Settings.module.scss'
 import Button from '../../components/Button'
 import { ModalTypes, Permissions } from '../../utils/constants'
-import { faPlusCircle } from '@fortawesome/pro-duotone-svg-icons'
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import { PrivateRoute } from '../../authentication/PrivateRoute'
 import Groups from './groups/Groups'
 import { UI } from '../../state/ui'

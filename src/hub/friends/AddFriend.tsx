@@ -8,9 +8,12 @@ import { Auth } from '../../authentication/state'
 import { isTag } from '../../utils/validations'
 import { findUser } from '../../conversation/remote'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExclamationCircle, faSearch } from '@fortawesome/pro-solid-svg-icons'
+import {
+  faExclamationCircle,
+  faSearch
+} from '@fortawesome/free-solid-svg-icons'
 import { UI } from '../../state/ui'
-import { faTimesCircle } from '@fortawesome/pro-duotone-svg-icons'
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import Modal from '../../components/Modal'
 
 type formData = { tag: string }
@@ -57,7 +60,7 @@ const AddFriend: FC = () => {
             )
             setFieldError('tag', 'No input')
             resetForm()
-          } catch (e) {
+          } catch (e: any) {
             if (
               e.response.data.errors.includes('UserNotFound') ||
               e.response.data.errors.includes('RecipientNotFound')

@@ -15,7 +15,7 @@ import {
   faChevronCircleDown,
   faSave,
   faTimesCircle
-} from '@fortawesome/pro-duotone-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { useUser } from '../../user/state'
 import * as Yup from 'yup'
 
@@ -333,7 +333,7 @@ const DangerZone: FC<{ community: CommunityResponse }> = ({ community }) => {
               )
               await queryCache.invalidateQueries(['community', community.id])
               history.push(`/communities/${community.id}`)
-            } catch (e) {
+            } catch (e: any) {
               if (e.response.data.errors.includes('UserNotFound'))
                 setErrors({ username: 'User not found' })
               // TODO: Add message if you try to add yourself...

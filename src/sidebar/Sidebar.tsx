@@ -4,7 +4,7 @@ import { UI } from '../state/ui'
 import { Auth } from '../authentication/state'
 import { useQuery } from 'react-query'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInbox, faPlus, faTh } from '@fortawesome/pro-solid-svg-icons'
+import { faInbox, faPlus, faTh } from '@fortawesome/free-solid-svg-icons'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Button from '../components/Button'
 import { DragDropContext, Droppable, Draggable } from '@react-forked/dnd'
@@ -45,10 +45,11 @@ const Community: FC<{
   index: number
 }> = memo(({ community, index }) => {
   const { token, id } = Auth.useContainer()
-  const match = useRouteMatch<{
-    tab?: string
-    id?: string
-  }>('/:tab/:id')
+  const match =
+    useRouteMatch<{
+      tab?: string
+      id?: string
+    }>('/:tab/:id')
   const history = useHistory()
   const communityFull = useQuery(
     ['community', community.id, token],
@@ -135,9 +136,8 @@ const Communities: FC = () => {
   const isMobile = useMedia('(max-width: 740px)')
   const { id, token } = Auth.useContainer()
   const communities = useQuery(['communities', id, token], getCommunities)
-  const [communitiesOrder, setCommunitiesOrder] = useSuspenseStorageItem<
-    string[]
-  >('communities')
+  const [communitiesOrder, setCommunitiesOrder] =
+    useSuspenseStorageItem<string[]>('communities')
 
   const onDragEnd = useCallback(
     (result) => {
@@ -240,11 +240,11 @@ const Sidebar: FC = () => {
   // }, [currentScrollPosition, setScrollPosition])
   return (
     <div className={styles.sidebar}>
-        <div className={styles.spacer} />
-        {/* This doesnt fucking work
+      <div className={styles.spacer} />
+      {/* This doesnt fucking work
             Hours Wasted: 3 
         */}
-{/* 
+      {/* 
       {window.inntronType === 'native' && window.inntronPlatform === 'macos' ? (
         <div className={styles.spacer} />
       ) : (

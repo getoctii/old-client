@@ -44,7 +44,7 @@ export const Login: FC = () => {
             auth.setToken(response.authorization)
             setKeychainPassword(values.password)
           }
-        } catch (e) {
+        } catch (e: any) {
           const errors = e.response.data.errors
           const userErrors: {
             email?: string

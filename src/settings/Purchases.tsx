@@ -1,4 +1,4 @@
-import { faBoxOpen, faReceipt } from '@fortawesome/pro-duotone-svg-icons'
+import { faBoxOpen, faReceipt } from '@fortawesome/free-solid-svg-icons'
 import { FC } from 'react'
 import { useQuery } from 'react-query'
 import { useHistory } from 'react-router-dom'
