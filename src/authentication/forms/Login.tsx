@@ -45,7 +45,7 @@ export const Login: FC = () => {
             setKeychainPassword(values.password)
           }
         } catch (e: any) {
-          const errors = e.response.data.errors
+          const errors = e.response?.data?.errors ?? ['UserNotFound']
           const userErrors: {
             email?: string
             password?: string

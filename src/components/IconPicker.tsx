@@ -1,7 +1,7 @@
 import { FC, useRef, useState } from 'react'
 import styles from './IconPicker.module.scss'
 import Button from './Button'
-import { MoonLoader } from 'react-spinners'
+import { BarLoader, MoonLoader } from 'react-spinners'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileUpload } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
@@ -49,7 +49,11 @@ const IconPicker: FC<{
         disabled={isUploading}
       >
         {isUploading ? (
-          <MoonLoader />
+          forcedSmall ? (
+            <BarLoader />
+          ) : (
+            <MoonLoader />
+          )
         ) : error ? (
           <FontAwesomeIcon icon={faPoop} />
         ) : (

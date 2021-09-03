@@ -22,6 +22,8 @@ import { Chat } from './state'
 import { isPlatform } from '@ionic/react'
 import { Plugins } from '@capacitor/core'
 import { Keychain } from '../keychain/state'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
 
 const { Keyboard } = Plugins
 
@@ -188,6 +190,7 @@ const MessagesView: FC<{ channel: ChannelResponse }> = ({ channel }) => {
       <div key={channel.id} className={styles.noKeychain}>
         {!hasKeychain ? (
           <>
+            <FontAwesomeIcon icon={faExclamationTriangle} size='2x' />
             <h1>No Keychain Found</h1>
             <h2>Please generate one in settings</h2>
           </>
