@@ -1,0 +1,8 @@
+{
+  "name": "Neko",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react",
+  "id": "7834bfde"
+}

@@ -1,0 +1,53 @@
+.newVersion {
+  .inputName {
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .type {
+    button {
+      margin-bottom: 0.5rem;
+      background: var(--neko-input-background);
+      width: 100%;
+      &.selected {
+        background: var(--neko-colors-secondary);
+      }
+    }
+  }
+
+  textarea {
+    background: var(--neko-input-background);
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .iconPicker {
+    background: var(--neko-input-background);
+    max-width: 100%;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  ul {
+    padding-left: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .error {
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+    color: var(--neko-text-danger);
+  }
+
+  .createButton {
+    background: var(--neko-colors-primary);
+  }
+
+  @media (max-width: 740px) {
+    height: 100%;
+  }
+}

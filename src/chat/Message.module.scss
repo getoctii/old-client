@@ -1,0 +1,274 @@
+@import '@fontsource/ubuntu-mono';
+
+.message {
+  display: flex;
+  padding-left: 2rem;
+  padding-right: 2rem;
+
+  h2 {
+    font-size: 1rem;
+    margin: 0;
+    cursor: pointer;
+
+    .time {
+      cursor: default;
+      margin-left: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 300;
+      opacity: 0.5;
+    }
+  }
+
+  .innerInput {
+    position: relative;
+
+    svg {
+      position: absolute;
+      right: 0.8rem;
+      bottom: 1.15rem;
+      cursor: pointer;
+    }
+  }
+
+  .input {
+    margin-top: 0.4rem;
+    margin-bottom: 0.4rem;
+    padding: 0.8rem;
+    border-radius: 11px;
+    background: var(--neko-input-background);
+    font-size: 1rem;
+    font-weight: 300;
+  }
+  p {
+    line-height: 1.5rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    min-width: fit-content;
+    max-width: 100%;
+    display: inline-block;
+    clear: both;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 300;
+
+    @media (min-width: 741px) {
+      user-select: text;
+    }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--neko-chat-hover);
+    }
+  }
+
+  &.primary {
+    margin-top: 0.8rem;
+  }
+
+  .avatar {
+    min-width: 2.65rem;
+    min-height: 2.65rem;
+    width: 2.65rem;
+    height: 2.65rem;
+    object-fit: cover;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+  }
+
+  .content {
+    margin-left: 1rem;
+    overflow: hidden;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    .innerInput {
+      position: relative;
+      .mentionsWrapper {
+        position: relative;
+        height: 0;
+      }
+      svg {
+        position: absolute;
+        right: 0.8rem;
+        bottom: 1.15rem;
+        cursor: pointer;
+      }
+      .input {
+        margin-top: 0.4rem;
+        margin-bottom: 0.4rem;
+        padding: 0.8rem;
+        border-radius: 11px;
+        background: var(--neko-input-background);
+        font-size: 1rem;
+        font-weight: 300;
+      }
+    }
+
+    a {
+      color: var(--neko-text-primary);
+      text-decoration: none;
+    }
+
+    &.spacer {
+      margin-left: 3.65rem;
+    }
+  }
+
+  .text {
+    margin: 0;
+    padding: 0;
+    line-height: 1.325rem;
+    font-size: 1rem;
+  }
+
+  .badge {
+    margin-left: 0.5rem;
+  }
+
+  &.joined,
+  &.left {
+    padding: 0.25rem 2rem;
+    .content {
+      border-radius: 15px;
+      padding: 1rem;
+      color: var(--neko-text-inverse);
+      width: 500px;
+      width: auto;
+      margin-left: 0;
+    }
+
+    @media (max-width: 740px) {
+      width: 100%;
+    }
+  }
+
+  &.joined {
+    .content {
+      background: var(--neko-colors-primary);
+    }
+  }
+
+  &.left {
+    .content {
+      background: var(--neko-colors-secondary);
+    }
+  }
+}
+
+.placeholder {
+  display: flex;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  .avatar {
+    width: 2.65rem;
+    height: 2.65rem;
+    min-width: 2.65rem;
+    min-height: 2.65rem;
+    border-radius: 12px;
+    background: var(--neko-channels-background);
+  }
+  .content {
+    margin-left: 1rem;
+    overflow: hidden;
+    width: 100%;
+
+    .message {
+      margin-top: 0.5rem;
+      height: 1.15rem;
+      width: 10rem;
+      display: inline-block;
+      clear: both;
+      background: var(--neko-channels-background);
+      border-radius: 6px;
+    }
+
+    .user {
+      display: flex;
+      .username {
+        height: 1rem;
+        margin: 0;
+        width: 5rem;
+        border-radius: 6px;
+        background: var(--neko-channels-background);
+      }
+      .date {
+        height: 1rem;
+        margin-left: 0.25rem;
+        width: 3rem;
+        border-radius: 6px;
+        background: var(--neko-channels-background);
+      }
+    }
+    &.spacer {
+      margin-left: 3.65rem;
+    }
+  }
+
+  &.primary {
+    margin-top: 0.8rem;
+  }
+}
+
+.code {
+  background-color: var(--neko-backgrounds-secondary);
+  border-radius: 12px;
+  padding: 1rem;
+  font-weight: 300;
+  font-size: 1rem;
+
+  font-family: 'Ubuntu Mono';
+}
+
+.line {
+  display: flex;
+  flex-direction: row;
+}
+
+.lineIndicator {
+  color: var(--neko-text-primary);
+}
+
+.lineContent {
+  color: var(--neko-text-secondary);
+  -webkit-user-select: auto;
+  -khtml-user-select: auto;
+  -moz-user-select: auto;
+  -o-user-select: auto;
+  user-select: auto;
+}
+
+.copyCodeButton {
+  background-color: var(--neko-backgrounds-primary);
+  height: 1rem;
+  width: 7rem;
+  color: var(--neko-text-primary);
+  margin-top: 1rem;
+  margin-left: auto;
+}
+
+.selectable {
+  -webkit-user-select: auto;
+  -khtml-user-select: auto;
+  -moz-user-select: auto;
+  -o-user-select: auto;
+  user-select: auto;
+}
+
+.actions {
+  display: flex;
+  margin-top: 0.25rem;
+  button {
+    background: var(--neko-colors-primary);
+
+    &:not(:first-child) {
+      margin-left: 0.25rem;
+    }
+
+    &:not(:last-child) {
+      margin-right: 0.25rem;
+    }
+  }
+}

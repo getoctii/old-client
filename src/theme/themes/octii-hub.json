@@ -1,0 +1,152 @@
+{
+  "id": "17918676-f5ab-457b-b574-39460ec14ae1",
+  "name": "OctiiHub",
+  "dark": {
+    "colors": {
+      "primary": "#FF9900",
+      "secondary": "#788A9F",
+      "success": "#8f8f8f",
+      "info": "#8f8f8f",
+      "danger": "#ed5454",
+      "warning": "#8f8f8f",
+      "light": "#dadada",
+      "dark": "#1F2430"
+    },
+    "text": {
+      "normal": "#FFFFFF",
+      "inverse": "#000000",
+      "primary": "#FF9900",
+      "danger": "#ed5454",
+      "warning": "#8f8f8f",
+      "secondary": "#788A9F"
+    },
+    "sidebar": {
+      "background": "#000000",
+      "seperator": "#383838",
+      "shadow": " 0 -9px 10px 0 rgba(0, 0, 0, 0.42)"
+    },
+    "backgrounds": {
+      "primary": "#000000",
+      "secondary": "#1B1B1B"
+    },
+    "settings": {
+      "background": "#000000",
+      "card": "#1B1B1B",
+      "input": "#1F2430"
+    },
+    "channels": {
+      "background": "#1B1B1B",
+      "seperator": "#383838"
+    },
+    "chat": {
+      "background": "#000000",
+      "hover": "#1B1B1BAC"
+    },
+    "context": {
+      "seperator": "#1F2430",
+      "background": "rgba(255, 255, 255, 0.1)"
+    },
+    "status": {
+      "selected": "#FF9900",
+      "online": "#BAE67E",
+      "idle": "#FFCC66",
+      "dnd": "#FF3333",
+      "offline": "#D8D8D8"
+    },
+    "mention": {
+      "me": "#1089FF",
+      "other": "#8BA0D8"
+    },
+    "message": {
+      "author": "string",
+      "date": "string",
+      "message": "string"
+    },
+    "input": {
+      "background": "#1B1B1B",
+      "text": "#ffffff"
+    },
+    "modal": {
+      "background": "rgba(70, 70, 70, 0.5)",
+      "foreground": "#000000"
+    },
+    "emojis": {
+      "background": "#1B1B1B",
+      "input": "#000000"
+    }
+  },
+  "light": {
+    "colors": {
+      "primary": "#FF9900",
+      "secondary": "#788A9F",
+      "success": "#8f8f8f",
+      "info": "#8f8f8f",
+      "danger": "#ed5454",
+      "warning": "#8f8f8f",
+      "light": "#dadada",
+      "dark": "#1F2430"
+    },
+    "text": {
+      "normal": "#000000",
+      "inverse": "#000000",
+      "primary": "#FF9900",
+      "danger": "#ed5454",
+      "warning": "#8f8f8f",
+      "secondary": "#788A9F"
+    },
+    "sidebar": {
+      "background": "#ffffff",
+      "seperator": "#F1F1F1",
+      "shadow": "0 -9px 12px -2px rgba(255, 255, 255, 1)"
+    },
+    "mention": {
+      "me": "#1089FF",
+      "other": "#8BA0D8"
+    },
+    "settings": {
+      "background": "#ffffff",
+      "card": "#EEEEEE",
+      "input": "#1F2430"
+    },
+    "backgrounds": {
+      "primary": "#ffffff",
+      "secondary": "#EEEEEE"
+    },
+    "channels": {
+      "background": "#EEEEEE",
+      "seperator": "#F1F1F1"
+    },
+    "chat": {
+      "background": "#ffffff",
+      "hover": "#EEEEEEAC"
+    },
+    "context": {
+      "seperator": "#1F2430",
+      "background": "rgba(255, 255, 255, 0.1)"
+    },
+    "status": {
+      "selected": "#FF9900",
+      "online": "#BAE67E",
+      "idle": "#FFCC66",
+      "dnd": "#FF3333",
+      "offline": "#D8D8D8"
+    },
+    "message": {
+      "author": "string",
+      "date": "string",
+      "message": "string"
+    },
+    "input": {
+      "background": "#EEEEEE",
+      "text": "#000000"
+    },
+    "modal": {
+      "background": "rgba(70, 70, 70, 0.5)",
+      "foreground": "#ffffff"
+    },
+    "emojis": {
+      "background": "#1B1B1B",
+      "input": "#ffffff"
+    }
+  }
+}

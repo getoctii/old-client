@@ -1,0 +1,130 @@
+.draggable {
+  outline: none;
+}
+
+.category {
+  .channel {
+    .icon {
+      display: none;
+    }
+  }
+
+  hr {
+    display: none;
+  }
+}
+
+.channel {
+  cursor: pointer;
+  padding: 0.6rem 0 0.6rem;
+
+  display: flex;
+  border-radius: 14px;
+  align-items: center;
+  border: inherit;
+
+  .icon {
+    margin-right: 0.5rem;
+    color: var(--neko-text-inverse);
+    border-radius: 10px;
+    padding: 0.5rem;
+  }
+  h4 {
+    padding: 0;
+    margin: 0 auto 0 0;
+    font-weight: 500;
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .indicators {
+    display: flex;
+    margin-left: auto;
+
+    .join {
+      font-weight: 600;
+    }
+
+    .unread {
+      background-color: var(--neko-text-primary);
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+    }
+    .mention {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--neko-text-primary);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 12px;
+
+      &.pill {
+        border-radius: 10px;
+        width: auto;
+        height: auto;
+        padding: 2px 8px;
+      }
+    }
+    .muted {
+      margin-left: 0.5rem;
+      margin-right: 0;
+    }
+  }
+
+  &.selected {
+    color: var(--neko-text-inverse);
+    margin-left: -0.6rem;
+    padding-left: 0.6rem;
+    margin-right: -0.6rem;
+    padding-right: 0.6rem;
+
+    .icon {
+      color: var(--neko-text-normal);
+      background: var(--neko-text-inverse) !important;
+      background-color: var(--neko-text-inverse) !important;
+    }
+  }
+
+  @media (max-width: 740px) {
+    .icon {
+      font-size: 1.05rem;
+      border-radius: 12px;
+      padding: 0.58rem;
+    }
+    h4 {
+      font-size: 1.05rem;
+    }
+  }
+}
+
+.channelPlaceholder {
+  border: inherit;
+  display: flex;
+  align-items: center;
+
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+  border: inherit;
+  display: flex;
+  border-radius: 14px;
+  align-items: center;
+
+  .icon {
+    background: var(--neko-sidebar-background);
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-right: 0.5rem;
+    border-radius: 10px;
+  }
+
+  .text {
+    height: 1rem;
+    background: var(--neko-sidebar-background);
+    border-radius: 4px;
+  }
+}

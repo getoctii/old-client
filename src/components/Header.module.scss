@@ -1,0 +1,80 @@
+.header {
+  display: flex;
+  align-items: center;
+  small {
+    padding: 0;
+    margin: 0;
+  }
+  h2 {
+    padding: 0;
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  .icon {
+    &.secondary {
+      background: var(--neko-colors-secondary);
+    }
+
+    &.primary {
+      background: var(--neko-colors-primary);
+    }
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin-right: 0.7rem;
+    padding: 0.5rem;
+    height: 2.65rem;
+    width: 2.65rem;
+    border-radius: 12px;
+    font-size: 1.25rem;
+    color: var(--neko-text-inverse);
+
+    svg {
+      align-self: center;
+
+      font-size: 1.25rem;
+    }
+    display: flex;
+    vertical-align: middle;
+    justify-content: center;
+
+    &.clickable {
+      cursor: pointer;
+    }
+  }
+}
+
+.placeholder {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+
+  .icon {
+    margin-right: 0.8rem;
+    height: 2.65rem;
+    width: 2.65rem;
+    min-height: 2.65rem;
+    min-width: 2.65rem;
+    background-color: var(--neko-settings-card);
+    background-size: contain;
+    border-radius: 12px;
+  }
+
+  .title {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 2.65rem !important;
+    .community {
+      border-radius: 5px;
+      background-color: var(--neko-settings-card);
+      height: 0.9rem;
+      width: 3rem;
+    }
+    .subtitle {
+      border-radius: 5px;
+      background-color: var(--neko-settings-card);
+      height: 1.3125rem;
+      width: 5rem;
+    }
+  }
+}

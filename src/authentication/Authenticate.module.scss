@@ -1,0 +1,180 @@
+.wrapper {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  animation: slide 20s linear infinite;
+  display: flex;
+  .card {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    max-width: 345px;
+    height: 100%;
+    background: var(--neko-default-background);
+
+    img,
+    picture {
+      width: 2.5rem;
+      height: auto;
+    }
+
+    h1 {
+      color: var(--neko-default-text);
+      margin-top: 0.8rem;
+      margin-bottom: 0.25rem;
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    nav {
+      color: var(--neko-default-text);
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  aside {
+    background: linear-gradient(180deg, #007fff 0%, #0035a8 100%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 6rem;
+
+    h1 {
+      font-size: 2.5rem;
+      color: var(--neko-default-text-inline);
+      margin: 0;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: var(--neko-default-text-inline);
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: var(--neko-default-text-inline);
+      text-align: right;
+      margin-right: 3rem;
+    }
+    .timeline::after {
+      content: '';
+      width: 0.5rem;
+      background: #ffffff;
+      position: absolute;
+      right: 6rem;
+      top: 6rem;
+      border-radius: 10px;
+      bottom: 6rem;
+    }
+
+    .circle {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      background: var(--neko-default-text-inline);
+      position: absolute;
+      z-index: 2;
+      right: 4.8rem;
+      margin-top: -2.25rem;
+      border: 5px solid var(--neko-default-text-inline);
+    }
+
+    .current {
+      animation: currentPulse alternate infinite ease-in-out 1.3s;
+    }
+
+    .next {
+      background: var(--neko-default-secondary);
+    }
+
+    @keyframes currentPulse {
+      0% {
+        background: var(--neko-default-text-inline);
+      }
+      100% {
+        background: var(--neko-default-primary);
+      }
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    aside {
+      background: linear-gradient(
+        320deg,
+        rgba(2, 0, 36, 1) 0%,
+        rgba(0, 86, 172, 1) 100%
+      );
+    }
+  }
+}
+
+@keyframes slide {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -1000px 0;
+  }
+}
+
+@media (max-width: 740px) {
+  .wrapper {
+    display: block;
+
+    aside {
+      display: none;
+    }
+
+    .card {
+      max-width: none;
+
+      input {
+        width: 100%;
+        max-width: none;
+      }
+    }
+  }
+}
+
+@media (max-height: 667px) {
+  .wrapper {
+    .card {
+      overflow-y: scroll;
+      display: block;
+      min-width: 345px;
+    }
+  }
+}
+
+@media (max-height: 667px) and (max-width: 740px) {
+  .wrapper {
+    .card {
+      min-width: auto;
+    }
+  }
+}
+
+@media (max-width: 740px) {
+  .wrapper {
+    .card {
+      padding: calc(env(safe-area-inset-top) + 2rem) 2rem
+        calc(env(safe-area-inset-bottom) + 2rem) 2rem;
+    }
+  }
+}

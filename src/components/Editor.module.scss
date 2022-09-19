@@ -1,0 +1,41 @@
+.mention {
+  font-weight: 600;
+  color: var(--neko-mention-other);
+
+  &.isMe {
+    color: var(--neko-mention-me);
+    border-radius: 4px;
+  }
+
+  &.selected {
+    color: var(--neko-text-inverse);
+    font-weight: 700;
+  }
+}
+
+.editor {
+  position: relative;
+
+  -webkit-user-select: auto;
+  -khtml-user-select: auto;
+  -moz-user-select: auto;
+  -o-user-select: auto;
+  user-select: auto;
+
+  .placeholder {
+    font-size: 1rem;
+    font-weight: 400;
+    opacity: 0.5;
+    left: 2.9375rem;
+    top: 0.9375rem;
+    position: absolute;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-right: 2rem;
+    text-align: left;
+    word-break: break-word;
+    max-width: calc(100% - 9.25rem);
+    user-select: none;
+  }
+}

@@ -1,0 +1,57 @@
+.codes {
+  overflow-y: scroll;
+  height: 100%;
+  width: 100%;
+  padding: 2rem;
+  background: var(--neko-settings-background);
+
+  .action {
+    height: 2.65rem;
+    margin-left: auto;
+    background: var(--neko-colors-primary);
+
+    @media (max-width: 740px) {
+      width: 2.65rem;
+    }
+  }
+
+  .icon {
+    background: var(--neko-colors-warning);
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    min-height: 45px;
+    border-radius: 10px;
+    position: relative;
+    background-size: contain;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 0.5rem;
+    color: var(--neko-text-inverse);
+
+    &.used {
+      background: var(--neko-colors-primary);
+    }
+  }
+  h4 {
+    overflow: visible !important;
+  }
+  .copyButton {
+    width: auto;
+    svg {
+      margin-right: 0.5rem;
+    }
+    background: var(--neko-colors-primary) !important;
+  }
+
+  .deleteButton {
+    margin-left: 0.6rem;
+    width: 46px;
+
+    background: var(--neko-colors-danger) !important;
+    svg {
+      margin-right: auto;
+    }
+  }
+}

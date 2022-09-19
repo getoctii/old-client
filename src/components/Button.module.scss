@@ -1,0 +1,59 @@
+.button {
+  border: 0;
+  border-radius: 13px;
+
+  outline: none;
+
+  margin: 0;
+  padding: 0.9rem 1.2rem;
+
+  transition: ease-in-out box-shadow 0.15s;
+
+  font-family: var(--inn-font);
+  font-weight: 500;
+  font-size: 1rem;
+
+  color: #ffffff;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  &.primary {
+    background: var(--neko-colors-primary);
+  }
+
+  &.secondary {
+    background: var(--neko-colors-secondary);
+  }
+
+  &.light {
+    color: #202020;
+    background: var(--neko-colors-light);
+  }
+
+  &.dark {
+    background: var(--neko-colors-dark);
+  }
+
+  &.danger {
+    background: var(--neko-colors-danger);
+  }
+
+  &.warning {
+    background: var(--neko-colors-warning);
+  }
+
+  &.info {
+    background: var(--neko-colors-info);
+  }
+
+  &.success {
+    background: var(--neko-colors-success);
+  }
+
+  &.pill {
+    border-radius: 25px;
+  }
+}

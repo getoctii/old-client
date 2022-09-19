@@ -1,0 +1,300 @@
+.communities {
+  * {
+    margin-bottom: 2rem;
+  }
+}
+
+.sidebar {
+  .spacer {
+    margin-top: 40px;
+  }
+
+  padding-top: calc(env(safe-area-inset-top));
+  padding-bottom: calc(env(safe-area-inset-bottom));
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 5.5rem;
+  min-height: 5.5rem;
+  z-index: 0;
+  background: var(--neko-sidebar-background);
+  border: 0;
+
+  a {
+    text-decoration: none;
+    color: var(--neko-text-inline);
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pinned {
+    position: absolute;
+    bottom: 0;
+    padding-bottom: 1rem;
+    box-shadow: var(--neko-sidebar-shadow);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    .pinnedWrapper {
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      background-color: var(--neko-sidebar-background);
+    }
+  }
+  .icon {
+    background-color: var(--neko-channels-background);
+    background-size: cover;
+    width: 3.5rem;
+    height: 3.5rem;
+    min-height: 3.5rem;
+    min-width: 3.5rem;
+    margin: 0 0 0.7rem;
+    border-radius: 16px;
+    transition: box-shadow 0.1s ease-in-out;
+    animation: bounce 0.2s easing-in;
+    position: relative;
+    outline: none;
+    .badge {
+      position: absolute;
+      height: 18px;
+      border-radius: 50%;
+      width: 18px;
+      bottom: -3.45px;
+      right: -3.45px;
+      border-color: var(--neko-sidebar-background);
+      border-width: 3.5px;
+      border-style: solid;
+      background: var(--neko-colors-primary);
+    }
+
+    img {
+      border-radius: 16px;
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+
+    @media (max-width: 740px) {
+      margin-bottom: 0;
+      margin-right: 0.7rem;
+    }
+  }
+
+  .scrollable {
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 7.7rem;
+    padding: 1rem 1rem;
+    scrollbar-width: none;
+  }
+  .separator {
+    margin-bottom: 0.7rem;
+    border-radius: 50%;
+    min-height: 0.5rem;
+    min-width: 0.5rem;
+    height: 0.5rem;
+    width: 0.5rem;
+    background: var(--neko-sidebar-seperator);
+    @media (max-width: 740px) {
+      margin-bottom: 0;
+      margin-right: 0.9rem;
+    }
+  }
+
+  .button {
+    margin: 0 0 0.7rem;
+    padding: 0 !important;
+    font-size: 0.7rem !important;
+    background: transparent;
+    width: 3.5rem;
+    border-radius: 16px;
+    height: 3.5rem;
+    min-height: 3.5rem;
+    min-width: 3.5rem;
+    position: relative;
+    @media (max-width: 740px) {
+      margin-bottom: 0;
+      margin-right: 0.7rem;
+    }
+
+    .badge {
+      position: absolute;
+      height: 18px;
+      border-radius: 50%;
+      width: 18px;
+      bottom: -3.45px;
+      right: -3.45px;
+      border-color: var(--neko-sidebar-background);
+      border-width: 3.5px;
+      border-style: solid;
+      background: var(--neko-colors-primary);
+    }
+  }
+
+  .selected {
+    box-shadow: 0 0 0 2px var(--neko-sidebar-background),
+      0 0 0 4px var(--neko-text-primary);
+  }
+
+  .messages {
+    @extend .button;
+    background: var(--neko-colors-danger);
+    color: #ffffff;
+  }
+
+  .hub {
+    @extend .button;
+    background: var(--neko-colors-primary);
+    color: #ffffff;
+  }
+
+  .hub {
+    @extend .button;
+    background: var(--neko-colors-primary);
+    color: #ffffff;
+  }
+
+  .plus {
+    @extend .button;
+    background: var(--neko-colors-secondary);
+    color: #ffffff;
+    margin-bottom: 0;
+  }
+
+  .avatar {
+    @extend .button;
+    height: 3.5rem;
+    width: 3.5rem;
+    position: relative;
+
+    background-color: var(--neko-channels-background);
+    .badge {
+      position: absolute;
+      height: 18px;
+      border-radius: 50%;
+      width: 18px;
+      bottom: -3.45px;
+      right: -3.45px;
+      border-color: var(--neko-sidebar-background);
+      border-width: 3.5px;
+      border-style: solid;
+      &.selectedBadge {
+        border-color: var(--neko-status-selected);
+      }
+      &.online {
+        background: var(--neko-status-online);
+      }
+      &.dnd {
+        background: var(--neko-status-dnd);
+      }
+      &.idle {
+        background: var(--neko-status-idle);
+      }
+      &.offline {
+        background: var(--neko-status-offline);
+      }
+    }
+    img {
+      pointer-events: all;
+      border-radius: 16px;
+      object-fit: cover;
+      height: 3.5rem;
+      width: 3.5rem;
+    }
+
+    .overlay {
+      display: flex;
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      margin: 0;
+      right: 0;
+      font-size: 0.7rem;
+      height: 3.5rem;
+      width: 3.5rem;
+      cursor: pointer;
+    }
+  }
+
+  @media (max-width: 740px) {
+    flex-direction: row;
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    height: calc(5.5rem + env(safe-area-inset-bottom));
+    max-height: calc(5.5rem + env(safe-area-inset-bottom));
+
+    padding: 1rem 0 calc(env(safe-area-inset-bottom) + 1rem);
+    .scrollable {
+      padding-left: 1rem;
+      overflow-x: scroll;
+      overflow-y: hidden;
+    }
+    .avatar {
+      position: relative;
+    }
+    .scrollable,
+    .list {
+      flex-direction: row;
+      max-height: 5.5rem;
+      margin-bottom: 0;
+      display: flex;
+    }
+    .button {
+      margin-top: 0;
+      margin-bottom: 0;
+      margin-right: 0.7rem;
+    }
+    .list {
+      padding-right: 1rem;
+      .icon {
+        margin-top: 0;
+      }
+    }
+  }
+}
+
+.communityPlaceholder {
+  width: 3.5rem;
+  height: 3.5rem;
+  min-height: 3.5rem;
+  min-width: 3.5rem;
+  margin: 0 0 0.7rem;
+  border-radius: 16px;
+  transition: box-shadow 0.1s ease-in-out;
+  animation: bounce 0.2s ease-in;
+  background: var(--neko-channels-background);
+}
+
+.mention {
+  position: absolute;
+  bottom: -3.45px;
+  right: -3.45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--neko-text-primary);
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 12px;
+  border-color: var(--neko-sidebar-background);
+  border-width: 3.5px;
+  border-style: solid;
+
+  &.pill {
+    border-radius: 15px;
+    width: auto;
+    height: auto;
+    padding: 3px 8px;
+  }
+}

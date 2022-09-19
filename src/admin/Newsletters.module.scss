@@ -1,0 +1,27 @@
+.newsletters {
+  background: var(--neko-settings-background);
+  overflow-y: scroll;
+  height: 100%;
+  width: 100%;
+  padding: 2rem;
+
+  .icon {
+    background: var(--neko-colors-warning);
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    min-height: 45px;
+    border-radius: 10px;
+    position: relative;
+    background-size: contain;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 0.5rem;
+    color: var(--neko-text-inverse);
+  }
+
+  h4 {
+    overflow: visible !important;
+  }
+}

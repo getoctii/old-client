@@ -1,0 +1,56 @@
+.community {
+  background: var(--neko-chat-background);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex: 2 1;
+  overflow: hidden;
+
+  @media (max-width: 740px) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.communityError {
+  background: var(--neko-channels-background);
+}
+
+.listPlaceholder {
+  padding: 2rem;
+  width: 100%;
+}
+
+.noPermission {
+  display: flex;
+  justify-content: center;
+  background: var(--neko-channels-background);
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  padding: 1rem;
+  flex-direction: column;
+  .locked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    svg {
+      color: var(--neko-text-warning);
+    }
+    small {
+      font-size: 1rem;
+      font-weight: 300;
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+    h3 {
+      font-size: 1.25rem;
+      margin: 0;
+    }
+  }
+
+  @media (max-width: 740px) {
+    padding: 2rem;
+  }
+}

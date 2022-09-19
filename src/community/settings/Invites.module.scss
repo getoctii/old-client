@@ -1,0 +1,49 @@
+.invites {
+  overflow-y: scroll;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--neko-settings-background);
+  margin-top: 1rem;
+  .icon {
+    background: var(--neko-colors-primary);
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    min-height: 45px;
+    border-radius: 10px;
+    position: relative;
+    background-size: contain;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 0.5rem;
+    color: var(--neko-text-inverse);
+  }
+
+  .copyButton {
+    width: auto;
+    svg {
+      margin-right: 0.5rem;
+    }
+    background: var(--neko-colors-primary) !important;
+
+    @media (max-width: 873px) {
+      width: 46px;
+      height: 46px;
+
+      svg {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .deleteButton {
+    margin-left: 0.6rem;
+    width: 46px;
+
+    background: var(--neko-colors-danger) !important;
+    svg {
+      margin-right: auto;
+    }
+  }
+}

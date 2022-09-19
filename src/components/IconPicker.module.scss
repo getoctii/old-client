@@ -1,0 +1,85 @@
+.icon {
+  border-radius: 13px;
+  padding: 1.5rem;
+  display: flex;
+  background: var(--neko-settings-background);
+
+  .details {
+    margin-right: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    h6 {
+      font-size: 0.9rem;
+      margin: 0;
+      font-weight: 700;
+    }
+    p {
+      font-weight: 400;
+      font-size: 0.8rem;
+      margin: 0;
+    }
+
+    a {
+      color: var(--neko-text-primary);
+      text-decoration: none;
+    }
+  }
+
+  img {
+    margin-right: 1rem;
+    object-fit: cover;
+  }
+  img,
+  button {
+    margin-top: 0;
+    border-radius: 12px;
+    width: 5rem;
+    height: 5rem;
+    min-width: 5rem;
+    max-height: 5rem;
+  }
+
+  button {
+    margin-left: auto;
+    color: var(--neko-text-normal);
+    background: var(--neko-settings-card);
+  }
+  input {
+    display: none;
+  }
+
+  @media (max-width: 873px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    img {
+      margin-bottom: 0.5rem;
+    }
+    button {
+      margin-top: 0.5rem;
+      margin-left: 0;
+      width: 100%;
+      background: var(--neko-colors-primary);
+      height: 3rem;
+    }
+  }
+
+  &.small {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    img {
+      margin-bottom: 0.5rem;
+    }
+    button {
+      margin-top: 0.5rem;
+      margin-left: 0;
+      width: 100%;
+      background: var(--neko-colors-primary);
+      height: 3rem;
+    }
+  }
+}

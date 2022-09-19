@@ -1,0 +1,120 @@
+.profile {
+  padding-top: 5rem;
+  overflow-y: scroll;
+  h2,
+  h5,
+  h4,
+  h6,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+  .error {
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+    color: var(--neko-text-danger);
+  }
+  form {
+    background: var(--neko-settings-card);
+    padding: 2rem;
+    border-radius: 14px;
+    height: auto;
+
+    margin-bottom: 2rem;
+    max-width: 500px;
+    min-width: 500px;
+
+    .inputName {
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .username,
+    .discriminator {
+      margin-top: 0.8rem;
+      input {
+        background: var(--neko-settings-background);
+        width: 100%;
+      }
+    }
+
+    .devmode {
+      color: var(--neko-text-danger);
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      cursor: pointer;
+    }
+    .save {
+      margin-top: 1rem;
+      background: var(--neko-colors-primary);
+    }
+  }
+  @media (max-height: 740px) {
+    padding-top: 2.5rem;
+  }
+
+  @media (max-width: 990px) and (min-width: 741px) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 2rem;
+    width: 100%;
+    form {
+      padding: 0;
+      max-width: 100%;
+      min-width: 100%;
+      background: var(--neko-settings-background);
+      .iconPicker {
+        background: var(--neko-settings-card);
+
+        button {
+          background: var(--neko-colors-primary);
+        }
+      }
+      .username,
+      .discriminator {
+        input {
+          background: var(--neko-settings-card);
+        }
+      }
+    }
+  }
+  @media (max-width: 740px) {
+    padding-top: 2rem;
+    margin-top: 0;
+    width: 100%;
+    .icon {
+      background: var(--neko-colors-primary);
+      margin-right: 0.7rem;
+      padding: 0.5rem;
+      height: 2.65rem;
+      width: 2.65rem;
+      border-radius: 12px;
+      color: var(--neko-text-inverse);
+      cursor: pointer;
+      svg {
+        align-self: center;
+      }
+      display: flex;
+      vertical-align: middle;
+      justify-content: center;
+    }
+
+    form {
+      padding: 1.5rem;
+      max-width: 100%;
+      min-width: 100%;
+    }
+    h2 {
+      display: flex;
+      align-items: center;
+    }
+    h2 {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+}

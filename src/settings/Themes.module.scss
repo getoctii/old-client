@@ -1,0 +1,155 @@
+.themes {
+  padding-top: 5rem;
+  overflow-y: scroll;
+
+  .options {
+    background: var(--neko-settings-card);
+    padding: 2rem;
+    margin-top: 0.8rem;
+    border-radius: 14px;
+    max-width: 500px;
+    min-width: 500px;
+  }
+
+  h2,
+  h5,
+  h4,
+  h6,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  h4 {
+    margin-bottom: 0.45rem;
+  }
+  .variations {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0.8rem;
+    border-radius: 14px;
+    background: var(--neko-settings-background);
+    .selected {
+      background: var(--neko-colors-primary);
+      color: var(--neko-text-inverse);
+    }
+    button {
+      flex: 1;
+      color: var(--neko-text-normal);
+      background: none;
+
+      &:not(:first-child) {
+        margin-left: 0.5rem;
+      }
+
+      &:not(:last-child) {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  .customColors {
+    margin-top: 1rem;
+  }
+  .colors {
+    hr {
+      margin: 0;
+      border-color: var(--neko-channels-seperator);
+      opacity: 0.5;
+      border-style: solid;
+    }
+    width: 100%;
+    .theme {
+      border-radius: 14px;
+      background: none;
+      display: flex;
+      align-items: center;
+      padding-top: 0.8rem;
+      padding-bottom: 0.8rem;
+      cursor: pointer;
+    }
+
+    .selected {
+      margin-left: -0.8rem;
+      padding-left: 0.8rem;
+      margin-right: -0.8rem;
+      padding-right: 0.8rem;
+      background: var(--neko-colors-primary);
+      color: var(--neko-text-inverse);
+    }
+  }
+
+  @media (max-width: 990px) and (min-width: 741px) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 2rem;
+    width: 100%;
+    .options {
+      background: var(--neko-settings-background);
+      padding: 0;
+      max-width: 100%;
+      min-width: 100%;
+    }
+    .variations {
+      background: var(--neko-settings-card);
+    }
+    form {
+      padding: 0;
+      width: 100%;
+      background: var(--neko-settings-background);
+
+      .password {
+        input {
+          background: var(--neko-settings-card);
+        }
+      }
+    }
+  }
+
+  @media (max-width: 740px) {
+    padding-top: 2rem;
+    margin-top: 0;
+    width: 100%;
+    .icon {
+      background: var(--neko-colors-primary);
+      margin-right: 0.7rem;
+      padding: 0.5rem;
+      height: 2.65rem;
+      width: 2.65rem;
+      border-radius: 12px;
+      color: var(--neko-text-inverse);
+      cursor: pointer;
+      svg {
+        align-self: center;
+      }
+      display: flex;
+      vertical-align: middle;
+      justify-content: center;
+    }
+
+    .options {
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 100%;
+      min-width: 100%;
+    }
+    .variations,
+    .colors {
+      padding: 0;
+    }
+    h2 {
+      display: flex;
+      align-items: center;
+    }
+    h2 {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+}

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Neko</string>
+    <string name="title_activity_main">Neko</string>
+    <string name="package_name">com.innatical.neko</string>
+    <string name="custom_url_scheme">com.innatical.neko</string>
+</resources>

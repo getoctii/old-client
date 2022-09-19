@@ -1,0 +1,91 @@
+
+.communityEmpty {
+  display: flex;
+  justify-content: center;
+  background: var(--neko-channels-background);
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  padding: 1rem;
+  flex-direction: column;
+
+  .container {
+    max-width: 300px;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    padding: 1rem;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    h1 {
+      margin: 1rem 0 0;
+      font-size: 1.28rem;
+    }
+
+    h3 {
+      margin: 1rem 0 0;
+      font-size: 1.1rem;
+      font-weight: 400;
+    }
+
+    .cards {
+      margin-top: 1rem;
+      width: 100%;
+      .card {
+        background: var(--neko-sidebar-background);
+        padding: 1.5rem;
+        border-radius: 13px;
+        width: 100%;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+
+        display: flex;
+
+        svg {
+          margin-left: auto;
+          font-size: 1.2rem;
+        }
+      }
+    }
+
+    .more {
+      border: none;
+      background: transparent;
+      color: var(--neko-text-default);
+      font-size: 0.85rem;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      svg {
+        margin-left: 0.25rem;
+        font-size: 0.9rem;
+      }
+      margin: 0.25rem 0 1rem;
+    }
+
+    .createButton {
+      margin-top: 1rem;
+      width: 100%;
+      background: var(--neko-colors-primary);
+      display: flex;
+      svg {
+        font-size: 1.25rem;
+        margin-left: auto;
+      }
+    }
+  }
+
+  @media (max-width: 740px) {
+    button {
+      background: var(--neko-colors-primary);
+      margin-bottom: 1rem;
+    }
+    padding: 2rem;
+    .video {
+      height: 300px;
+      width: 95%;
+    }
+  }
+}

@@ -1,0 +1,58 @@
+.invite {
+  h3,
+  h2,
+  p {
+    margin: 0;
+  }
+
+  button {
+    background: var(--neko-colors-primary);
+  }
+
+  .inputName {
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .iconPicker {
+    margin-top: 1rem;
+    background: var(--neko-input-background);
+    max-width: 100%;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .error {
+    color: var(--neko-text-danger);
+  }
+
+  .createButton {
+    background: var(--neko-colors-primary);
+  }
+  .joinButton {
+    margin-top: 0.7rem;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  @media (max-width: 740px) {
+    max-width: 100%;
+    display: flex;
+    padding: 0;
+    margin: 0;
+    flex-direction: column;
+    height: 100%;
+    .body {
+      padding-top: 0;
+    }
+    form {
+      height: 100%;
+    }
+    .bottom {
+      margin-top: auto;
+      padding: 1.25rem 2rem calc(env(safe-area-inset-bottom) + 2rem);
+    }
+  }
+}

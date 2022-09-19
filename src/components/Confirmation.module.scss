@@ -1,0 +1,42 @@
+.confirmation {
+  padding: 2rem;
+  width: 380px;
+  div {
+    display: flex;
+    button {
+      width: 100%;
+    }
+  }
+
+  .cancel {
+    background: var(--neko-colors-secondary);
+  }
+
+  h3 {
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 0.3rem;
+  }
+
+  p {
+    font-weight: 400;
+    font-size: 1rem;
+  }
+
+  @media (max-width: 740px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.danger {
+  background: var(--neko-colors-danger);
+}
+
+.separator {
+  width: 15px;
+}

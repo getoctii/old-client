@@ -1,0 +1,47 @@
+.unread {
+  background-color: var(--neko-text-primary);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.channels {
+  .rooms {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0.7rem 0 0.3rem;
+
+    span {
+      float: right;
+    }
+
+    .add {
+      cursor: pointer;
+    }
+  }
+
+  .list {
+    hr {
+      margin: 0 0 0 2.6rem;
+      border-color: var(--neko-channels-seperator);
+      opacity: 0.5;
+      border-style: solid;
+    }
+  }
+}
+
+.channelsPlaceholder {
+  hr {
+    margin: 0 0 0 2.6rem;
+    border-color: var(--neko-sidebar-seperator);
+    opacity: 0.5;
+    border-style: solid;
+  }
+  .rooms {
+    margin-top: 0.5rem;
+    height: 1rem;
+    width: 4rem;
+    background: var(--neko-sidebar-background);
+    border-radius: 5px;
+  }
+}

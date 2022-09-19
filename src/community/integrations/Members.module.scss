@@ -1,0 +1,65 @@
+.members {
+  overflow-y: scroll;
+  height: 100vh;
+  width: 100%;
+  padding: 2rem;
+  background-color: var(--neko-settings-background);
+
+  .overflowGroup {
+    max-width: 100%;
+    overflow: hidden;
+    display: flex;
+    margin-left: 0.5rem;
+    .group {
+      margin-left: 0.5rem;
+      padding: 0.5rem;
+      background: var(--neko-colors-secondary);
+      border-radius: 9px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-width: 200px;
+      text-align: center;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 1600px) {
+      .group {
+        max-width: 160px;
+      }
+    }
+
+    @media (max-width: 1440px) {
+      .group {
+        max-width: 100px;
+      }
+    }
+  }
+
+  .addGroup {
+    background: var(--neko-colors-secondary);
+    margin-left: 0.5rem;
+    border-radius: 9px;
+    height: 2.2125rem;
+    width: 2.2125rem;
+
+    &.noGroups {
+      width: auto;
+      margin-left: 1rem;
+    }
+  }
+
+  .messageButton {
+    background: var(--neko-colors-primary) !important;
+    width: auto;
+    svg {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}

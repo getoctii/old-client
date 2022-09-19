@@ -1,0 +1,168 @@
+.home {
+  overflow-y: scroll;
+  width: 100%;
+  height: 100%;
+  background: var(--neko-default-background);
+  .hero {
+    width: 100%;
+    height: 75vh;
+    padding: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--neko-default-gradient-background);
+    justify-content: space-between;
+    min-height: 500px;
+    .info {
+      position: relative;
+      text-align: center;
+      max-width: 400px;
+      h1 {
+        font-weight: 900;
+        font-size: 2rem;
+        margin: 0;
+        margin-bottom: 0.5rem;
+        color: var(--neko-default-text);
+      }
+
+      p {
+        opacity: 0.7;
+        font-weight: 400;
+        font-size: 1.2rem;
+        margin: 0;
+        margin-bottom: 1.5rem;
+        color: var(--neko-default-text);
+      }
+      .form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .input {
+          color: var(--neko-default-text);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          max-width: 325px;
+          input {
+            background: var(--neko-default-background);
+          }
+          button {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            border-radius: 100%;
+            min-width: 1rem;
+            min-height: 1rem;
+            max-width: 1rem;
+            max-height: 1rem;
+            padding: 1rem;
+
+            background: var(--neko-default-primary);
+
+            &.error {
+              background: var(--neko-default-danger);
+              color: var(--neko-default-text-inline);
+            }
+            &:disabled {
+              cursor: default;
+              background: var(--neko-default-secondary);
+            }
+          }
+        }
+        label {
+          color: var(--neko-default-text);
+          font-weight: 300;
+          margin-bottom: 0.45rem;
+        }
+
+        input {
+          text-align: center;
+          &::placeholder {
+            text-align: center;
+            font-weight: 300;
+            opacity: 0.35;
+          }
+        }
+      }
+    }
+
+    .next {
+      cursor: pointer;
+      text-align: center;
+      p {
+        margin-top: 0;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        width: 100px;
+      }
+      svg,
+      p {
+        color: var(--neko-default-text);
+      }
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  .body {
+    width: 100%;
+    padding: 3.5rem;
+    padding-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .questions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .question {
+        max-width: 380px;
+        h2,
+        p {
+          margin: 0;
+          color: var(--neko-default-text);
+        }
+
+        h2 {
+          margin-bottom: 0.5rem;
+          font-size: 1.25rem;
+        }
+        p {
+          margin-bottom: 1.8rem;
+        }
+
+        text-align: center;
+      }
+    }
+
+    img,
+    picture {
+      max-width: 1000px;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+    }
+
+    .disclaimers {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-left: 0;
+      li {
+        color: var(--neko-default-text);
+        font-size: 0.8rem;
+        opacity: 0.7;
+        font-weight: 300;
+      }
+    }
+  }
+
+  hr {
+    width: 20rem;
+    border-radius: 10px;
+    border-color: var(--neko-default-foreground);
+    opacity: 0.5;
+    margin-bottom: 2rem;
+    height: 2px;
+  }
+}

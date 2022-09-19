@@ -1,0 +1,73 @@
+.current {
+  z-index: 10;
+  position: absolute;
+  bottom: 0;
+  left: 5.5rem;
+  background: var(--neko-modal-foreground);
+  padding: 1rem;
+  margin: 1.5rem;
+  width: 15rem;
+  border-radius: 14px;
+
+  h3 {
+    font-size: 1.15rem;
+  }
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  p {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+  }
+  nav {
+    display: flex;
+  }
+
+  button {
+    cursor: pointer;
+    margin-right: 0.3rem;
+    min-width: 2.5rem;
+    font-size: 1rem;
+    min-height: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 0;
+    border-radius: 10px;
+    color: var(--neko-text-inverse);
+    background: var(--neko-colors-secondary);
+  }
+
+  button:last-child {
+    margin-right: 0;
+    background: var(--neko-colors-danger);
+    width: 100%;
+  }
+
+  @media (max-width: 740px) {
+    button {
+      width: auto;
+      min-width: auto;
+      background: var(--neko-text-inverse);
+      color: var(--neko-text-primary);
+    }
+    button:last-child {
+      background: var(--neko-text-danger);
+      color: var(--neko-text-inverse);
+    }
+    position: static;
+    margin: 0;
+    padding-top: calc(env(safe-area-inset-top) + 10px);
+    height: auto;
+    background: var(--neko-colors-primary);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    width: 100%;
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}

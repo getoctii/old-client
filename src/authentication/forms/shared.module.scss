@@ -1,0 +1,67 @@
+form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.input {
+  display: block;
+  border: none;
+  padding: 0;
+  padding-left: 0.9375rem !important;
+  padding-right: 0.9375rem !important;
+  border-radius: 8px;
+  min-height: 3.75rem;
+  height: 3.75rem;
+  margin: 0 0 0.25rem;
+  font-size: 1.1875rem;
+  background: var(--neko-default-foreground);
+  color: var(--neko-default-text);
+}
+
+.label {
+  margin-top: 0.8rem;
+  display: inline-block;
+  color: var(--neko-default-text);
+  margin-bottom: 0.25rem;
+}
+
+.button {
+  margin-top: auto;
+  border: 0;
+  outline: none;
+  border-radius: 8px;
+  padding: 0.9375rem;
+  min-height: 3.75rem;
+  height: 3.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--neko-default-primary);
+  color: var(--neko-default-text-inline);
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  width: 100%;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.error {
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+  color: var(--neko-text-danger);
+}
+
+@media (max-height: 667px) {
+  form {
+    height: auto;
+  }
+
+  .button {
+    margin-top: 1.25rem;
+  }
+}

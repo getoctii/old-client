@@ -1,0 +1,55 @@
+.featured {
+  // overflow-x: hidden;
+
+  h2 {
+    margin-top: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+
+  .row {
+    overflow-x: scroll;
+    display: grid;
+    gap: 1rem;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+
+    .card {
+      background: var(--neko-settings-card);
+      border-radius: 10px;
+      width: 100%;
+
+      img {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        height: auto;
+        max-height: 150px;
+        width: 100%;
+        object-fit: cover;
+      }
+
+      .content {
+        padding: 1rem;
+
+        h1 {
+          font-size: 1.2rem;
+          font-weight: 700;
+          margin: 0;
+          margin-bottom: 0.2rem;
+        }
+
+        p {
+          margin: 0;
+        }
+      }
+
+      @media (max-width: 740px) {
+        background: var(--neko-settings-background);
+      }
+    }
+  }
+}
